@@ -41,9 +41,12 @@ public class TradeGuideCalculatorTest {
         TradeGuideCalculator calculator =
                 new TradeGuideCalculator();
 
-        assertThrows(
+        IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> calculator.calculate(request)
         );
+
+        assertEquals("평균 매입가는 0보다 커야 합니다.", exception.getMessage());
+
     }
 }
