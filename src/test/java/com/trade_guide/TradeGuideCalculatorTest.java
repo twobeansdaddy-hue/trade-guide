@@ -3,6 +3,7 @@ package com.trade_guide;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TradeGuideCalculatorTest {
     @Test
@@ -30,5 +31,19 @@ public class TradeGuideCalculatorTest {
         TradeGuideCalculator calculator = new TradeGuideCalculator();
         TradeGuideResult result = calculator.calculate(request);
         assertEquals(TradeAction.HOLD, result.getTradeAction());
+    }
+
+    @Test
+    void 평균_매입가가_0이면_예외가_발생한다() {
+        TradeGuideRequest request =
+                new TradeGuideRequest(0, 120, 15, 8);
+
+        TradeGuideCalculator calculator =
+                new TradeGuideCalculator();
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> calculator.calculate(request)
+        );
     }
 }
