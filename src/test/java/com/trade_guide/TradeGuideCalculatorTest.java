@@ -60,6 +60,6 @@ public class TradeGuideCalculatorTest {
                 () -> calculator.calculate(request)
         );
 
-        assertEquals("현재가는 0 이상이어야 합니다.", exception.getMessage());
+        assertEquals("현재가는 0보다 커야 합니다.", exception.getMessage());
     }
 }

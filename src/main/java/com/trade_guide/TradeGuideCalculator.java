@@ -16,7 +16,7 @@ public class TradeGuideCalculator {
 
         // 입력값 유효성 검증
         if (request.getCurrentPrice() <= 0) {
-            throw new IllegalArgumentException("현재가는 0 이상이어야 합니다.");
+            throw new IllegalArgumentException("현재가는 0보다 커야 합니다.");
         }
 
         // 2. 3가지 값 계산
