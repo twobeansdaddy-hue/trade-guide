@@ -14,6 +14,11 @@ public class TradeGuideCalculator {
             throw new IllegalArgumentException("평균 매입가는 0보다 커야 합니다.");
         }
 
+        // 입력값 유효성 검증
+        if (request.getCurrentPrice() <= 0) {
+            throw new IllegalArgumentException("현재가는 0 이상이어야 합니다.");
+        }
+
         // 2. 3가지 값 계산
         // 현재 수익률 = (현재가 - 평균 매입가) / 평균 매입가 × 100
         double currentReturnRate = ((currentPrice - averagePrice) / averagePrice) * 100;
