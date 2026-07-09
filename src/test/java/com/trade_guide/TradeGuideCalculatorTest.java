@@ -11,10 +11,13 @@ public class TradeGuideCalculatorTest {
         TradeGuideCalculator calculator = new TradeGuideCalculator();
         TradeGuideResult result = calculator.calculate(request);
         assertEquals(TradeAction.TAKE_PROFIT, result.getTradeAction());
+        assertEquals(20.0, result.getCurrentReturnRate(), 0.001);
+        assertEquals(115.0, result.getTargetSellPrice(), 0.001);
+        assertEquals(92.0, result.getStopLossPrice(), 0.001);
     }
 
     @Test
-    void 목표_매도가_이하면_매도한다() {
+    void 손절가_이하면_매도한다() {
         TradeGuideRequest request = new TradeGuideRequest(100, 90, 15, 8);
         TradeGuideCalculator calculator = new TradeGuideCalculator();
         TradeGuideResult result = calculator.calculate(request);
@@ -22,7 +25,7 @@ public class TradeGuideCalculatorTest {
     }
 
     @Test
-    void 목표_매도가_사이면_보유한다() {
+    void 손절가와_목표가_사이면_보유한다() {
         TradeGuideRequest request = new TradeGuideRequest(100, 100, 15, 8);
         TradeGuideCalculator calculator = new TradeGuideCalculator();
         TradeGuideResult result = calculator.calculate(request);
