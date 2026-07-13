@@ -44,11 +44,11 @@ public class TradeGuideCalculator {
             throw new IllegalArgumentException("현재가는 0보다 커야 합니다.");
         }
 
-        if (request.getTargetReturnRate() <= 0) {
+        if (request.getTargetReturnRate() < 0) {
             throw new IllegalArgumentException("목표 수익률은 0 이상이어야 합니다.");
         }
 
-        if (request.getMaximumLossRate() <= 0) {
+        if (request.getMaximumLossRate() < 0) {
             throw new IllegalArgumentException("최대 손실률은 0 이상이어야 합니다.");
         }
     }

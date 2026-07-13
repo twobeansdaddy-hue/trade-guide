@@ -78,7 +78,7 @@ public class TradeGuideCalculatorTest {
 
     @Test
     void 최대손실률은_0이상이어야_한다() {
-        TradeGuideRequest request = new TradeGuideRequest(100, 120, 15, 0);
+        TradeGuideRequest request = new TradeGuideRequest(100, 120, 15, -1);
         TradeGuideCalculator calculator = new TradeGuideCalculator();
 
         IllegalArgumentException exception = assertThrows(
