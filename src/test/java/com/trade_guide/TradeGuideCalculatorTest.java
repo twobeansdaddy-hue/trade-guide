@@ -62,4 +62,42 @@ public class TradeGuideCalculatorTest {
 
         assertEquals("현재가는 0보다 커야 합니다.", exception.getMessage());
     }
+
+    @Test
+    void 목표수익률은_0이상이어야_한다() {
+        TradeGuideRequest request = new TradeGuideRequest(100, 120, -10, 8);
+        TradeGuideCalculator calculator = new TradeGuideCalculator();
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> calculator.calculate(request)
+        );
+
+        assertEquals("목표 수익률은 0 이상이어야 합니다.", exception.getMessage());
+    }
+
+    @Test
+    void 최대손실률은_0이상이어야_한다() {
+        TradeGuideRequest request = new TradeGuideRequest(100, 120, 15, 0);
+        TradeGuideCalculator calculator = new TradeGuideCalculator();
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> calculator.calculate(request)
+        );
+
+        assertEquals("최대 손실률은 0 이상이어야 합니다.", exception.getMessage());
+    }
+
+    @Test
+    void 요청이_null이면_오류가_발생한다() {
+        TradeGuideCalculator calculator = new TradeGuideCalculator();
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> calculator.calculate(null)
+        );
+
+        assertEquals("요청 정보는 필수입니다.", exception.getMessage());
+    }
 }
