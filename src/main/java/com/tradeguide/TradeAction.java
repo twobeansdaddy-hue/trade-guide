@@ -1,4 +1,4 @@
-package com.trade_guide;
+package com.tradeguide;
 
 public enum TradeAction {
     HOLD,

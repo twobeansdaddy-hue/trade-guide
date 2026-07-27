@@ -1,4 +1,4 @@
-package com.trade_guide;
+package com.tradeguide;
 
 import org.junit.jupiter.api.Test;
 
