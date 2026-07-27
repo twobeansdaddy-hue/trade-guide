@@ -1,5 +1,8 @@
 package com.tradeguide;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class TradeGuideCalculator {
 
     public TradeGuideResult calculate(TradeGuideRequest request) {
