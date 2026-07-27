@@ -13,6 +13,7 @@ public class Main {
         System.out.println("목표 매도가 : " + result.getTargetSellPrice());
         System.out.println("손절 기준가 : " + result.getStopLossPrice());
         System.out.println("액션 : " + result.getTradeAction());
+        System.out.println("메시지 : " + result.getTradeActionMessage());
 
     }
 }

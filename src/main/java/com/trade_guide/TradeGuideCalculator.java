@@ -24,8 +24,11 @@ public class TradeGuideCalculator {
         // 3. tradeAction 정의
         TradeAction tradeAction = determineTradeAction(currentPrice, targetSellPrice, stopLossPrice);
 
+        // 3.1 tradeAtion 메시지 Mapping
+        String tradeActionMessage = createTradeActionMessage(tradeAction);
+
         // 4. 결과 Return
-        return new TradeGuideResult(currentReturnRate, targetSellPrice, stopLossPrice, tradeAction);
+        return new TradeGuideResult(currentReturnRate, targetSellPrice, stopLossPrice, tradeAction, tradeActionMessage);
 
     }
 
@@ -65,6 +68,14 @@ public class TradeGuideCalculator {
         } else {
             return TradeAction.HOLD;
         }
+    }
+
+    private String createTradeActionMessage(TradeAction tradeAction) {
+        return switch (tradeAction) {
+            case TAKE_PROFIT -> "익절 매도 고려";
+            case SELL -> "손절 매도 고려";
+            case HOLD -> "보유 유지";
+        };
     }
 
 }

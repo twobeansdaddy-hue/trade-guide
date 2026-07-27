@@ -5,12 +5,19 @@ public class TradeGuideResult {
     private final double targetSellPrice;
     private final double stopLossPrice;
     private final TradeAction tradeAction;
+    private final String tradeActionMessage;
 
-    public TradeGuideResult(double currentReturnRate, double targetSellPrice, double stopLossPrice, TradeAction tradeAction) {
+    public TradeGuideResult(
+            double currentReturnRate,
+            double targetSellPrice,
+            double stopLossPrice,
+            TradeAction tradeAction,
+            String tradeActionMessage) {
         this.currentReturnRate = currentReturnRate;
         this.targetSellPrice = targetSellPrice;
         this.stopLossPrice = stopLossPrice;
         this.tradeAction = tradeAction;
+        this.tradeActionMessage = tradeActionMessage;
     }
 
     public double getCurrentReturnRate() {
@@ -27,5 +34,9 @@ public class TradeGuideResult {
 
     public TradeAction getTradeAction() {
         return tradeAction;
+    }
+
+    public String getTradeActionMessage() {
+        return tradeActionMessage;
     }
 }
