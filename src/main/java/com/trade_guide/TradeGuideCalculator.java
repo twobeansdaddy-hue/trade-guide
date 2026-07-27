@@ -51,6 +51,10 @@ public class TradeGuideCalculator {
         if (request.getMaximumLossRate() < 0) {
             throw new IllegalArgumentException("최대 손실률은 0 이상이어야 합니다.");
         }
+
+        if (request.getMaximumLossRate() > 100) {
+            throw new IllegalArgumentException("최대 손실률은 100 이하이어야 합니다.");
+        }
     }
 
     private TradeAction determineTradeAction(double currentPrice, double targetSellPrice, double stopLossPrice) {

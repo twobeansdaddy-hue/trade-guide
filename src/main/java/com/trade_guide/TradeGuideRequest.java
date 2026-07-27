@@ -1,10 +1,10 @@
 package com.trade_guide;
 
 public class TradeGuideRequest {
-    private double averagePrice;
-    private double currentPrice;
-    private double targetReturnRate;
-    private double maximumLossRate;
+    private final double averagePrice;
+    private final double currentPrice;
+    private final double targetReturnRate;
+    private final double maximumLossRate;
 
     public TradeGuideRequest(double averagePrice, double currentPrice, double targetReturnRate, double maximumLossRate) {
         this.averagePrice = averagePrice;
