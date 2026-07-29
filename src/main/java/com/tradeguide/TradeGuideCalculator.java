@@ -31,7 +31,12 @@ public class TradeGuideCalculator {
         String tradeActionMessage = createTradeActionMessage(tradeAction);
 
         // 4. 결과 Return
-        return new TradeGuideResult(currentReturnRate, targetSellPrice, stopLossPrice, tradeAction, tradeActionMessage);
+        return new TradeGuideResult(
+                roundToTwoDecimalPlaces(currentReturnRate),
+                roundToTwoDecimalPlaces(targetSellPrice),
+                roundToTwoDecimalPlaces(stopLossPrice),
+                tradeAction,
+                tradeActionMessage);
 
     }
 
@@ -79,6 +84,10 @@ public class TradeGuideCalculator {
             case SELL -> "손절 매도 고려";
             case HOLD -> "보유 유지";
         };
+    }
+
+    private double roundToTwoDecimalPlaces(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 
 }

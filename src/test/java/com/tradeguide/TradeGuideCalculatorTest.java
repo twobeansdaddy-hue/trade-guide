@@ -117,4 +117,15 @@ public class TradeGuideCalculatorTest {
         assertEquals(TradeAction.HOLD, result.getTradeAction());
 
     }
+
+    @Test
+    void 계산_결과는_소수점_둘째_자리까지_반올림된다() {
+        TradeGuideRequest request = new TradeGuideRequest(3, 4, 12.345, 7.891);
+
+        TradeGuideResult result = calculator.calculate(request);
+
+        assertEquals(33.33, result.getCurrentReturnRate(), 0.001);
+        assertEquals(3.37, result.getTargetSellPrice(), 0.001);
+        assertEquals(2.76, result.getStopLossPrice(), 0.001);
+    }
 }
