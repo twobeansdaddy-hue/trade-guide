@@ -1,5 +1,10 @@
-package com.tradeguide;
+package com.tradeguide.controller;
 
+import com.tradeguide.domain.TradeGuideRequest;
+import com.tradeguide.domain.TradeGuideResult;
+import com.tradeguide.dto.TradeGuideCalculateRequest;
+import com.tradeguide.dto.TradeGuideResponse;
+import com.tradeguide.service.TradeGuideCalculator;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,4 +1,7 @@
-package com.tradeguide;
+package com.tradeguide.dto;
+
+import com.tradeguide.domain.TradeAction;
+import com.tradeguide.domain.TradeGuideResult;
 
 public class TradeGuideResponse {
     private final double currentReturnRate;

@@ -1,5 +1,6 @@
-package com.tradeguide;
+package com.tradeguide.dto;
 
+import com.tradeguide.domain.TradeGuideRequest;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;

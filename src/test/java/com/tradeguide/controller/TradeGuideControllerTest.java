@@ -1,6 +1,5 @@
-package com.tradeguide;
+package com.tradeguide.controller;
 
-import com.tradeguide.controller.TradeGuideController;
 import com.tradeguide.domain.TradeAction;
 import com.tradeguide.domain.TradeGuideRequest;
 import com.tradeguide.domain.TradeGuideResult;

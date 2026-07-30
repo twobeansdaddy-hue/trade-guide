@@ -1,4 +1,4 @@
-package com.tradeguide;
+package com.tradeguide.dto;
 
 public class ErrorResponse {
     private final String message;

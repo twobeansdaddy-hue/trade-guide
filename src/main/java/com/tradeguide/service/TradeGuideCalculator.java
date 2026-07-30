@@ -1,5 +1,8 @@
-package com.tradeguide;
+package com.tradeguide.service;
 
+import com.tradeguide.domain.TradeAction;
+import com.tradeguide.domain.TradeGuideRequest;
+import com.tradeguide.domain.TradeGuideResult;
 import org.springframework.stereotype.Service;
 
 @Service

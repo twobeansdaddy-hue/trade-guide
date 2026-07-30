@@ -1,4 +1,4 @@
-package com.tradeguide;
+package com.tradeguide.domain;
 
 public class TradeGuideRequest {
     private final double averagePrice;

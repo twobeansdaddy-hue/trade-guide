@@ -1,4 +1,4 @@
-package com.tradeguide;
+package com.tradeguide.domain;
 
 public class TradeGuideResult {
     private final double currentReturnRate;
