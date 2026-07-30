@@ -16,7 +16,10 @@ public class TradeGuideController {
     }
 
     @PostMapping("/calculate")
-    public TradeGuideResult calculate(@RequestBody TradeGuideRequest request) {
-        return calculator.calculate(request);
+    public TradeGuideResponse calculate(@RequestBody TradeGuideCalculateRequest request) {
+        TradeGuideRequest tradeGuideRequest = request.toTradeGuideRequest();
+        TradeGuideResult result = calculator.calculate(tradeGuideRequest);
+
+        return TradeGuideResponse.from(result);
     }
 }
