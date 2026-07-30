@@ -52,8 +52,6 @@ public class TradeGuideControllerTest {
 
     @Test
     void 잘못된_요청이면_에러_메시지를_응답한다() throws Exception {
-        when(calculator.calculate(any(TradeGuideRequest.class)))
-                .thenThrow(new IllegalArgumentException("평균 매입가는 0보다 커야 합니다."));
 
         mockMvc.perform(post("/api/trade-guide/calculate")
                         .contentType("application/json")
