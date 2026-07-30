@@ -1,5 +1,10 @@
 package com.tradeguide;
 
+import com.tradeguide.controller.TradeGuideController;
+import com.tradeguide.domain.TradeAction;
+import com.tradeguide.domain.TradeGuideRequest;
+import com.tradeguide.domain.TradeGuideResult;
+import com.tradeguide.service.TradeGuideCalculator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

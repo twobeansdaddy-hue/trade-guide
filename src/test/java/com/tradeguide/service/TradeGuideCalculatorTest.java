@@ -1,5 +1,9 @@
 package com.tradeguide;
 
+import com.tradeguide.domain.TradeAction;
+import com.tradeguide.domain.TradeGuideRequest;
+import com.tradeguide.domain.TradeGuideResult;
+import com.tradeguide.service.TradeGuideCalculator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
