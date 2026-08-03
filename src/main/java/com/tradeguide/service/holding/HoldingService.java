@@ -26,7 +26,7 @@ public class HoldingService {
     }
 
     public List<Holding> getHoldings(Long memberId, Long portfolioId) {
-        portfolioRepository.findByIdAndMember_Id(portfolioId, memberId)
+        portfolioRepository.findByMember_IdAndId(memberId, portfolioId)
                 .orElseThrow(() ->
                         new IllegalArgumentException(
                                 "포트폴리오를 찾을 수 없습니다."

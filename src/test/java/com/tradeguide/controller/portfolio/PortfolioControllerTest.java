@@ -1,6 +1,9 @@
 package com.tradeguide.controller.portfolio;
 
+import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.portfolio.Portfolio;
+import com.tradeguide.domain.trade.Market;
+import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +12,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,6 +32,8 @@ class PortfolioControllerTest {
 
     @MockitoBean
     private PortfolioService portfolioService;
+    @MockitoBean
+    private HoldingService holdingService;
 
     @Test
     void createsPortfolio() throws Exception {
@@ -82,5 +91,48 @@ class PortfolioControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
                         .value("회원을 찾을 수 없습니다."));
+    }
+
+    @Test
+    void getsHoldings() throws Exception {
+        List<Holding> holdings = List.of(
+                new Holding(
+                        Market.US,
+                        "AAPL",
+                        new BigDecimal("8"),
+                        new BigDecimal("100.01")
+                )
+        );
+
+        when(holdingService.getHoldings(10L, 100L))
+                .thenReturn(holdings);
+
+        mockMvc.perform(
+                        get("/api/members/10/portfolios/100/holdings")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].market").value("US"))
+                .andExpect(jsonPath("$[0].ticker").value("AAPL"))
+                .andExpect(jsonPath("$[0].quantity").value(8))
+                .andExpect(jsonPath("$[0].averagePurchasePrice")
+                        .value(100.01));
+
+        verify(holdingService).getHoldings(10L, 100L);
+    }
+
+    @Test
+    void returnsBadRequestWhenPortfolioIsNotOwnedByMember()
+            throws Exception {
+        when(holdingService.getHoldings(777L, 999L))
+                .thenThrow(new IllegalArgumentException(
+                        "포트폴리오를 찾을 수 없습니다."
+                ));
+
+        mockMvc.perform(
+                        get("/api/members/777/portfolios/999/holdings")
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("포트폴리오를 찾을 수 없습니다."));
     }
 }

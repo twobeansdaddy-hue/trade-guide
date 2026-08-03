@@ -57,7 +57,7 @@ class HoldingServiceTest {
                 )
         );
 
-        when(portfolioRepository.findByIdAndMember_Id(100L, 10L))
+        when(portfolioRepository.findByMember_IdAndId(10L, 100L))
                 .thenReturn(Optional.of(portfolio));
         when(tradeTransactionRepository
                 .findAllByPortfolio_IdOrderByTradedAtAsc(100L))
@@ -75,7 +75,7 @@ class HoldingServiceTest {
 
     @Test
     void throwsExceptionWhenPortfolioDoesNotExist() {
-        when(portfolioRepository.findByIdAndMember_Id(999L, 777L))
+        when(portfolioRepository.findByMember_IdAndId(777L, 999L))
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> holdingService.getHoldings(777L, 999L))
