@@ -57,28 +57,28 @@ class HoldingServiceTest {
                 )
         );
 
-        when(portfolioRepository.findById(1L))
+        when(portfolioRepository.findByIdAndMember_Id(100L, 10L))
                 .thenReturn(Optional.of(portfolio));
         when(tradeTransactionRepository
-                .findAllByPortfolio_IdOrderByTradedAtAsc(1L))
+                .findAllByPortfolio_IdOrderByTradedAtAsc(100L))
                 .thenReturn(transactions);
         when(holdingCalculator.calculate(transactions))
                 .thenReturn(expectedHoldings);
 
-        List<Holding> holdings = holdingService.getHoldings(1L);
+        List<Holding> holdings = holdingService.getHoldings(10L, 100L);
 
         assertThat(holdings).isSameAs(expectedHoldings);
         verify(tradeTransactionRepository)
-                .findAllByPortfolio_IdOrderByTradedAtAsc(1L);
+                .findAllByPortfolio_IdOrderByTradedAtAsc(100L);
         verify(holdingCalculator).calculate(transactions);
     }
 
     @Test
     void throwsExceptionWhenPortfolioDoesNotExist() {
-        when(portfolioRepository.findById(999L))
+        when(portfolioRepository.findByIdAndMember_Id(999L, 777L))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> holdingService.getHoldings(999L))
+        assertThatThrownBy(() -> holdingService.getHoldings(777L, 999L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("포트폴리오를 찾을 수 없습니다.");
 

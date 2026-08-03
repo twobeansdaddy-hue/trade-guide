@@ -25,8 +25,8 @@ public class HoldingService {
         this.holdingCalculator = holdingCalculator;
     }
 
-    public List<Holding> getHoldings(Long portfolioId) {
-        portfolioRepository.findById(portfolioId)
+    public List<Holding> getHoldings(Long memberId, Long portfolioId) {
+        portfolioRepository.findByIdAndMember_Id(portfolioId, memberId)
                 .orElseThrow(() ->
                         new IllegalArgumentException(
                                 "포트폴리오를 찾을 수 없습니다."
