@@ -3,6 +3,7 @@ package com.tradeguide.dto.holding;
 import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.trade.Market;
 
+import java.math.RoundingMode;
 import java.math.BigDecimal;
 
 public class HoldingResponse {
@@ -10,6 +11,8 @@ public class HoldingResponse {
     private final String ticker;
     private final BigDecimal quantity;
     private final BigDecimal averagePurchasePrice;
+
+    private static final int PRICE_SCALE = 2;
 
     private HoldingResponse(Market market, String ticker, BigDecimal quantity, BigDecimal averagePurchasePrice) {
         this.market = market;
@@ -23,7 +26,7 @@ public class HoldingResponse {
                 holding.getMarket(),
                 holding.getTicker(),
                 holding.getQuantity(),
-                holding.getAveragePurchasePrice()
+                holding.getAveragePurchasePrice().setScale(PRICE_SCALE, RoundingMode.HALF_UP)
         );
     }
 
