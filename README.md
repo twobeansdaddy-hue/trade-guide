@@ -32,7 +32,7 @@
   - 종목별 평가 결과 합산
   - 전체 매입금액, 평가금액, 평가손익, 수익률
 - 포트폴리오 평가 조회 API
-  - 임시 시세 제공자(`StubMarketPriceProvider`)의 AAPL, MSFT 가격으로 평가
+  - Twelve Data의 현재가 API를 이용해 미국 주식 평가
 - 단위 테스트, Repository 테스트, Controller 테스트
 - H2 인메모리 데이터베이스와 H2 Console
 
@@ -224,6 +224,7 @@ When test execution state appears inconsistent, rebuild generated artifacts:
 
 - Financial values use `BigDecimal`; do not use `double`.
 - External market data depends on `MarketPriceProvider`, not a specific API client.
+- The Twelve Data API key is supplied only through the `TWELVE_DATA_API_KEY` environment variable.
 - Market data and investment strategies will be versioned and testable before being used as guidance.
 - The service provides decision support, not guaranteed returns or automated trading.
 - Secrets such as API keys and tokens must be provided through environment-specific configuration and must not be committed to Git.

@@ -37,4 +37,15 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(MarketPriceUnavailableException.class)
+    public ResponseEntity<ErrorResponse> handleMarketPriceUnavailableException(
+            MarketPriceUnavailableException exception
+    ) {
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_GATEWAY)
+                .body(response);
+    }
+
 }
