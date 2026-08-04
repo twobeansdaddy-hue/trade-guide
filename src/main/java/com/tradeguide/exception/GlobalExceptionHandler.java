@@ -48,4 +48,15 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(MarketPriceRateLimitExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMarketPriceRateLimitExceededException(
+            MarketPriceRateLimitExceededException exception
+    ) {
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(response);
+    }
+
 }
