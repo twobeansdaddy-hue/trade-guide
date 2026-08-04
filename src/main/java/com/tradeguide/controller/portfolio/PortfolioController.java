@@ -2,11 +2,14 @@ package com.tradeguide.controller.portfolio;
 
 import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.portfolio.Portfolio;
+import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.dto.holding.HoldingResponse;
 import com.tradeguide.dto.portfolio.PortfolioCreateRequest;
 import com.tradeguide.dto.portfolio.PortfolioResponse;
+import com.tradeguide.dto.valuation.PortfolioValuationResponse;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
+import com.tradeguide.service.valuation.PortfolioValuationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +22,15 @@ import java.util.List;
 public class PortfolioController {
     private final PortfolioService portfolioService;
     private final HoldingService holdingService;
+    private final PortfolioValuationService portfolioValuationService;
 
     public PortfolioController(
             PortfolioService portfolioService,
-            HoldingService holdingService) {
+            HoldingService holdingService,
+            PortfolioValuationService portfolioValuationService) {
         this.portfolioService = portfolioService;
         this.holdingService = holdingService;
+        this.portfolioValuationService = portfolioValuationService;
     }
 
     @PostMapping
@@ -49,5 +55,18 @@ public class PortfolioController {
         return holdings.stream()
                 .map(HoldingResponse::from)
                 .toList();
+    }
+
+    @GetMapping("/{portfolioId}/valuation")
+    public PortfolioValuationResponse getPortfolioValuation(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId
+    ) {
+        PortfolioValuation valuation = portfolioValuationService.getPortfolioValuation(
+                memberId,
+                portfolioId
+        );
+
+        return PortfolioValuationResponse.from(valuation);
     }
 }

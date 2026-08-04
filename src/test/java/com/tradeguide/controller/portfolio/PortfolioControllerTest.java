@@ -3,8 +3,11 @@ package com.tradeguide.controller.portfolio;
 import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.trade.Market;
+import com.tradeguide.domain.valuation.HoldingValuation;
+import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
+import com.tradeguide.service.valuation.PortfolioValuationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -34,6 +37,8 @@ class PortfolioControllerTest {
     private PortfolioService portfolioService;
     @MockitoBean
     private HoldingService holdingService;
+    @MockitoBean
+    private PortfolioValuationService portfolioValuationService;
 
     @Test
     void createsPortfolio() throws Exception {
@@ -134,5 +139,48 @@ class PortfolioControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
                         .value("포트폴리오를 찾을 수 없습니다."));
+    }
+
+    @Test
+    void getsPortfolioValuation() throws Exception {
+        HoldingValuation holdingValuation = new HoldingValuation(
+                Market.US,
+                "AAPL",
+                new BigDecimal("10"),
+                new BigDecimal("100"),
+                new BigDecimal("210.50"),
+                new BigDecimal("1000"),
+                new BigDecimal("2105"),
+                new BigDecimal("1105"),
+                new BigDecimal("110.5")
+        );
+        PortfolioValuation valuation = new PortfolioValuation(
+                List.of(holdingValuation),
+                new BigDecimal("1000"),
+                new BigDecimal("2105"),
+                new BigDecimal("1105"),
+                new BigDecimal("110.5")
+        );
+
+        when(portfolioValuationService.getPortfolioValuation(10L, 100L))
+                .thenReturn(valuation);
+
+        mockMvc.perform(
+                        get("/api/members/10/portfolios/100/valuation")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.holdingValuations[0].market")
+                        .value("US"))
+                .andExpect(jsonPath("$.holdingValuations[0].ticker")
+                        .value("AAPL"))
+                .andExpect(jsonPath("$.holdingValuations[0].currentPrice")
+                        .value(210.5))
+                .andExpect(jsonPath("$.totalPurchaseAmount").value(1000))
+                .andExpect(jsonPath("$.totalMarketValue").value(2105))
+                .andExpect(jsonPath("$.totalUnrealizedProfitLoss").value(1105))
+                .andExpect(jsonPath("$.totalReturnRate").value(110.5));
+
+        verify(portfolioValuationService)
+                .getPortfolioValuation(10L, 100L);
     }
 }
