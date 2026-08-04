@@ -2,8 +2,8 @@ package com.tradeguide.service.market;
 
 import com.tradeguide.domain.market.MarketPrice;
 import com.tradeguide.domain.trade.Market;
-import com.tradeguide.exception.MarketPriceUnavailableException;
-import com.tradeguide.exception.MarketPriceRateLimitExceededException;
+import com.tradeguide.exception.MarketDataUnavailableException;
+import com.tradeguide.exception.MarketDataRateLimitExceededException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -49,7 +49,7 @@ public class TwelveDataMarketPriceProvider implements MarketPriceProvider {
             String ticker
     ) {
         if (apiKey.isBlank()) {
-            throw new MarketPriceUnavailableException(
+            throw new MarketDataUnavailableException(
                     "현재가 조회 API 키가 설정되지 않았습니다."
             );
         }
@@ -69,25 +69,25 @@ public class TwelveDataMarketPriceProvider implements MarketPriceProvider {
         } catch (RestClientResponseException exception) {
             if (exception.getStatusCode()
                     .isSameCodeAs(HttpStatus.TOO_MANY_REQUESTS)) {
-                throw new MarketPriceRateLimitExceededException(
+                throw new MarketDataRateLimitExceededException(
                         "현재가 조회 요청이 많습니다. 잠시 후 다시 시도해 주세요.",
                         exception
                 );
             }
 
-            throw new MarketPriceUnavailableException(
+            throw new MarketDataUnavailableException(
                     "현재가 조회에 실패했습니다.",
                     exception
             );
         } catch (RestClientException exception) {
-            throw new MarketPriceUnavailableException(
+            throw new MarketDataUnavailableException(
                     "현재가 조회에 실패했습니다.",
                     exception
             );
         }
 
         if (response == null || response.price() == null) {
-            throw new MarketPriceUnavailableException(
+            throw new MarketDataUnavailableException(
                     "현재가 응답이 올바르지 않습니다."
             );
         }
@@ -100,7 +100,7 @@ public class TwelveDataMarketPriceProvider implements MarketPriceProvider {
                     Instant.now()
             );
         } catch (NumberFormatException exception) {
-            throw new MarketPriceUnavailableException(
+            throw new MarketDataUnavailableException(
                     "현재가 응답의 가격 형식이 올바르지 않습니다.",
                     exception
             );

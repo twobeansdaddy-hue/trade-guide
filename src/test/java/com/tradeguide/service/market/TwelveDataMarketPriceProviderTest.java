@@ -1,7 +1,7 @@
 package com.tradeguide.service.market;
 
 import com.tradeguide.domain.trade.Market;
-import com.tradeguide.exception.MarketPriceRateLimitExceededException;
+import com.tradeguide.exception.MarketDataRateLimitExceededException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -51,7 +51,7 @@ class TwelveDataMarketPriceProviderTest {
         assertThatThrownBy(() ->
                 provider.getCurrentPrice(Market.US, "AAPL")
         )
-                .isInstanceOf(MarketPriceRateLimitExceededException.class)
+                .isInstanceOf(MarketDataRateLimitExceededException.class)
                 .hasMessage("현재가 조회 요청이 많습니다. 잠시 후 다시 시도해 주세요.");
 
         server.verify();

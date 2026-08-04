@@ -1,9 +1,9 @@
 package com.tradeguide.exception;
 
-public class MarketPriceRateLimitExceededException
+public class MarketDataRateLimitExceededException
         extends RuntimeException {
 
-    public MarketPriceRateLimitExceededException(
+    public MarketDataRateLimitExceededException(
             String message,
             Throwable cause
     ) {

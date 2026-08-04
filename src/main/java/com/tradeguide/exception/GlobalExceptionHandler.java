@@ -37,9 +37,9 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
-    @ExceptionHandler(MarketPriceUnavailableException.class)
-    public ResponseEntity<ErrorResponse> handleMarketPriceUnavailableException(
-            MarketPriceUnavailableException exception
+    @ExceptionHandler(MarketDataUnavailableException.class)
+    public ResponseEntity<ErrorResponse> handleMarketDataUnavailableException(
+            MarketDataUnavailableException exception
     ) {
         ErrorResponse response = new ErrorResponse(exception.getMessage());
 
@@ -48,9 +48,9 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
-    @ExceptionHandler(MarketPriceRateLimitExceededException.class)
-    public ResponseEntity<ErrorResponse> handleMarketPriceRateLimitExceededException(
-            MarketPriceRateLimitExceededException exception
+    @ExceptionHandler(MarketDataRateLimitExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMarketDataRateLimitExceededException(
+            MarketDataRateLimitExceededException exception
     ) {
         ErrorResponse response = new ErrorResponse(exception.getMessage());
 

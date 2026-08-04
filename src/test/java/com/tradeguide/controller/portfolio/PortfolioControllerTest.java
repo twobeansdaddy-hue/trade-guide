@@ -8,7 +8,7 @@ import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
-import com.tradeguide.exception.MarketPriceRateLimitExceededException;
+import com.tradeguide.exception.MarketDataRateLimitExceededException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -189,7 +189,7 @@ class PortfolioControllerTest {
     void returnsTooManyRequestsWhenMarketPriceRateLimitIsExceeded()
             throws Exception {
         when(portfolioValuationService.getPortfolioValuation(10L, 100L))
-                .thenThrow(new MarketPriceRateLimitExceededException(
+                .thenThrow(new MarketDataRateLimitExceededException(
                         "현재가 조회 요청이 많습니다. 잠시 후 다시 시도해 주세요.",
                         new RuntimeException()
                 ));
