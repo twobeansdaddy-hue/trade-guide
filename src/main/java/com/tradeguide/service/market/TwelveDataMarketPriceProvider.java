@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import org.springframework.http.HttpHeaders;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -58,8 +59,8 @@ public class TwelveDataMarketPriceProvider implements MarketPriceProvider {
                     .uri(uriBuilder -> uriBuilder
                             .path("/price")
                             .queryParam("symbol", normalizedTicker)
-                            .queryParam("apikey", apiKey)
                             .build())
+                    .header(HttpHeaders.AUTHORIZATION, "apikey " + apiKey)
                     .retrieve()
                     .body(TwelveDataPriceResponse.class);
         } catch (RestClientException exception) {
