@@ -3,7 +3,6 @@ package com.tradeguide.service.market;
 import com.tradeguide.domain.market.MarketPrice;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.MarketPriceUnavailableException;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -14,23 +13,37 @@ import java.time.Instant;
 import java.util.Locale;
 
 @Service
-public class TwelveDataMarketPriceProvider implements MarketPriceProvider{
+public class TwelveDataMarketPriceProvider implements MarketPriceProvider {
 
     private final RestClient restClient;
     private final String apiKey;
+    private final MarketPriceCache marketPriceCache;
 
     public TwelveDataMarketPriceProvider(
             RestClient.Builder restClientBuilder,
-            @Value("${twelve-data.api-key}") String apiKey
+            @Value("${twelve-data.api-key}") String apiKey,
+            MarketPriceCache marketPriceCache
     ) {
         this.restClient = restClientBuilder
                 .baseUrl("https://api.twelvedata.com")
                 .build();
         this.apiKey = apiKey;
+        this.marketPriceCache = marketPriceCache;
     }
 
     @Override
     public MarketPrice getCurrentPrice(Market market, String ticker) {
+        return marketPriceCache.getOrLoad(
+                market,
+                ticker,
+                () -> loadCurrentPrice(market, ticker)
+        );
+    }
+
+    private MarketPrice loadCurrentPrice(
+            Market market,
+            String ticker
+    ) {
         if (apiKey.isBlank()) {
             throw new MarketPriceUnavailableException(
                     "현재가 조회 API 키가 설정되지 않았습니다."
