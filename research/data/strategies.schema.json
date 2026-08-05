@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Trade Guide Investment Strategy Research Entry",
+  "description": "research/reports/<slug>.md 에 대응하는 구조화 데이터 한 건. strategies.json은 이 스키마를 따르는 객체의 배열입니다.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "category",
+    "summary",
+    "sources",
+    "confidence",
+    "last_updated"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "slug 형태 고유 id (예: dcf-target-price)"
+    },
+    "name": {
+      "type": "string",
+      "description": "전략/방법론 이름 (한글)"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "target_price",
+        "timing",
+        "market_regime",
+        "portfolio_strategy",
+        "risk_management"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "description": "핵심 결론 2~4문장 요약"
+    },
+    "target_price_method": {
+      "type": ["string", "null"],
+      "description": "목표가 산정과 관련된 경우, 계산/적용 방법 요약"
+    },
+    "buy_sell_signals": {
+      "type": "object",
+      "properties": {
+        "buy": { "type": "array", "items": { "type": "string" } },
+        "sell": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "market_regime_fit": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "이 전략이 잘 맞는 시장 국면 (예: 강세장, 고금리 국면 등)"
+    },
+    "risk_notes": {
+      "type": "string",
+      "description": "적용 시 유의점, 한계, 실패 사례"
+    },
+    "report_path": {
+      "type": "string",
+      "description": "대응하는 research/reports/<slug>.md 경로"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "url"],
+        "properties": {
+          "title": { "type": "string" },
+          "url": { "type": "string" },
+          "accessed": { "type": "string", "format": "date" }
+        }
+      }
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"]
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

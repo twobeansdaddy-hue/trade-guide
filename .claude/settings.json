@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "WebSearch",
+      "WebFetch",
+      "Write(research/**)",
+      "Edit(research/**)"
+    ],
+    "deny": [
+      "Bash(git push*)",
+      "Bash(git commit*)",
+      "Bash(rm *)",
+      "Bash(npm install*)",
+      "Bash(npm uninstall*)",
+      "Bash(pip install*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/hooks/block-non-research-writes.py"
+          }
+        ]
+      }
+    ]
+  }
+}
