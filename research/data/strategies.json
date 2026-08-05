@@ -1,1 +1,237 @@
-[]
+[
+  {
+    "id": "dcf-target-price",
+    "name": "DCF(현금흐름할인법) 기반 목표가 산정",
+    "category": "target_price",
+    "summary": "미래 잉여현금흐름(FCF)을 WACC로 할인해 내재가치를 구하고 발행주식수로 나눠 목표가를 산정하는 방법. 시장가격과 무관한 독립적 밸류에이션이 장점이나, 할인율·성장률·Terminal Value 가정에 결과가 극도로 민감해 소형주/성장주에는 단독 적용이 위험하다.",
+    "target_price_method": "추정기간(통상 5개년) FCFF를 WACC로 할인한 현재가치 합 + Terminal Value(영구성장모형 또는 Exit Multiple)의 현재가치로 영업가치 산출 → 비영업자산 가산, 순부채 차감 후 발행주식수로 나눠 주당 목표가 도출. 성장주에는 역산 DCF(Reverse DCF)로 시장 내재 성장률을 먼저 점검하는 방식을 병행 권장.",
+    "buy_sell_signals": {
+      "buy": [],
+      "sell": []
+    },
+    "market_regime_fit": ["실적 이력이 안정적인 대형주/성숙기업", "펀더멘털 중심 밸류에이션이 유효한 국면"],
+    "risk_notes": "Terminal Value가 전체 가치의 절반~4분의 3을 차지하는 경우가 많아 가정 오류에 매우 취약. WACC·성장률 소폭 변경만으로 목표가가 크게 흔들림. 소형주/성장주, 적자 지속 기업에는 추정 자체의 오차 범위가 넓어 상대가치평가(PER/PBR/EV-EBITDA)나 역산 DCF와 병행 검증이 필요. 반드시 민감도 분석(sensitivity table)으로 범위를 제시할 것.",
+    "report_path": "research/reports/dcf-target-price.md",
+    "sources": [
+      {
+        "title": "DCF Analysis | Intrinsic Value Pros and Cons — Wall Street Prep",
+        "url": "https://www.wallstreetprep.com/knowledge/dcf-pros-cons/",
+        "accessed": "2026-08-05"
+      },
+      {
+        "title": "How to Value a Stock With a Reverse DCF (with Examples) — Investing for Beginners",
+        "url": "https://einvestingforbeginners.com/reverse-dcf-daah/",
+        "accessed": "2026-08-05"
+      },
+      {
+        "title": "내 기업가치(지분가치)는 어떻게 결정될까? - 수익가치접근법 (part 1) — ZUZU",
+        "url": "https://zuzu.network/resource/blog/what-is-dcf/",
+        "accessed": "2026-08-05"
+      },
+      {
+        "title": "DCF를 활용한 M&A 기업가치평가 방법 — 모멘스인사이트",
+        "url": "https://momensinsight.kr/posts/insight/4302",
+        "accessed": "2026-08-05"
+      }
+    ],
+    "confidence": "medium",
+    "last_updated": "2026-08-05"
+  },
+  {
+    "id": "relative-valuation-band",
+    "name": "상대가치평가(PER/PBR/PEG/EV-EBITDA) 밴드 기반 목표가 설정",
+    "category": "target_price",
+    "summary": "동종업종·과거 이력 대비 PER/PBR/PEG/EV-EBITDA 배수를 비교해 목표가를 산정하는 방법. PER 밴드는 역사적 저점~고점 범위로 저평가/고평가 구간을 판단하고, PEG는 성장률을, EV/EBITDA는 부채·감가상각 차이를 보정한다. 비교 대상 자체가 왜곡되면 결과도 왜곡되므로 DCF 등 절대가치평가와 병행이 필요하다.",
+    "target_price_method": "(적정 배수: 역사적 평균 또는 동종업종 평균 PER/PBR/EV-EBITDA) × (추정 실적: EPS/BPS/EBITDA) = 목표주가. 성장주는 PEG(PER÷EPS성장률)로 보정하며 Lynch 기준 PEG<1 저평가, PEG>2 고평가로 해석. 여러 지표를 교차 검증해 배수 범위(band)로 목표가를 제시.",
+    "buy_sell_signals": {
+      "buy": ["PER/PBR이 역사적 밴드 하단 근접", "PEG < 1"],
+      "sell": ["PER/PBR이 역사적 밴드 상단 근접", "PEG > 2"]
+    },
+    "market_regime_fit": ["동종업종 비교기업이 풍부한 경우", "이익이 안정적으로 발생하는 국면(PER/PEG), 부채비중 크거나 자본집약적 업종(EV-EBITDA)"],
+    "risk_notes": "비교 대상(업종 평균, peer group)이 이미 고평가/저평가되어 있으면 밴드 자체가 왜곡됨. PER은 적자 기업에 적용 불가 — 이 경우 EV/EBITDA·PSR 등 대체 필요. PEG는 성장률 추정 오차에 취약. EV/EBITDA는 CAPEX 재투자 부담을 반영하지 못해 자본집약적 업종에서 과대평가 신호를 놓칠 수 있음. 단일 지표가 아닌 복수 지표 교차검증과 DCF 병행 권장.",
+    "report_path": "research/reports/relative-valuation-band.md",
+    "sources": [
+      {
+        "title": "Valuation & Market Ratios: P/E, EV/EBITDA, Yield — Umbrex",
+        "url": "https://umbrex.com/resources/financial-ratio-primer/valuation-market-ratios/",
+        "accessed": "2026-08-05"
+      },
+      {
+        "title": "Relative valuation conflicts - EV/EBITDA versus P/E — The Footnotes Analyst",
+        "url": "https://www.footnotesanalyst.com/relative-valuation-conflicts-ev-ebitda-versus-p-e/",
+        "accessed": "2026-08-05"
+      },
+      {
+        "title": "The PEG Ratio: Peter Lynch's Secret to 29% Annual Returns — FAST Graphs",
+        "url": "https://www.fastgraphs.com/blog/the-peg-ratio-peter-lynchs-secret-to-29-annual-returns-and-how-fast-graphs-makes-it-easy-to-use",
+        "accessed": "2026-08-05"
+      },
+      {
+        "title": "When to use P/E Vs EV/EBITDA in Stock Market — Motilal Oswal",
+        "url": "https://www.motilaloswal.com/learning-centre/2020/2/when-to-use-p-e-vs-ev-ebitda-in-stock-market",
+        "accessed": "2026-08-05"
+      },
+      {
+        "title": "내 주식이 싼지 비싼지 알 수 있는 방법 : PER vs PBR — 토스피드",
+        "url": "https://toss.im/tossfeed/article/per-and-pbr",
+        "accessed": "2026-08-05"
+      }
+    ],
+    "confidence": "medium",
+    "last_updated": "2026-08-05"
+  },
+  {
+    "id": "analyst-consensus-target-price",
+    "name": "애널리스트 컨센서스 목표가 활용법과 신뢰도 판단 기준",
+    "category": "target_price",
+    "summary": "여러 증권사 목표가의 평균인 컨센서스는 구조적 낙관 편향을 띠며 12개월 목표가 달성률이 절반에도 못 미친다는 연구가 다수다. 컨센서스 절대 수치보다 목표가의 최근 방향성, 애널리스트 간 분산, 개별 애널리스트의 과거 적중률이 더 유용한 신호이며, 자체 밸류에이션과 병행 검증이 필요하다.",
+    "target_price_method": null,
+    "buy_sell_signals": {
+      "buy": ["여러 증권사가 연달아 목표가 상향 조정 (모멘텀 신호)", "과거 적중률이 높은 애널리스트의 확신 있는 상향 리포트"],
+      "sell": ["여러 증권사가 연달아 목표가 하향 조정", "목표가 분산이 크고 하락장에서 괴리율만 큰 경우 (지연 반영 가능성)"]
+    },
+    "market_regime_fit": ["보조 지표로서 모든 국면에 참고 가능하나, 하락장에서는 괴리율 해석에 특히 주의 필요"],
+    "risk_notes": "애널리스트 목표가는 IB 관계·커리어 인센티브·앵커링 편향 등으로 구조적 상향 편향을 가짐. 평균 정확도는 낮지만 애널리스트 간 편차가 매우 커서 컨센서스 자체보다 개별 track record 확인이 중요. 괴리율은 상승장/하락장에서 비대칭적으로 변하므로 국면을 고려하지 않은 단순 괴리율 매수 전략은 하락장에서 위험. 단독 근거로 사용하지 말고 자체 밸류에이션(DCF, 상대가치평가)과 병행할 것.",
+    "report_path": "research/reports/analyst-consensus-target-price.md",
+    "sources": [
+      {
+        "title": "How Accurate Are Analyst Price Targets? 18 Years of Data — AnaChart",
+        "url": "https://anachart.com/how-accurate-are-analyst-price-targets/",
+        "accessed": "2026-08-05"
+      },
+      {
+        "title": "A multi-dimensional assessment of the accuracy of analyst target prices — ScienceDirect",
+        "url": "https://www.sciencedirect.com/science/article/abs/pii/S1059056024000960",
+        "accessed": "2026-08-05"
+      },
+      {
+        "title": "Consensus Analyst Target Prices: Information Content — Columbia Business School",
+        "url": "https://business.columbia.edu/sites/default/files-efs/imce-uploads/FRANK%20ZHANG%20PAPER%20PSZ_20190913.pdf",
+        "accessed": "2026-08-05"
+      },
+      {
+        "title": "애널리스트들이 제시하는 목표주가, 쓸모 있나? — 스탁플러스 인사이트",
+        "url": "https://insight.stockplus.com/articles/26",
+        "accessed": "2026-08-05"
+      },
+      {
+        "title": "목표주가 괴리율이란? — 스탁플러스",
+        "url": "https://www.stockplus.com/m/investing_strategies/articles/6734",
+        "accessed": "2026-08-05"
+      }
+    ],
+    "confidence": "medium",
+    "last_updated": "2026-08-05"
+  },
+  {
+    "id": "soxl-volatility-decay",
+    "name": "레버리지 ETF(SOXL) 변동성 감쇠 메커니즘과 장기보유 리스크",
+    "category": "risk_management",
+    "summary": "SOXL(3x)은 일간 리밸런싱 구조로 인해 장기 누적수익률이 기초지수의 단순 3배가 되지 않는다. 실데이터 검증 결과 5년간 SOXL(+209.2%)이 무레버리지 SOXX(+263.4%)보다도 낮은 수익률을 기록했으며, 최대낙폭도 -89.8%로 SOXX(-44.4%)의 2배 수준이다.",
+    "target_price_method": null,
+    "buy_sell_signals": { "buy": [], "sell": [] },
+    "market_regime_fit": ["뚜렷한 단방향 추세장(단기)에서는 유리할 수 있음", "횡보·급등락 반복 국면에서는 감쇠가 커져 불리"],
+    "risk_notes": "일간 리밸런싱 특성상 변동성이 클수록(방향성 없이) 손실이 누적되는 구조. 실측 5년 데이터에서 3배 레버리지 상품이 1배 상품보다 낮은 누적수익률을 기록했고 변동성은 정확히 3배(SOXL 연환산 103.3% vs SOXX 34.4%). 장기 보유(buy-and-hold)보다 단기 방향성 베팅에 적합한 상품 구조이며, '장기 보유하면 지수 3배'라는 가정은 실데이터로 반박됨.",
+    "report_path": "research/reports/soxl-volatility-decay.md",
+    "sources": [
+      { "title": "Daily Rebalancing & Compounding: Effects on Leveraged ETFs — Leverage Shares", "url": "https://leverageshares.com/us/insights/daily-rebalancing-compounding-impact-on-leveraged-etfs/", "accessed": "2026-08-05" },
+      { "title": "Understanding The Decay Risk in Leveraged ETFs — GraniteShares", "url": "https://graniteshares.com/institutional/us/en-us/research/understanding-the-decay-risk-in-leveraged-etfs/", "accessed": "2026-08-05" },
+      { "title": "How Leveraged ETFs Work: The Math of Daily Rebalancing — REX Shares", "url": "https://www.rexshares.com/how-leveraged-etfs-work/", "accessed": "2026-08-05" },
+      { "title": "Compounding Effects in Leveraged ETFs: Beyond the Volatility Drag Paradigm — arXiv", "url": "https://arxiv.org/pdf/2504.20116", "accessed": "2026-08-05" },
+      { "title": "Yahoo Finance - SOXL/SOXX Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/SOXL/history/", "accessed": "2026-08-05" }
+    ],
+    "confidence": "medium",
+    "last_updated": "2026-08-05"
+  },
+  {
+    "id": "soxl-ma-rsi-timing",
+    "name": "SOXL 실데이터 기반 이동평균·RSI 타이밍 신호 백테스트",
+    "category": "timing",
+    "summary": "10주/40주 이동평균 크로스오버는 5년간 3건 거래 전부 수익(승률 100%)이었고 2021~2022년 대형 하락 구간(-89.8%) 내내 무포지션을 유지해 낙폭을 회피시켰다. RSI(14주) 단독 역추세 매매는 2건 중 1건 대형 손실(-46.6%)로 승률 50%에 그쳤다. 두 백테스트 모두 표본이 매우 적어(3건/2건) 통계적 신뢰도는 낮음.",
+    "target_price_method": null,
+    "buy_sell_signals": {
+      "buy": ["10주선이 40주선 상향 돌파 (골든크로스)", "RSI(14주) < 30 (단, 강한 하락 추세 중에는 위험 — 실데이터상 승률 낮음)"],
+      "sell": ["10주선이 40주선 하향 돌파 (데드크로스)", "RSI(14주) > 70"]
+    },
+    "market_regime_fit": ["이동평균 크로스오버: 추세가 뚜렷한 구간, 특히 하락 추세 회피에 효과적", "RSI 역추세: 바닥 확인 후 반등 국면에만 제한적으로 유효, 하락 추세 중 단독 사용은 위험"],
+    "risk_notes": "두 백테스트 모두 거래 표본이 극소(3건/2건)라 과최적화·우연의 가능성을 배제할 수 없음. RSI 단독 역추세는 강한 하락 추세 중 '떨어지는 칼날 잡기' 위험이 실증되어, 추세 필터 없이 사용하면 위험. 이동평균 크로스오버는 표본은 적지만 대형 낙폭 회피라는 방향성이 뚜렷하게 나타남.",
+    "report_path": "research/reports/soxl-timing-and-drawdown-backtest.md",
+    "sources": [
+      { "title": "Yahoo Finance - SOXL Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/SOXL/history/", "accessed": "2026-08-05" }
+    ],
+    "confidence": "low",
+    "last_updated": "2026-08-05"
+  },
+  {
+    "id": "soxl-drawdown-recovery",
+    "name": "SOXL 대형 낙폭 이후 회복 패턴 실증 분석",
+    "category": "risk_management",
+    "summary": "5년간 -30% 이상 대형 낙폭 3건 발생. 2021~2022년 -89.8% 낙폭은 완전 회복까지 175주(3.4년) 소요된 반면, 2026년 초 -30.5% 낙폭은 2주 만에 회복. 낙폭 규모가 클수록 회복 기간이 비선형적으로 늘어나는 경향이 뚜렷하며, 2026년 6~7월 -58.9% 낙폭은 리포트 작성 시점 기준 미회복 상태.",
+    "target_price_method": null,
+    "buy_sell_signals": { "buy": [], "sell": [] },
+    "market_regime_fit": ["모든 국면에 적용되는 리스크 관리 참고 지표"],
+    "risk_notes": "-90% 손실은 원금 회복에 +900% 상승이 필요한 산술적 특성상, 대형 낙폭일수록 회복이 기하급수적으로 어려워짐. 레버리지 ETF는 '존버로 회복'을 기대하기보다 애초에 낙폭 규모 자체를 손절·포지션 사이징으로 제한하는 접근이 중요. 과거 회복기간을 현재 진행 중인 낙폭에 그대로 적용해 예단할 수는 없음(낙폭 원인·매크로 환경이 매번 다름).",
+    "report_path": "research/reports/soxl-timing-and-drawdown-backtest.md",
+    "sources": [
+      { "title": "Yahoo Finance - SOXL Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/SOXL/history/", "accessed": "2026-08-05" }
+    ],
+    "confidence": "medium",
+    "last_updated": "2026-08-05"
+  },
+  {
+    "id": "soxl-position-sizing-stoploss",
+    "name": "레버리지 ETF(SOXL) 손절·포지션 사이징 규칙 (변동성 조정 기반)",
+    "category": "risk_management",
+    "summary": "계좌 대비 리스크 비율 고정(예: 2%)과 ATR 기반 변동성 조정 손절폭을 결합한 하이브리드 방식. 두 방식으로 각각 계산한 포지션 크기 중 더 작은 쪽을 채택하는 것이 표준. SOXL은 2026-08-04 기준 주간 ATR/종가 비율이 44.1%로 극단적으로 높아, ATR 손절에 고정비율 상한(cap)을 함께 두는 것이 특히 중요.",
+    "target_price_method": null,
+    "buy_sell_signals": { "buy": [], "sell": [] },
+    "market_regime_fit": ["변동성이 큰 레버리지/고베타 상품", "변동성 국면이 자주 바뀌는 시장"],
+    "risk_notes": "포지션 크기 = 리스크 허용 금액 / 손절 거리. 손절 거리는 (A) 고정비율(%) 또는 (B) ATR×배수(통상 1.5~2.0배) 중 더 보수적인(포지션을 더 작게 만드는) 쪽을 채택. SOXL처럼 ATR/가격 비율이 극단적으로 높은 상품은 순수 ATR 공식만 쓰면 손절폭이 비현실적으로 넓어질 수 있어 고정비율 상한을 병행해야 함. 이미 보유 중인 포지션의 비중 축소에는 별도 재계산이 필요하며, 배수·상한 등 세부 파라미터는 개인 리스크 성향에 따라 조정 필요.",
+    "report_path": "research/reports/soxl-position-sizing-stoploss.md",
+    "sources": [
+      { "title": "Two percent rule: Fixed Fractional Position Sizing — spread-betting.com", "url": "http://www.spread-betting.com/spreadbetting/risk-management/two-percent-rule", "accessed": "2026-08-05" },
+      { "title": "Risk Before Returns: Position Sizing Frameworks — Medium", "url": "https://medium.com/@ildiveliu/risk-before-returns-position-sizing-frameworks-fixed-fractional-atr-based-kelly-lite-4513f770a82a", "accessed": "2026-08-05" },
+      { "title": "2x Leveraged ETFs: How They Work, Best Picks & Risks — AlphaEx Capital", "url": "https://www.alphaexcapital.com/etfs/types-of-etfs/leveraged-and-inverse-etfs/2x-leveraged-etfs", "accessed": "2026-08-05" },
+      { "title": "Yahoo Finance - SOXL Historical Data (Weekly OHLC)", "url": "https://finance.yahoo.com/quote/SOXL/history/", "accessed": "2026-08-05" }
+    ],
+    "confidence": "medium",
+    "last_updated": "2026-08-05"
+  },
+  {
+    "id": "trackb-ma-timing-regular-stocks",
+    "name": "Track B(일반 종목) 이동평균 타이밍 규칙 실데이터 백테스트 — AAPL/JPM/PG",
+    "category": "timing",
+    "summary": "SOXL에서 효과적이었던 10주/40주 이동평균 크로스오버 규칙을 대형 우량주 3종(AAPL/JPM/PG)에 적용한 결과, 세 종목 모두 전략 수익률이 단순 매수 후 보유보다 낮았다. SOXL에서 관찰된 '대형 낙폭 회피' 효과는 이들 종목에 애초에 그런 낙폭이 없었기 때문에 재현되지 않았으며, 저변동성 종목(PG)일수록 휩쏘(잦은 오신호)로 인한 효용 저하가 두드러졌다.",
+    "target_price_method": null,
+    "buy_sell_signals": {
+      "buy": ["10주선이 40주선 상향 돌파 (골든크로스) — 단, 일반 우량주에서는 단순보유 대비 우위가 실증되지 않음"],
+      "sell": ["10주선이 40주선 하향 돌파 (데드크로스)"]
+    },
+    "market_regime_fit": ["대형 낙폭 리스크가 큰 자산(레버리지 ETF 등)에서는 유효할 수 있으나, 이미 안정적인 대형 우량주에는 같은 규칙의 우위가 확인되지 않음"],
+    "risk_notes": "표본이 종목당 2~5건으로 매우 적어 통계적 유의성 없음. 짧은 검증 구간(5년), 3종목이라는 적은 샘플로 과최적화·생존편향 가능성 배제 불가. 이 결과는 '타이밍 규칙이 일반 종목에 전혀 쓸모없다'가 아니라 'SOXL에서의 강한 효과가 자동으로 이전되지 않는다'는 의미로 해석해야 함. 밸류에이션(저평가/고평가 판단) 요소는 이 백테스트에 포함되지 않았으며 별도로 기존 연구를 인용해 다룰 예정.",
+    "report_path": "research/reports/trackb-ma-timing-regular-stocks.md",
+    "sources": [
+      { "title": "Yahoo Finance - AAPL Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/AAPL/history/", "accessed": "2026-08-05" },
+      { "title": "Yahoo Finance - JPM Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/JPM/history/", "accessed": "2026-08-05" },
+      { "title": "Yahoo Finance - PG Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/PG/history/", "accessed": "2026-08-05" }
+    ],
+    "confidence": "low",
+    "last_updated": "2026-08-05"
+  },
+  {
+    "id": "two-track-strategy-framework",
+    "name": "투트랙 투자 전략 프레임워크 — Track A(레버리지/고변동성) vs Track B(일반 종목)",
+    "category": "portfolio_strategy",
+    "summary": "SOXL(레버리지 ETF)과 AAPL/JPM/PG(일반 우량주)에 동일한 이동평균 타이밍 규칙을 적용했을 때 정반대 결과가 나온 실증 근거를 바탕으로, 두 자산군의 관리 방식을 분리하는 프레임워크. Track A는 타이밍/리스크관리(변동성 감쇠·대형낙폭 회피) 중심, Track B는 밸류에이션(PEG/PER) 중심 + 보조적 타이밍으로 역할을 구분한다.",
+    "target_price_method": null,
+    "buy_sell_signals": { "buy": [], "sell": [] },
+    "market_regime_fit": ["레버리지/고베타 상품(Track A) 보유 시 타이밍·리스크관리 우선", "일반 우량주(Track B) 보유·신규 후보 발굴 시 밸류에이션 우선, 타이밍은 보조 신호로만 활용"],
+    "risk_notes": "트랙 구분 기준(베타·ATR/가격비율 등 정량 임계치)이 아직 엄밀하게 정의되지 않은 초기 가설 단계. Track B의 타이밍 신호가 무의미하다는 뜻이 아니라 밸류에이션과 결합되지 않은 단독 신호로는 실증적 우위가 확인되지 않았다는 의미. 검증 종목·구간이 제한적(3~4종목, 5년)이라 지속적인 보완이 필요.",
+    "report_path": "research/reports/two-track-strategy-framework.md",
+    "sources": [
+      { "title": "내부 리서치 종합 — soxl-volatility-decay, soxl-ma-rsi-timing, soxl-drawdown-recovery, soxl-position-sizing-stoploss, trackb-ma-timing-regular-stocks, relative-valuation-band, analyst-consensus-target-price", "url": "research/data/strategies.json", "accessed": "2026-08-05" }
+    ],
+    "confidence": "low",
+    "last_updated": "2026-08-05"
+  }
+]

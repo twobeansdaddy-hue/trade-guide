@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Trade Guide Track B Candidate Screening Snapshot",
+  "type": "object",
+  "required": ["id", "snapshot_date", "universe", "screen_criteria", "candidates", "num_candidates", "sources", "confidence", "last_updated"],
+  "properties": {
+    "id": { "type": "string" },
+    "snapshot_date": { "type": "string", "format": "date" },
+    "universe": { "type": "string" },
+    "screen_criteria": {
+      "type": "object",
+      "required": ["valuation", "technical"],
+      "properties": {
+        "valuation": { "type": "string" },
+        "technical": { "type": "string" },
+        "raw_query_url": { "type": "string" }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ticker"],
+        "properties": {
+          "ticker": { "type": "string" },
+          "company": { "type": "string" },
+          "sector": { "type": "string" },
+          "peg": { "type": ["number", "null"] },
+          "pe": { "type": ["number", "null"] },
+          "price": { "type": ["number", "null"] },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "num_candidates": { "type": "integer" },
+    "methodology_note": { "type": "string" },
+    "forward_tracking": {
+      "type": "object",
+      "description": "다음 스냅샷에서 이번 후보군의 이후 성과를 비교 검증하기 위한 필드 (선택)",
+      "properties": {
+        "check_at": { "type": "string", "format": "date" },
+        "outcome_summary": { "type": ["string", "null"] }
+      }
+    },
+    "report_path": { "type": "string" },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "url"],
+        "properties": {
+          "title": { "type": "string" },
+          "url": { "type": "string" },
+          "accessed": { "type": "string" }
+        }
+      }
+    },
+    "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+    "caveats": { "type": "string" },
+    "last_updated": { "type": "string", "format": "date" }
+  }
+}

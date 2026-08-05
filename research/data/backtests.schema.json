@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Trade Guide Backtest / Prediction Validation Record",
+  "description": "research/data/backtests.json 배열의 각 항목 스키마. strategies.json(방법론 요약)과 달리, 실제 가격 데이터로 계산한 백테스트 결과 또는 정기적으로 기록되는 예측치/결과치를 담습니다. type='backtest'는 과거 데이터 검증, type='forecast'는 특정 시점에 미리 남긴 예측과 이후 결과 확인 기록입니다.",
+  "type": "object",
+  "required": [
+    "id",
+    "type",
+    "ticker",
+    "strategy_id",
+    "created_date",
+    "summary",
+    "sources",
+    "confidence"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "slug 형태 고유 id (예: soxl-vol-decay-2021-2026)"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["backtest", "forecast"],
+      "description": "backtest: 과거 데이터로 계산한 검증 결과. forecast: 특정 시점에 남긴 예측 후 결과확인 대상"
+    },
+    "ticker": {
+      "type": "string",
+      "description": "대상 티커 (예: SOXL). 복수면 콤마 구분 문자열"
+    },
+    "strategy_id": {
+      "type": "string",
+      "description": "관련된 strategies.json 항목의 id (해당 전략 방법론과의 연결고리)"
+    },
+    "data_range": {
+      "type": "object",
+      "properties": {
+        "start": { "type": "string", "format": "date" },
+        "end": { "type": "string", "format": "date" },
+        "frequency": { "type": "string", "enum": ["daily", "weekly", "monthly"] }
+      }
+    },
+    "created_date": {
+      "type": "string",
+      "format": "date",
+      "description": "이 레코드가 생성된 날짜 (forecast의 경우 예측을 남긴 시점)"
+    },
+    "summary": {
+      "type": "string",
+      "description": "핵심 결과 2~4문장 요약"
+    },
+    "metrics": {
+      "type": "object",
+      "description": "자유 형식의 실측 계산 결과 (예: cumulative_return, max_drawdown, win_rate, avg_return_per_trade 등). 키/값은 분석 성격에 따라 달라질 수 있음",
+      "additionalProperties": true
+    },
+    "trades": {
+      "type": "array",
+      "description": "백테스트에서 발생한 개별 매매 기록 (있는 경우)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entry_date": { "type": "string", "format": "date" },
+          "exit_date": { "type": ["string", "null"], "format": "date" },
+          "entry_price": { "type": "number" },
+          "exit_price": { "type": ["number", "null"] },
+          "return_pct": { "type": ["number", "null"] }
+        }
+      }
+    },
+    "forecast": {
+      "type": "object",
+      "description": "type=forecast일 때만 사용. 예측 시점의 신호와 이후 검증 결과",
+      "properties": {
+        "predicted_at": { "type": "string", "format": "date" },
+        "signal": { "type": "string", "description": "예: buy/sell/hold, 목표가, 기대 방향 등" },
+        "rationale": { "type": "string" },
+        "check_at": { "type": ["string", "null"], "format": "date" },
+        "actual_outcome": { "type": ["string", "null"] },
+        "hit": { "type": ["boolean", "null"], "description": "예측이 맞았는지 여부, 검증 전이면 null" }
+      }
+    },
+    "report_path": {
+      "type": "string",
+      "description": "대응하는 research/reports/<slug>.md 경로"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "url"],
+        "properties": {
+          "title": { "type": "string" },
+          "url": { "type": "string" },
+          "accessed": { "type": "string", "format": "date" }
+        }
+      }
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "표본 크기, 데이터 기간 등을 고려한 결과 신뢰도. 표본이 적으면(예: 매매 2~3건) low/medium으로 표기"
+    },
+    "caveats": {
+      "type": "string",
+      "description": "표본 크기 한계, 생존 편향, 과최적화 위험 등 해석 시 반드시 알아야 할 주의사항"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}
