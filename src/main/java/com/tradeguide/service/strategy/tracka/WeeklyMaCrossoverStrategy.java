@@ -27,6 +27,11 @@ public class WeeklyMaCrossoverStrategy implements TradingStrategy {
     }
 
     @Override
+    public boolean supports(InvestmentTrack investmentTrack) {
+        return investmentTrack == InvestmentTrack.TRACK_A;
+    }
+
+    @Override
     public StrategyDecision decide(
             AssetProfile assetProfile,
             List<MarketCandle> candles

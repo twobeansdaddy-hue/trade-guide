@@ -59,4 +59,14 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(AssetProfileNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAssetProfileNotFoundException(
+            AssetProfileNotFoundException exception) {
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(response);
+    }
+
 }
