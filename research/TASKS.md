@@ -3,6 +3,9 @@
 에이전트는 이 파일의 `[ ]` 항목을 우선순위 순서로 진행하고, 완료 시 `[x]`로 표시합니다.
 각 항목은 `research/reports/<slug>.md` + `research/data/strategies.json` 항목으로 마무리합니다.
 
+## 운영 정책
+- [x] 전략 엔진 운영 정책 수립 — `research/STRATEGY_ENGINE_POLICY.md`
+
 ## 1. 목표가(Target Price) 산정 방법론
 - [x] DCF(현금흐름할인법) 기반 목표가 산정 — 장단점과 소형/성장주 적용 시 유의점
 - [x] 상대가치평가(PER/PBR/PEG/EV-EBITDA) 밴드 기반 목표가 설정법

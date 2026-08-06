@@ -228,6 +228,7 @@ Gradle 캐시 때문에 변경한 테스트가 실행되지 않은 것처럼 보
 - 외부 시세는 특정 API 클라이언트가 아닌 `MarketPriceProvider`에 의존한다.
 - Twelve Data API 키는 `TWELVE_DATA_API_KEY` 환경 변수 또는 Git에서 제외된 `application-local.yml`로만 제공한다.
 - 시장 데이터와 투자 전략은 가이드에 사용하기 전에 버전 관리하고 테스트한다.
+- 리서치 결과, 실행 전략, 예약 주문 계획은 `research/STRATEGY_ENGINE_POLICY.md`의 기준에 따라 분리한다.
 - 서비스는 자동 매매나 수익 보장이 아닌 의사결정 지원을 제공한다.
 - API 키와 토큰 같은 비밀값은 환경별 설정으로 분리하고 Git에 커밋하지 않는다.
 
