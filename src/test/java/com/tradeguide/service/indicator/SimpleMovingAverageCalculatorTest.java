@@ -44,7 +44,7 @@ class SimpleMovingAverageCalculatorTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> calculator.calculate(candles, 3))
                 .withMessage(
-                        "이동평균을 계산하기 위한 일봉 데이터가 부족합니다."
+                        "이동평균을 계산하기 위한 캔들 데이터가 부족합니다."
                 );
     }
 

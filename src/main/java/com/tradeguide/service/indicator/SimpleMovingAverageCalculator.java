@@ -22,7 +22,7 @@ public class SimpleMovingAverageCalculator {
 
         if (candles.size() < period) {
             throw new IllegalArgumentException(
-                    "이동평균을 계산하기 위한 일봉 데이터가 부족합니다."
+                    "이동평균을 계산하기 위한 캔들 데이터가 부족합니다."
             );
         }
 
