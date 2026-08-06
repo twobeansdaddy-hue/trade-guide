@@ -11,4 +11,9 @@ public interface AssetProfileRepository extends JpaRepository<AssetProfile, Long
             Market market,
             String ticker
     );
+
+    boolean existsByMarketAndTicker(
+            Market market,
+            String ticker
+    );
 }

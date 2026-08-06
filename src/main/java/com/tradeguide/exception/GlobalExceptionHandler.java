@@ -69,4 +69,14 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(AssetProfileAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleAssetProfileAlreadyExistsException(
+            AssetProfileAlreadyExistsException exception) {
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(response);
+    }
+
 }
