@@ -1,5 +1,6 @@
 package com.tradeguide.controller.market;
 
+import com.tradeguide.domain.market.CandleInterval;
 import com.tradeguide.domain.market.MarketCandle;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.service.market.MarketHistoryService;
@@ -44,9 +45,10 @@ class MarketHistoryControllerTest {
                 )
         );
 
-        when(marketHistoryService.getDailyCandles(
+        when(marketHistoryService.getCandles(
                 Market.US,
                 "AAPL",
+                CandleInterval.DAILY,
                 200
         )).thenReturn(candles);
 
@@ -65,9 +67,10 @@ class MarketHistoryControllerTest {
                 .andExpect(jsonPath("$[0].close").value(202.50))
                 .andExpect(jsonPath("$[0].volume").value(1_000_000));
 
-        verify(marketHistoryService).getDailyCandles(
+        verify(marketHistoryService).getCandles(
                 Market.US,
                 "AAPL",
+                CandleInterval.DAILY,
                 200
         );
     }
@@ -75,9 +78,10 @@ class MarketHistoryControllerTest {
     @Test
     void getsDailyCandlesWithSpecifiedOutputSize() throws Exception {
         // Given
-        when(marketHistoryService.getDailyCandles(
+        when(marketHistoryService.getCandles(
                 Market.US,
                 "AAPL",
+                CandleInterval.DAILY,
                 30
         )).thenReturn(List.of());
 
@@ -89,10 +93,37 @@ class MarketHistoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
 
-        verify(marketHistoryService).getDailyCandles(
+        verify(marketHistoryService).getCandles(
                 Market.US,
                 "AAPL",
+                CandleInterval.DAILY,
                 30
+        );
+    }
+
+    @Test
+    void getsWeeklyCandlesWithSpecifiedOutputSize() throws Exception {
+        // Given
+        when(marketHistoryService.getCandles(
+                Market.US,
+                "SOXL",
+                CandleInterval.WEEKLY,
+                50
+        )).thenReturn(List.of());
+
+        // When & Then
+        mockMvc.perform(
+                        get("/api/markets/US/stocks/SOXL/candles/weekly")
+                                .param("outputSize", "50")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+
+        verify(marketHistoryService).getCandles(
+                Market.US,
+                "SOXL",
+                CandleInterval.WEEKLY,
+                50
         );
     }
 }

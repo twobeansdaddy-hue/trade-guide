@@ -1,5 +1,6 @@
 package com.tradeguide.controller.market;
 
+import com.tradeguide.domain.market.CandleInterval;
 import com.tradeguide.domain.market.MarketCandle;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.dto.market.MarketCandleResponse;
@@ -26,9 +27,38 @@ public class MarketHistoryController {
             @PathVariable String ticker,
             @RequestParam(defaultValue = "200") int outputSize
     ) {
-        List<MarketCandle> candles = marketHistoryService.getDailyCandles(
+        return getCandleResponses(
                 market,
                 ticker,
+                CandleInterval.DAILY,
+                outputSize
+        );
+    }
+
+    @GetMapping("/weekly")
+    public List<MarketCandleResponse> getWeeklyCandles(
+            @PathVariable Market market,
+            @PathVariable String ticker,
+            @RequestParam(defaultValue = "200") int outputSize
+    ) {
+        return getCandleResponses(
+                market,
+                ticker,
+                CandleInterval.WEEKLY,
+                outputSize
+        );
+    }
+
+    private List<MarketCandleResponse> getCandleResponses(
+            Market market,
+            String ticker,
+            CandleInterval interval,
+            int outputSize
+    ) {
+        List<MarketCandle> candles = marketHistoryService.getCandles(
+                market,
+                ticker,
+                interval,
                 outputSize
         );
 
@@ -36,5 +66,4 @@ public class MarketHistoryController {
                 .map(MarketCandleResponse::from)
                 .toList();
     }
-
 }

@@ -1,5 +1,6 @@
 package com.tradeguide.service.market;
 
+import com.tradeguide.domain.market.CandleInterval;
 import com.tradeguide.domain.market.MarketCandle;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
@@ -34,14 +35,15 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
     }
 
     @Override
-    public List<MarketCandle> getDailyCandles(
+    public List<MarketCandle> getCandles(
             Market market,
             String ticker,
+            CandleInterval interval,
             int outputSize
     ) {
         if (outputSize < 1 || outputSize > 5000) {
             throw new IllegalArgumentException(
-                    "일봉 조회 개수는 1에서 5000 사이여야 합니다."
+                    "캔들 조회 개수는 1에서 5000 사이여야 합니다."
             );
         }
 
@@ -59,7 +61,7 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
                     .uri(uriBuilder -> uriBuilder
                             .path("/time_series")
                             .queryParam("symbol", normalizedTicker)
-                            .queryParam("interval", "1day")
+                            .queryParam("interval", toTwelveDataInterval(interval))
                             .queryParam("outputsize", outputSize)
                             .queryParam("order","asc")
                             .build())
@@ -90,7 +92,7 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
                 || response.values() == null
                 || response.values().isEmpty()) {
             throw new MarketDataUnavailableException(
-                    "일봉 데이터를 찾을 수 없습니다."
+                    "캔들 데이터를 찾을 수 없습니다."
             );
         }
 
@@ -109,7 +111,7 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
                     .toList();
         } catch (RuntimeException exception) {
             throw new MarketDataUnavailableException(
-                    "일봉 데이터 형식이 올바르지 않습니다.",
+                    "캔들 데이터 형식이 올바르지 않습니다.",
                     exception
             );
         }
@@ -129,5 +131,14 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
             String close,
             String volume
     ) {
+    }
+
+    private String toTwelveDataInterval(
+            CandleInterval interval
+    ) {
+        return switch (interval) {
+            case DAILY -> "1day";
+            case WEEKLY -> "1week";
+        };
     }
 }

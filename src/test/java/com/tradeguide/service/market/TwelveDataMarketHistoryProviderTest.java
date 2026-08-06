@@ -1,5 +1,6 @@
 package com.tradeguide.service.market;
 
+import com.tradeguide.domain.market.CandleInterval;
 import com.tradeguide.domain.market.MarketCandle;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
@@ -78,7 +79,7 @@ class TwelveDataMarketHistoryProviderTest {
 
         // When
         List<MarketCandle> candles =
-                provider.getDailyCandles(Market.US, "aapl", 2);
+                provider.getCandles(Market.US, "aapl", CandleInterval.DAILY, 2);
 
         // Then
         assertThat(candles).hasSize(2);
@@ -107,6 +108,60 @@ class TwelveDataMarketHistoryProviderTest {
     }
 
     @Test
+    void returnsWeeklyCandlesInAscendingOrder() {
+        // Given
+        server.expect(
+                        requestTo(
+                                "https://api.twelvedata.com/time_series"
+                                        + "?symbol=SOXL&interval=1week"
+                                        + "&outputsize=2&order=asc"
+                        )
+                )
+                .andRespond(
+                        withSuccess("""
+                            {
+                              "values": [
+                                {
+                                  "datetime": "2026-07-24",
+                                  "open": "20.10",
+                                  "high": "22.00",
+                                  "low": "19.50",
+                                  "close": "21.50",
+                                  "volume": "1000000"
+                                },
+                                {
+                                  "datetime": "2026-07-31",
+                                  "open": "21.80",
+                                  "high": "23.00",
+                                  "low": "20.30",
+                                  "close": "22.10",
+                                  "volume": "1200000"
+                                }
+                              ]
+                            }
+                            """, MediaType.APPLICATION_JSON)
+                );
+
+        // When
+        List<MarketCandle> candles = provider.getCandles(
+                Market.US,
+                "soxl",
+                CandleInterval.WEEKLY,
+                2
+        );
+
+        // Then
+        assertThat(candles).hasSize(2);
+        assertThat(candles.get(0).getTicker()).isEqualTo("SOXL");
+        assertThat(candles.get(0).getTradingDate())
+                .isEqualTo(LocalDate.of(2026, 7, 24));
+        assertThat(candles.get(1).getTradingDate())
+                .isEqualTo(LocalDate.of(2026, 7, 31));
+
+        server.verify();
+    }
+
+    @Test
     void throwsExceptionWhenTwelveDataRateLimitIsExceeded() {
         // Given
         server.expect(
@@ -130,7 +185,7 @@ class TwelveDataMarketHistoryProviderTest {
 
         // When & Then
         assertThatThrownBy(() ->
-                provider.getDailyCandles(Market.US, "AAPL", 2)
+                provider.getCandles(Market.US, "AAPL", CandleInterval.DAILY, 2)
         )
                 .isInstanceOf(MarketDataRateLimitExceededException.class)
                 .hasMessage(
@@ -144,15 +199,15 @@ class TwelveDataMarketHistoryProviderTest {
     void throwsExceptionWhenOutputSizeIsOutsideAllowedRange() {
         assertThatIllegalArgumentException()
                 .isThrownBy(() ->
-                        provider.getDailyCandles(Market.US, "AAPL", 0)
+                        provider.getCandles(Market.US, "AAPL", CandleInterval.DAILY,0)
                 )
-                .withMessage("일봉 조회 개수는 1에서 5000 사이여야 합니다.");
+                .withMessage("캔들 조회 개수는 1에서 5000 사이여야 합니다.");
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() ->
-                        provider.getDailyCandles(Market.US, "AAPL", 5001)
+                        provider.getCandles(Market.US, "AAPL", CandleInterval.DAILY,5001)
                 )
-                .withMessage("일봉 조회 개수는 1에서 5000 사이여야 합니다.");
+                .withMessage("캔들 조회 개수는 1에서 5000 사이여야 합니다.");
     }
 
     @Test
@@ -166,9 +221,10 @@ class TwelveDataMarketHistoryProviderTest {
 
         // When & Then
         assertThatThrownBy(() ->
-                providerWithoutApiKey.getDailyCandles(
+                providerWithoutApiKey.getCandles(
                         Market.US,
                         "AAPL",
+                        CandleInterval.DAILY,
                         2
                 )
         )

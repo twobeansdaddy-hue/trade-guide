@@ -1,6 +1,7 @@
 package com.tradeguide.service.market;
 
 
+import com.tradeguide.domain.market.CandleInterval;
 import com.tradeguide.domain.market.MarketCandle;
 import com.tradeguide.domain.trade.Market;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,16 @@ public class MarketHistoryService {
         this.marketHistoryProvider = marketHistoryProvider;
     }
 
-    public List<MarketCandle> getDailyCandles(
+    public List<MarketCandle> getCandles(
             Market market,
             String ticker,
+            CandleInterval interval,
             int outputSize
     ) {
-        return marketHistoryProvider.getDailyCandles(
+        return marketHistoryProvider.getCandles(
                 market,
                 ticker,
+                interval,
                 outputSize
         );
     }
