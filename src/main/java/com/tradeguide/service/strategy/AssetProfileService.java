@@ -7,6 +7,7 @@ import com.tradeguide.exception.AssetProfileAlreadyExistsException;
 import com.tradeguide.repository.strategy.AssetProfileRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -54,5 +55,9 @@ public class AssetProfileService {
         );
 
         return assetProfileRepository.save(assetProfile);
+    }
+
+    public List<AssetProfile> getAssetProfiles() {
+        return assetProfileRepository.findAll();
     }
 }
