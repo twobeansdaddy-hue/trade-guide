@@ -7,8 +7,13 @@ import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
+import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
+import com.tradeguide.domain.strategy.AssetStrategyGuide;
+import com.tradeguide.domain.strategy.StrategyAction;
+import com.tradeguide.domain.strategy.StrategyDecision;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,6 +45,8 @@ class PortfolioControllerTest {
     private HoldingService holdingService;
     @MockitoBean
     private PortfolioValuationService portfolioValuationService;
+    @MockitoBean
+    private PortfolioStrategyGuideService portfolioStrategyGuideService;
 
     @Test
     void createsPortfolio() throws Exception {
@@ -200,5 +207,40 @@ class PortfolioControllerTest {
                 .andExpect(status().isTooManyRequests())
                 .andExpect(jsonPath("$.message")
                         .value("현재가 조회 요청이 많습니다. 잠시 후 다시 시도해 주세요."));
+    }
+
+    @Test
+    void getsPortfolioStrategyGuides() throws Exception {
+        StrategyDecision decision = new StrategyDecision(
+                StrategyAction.BUY,
+                new BigDecimal("25.5"),
+                "10주 이동평균이 40주 이동평균을 상향 돌파했습니다."
+        );
+        AssetStrategyGuide strategyGuide = new AssetStrategyGuide(
+                Market.US,
+                "SOXL",
+                decision
+        );
+
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(
+                10L,
+                100L
+        )).thenReturn(List.of(strategyGuide));
+
+        mockMvc.perform(
+                        get("/api/members/10/portfolios/100/strategy-guides")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].market").value("US"))
+                .andExpect(jsonPath("$[0].ticker").value("SOXL"))
+                .andExpect(jsonPath("$[0].decision.action").value("BUY"))
+                .andExpect(jsonPath("$[0].decision.referencePrice")
+                        .value(25.5))
+                .andExpect(jsonPath("$[0].decision.reason").value(
+                        "10주 이동평균이 40주 이동평균을 상향 돌파했습니다."
+                ));
+
+        verify(portfolioStrategyGuideService)
+                .getPortfolioStrategyGuides(10L, 100L);
     }
 }
