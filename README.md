@@ -35,14 +35,30 @@
   - Twelve Data의 현재가 API를 이용해 미국 주식 평가
 - 현재가 조회 캐시
   - 종목별 현재가를 1분간 메모리에 보관해 반복 호출을 줄임
+- Twelve Data 일봉·주봉 캔들 조회
+  - `DAILY`, `WEEKLY` 캔들 구분
+  - 주봉 이동평균 계산에 사용할 최근 캔들 데이터 조회
+- 전략 자산 프로필 관리
+  - `market + ticker`를 유니크 키로 하는 `AssetProfile` 저장
+  - 티커 대문자 정규화와 중복 등록 `409 Conflict` 처리
+  - 관리자용 프로필 등록·목록 조회 API
+- Track A 전략 엔진의 첫 구현
+  - SOXL 등 명시적으로 등록한 `TRACK_A` 자산 대상
+  - 주봉 10/40 이동평균 상향 돌파 `BUY`, 하향 돌파 `SELL`, 그 외 `HOLD`
+  - 판단에는 현재 40주 평균과 직전 40주 평균 비교를 위해 최소 41개 주봉 필요
+- 종목·포트폴리오 전략 가이드 조회
+  - 종목별 전략 판단: 행동, 기준 가격, 근거 반환
+  - 포트폴리오 보유 종목을 순회해 종목별 전략 판단 목록 반환
 - 단위 테스트, Repository 테스트, Controller 테스트
 - H2 인메모리 데이터베이스와 H2 Console
 
 ### 향후 계획
 
-- 실제 미국 주식 시세 API 연동
 - 시장 상태와 뉴스/경제 지표 등 외부 요인 연동
-- 검증된 매매 규칙과 전략의 버전 관리
+- `TradePlan` 기반의 주문 초안
+  - 주문 수량 또는 비율, 지정가, 손절 발동가, 유효 기간
+  - 전략 판단과 주문 초안의 분리
+- 검증된 매매 규칙의 설정·버전 관리와 활성화 승인
 - 과거 데이터 기반 백테스트와 전략 성과 비교
 - 사용자 인증 및 권한 관리
 - React/TypeScript 기반 웹 화면
@@ -71,6 +87,11 @@ classDiagram
     Holding --> MarketPrice : 현재가로 평가
     Holding --> HoldingValuation : 계산 결과
     HoldingValuation "0..*" --> "1" PortfolioValuation : 합산
+    AssetProfile --> Market : 시장과 티커의 전략 분류
+    AssetProfile --> InvestmentTrack
+    AssetProfile --> StrategyDecision : 적용 전략 선택
+    Holding --> AssetStrategyGuide : 보유 종목별 가이드
+    AssetStrategyGuide --> StrategyDecision
 ```
 
 ### 원본 데이터
@@ -94,6 +115,9 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 | `MarketPrice` | 특정 시점의 종목 현재가 |
 | `HoldingValuation` | 한 종목의 평가 결과 |
 | `PortfolioValuation` | 포트폴리오 전체 평가 결과 |
+| `AssetProfile` | 시장·티커별 투자 트랙을 관리하는 전략 자산 카탈로그 |
+| `StrategyDecision` | 전략 행동, 판단 기준 가격, 판단 근거 |
+| `AssetStrategyGuide` | 보유 종목과 해당 종목의 전략 판단을 묶은 값 객체 |
 
 ## 계산 규칙
 
@@ -130,6 +154,8 @@ com.tradeguide
     ├── market
     ├── member
     ├── portfolio
+    ├── strategy
+    │   └── tracka
     ├── trade
     └── valuation
 ```
@@ -151,6 +177,12 @@ Controller -> Service -> Repository -> Database
 | `POST` | `/api/members/{memberId}/portfolios/{portfolioId}/transactions` | 매매 기록 등록 |
 | `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/holdings` | 보유 종목 조회 |
 | `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/valuation` | 현재가 기준 포트폴리오 평가 조회 |
+| `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/strategy-guides` | 보유 종목별 전략 가이드 조회 |
+| `GET` | `/api/markets/{market}/stocks/{ticker}/candles/daily` | 일봉 캔들 조회 |
+| `GET` | `/api/markets/{market}/stocks/{ticker}/candles/weekly` | 주봉 캔들 조회 |
+| `GET` | `/api/markets/{market}/stocks/{ticker}/strategy-guide` | 한 종목의 전략 가이드 조회 |
+| `POST` | `/api/admin/asset-profiles` | 전략 자산 프로필 등록 |
+| `GET` | `/api/admin/asset-profiles` | 등록된 전략 자산 프로필 목록 조회 |
 
 ### 회원 생성 예시
 
@@ -181,6 +213,43 @@ Content-Type: application/json
 }
 ```
 
+### 전략 자산 프로필 등록 예시
+
+현재 `/api/admin/**` 경로는 인증을 구현하기 전의 로컬 개발용 관리 기능이다. 실제 공개 환경에서는 관리자 권한 검증을 적용해야 한다.
+
+```http
+POST /api/admin/asset-profiles
+Content-Type: application/json
+
+{
+  "market": "US",
+  "ticker": "SOXL",
+  "investmentTrack": "TRACK_A"
+}
+```
+
+### 포트폴리오 전략 가이드 예시
+
+```http
+GET /api/members/1/portfolios/1/strategy-guides
+```
+
+```json
+[
+  {
+    "market": "US",
+    "ticker": "SOXL",
+    "decision": {
+      "action": "HOLD",
+      "referencePrice": 25.5,
+      "reason": "10주와 40주 이동평균의 교차 조건이 충족되지 않았습니다."
+    }
+  }
+]
+```
+
+`referencePrice`는 현재 전략 판단에 사용한 최신 주봉 캔들의 종가다. 예약 주문의 지정가나 목표가가 아니며, 주문 초안은 이후 `TradePlan` 단계에서 별도로 구현한다. 주봉 확정 여부를 검증하는 필터는 아직 구현하지 않았다.
+
 ## 실행 및 테스트
 
 ### 요구 사항
@@ -194,6 +263,15 @@ Content-Type: application/json
 ```
 
 기본 실행 주소는 `http://localhost:8080`입니다.
+
+Twelve Data 연동을 사용하려면 실행 환경에 API 키가 필요하다.
+
+```bash
+export TWELVE_DATA_API_KEY=발급받은_키
+./gradlew bootRun
+```
+
+IntelliJ 실행 설정의 환경 변수는 터미널에 자동으로 전달되지 않는다. 터미널 실행 시에는 같은 터미널 세션에서 환경 변수를 설정한다.
 
 ### H2 Console
 
@@ -229,6 +307,8 @@ Gradle 캐시 때문에 변경한 테스트가 실행되지 않은 것처럼 보
 - Twelve Data API 키는 `TWELVE_DATA_API_KEY` 환경 변수 또는 Git에서 제외된 `application-local.yml`로만 제공한다.
 - 시장 데이터와 투자 전략은 가이드에 사용하기 전에 버전 관리하고 테스트한다.
 - 리서치 결과, 실행 전략, 예약 주문 계획은 `research/STRATEGY_ENGINE_POLICY.md`의 기준에 따라 분리한다.
+- 현재 `TRACK_A` 주봉 10/40 이동평균 전략은 학습·검증 중인 구현 후보이며, 수익 보장이나 자동 주문 근거가 아니다.
+- 전략 자산 프로필은 사용자별 투자 설정이 아니라 시스템이 관리하는 종목 전략 카탈로그다.
 - 서비스는 자동 매매나 수익 보장이 아닌 의사결정 지원을 제공한다.
 - API 키와 토큰 같은 비밀값은 환경별 설정으로 분리하고 Git에 커밋하지 않는다.
 
