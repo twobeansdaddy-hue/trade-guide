@@ -15,6 +15,8 @@
 - 두 PC에서 같은 브랜치를 동시에 수정하지 않는다.
 - `application-local.yml`, `.env`, API Key, H2 인메모리 데이터는 PC별 로컬 상태이며 동기화하지 않는다.
 
+새 AI 작업은 먼저 `AGENTS.md`, `docs/PROJECT_CONTEXT.md`, 이 문서를 읽는다. `AGENTS.md`는 학습 방식과 작업 원칙을, `PROJECT_CONTEXT.md`는 제품·전략·설계 결정을, 이 문서는 현재 작업 위치를 관리한다.
+
 ## 작업 시작과 종료
 
 ### 작업 종료
@@ -69,7 +71,7 @@ git pull --ff-only
 
 ```text
 trade-guide 프로젝트 학습을 이어서 진행한다.
-저장소의 docs/LEARNING_LOG.md와 README.md를 먼저 읽고 현재 상태를 파악한다.
+저장소의 AGENTS.md, docs/PROJECT_CONTEXT.md, docs/LEARNING_LOG.md를 먼저 읽고 현재 상태를 파악한다.
 현재 브랜치와 git status를 확인한 뒤, 노출 비중 API의 DTO, Controller, Controller 테스트부터 이어서 진행한다.
 나는 직접 구현하므로 한 단계씩 구현 가이드를 제공하고, 내가 완료했다고 말한 뒤에 다음 단계를 안내한다.
 ```
