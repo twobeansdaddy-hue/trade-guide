@@ -2,6 +2,7 @@ package com.tradeguide.controller.portfolio;
 
 import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.portfolio.Portfolio;
+import com.tradeguide.domain.strategy.StrategyMetadata;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
@@ -22,6 +23,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -214,7 +216,12 @@ class PortfolioControllerTest {
         StrategyDecision decision = new StrategyDecision(
                 StrategyAction.BUY,
                 new BigDecimal("25.5"),
-                "10주 이동평균이 40주 이동평균을 상향 돌파했습니다."
+                "10주 이동평균이 40주 이동평균을 상향 돌파했습니다.",
+                new StrategyMetadata(
+                        "test-strategy",
+                        "test-v1",
+                        LocalDate.of(2026, 8, 7)
+                )
         );
         AssetStrategyGuide strategyGuide = new AssetStrategyGuide(
                 Market.US,
@@ -238,7 +245,13 @@ class PortfolioControllerTest {
                         .value(25.5))
                 .andExpect(jsonPath("$[0].decision.reason").value(
                         "10주 이동평균이 40주 이동평균을 상향 돌파했습니다."
-                ));
+                ))
+                .andExpect(jsonPath("$[0].decision.metadata.strategyId")
+                        .value("test-strategy"))
+                .andExpect(jsonPath("$[0].decision.metadata.strategyVersion")
+                        .value("test-v1"))
+                .andExpect(jsonPath("$[0].decision.metadata.dataAsOf")
+                        .value("2026-08-07"));;
 
         verify(portfolioStrategyGuideService)
                 .getPortfolioStrategyGuides(10L, 100L);

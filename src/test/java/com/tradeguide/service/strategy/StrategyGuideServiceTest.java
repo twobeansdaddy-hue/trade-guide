@@ -2,10 +2,7 @@ package com.tradeguide.service.strategy;
 
 import com.tradeguide.domain.market.CandleInterval;
 import com.tradeguide.domain.market.MarketCandle;
-import com.tradeguide.domain.strategy.AssetProfile;
-import com.tradeguide.domain.strategy.InvestmentTrack;
-import com.tradeguide.domain.strategy.StrategyAction;
-import com.tradeguide.domain.strategy.StrategyDecision;
+import com.tradeguide.domain.strategy.*;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.AssetProfileNotFoundException;
 import com.tradeguide.repository.strategy.AssetProfileRepository;
@@ -17,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,7 +53,12 @@ class StrategyGuideServiceTest {
         StrategyDecision expected = new StrategyDecision(
                 StrategyAction.BUY,
                 new BigDecimal("120"),
-                "테스트 전략 판단"
+                "테스트 전략 판단",
+                new StrategyMetadata(
+                        "test-strategy",
+                        "test-v1",
+                        LocalDate.of(2026, 8, 7)
+                )
         );
 
         when(assetProfileRepository.findByMarketAndTicker(

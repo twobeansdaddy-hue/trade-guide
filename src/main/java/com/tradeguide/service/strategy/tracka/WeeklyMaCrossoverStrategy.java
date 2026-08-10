@@ -5,6 +5,7 @@ import com.tradeguide.domain.strategy.AssetProfile;
 import com.tradeguide.domain.strategy.InvestmentTrack;
 import com.tradeguide.domain.strategy.StrategyAction;
 import com.tradeguide.domain.strategy.StrategyDecision;
+import com.tradeguide.domain.strategy.StrategyMetadata;
 import com.tradeguide.service.indicator.SimpleMovingAverageCalculator;
 import com.tradeguide.service.strategy.TradingStrategy;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,8 @@ public class WeeklyMaCrossoverStrategy implements TradingStrategy {
 
     private static final int SHORT_PERIOD = 10;
     private static final int LONG_PERIOD = 40;
+    private static final String STRATEGY_ID = "track-a-weekly-ma-crossover";
+    private static final String STRATEGY_VERSION = "v1";
 
     private final SimpleMovingAverageCalculator movingAverageCalculator;
 
@@ -55,7 +58,14 @@ public class WeeklyMaCrossoverStrategy implements TradingStrategy {
         BigDecimal currentShortAverage = movingAverageCalculator.calculate(candles, SHORT_PERIOD);
         BigDecimal currentLongAverage = movingAverageCalculator.calculate(candles, LONG_PERIOD);
 
-        BigDecimal referencePrice = candles.get(candles.size() -1).getClose();
+        MarketCandle latestCandle = candles.get(candles.size() - 1);
+        BigDecimal referencePrice = latestCandle.getClose();
+
+        StrategyMetadata metadata = new StrategyMetadata(
+                STRATEGY_ID,
+                STRATEGY_VERSION,
+                latestCandle.getTradingDate()
+        );
 
         boolean crossedAbove = previousShortAverage.compareTo(previousLongAverage) <= 0
                 && currentShortAverage.compareTo(currentLongAverage) > 0;
@@ -68,7 +78,8 @@ public class WeeklyMaCrossoverStrategy implements TradingStrategy {
             return new StrategyDecision(
                     StrategyAction.BUY,
                     referencePrice,
-                    "10주 이동평균이 40주 이동평균을 상향 돌파했습니다."
+                    "10주 이동평균이 40주 이동평균을 상향 돌파했습니다.",
+                    metadata
             );
         }
 
@@ -76,14 +87,16 @@ public class WeeklyMaCrossoverStrategy implements TradingStrategy {
             return new StrategyDecision(
                     StrategyAction.SELL,
                     referencePrice,
-                    "10주 이동평균이 40주 이동평균을 하향 돌파했습니다."
+                    "10주 이동평균이 40주 이동평균을 하향 돌파했습니다.",
+                    metadata
             );
         }
 
         return new StrategyDecision(
                 StrategyAction.HOLD,
                 referencePrice,
-                "10주와 40주 이동평균의 교차 조건이 충족되지 않았습니다."
+                "10주와 40주 이동평균의 교차 조건이 충족되지 않았습니다.",
+                metadata
         );
     }
 }

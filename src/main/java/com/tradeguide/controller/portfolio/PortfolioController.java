@@ -76,15 +76,15 @@ public class PortfolioController {
         return PortfolioValuationResponse.from(valuation);
     }
 
-    @GetMapping("/{portfoiloId}/strategy-guides")
+    @GetMapping("/{portfolioId}/strategy-guides")
     public List<AssetStrategyGuideResponse> getPortfolioStrategyGuides(
             @PathVariable Long memberId,
-            @PathVariable Long portfoiloId
+            @PathVariable Long portfolioId
     ) {
 
         List<AssetStrategyGuide> strategyGuides = portfolioStrategyGuideService.getPortfolioStrategyGuides(
                 memberId,
-                portfoiloId
+                portfolioId
         );
 
         return strategyGuides.stream()

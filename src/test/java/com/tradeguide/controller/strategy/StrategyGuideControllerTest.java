@@ -2,6 +2,7 @@ package com.tradeguide.controller.strategy;
 
 import com.tradeguide.domain.strategy.StrategyAction;
 import com.tradeguide.domain.strategy.StrategyDecision;
+import com.tradeguide.domain.strategy.StrategyMetadata;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.AssetProfileNotFoundException;
 import com.tradeguide.service.strategy.StrategyGuideService;
@@ -12,6 +13,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,7 +35,12 @@ class StrategyGuideControllerTest {
         StrategyDecision strategyDecision = new StrategyDecision(
                 StrategyAction.BUY,
                 new BigDecimal("120.25"),
-                "10주 이동평균이 40주 이동평균을 상향 돌파했습니다."
+                "10주 이동평균이 40주 이동평균을 상향 돌파했습니다.",
+                new StrategyMetadata(
+                        "test-strategy",
+                        "test-v1",
+                        LocalDate.of(2026, 8, 7)
+                )
         );
 
         when(strategyGuideService.getStrategyDecision(
@@ -49,7 +56,13 @@ class StrategyGuideControllerTest {
                 .andExpect(jsonPath("$.referencePrice").value(120.25))
                 .andExpect(jsonPath("$.reason").value(
                         "10주 이동평균이 40주 이동평균을 상향 돌파했습니다."
-                ));
+                ))
+                .andExpect(jsonPath("$.metadata.strategyId")
+                        .value("test-strategy"))
+                .andExpect(jsonPath("$.metadata.strategyVersion")
+                        .value("test-v1"))
+                .andExpect(jsonPath("$.metadata.dataAsOf")
+                        .value("2026-08-07"));
 
         verify(strategyGuideService)
                 .getStrategyDecision(Market.US, "SOXL");
