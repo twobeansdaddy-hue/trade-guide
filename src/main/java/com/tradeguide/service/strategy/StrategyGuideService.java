@@ -7,6 +7,7 @@ import com.tradeguide.domain.strategy.StrategyDecision;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.AssetProfileNotFoundException;
 import com.tradeguide.repository.strategy.AssetProfileRepository;
+import com.tradeguide.service.market.CompletedWeeklyCandleFilter;
 import com.tradeguide.service.market.MarketHistoryService;
 import org.springframework.stereotype.Service;
 
@@ -20,15 +21,18 @@ public class StrategyGuideService {
     private final AssetProfileRepository assetProfileRepository;
     private final MarketHistoryService marketHistoryService;
     private final StrategySelector strategySelector;
+    private final CompletedWeeklyCandleFilter completedWeeklyCandleFilter;
 
     public StrategyGuideService(
             AssetProfileRepository assetProfileRepository,
             MarketHistoryService marketHistoryService,
-            StrategySelector strategySelector
+            StrategySelector strategySelector,
+            CompletedWeeklyCandleFilter completedWeeklyCandleFilter
     ) {
         this.assetProfileRepository = assetProfileRepository;
         this.marketHistoryService = marketHistoryService;
         this.strategySelector = strategySelector;
+        this.completedWeeklyCandleFilter = completedWeeklyCandleFilter;
     }
 
     public StrategyDecision getStrategyDecision(
@@ -44,13 +48,15 @@ public class StrategyGuideService {
                 assetProfile.getMarket(),
                 assetProfile.getTicker(),
                 CandleInterval.WEEKLY,
-                WEEKLY_CANDLE_OUTPUT_SIZE
+                101
         );
+
+        List<MarketCandle> completedCandles = completedWeeklyCandleFilter.filter(candles);
 
         TradingStrategy strategy = strategySelector.select(
                 assetProfile.getInvestmentTrack()
         );
 
-        return strategy.decide(assetProfile, candles);
+        return strategy.decide(assetProfile, completedCandles);
     }
 }

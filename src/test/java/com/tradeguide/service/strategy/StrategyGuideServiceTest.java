@@ -6,6 +6,7 @@ import com.tradeguide.domain.strategy.*;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.AssetProfileNotFoundException;
 import com.tradeguide.repository.strategy.AssetProfileRepository;
+import com.tradeguide.service.market.CompletedWeeklyCandleFilter;
 import com.tradeguide.service.market.MarketHistoryService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,9 @@ class StrategyGuideServiceTest {
     @Mock
     private TradingStrategy tradingStrategy;
 
+    @Mock
+    private CompletedWeeklyCandleFilter completedWeeklyCandleFilter;
+
     @InjectMocks
     private StrategyGuideService strategyGuideService;
 
@@ -49,7 +53,10 @@ class StrategyGuideServiceTest {
                 "SOXL",
                 InvestmentTrack.TRACK_A
         );
-        List<MarketCandle> candles = List.of();
+
+        List<MarketCandle> fetchedCandles = List.of();
+        List<MarketCandle> completedCandles = List.of();
+
         StrategyDecision expected = new StrategyDecision(
                 StrategyAction.BUY,
                 new BigDecimal("120"),
@@ -70,13 +77,16 @@ class StrategyGuideServiceTest {
                 Market.US,
                 "SOXL",
                 CandleInterval.WEEKLY,
-                100
-        )).thenReturn(candles);
+                101
+        )).thenReturn(fetchedCandles);
+
+        when(completedWeeklyCandleFilter.filter(fetchedCandles))
+                .thenReturn(completedCandles);
 
         when(strategySelector.select(InvestmentTrack.TRACK_A))
                 .thenReturn(tradingStrategy);
 
-        when(tradingStrategy.decide(assetProfile, candles))
+        when(tradingStrategy.decide(assetProfile, completedCandles))
                 .thenReturn(expected);
 
         StrategyDecision result =
@@ -93,10 +103,11 @@ class StrategyGuideServiceTest {
                 Market.US,
                 "SOXL",
                 CandleInterval.WEEKLY,
-                100
+                101
         );
         verify(strategySelector).select(InvestmentTrack.TRACK_A);
-        verify(tradingStrategy).decide(assetProfile, candles);
+        verify(completedWeeklyCandleFilter).filter(fetchedCandles);
+        verify(tradingStrategy).decide(assetProfile, completedCandles);
     }
 
     @Test
@@ -118,6 +129,7 @@ class StrategyGuideServiceTest {
 
         verifyNoInteractions(
                 marketHistoryService,
+                completedWeeklyCandleFilter,
                 strategySelector,
                 tradingStrategy
         );
