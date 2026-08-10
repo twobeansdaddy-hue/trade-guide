@@ -75,6 +75,31 @@
 - JUnit 5 / Mockito / AssertJ
 - Gradle 9.3.0
 
+## 멀티 PC 학습 환경
+
+이 프로젝트는 회사 MacBook과 집 Windows PC에서 각각 로컬로 실행하고, GitHub 원격 저장소를 기준으로 소스를 동기화한다. IntelliJ 설정, H2 인메모리 데이터, 실행 중인 애플리케이션, 환경 변수는 각 PC에서 독립적으로 관리한다.
+
+작업을 마칠 때는 테스트 후 변경 사항을 커밋하고 원격 저장소에 푸시한다.
+
+```bash
+git status
+./gradlew test
+git add .
+git commit -m "변경 내용"
+git push
+```
+
+다른 PC에서 작업을 시작할 때는 현재 브랜치를 확인한 뒤 원격 변경 사항을 먼저 반영한다.
+
+```bash
+git status
+git switch feature/portfolio-foundation
+git pull --ff-only
+./gradlew test
+```
+
+`application-local.yml`, `.env`, API Key와 같은 비밀값은 GitHub에 올리지 않는다. 각 PC에서 별도로 설정한다. 진행 상황과 다음 학습 단계는 [학습 로그](docs/LEARNING_LOG.md)에 기록한다.
+
 ## 도메인 모델
 
 ```mermaid
