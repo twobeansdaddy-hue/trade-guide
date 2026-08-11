@@ -53,6 +53,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - Twelve Data에서 현재가, 일봉, 주봉을 조회한다.
 - 주봉 10/40 이동평균 전략은 `TRACK_A` 자산에 적용한다.
 - 진행 중인 주봉이 신호에 섞이지 않도록 완료 주봉 필터를 적용했다.
+- 최신 완료 주봉이 현재 시점에 기대되는 주보다 오래되면 `StaleMarketDataException`으로 전략 판단을 차단한다.
 - 응답에는 전략 ID, 버전, 데이터 기준일을 포함한다.
 - 응답에는 `trend`와 `signalEvent`도 포함한다. 교차가 발생한 한 주만이 아니라 현재 추세도 구분한다.
 - `referencePrice`는 전략 판단에 사용한 최신 완료 주봉 종가다. 주문 지정가나 목표가가 아니다.
@@ -66,4 +67,4 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 
 ## 현재 구현 위치
 
-포트폴리오 내 각 보유 종목의 평가금액 비중을 계산하는 노출 비중 API까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.
+포트폴리오 노출 비중 API, Track A 골든 테스트, 주봉 데이터 신선도 가드까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.

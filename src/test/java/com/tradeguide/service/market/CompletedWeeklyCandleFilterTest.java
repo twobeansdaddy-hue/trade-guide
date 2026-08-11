@@ -22,7 +22,7 @@ class CompletedWeeklyCandleFilterTest {
                 ZoneOffset.UTC
         );
         CompletedWeeklyCandleFilter filter =
-                new CompletedWeeklyCandleFilter(clock);
+                new CompletedWeeklyCandleFilter(new WeeklyCandleSchedule(clock));
 
         List<MarketCandle> result = filter.filter(List.of(
                 candle(LocalDate.of(2026, 7, 27)),
@@ -41,7 +41,7 @@ class CompletedWeeklyCandleFilterTest {
                 ZoneOffset.UTC
         );
         CompletedWeeklyCandleFilter filter =
-                new CompletedWeeklyCandleFilter(clock);
+                new CompletedWeeklyCandleFilter(new WeeklyCandleSchedule(clock));
 
         List<MarketCandle> result = filter.filter(List.of(
                 candle(LocalDate.of(2026, 7, 27)),
@@ -63,7 +63,7 @@ class CompletedWeeklyCandleFilterTest {
                 ZoneOffset.UTC
         );
         CompletedWeeklyCandleFilter filter =
-                new CompletedWeeklyCandleFilter(clock);
+                new CompletedWeeklyCandleFilter(new WeeklyCandleSchedule(clock));
 
         List<MarketCandle> result = filter.filter(List.of(
                 candle(LocalDate.of(2026, 1, 12)),

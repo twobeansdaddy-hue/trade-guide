@@ -5,9 +5,11 @@ import com.tradeguide.domain.market.MarketCandle;
 import com.tradeguide.domain.strategy.*;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.AssetProfileNotFoundException;
+import com.tradeguide.exception.StaleMarketDataException;
 import com.tradeguide.repository.strategy.AssetProfileRepository;
 import com.tradeguide.service.market.CompletedWeeklyCandleFilter;
 import com.tradeguide.service.market.MarketHistoryService;
+import com.tradeguide.service.market.WeeklyCandleFreshnessValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 class StrategyGuideServiceTest {
@@ -42,6 +45,9 @@ class StrategyGuideServiceTest {
 
     @Mock
     private CompletedWeeklyCandleFilter completedWeeklyCandleFilter;
+
+    @Mock
+    private WeeklyCandleFreshnessValidator weeklyCandleFreshnessValidator;
 
     @InjectMocks
     private StrategyGuideService strategyGuideService;
@@ -108,6 +114,7 @@ class StrategyGuideServiceTest {
         verify(strategySelector).select(InvestmentTrack.TRACK_A);
         verify(completedWeeklyCandleFilter).filter(fetchedCandles);
         verify(tradingStrategy).decide(assetProfile, completedCandles);
+        verify(weeklyCandleFreshnessValidator).validate(completedCandles);
     }
 
     @Test
@@ -131,7 +138,48 @@ class StrategyGuideServiceTest {
                 marketHistoryService,
                 completedWeeklyCandleFilter,
                 strategySelector,
-                tradingStrategy
+                tradingStrategy,
+                weeklyCandleFreshnessValidator
         );
+    }
+
+    @Test
+    void doesNotSelectStrategyWhenCompletedCandlesAreStale() {
+        AssetProfile assetProfile = new AssetProfile(
+                Market.US,
+                "SOXL",
+                InvestmentTrack.TRACK_A
+        );
+
+        List<MarketCandle> fetchedCandles = List.of();
+        List<MarketCandle> completedCandles = List.of();
+
+        when(assetProfileRepository.findByMarketAndTicker(
+                Market.US,
+                "SOXL"
+        )).thenReturn(Optional.of(assetProfile));
+
+        when(marketHistoryService.getCandles(
+                Market.US,
+                "SOXL",
+                CandleInterval.WEEKLY,
+                101
+        )).thenReturn(fetchedCandles);
+
+        when(completedWeeklyCandleFilter.filter(fetchedCandles))
+                .thenReturn(completedCandles);
+
+        doThrow(new StaleMarketDataException(
+                "최신 완료 주봉 데이터가 오래되었습니다."
+        )).when(weeklyCandleFreshnessValidator)
+                .validate(completedCandles);
+
+        assertThatThrownBy(() ->
+                strategyGuideService.getStrategyDecision(Market.US, "SOXL")
+        )
+                .isInstanceOf(StaleMarketDataException.class)
+                .hasMessage("최신 완료 주봉 데이터가 오래되었습니다.");
+
+        verifyNoInteractions(strategySelector, tradingStrategy);
     }
 }

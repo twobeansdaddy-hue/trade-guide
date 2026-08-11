@@ -7,6 +7,7 @@ import com.tradeguide.domain.strategy.StrategySignalEvent;
 import com.tradeguide.domain.strategy.StrategyTrend;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.AssetProfileNotFoundException;
+import com.tradeguide.exception.StaleMarketDataException;
 import com.tradeguide.service.strategy.StrategyGuideService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,5 +92,26 @@ class StrategyGuideControllerTest {
                 .andExpect(jsonPath("$.message").value(
                         "전략 프로필을 찾을 수 없습니다: US / AAPL"
                 ));
+    }
+
+    @Test
+    void returnsBadGatewayWhenWeeklyCandleDataIsStale() throws Exception {
+        when(strategyGuideService.getStrategyDecision(
+                Market.US,
+                "SOXL"
+        )).thenThrow(new StaleMarketDataException(
+                "최신 완료 주봉 데이터가 오래되었습니다."
+        ));
+
+        mockMvc.perform(
+                        get("/api/markets/US/stocks/SOXL/strategy-guide")
+                )
+                .andExpect(status().isBadGateway())
+                .andExpect(jsonPath("$.message").value(
+                        "최신 완료 주봉 데이터가 오래되었습니다."
+                ));
+
+        verify(strategyGuideService)
+                .getStrategyDecision(Market.US, "SOXL");
     }
 }

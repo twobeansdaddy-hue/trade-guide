@@ -9,6 +9,7 @@ import com.tradeguide.exception.AssetProfileNotFoundException;
 import com.tradeguide.repository.strategy.AssetProfileRepository;
 import com.tradeguide.service.market.CompletedWeeklyCandleFilter;
 import com.tradeguide.service.market.MarketHistoryService;
+import com.tradeguide.service.market.WeeklyCandleFreshnessValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,17 +24,20 @@ public class StrategyGuideService {
     private final MarketHistoryService marketHistoryService;
     private final StrategySelector strategySelector;
     private final CompletedWeeklyCandleFilter completedWeeklyCandleFilter;
+    private final WeeklyCandleFreshnessValidator weeklyCandleFreshnessValidator;
 
     public StrategyGuideService(
             AssetProfileRepository assetProfileRepository,
             MarketHistoryService marketHistoryService,
             StrategySelector strategySelector,
-            CompletedWeeklyCandleFilter completedWeeklyCandleFilter
+            CompletedWeeklyCandleFilter completedWeeklyCandleFilter,
+            WeeklyCandleFreshnessValidator weeklyCandleFreshnessValidator
     ) {
         this.assetProfileRepository = assetProfileRepository;
         this.marketHistoryService = marketHistoryService;
         this.strategySelector = strategySelector;
         this.completedWeeklyCandleFilter = completedWeeklyCandleFilter;
+        this.weeklyCandleFreshnessValidator = weeklyCandleFreshnessValidator;
     }
 
     public StrategyDecision getStrategyDecision(
@@ -53,6 +57,8 @@ public class StrategyGuideService {
         );
 
         List<MarketCandle> completedCandles = completedWeeklyCandleFilter.filter(candles);
+
+        weeklyCandleFreshnessValidator.validate(completedCandles);
 
         TradingStrategy strategy = strategySelector.select(
                 assetProfile.getInvestmentTrack()
