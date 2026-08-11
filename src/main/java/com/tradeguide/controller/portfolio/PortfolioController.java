@@ -9,10 +9,12 @@ import com.tradeguide.dto.portfolio.PortfolioCreateRequest;
 import com.tradeguide.dto.portfolio.PortfolioResponse;
 import com.tradeguide.dto.strategy.AssetStrategyGuideResponse;
 import com.tradeguide.dto.valuation.PortfolioValuationResponse;
+import com.tradeguide.dto.risk.HoldingExposureResponse;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
+import com.tradeguide.service.risk.PortfolioExposureService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,16 +29,20 @@ public class PortfolioController {
     private final HoldingService holdingService;
     private final PortfolioValuationService portfolioValuationService;
     private final PortfolioStrategyGuideService portfolioStrategyGuideService;
+    private final PortfolioExposureService portfolioExposureService;
 
     public PortfolioController(
             PortfolioService portfolioService,
             HoldingService holdingService,
             PortfolioValuationService portfolioValuationService,
-            PortfolioStrategyGuideService portfolioStrategyGuideService) {
+            PortfolioStrategyGuideService portfolioStrategyGuideService,
+            PortfolioExposureService portfolioExposureService
+    ) {
         this.portfolioService = portfolioService;
         this.holdingService = holdingService;
         this.portfolioValuationService = portfolioValuationService;
         this.portfolioStrategyGuideService = portfolioStrategyGuideService;
+        this.portfolioExposureService = portfolioExposureService;
     }
 
     @PostMapping
@@ -89,6 +95,17 @@ public class PortfolioController {
 
         return strategyGuides.stream()
                 .map(AssetStrategyGuideResponse::from)
+                .toList();
+    }
+
+    @GetMapping("/{portfolioId}/exposures")
+    public List<HoldingExposureResponse> getPortfolioExposures(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId
+    ) {
+        return portfolioExposureService.getExposures(memberId, portfolioId)
+                .stream()
+                .map(HoldingExposureResponse::from)
                 .toList();
     }
 }

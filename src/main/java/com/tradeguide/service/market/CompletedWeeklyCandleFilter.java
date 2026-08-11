@@ -11,7 +11,7 @@ import java.util.List;
 public class CompletedWeeklyCandleFilter {
 
     private static final ZoneId NEW_YORK_ZONE = ZoneId.of("America/New_York");
-    private static final LocalTime REGULAR_MARKET_CLOSE = LocalTime.of(16,15);
+    private static final LocalTime REGULAR_MARKET_CLOSE = LocalTime.of(16, 15);
 
     private final Clock clock;
 
@@ -36,8 +36,8 @@ public class CompletedWeeklyCandleFilter {
 
         if (now.getDayOfWeek() == DayOfWeek.SATURDAY
                 || now.getDayOfWeek() == DayOfWeek.SUNDAY
-                || now.getDayOfWeek() == DayOfWeek.FRIDAY
-                && !now.toLocalTime().isBefore(REGULAR_MARKET_CLOSE)) {
+                || (now.getDayOfWeek() == DayOfWeek.FRIDAY
+                && !now.toLocalTime().isBefore(REGULAR_MARKET_CLOSE))) {
             return today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
         }
 

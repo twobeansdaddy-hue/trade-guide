@@ -8,6 +8,8 @@ public class StrategyDecision {
     private final BigDecimal referencePrice;
     private final String reason;
     private final StrategyMetadata metadata;
+    private final StrategyTrend trend;
+    private final StrategySignalEvent signalEvent;
 
     public StrategyDecision(
             StrategyAction action,
@@ -15,10 +17,23 @@ public class StrategyDecision {
             String reason,
             StrategyMetadata metadata
     ) {
+        this(action, referencePrice, reason, metadata, null, null);
+    }
+
+    public StrategyDecision(
+            StrategyAction action,
+            BigDecimal referencePrice,
+            String reason,
+            StrategyMetadata metadata,
+            StrategyTrend trend,
+            StrategySignalEvent signalEvent
+    ) {
         this.action = action;
         this.referencePrice = referencePrice;
         this.reason = reason;
         this.metadata = metadata;
+        this.trend = trend;
+        this.signalEvent = signalEvent;
     }
 
     public StrategyAction getAction() {
@@ -35,5 +50,13 @@ public class StrategyDecision {
 
     public StrategyMetadata getMetadata() {
         return metadata;
+    }
+
+    public StrategyTrend getTrend() {
+        return trend;
+    }
+
+    public StrategySignalEvent getSignalEvent() {
+        return signalEvent;
     }
 }

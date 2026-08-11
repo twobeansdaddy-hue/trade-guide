@@ -6,10 +6,12 @@ import com.tradeguide.domain.strategy.StrategyMetadata;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
+import com.tradeguide.domain.risk.HoldingExposure;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
+import com.tradeguide.service.risk.PortfolioExposureService;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
 import com.tradeguide.domain.strategy.AssetStrategyGuide;
 import com.tradeguide.domain.strategy.StrategyAction;
@@ -49,6 +51,8 @@ class PortfolioControllerTest {
     private PortfolioValuationService portfolioValuationService;
     @MockitoBean
     private PortfolioStrategyGuideService portfolioStrategyGuideService;
+    @MockitoBean
+    private PortfolioExposureService portfolioExposureService;
 
     @Test
     void createsPortfolio() throws Exception {
@@ -251,9 +255,31 @@ class PortfolioControllerTest {
                 .andExpect(jsonPath("$[0].decision.metadata.strategyVersion")
                         .value("test-v1"))
                 .andExpect(jsonPath("$[0].decision.metadata.dataAsOf")
-                        .value("2026-08-07"));;
+                        .value("2026-08-07"));
 
         verify(portfolioStrategyGuideService)
                 .getPortfolioStrategyGuides(10L, 100L);
+    }
+
+    @Test
+    void getsPortfolioExposures() throws Exception {
+        HoldingExposure exposure = new HoldingExposure(
+                Market.US,
+                "SOXL",
+                new BigDecimal("600"),
+                new BigDecimal("30.00")
+        );
+
+        when(portfolioExposureService.getExposures(10L, 100L))
+                .thenReturn(List.of(exposure));
+
+        mockMvc.perform(get("/api/members/10/portfolios/100/exposures"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].market").value("US"))
+                .andExpect(jsonPath("$[0].ticker").value("SOXL"))
+                .andExpect(jsonPath("$[0].marketValue").value(600))
+                .andExpect(jsonPath("$[0].exposureRate").value(30));
+
+        verify(portfolioExposureService).getExposures(10L, 100L);
     }
 }

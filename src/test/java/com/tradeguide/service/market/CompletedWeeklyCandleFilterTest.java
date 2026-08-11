@@ -56,6 +56,25 @@ class CompletedWeeklyCandleFilterTest {
                 );
     }
 
+    @Test
+    void excludesCurrentWeekCandleWhenWeekStartsOnTuesdayAfterHoliday() {
+        Clock clock = Clock.fixed(
+                Instant.parse("2026-01-21T15:00:00Z"),
+                ZoneOffset.UTC
+        );
+        CompletedWeeklyCandleFilter filter =
+                new CompletedWeeklyCandleFilter(clock);
+
+        List<MarketCandle> result = filter.filter(List.of(
+                candle(LocalDate.of(2026, 1, 12)),
+                candle(LocalDate.of(2026, 1, 20))
+        ));
+
+        assertThat(result)
+                .extracting(MarketCandle::getTradingDate)
+                .containsExactly(LocalDate.of(2026, 1, 12));
+    }
+
     private MarketCandle candle(LocalDate tradingDate) {
         return new MarketCandle(
                 Market.US,

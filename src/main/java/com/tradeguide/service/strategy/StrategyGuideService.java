@@ -16,7 +16,8 @@ import java.util.List;
 @Service
 public class StrategyGuideService {
 
-    private static final int WEEKLY_CANDLE_OUTPUT_SIZE = 100;
+    // 완료 처리 중인 이번 주 봉을 제외해도, 40주 이동평균 계산에 필요한 이력을 확보한다.
+    private static final int WEEKLY_CANDLE_OUTPUT_SIZE = 101;
 
     private final AssetProfileRepository assetProfileRepository;
     private final MarketHistoryService marketHistoryService;
@@ -48,7 +49,7 @@ public class StrategyGuideService {
                 assetProfile.getMarket(),
                 assetProfile.getTicker(),
                 CandleInterval.WEEKLY,
-                101
+                WEEKLY_CANDLE_OUTPUT_SIZE
         );
 
         List<MarketCandle> completedCandles = completedWeeklyCandleFilter.filter(candles);

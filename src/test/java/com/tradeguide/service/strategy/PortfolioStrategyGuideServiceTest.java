@@ -5,6 +5,8 @@ import com.tradeguide.domain.strategy.AssetStrategyGuide;
 import com.tradeguide.domain.strategy.StrategyAction;
 import com.tradeguide.domain.strategy.StrategyDecision;
 import com.tradeguide.domain.strategy.StrategyMetadata;
+import com.tradeguide.domain.strategy.StrategySignalEvent;
+import com.tradeguide.domain.strategy.StrategyTrend;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.service.holding.HoldingService;
 import org.junit.jupiter.api.Test;
@@ -56,7 +58,9 @@ class PortfolioStrategyGuideServiceTest {
                         "test-strategy",
                         "test-v1",
                         LocalDate.of(2026, 8, 7)
-                )
+                ),
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE
         );
         StrategyDecision aaplDecision = new StrategyDecision(
                 StrategyAction.HOLD,
@@ -66,7 +70,9 @@ class PortfolioStrategyGuideServiceTest {
                         "test-strategy",
                         "test-v1",
                         LocalDate.of(2026, 8, 7)
-                )
+                ),
+                StrategyTrend.BELOW_LONG_AVERAGE,
+                StrategySignalEvent.NONE
         );
 
         when(holdingService.getHoldings(1L, 10L))
@@ -87,11 +93,13 @@ class PortfolioStrategyGuideServiceTest {
 
         assertThat(result.get(0).getTicker()).isEqualTo("SOXL");
         assertThat(result.get(0).getStrategyDecision())
-                .isSameAs(soxlDecision);
+                .extracting(StrategyDecision::getAction)
+                .isEqualTo(StrategyAction.HOLD);
 
         assertThat(result.get(1).getTicker()).isEqualTo("AAPL");
         assertThat(result.get(1).getStrategyDecision())
-                .isSameAs(aaplDecision);
+                .extracting(StrategyDecision::getAction)
+                .isEqualTo(StrategyAction.SELL);
 
         verify(holdingService).getHoldings(1L, 10L);
         verify(strategyGuideService)

@@ -1,17 +1,19 @@
-package com.tradeguide.domain.risk;
+package com.tradeguide.dto.risk;
 
+import com.tradeguide.domain.risk.HoldingExposure;
 import com.tradeguide.domain.trade.Market;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
-public class HoldingExposure {
+public class HoldingExposureResponse {
 
     private final Market market;
     private final String ticker;
     private final BigDecimal marketValue;
     private final BigDecimal exposureRate;
 
-    public HoldingExposure(
+    private HoldingExposureResponse(
             Market market,
             String ticker,
             BigDecimal marketValue,
@@ -21,6 +23,15 @@ public class HoldingExposure {
         this.ticker = ticker;
         this.marketValue = marketValue;
         this.exposureRate = exposureRate;
+    }
+
+    public static HoldingExposureResponse from(HoldingExposure exposure) {
+        return new HoldingExposureResponse(
+                exposure.getMarket(),
+                exposure.getTicker(),
+                exposure.getMarketValue().setScale(2, RoundingMode.HALF_UP),
+                exposure.getExposureRate().setScale(2, RoundingMode.HALF_UP)
+        );
     }
 
     public Market getMarket() {

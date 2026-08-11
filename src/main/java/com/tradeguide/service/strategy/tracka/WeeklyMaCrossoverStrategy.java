@@ -6,6 +6,8 @@ import com.tradeguide.domain.strategy.InvestmentTrack;
 import com.tradeguide.domain.strategy.StrategyAction;
 import com.tradeguide.domain.strategy.StrategyDecision;
 import com.tradeguide.domain.strategy.StrategyMetadata;
+import com.tradeguide.domain.strategy.StrategySignalEvent;
+import com.tradeguide.domain.strategy.StrategyTrend;
 import com.tradeguide.service.indicator.SimpleMovingAverageCalculator;
 import com.tradeguide.service.strategy.TradingStrategy;
 import org.springframework.stereotype.Component;
@@ -79,7 +81,9 @@ public class WeeklyMaCrossoverStrategy implements TradingStrategy {
                     StrategyAction.BUY,
                     referencePrice,
                     "10주 이동평균이 40주 이동평균을 상향 돌파했습니다.",
-                    metadata
+                    metadata,
+                    StrategyTrend.ABOVE_LONG_AVERAGE,
+                    StrategySignalEvent.CROSS_UP
             );
         }
 
@@ -88,15 +92,30 @@ public class WeeklyMaCrossoverStrategy implements TradingStrategy {
                     StrategyAction.SELL,
                     referencePrice,
                     "10주 이동평균이 40주 이동평균을 하향 돌파했습니다.",
-                    metadata
+                    metadata,
+                    StrategyTrend.BELOW_LONG_AVERAGE,
+                    StrategySignalEvent.CROSS_DOWN
+            );
+        }
+
+        if (currentShortAverage.compareTo(currentLongAverage) > 0) {
+            return new StrategyDecision(
+                    StrategyAction.BUY,
+                    referencePrice,
+                    "10주 이동평균이 40주 이동평균 위에 있어 상승 추세가 유지되고 있습니다.",
+                    metadata,
+                    StrategyTrend.ABOVE_LONG_AVERAGE,
+                    StrategySignalEvent.NONE
             );
         }
 
         return new StrategyDecision(
-                StrategyAction.HOLD,
+                StrategyAction.SELL,
                 referencePrice,
-                "10주와 40주 이동평균의 교차 조건이 충족되지 않았습니다.",
-                metadata
+                "10주 이동평균이 40주 이동평균 아래에 있어 하락 추세가 유지되고 있습니다.",
+                metadata,
+                StrategyTrend.BELOW_LONG_AVERAGE,
+                StrategySignalEvent.NONE
         );
     }
 }

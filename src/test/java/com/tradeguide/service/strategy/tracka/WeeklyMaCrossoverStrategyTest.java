@@ -5,6 +5,8 @@ import com.tradeguide.domain.strategy.AssetProfile;
 import com.tradeguide.domain.strategy.InvestmentTrack;
 import com.tradeguide.domain.strategy.StrategyAction;
 import com.tradeguide.domain.strategy.StrategyDecision;
+import com.tradeguide.domain.strategy.StrategySignalEvent;
+import com.tradeguide.domain.strategy.StrategyTrend;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.service.indicator.SimpleMovingAverageCalculator;
 import org.junit.jupiter.api.Test;
@@ -38,6 +40,8 @@ class WeeklyMaCrossoverStrategyTest {
         // Then
         assertThat(result.getAction()).isEqualTo(StrategyAction.BUY);
         assertThat(result.getReferencePrice()).isEqualByComparingTo("200");
+        assertThat(result.getTrend()).isEqualTo(StrategyTrend.ABOVE_LONG_AVERAGE);
+        assertThat(result.getSignalEvent()).isEqualTo(StrategySignalEvent.CROSS_UP);
     }
 
     private List<MarketCandle> candlesWithGoldenCross() {
@@ -68,7 +72,7 @@ class WeeklyMaCrossoverStrategyTest {
     }
 
     @Test
-    void returnsHoldWhenThereIsNoGoldenCross() {
+    void returnsSellWhenBelowLongAverageWithoutNewCross() {
         AssetProfile assetProfile = new AssetProfile(
                 Market.US,
                 "SOXL",
@@ -78,7 +82,9 @@ class WeeklyMaCrossoverStrategyTest {
 
         StrategyDecision result = strategy.decide(assetProfile, candles);
 
-        assertThat(result.getAction()).isEqualTo(StrategyAction.HOLD);
+        assertThat(result.getAction()).isEqualTo(StrategyAction.SELL);
+        assertThat(result.getTrend()).isEqualTo(StrategyTrend.BELOW_LONG_AVERAGE);
+        assertThat(result.getSignalEvent()).isEqualTo(StrategySignalEvent.NONE);
     }
 
     @Test
@@ -108,6 +114,7 @@ class WeeklyMaCrossoverStrategyTest {
 
         assertThat(result.getAction()).isEqualTo(StrategyAction.SELL);
         assertThat(result.getReferencePrice()).isEqualByComparingTo("50");
+        assertThat(result.getSignalEvent()).isEqualTo(StrategySignalEvent.CROSS_DOWN);
     }
 
     @Test

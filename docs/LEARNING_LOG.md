@@ -50,28 +50,26 @@ git pull --ff-only
 - Track A 주봉 10/40 이동평균 전략 가이드
 - 완료된 주봉만 전략 판단에 반영
 - 전략 ID, 버전, 데이터 기준일 응답
+- 추세 상태와 교차 이벤트를 함께 반환하는 Track A 전략 판단
+- 보유 종목 여부를 반영한 포트폴리오 전략 가이드
+- 포트폴리오 보유 종목별 평가금액 노출 비중 계산 및 조회 API
 
 ### 진행 중
 
-포트폴리오 보유 종목의 현재 평가금액 비중을 계산하는 노출 비중 기능을 구현 중이다.
-
-- `HoldingExposure` 도메인 객체 작성
-- `PortfolioExposureCalculator` 작성 및 단위 테스트 통과
-- `PortfolioExposureService` 작성
+다음 단계의 설계를 준비한다. 현재 전략 API는 시장 데이터 단독 가이드와 보유 종목 가이드를 구분한다.
 
 ### 다음 작업
 
-1. `HoldingExposureResponse` DTO 작성
-2. `GET /api/members/{memberId}/portfolios/{portfolioId}/exposures` 추가
-3. `PortfolioControllerTest`에 노출 비중 API 테스트 및 `PortfolioExposureService` Mock Bean 추가
-4. 전체 테스트와 Postman 호출 확인
-5. 기능 단위 커밋 및 푸시
+1. 현재가·캔들 데이터의 최신성 검증 기준과 오류 응답을 설계한다.
+2. 다종목 전략 가이드의 캐시와 일부 종목 조회 실패 응답 형식을 설계한다.
+3. `TradePlan`의 주문 가격·수량·유효 기간과 위험 정책을 전략 판단에서 분리해 모델링한다.
+4. 전체 테스트와 Postman 호출을 확인한 뒤 기능 단위로 커밋·푸시한다.
 
 ## 새 대화 시작용 인계 문구
 
 ```text
 trade-guide 프로젝트 학습을 이어서 진행한다.
 저장소의 AGENTS.md, docs/PROJECT_CONTEXT.md, docs/LEARNING_LOG.md를 먼저 읽고 현재 상태를 파악한다.
-현재 브랜치와 git status를 확인한 뒤, 노출 비중 API의 DTO, Controller, Controller 테스트부터 이어서 진행한다.
+현재 브랜치와 git status를 확인한 뒤, 최신성 검증 기준과 다종목 전략 가이드의 캐시·부분 실패 정책을 설계부터 이어서 진행한다.
 나는 직접 구현하므로 한 단계씩 구현 가이드를 제공하고, 내가 완료했다고 말한 뒤에 다음 단계를 안내한다.
 ```

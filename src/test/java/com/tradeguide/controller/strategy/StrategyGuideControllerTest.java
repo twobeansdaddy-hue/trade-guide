@@ -3,6 +3,8 @@ package com.tradeguide.controller.strategy;
 import com.tradeguide.domain.strategy.StrategyAction;
 import com.tradeguide.domain.strategy.StrategyDecision;
 import com.tradeguide.domain.strategy.StrategyMetadata;
+import com.tradeguide.domain.strategy.StrategySignalEvent;
+import com.tradeguide.domain.strategy.StrategyTrend;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.AssetProfileNotFoundException;
 import com.tradeguide.service.strategy.StrategyGuideService;
@@ -40,7 +42,9 @@ class StrategyGuideControllerTest {
                         "test-strategy",
                         "test-v1",
                         LocalDate.of(2026, 8, 7)
-                )
+                ),
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.CROSS_UP
         );
 
         when(strategyGuideService.getStrategyDecision(
@@ -62,7 +66,9 @@ class StrategyGuideControllerTest {
                 .andExpect(jsonPath("$.metadata.strategyVersion")
                         .value("test-v1"))
                 .andExpect(jsonPath("$.metadata.dataAsOf")
-                        .value("2026-08-07"));
+                        .value("2026-08-07"))
+                .andExpect(jsonPath("$.trend").value("ABOVE_LONG_AVERAGE"))
+                .andExpect(jsonPath("$.signalEvent").value("CROSS_UP"));
 
         verify(strategyGuideService)
                 .getStrategyDecision(Market.US, "SOXL");

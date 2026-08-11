@@ -44,11 +44,14 @@
   - 관리자용 프로필 등록·목록 조회 API
 - Track A 전략 엔진의 첫 구현
   - SOXL 등 명시적으로 등록한 `TRACK_A` 자산 대상
-  - 주봉 10/40 이동평균 상향 돌파 `BUY`, 하향 돌파 `SELL`, 그 외 `HOLD`
+  - 주봉 10/40 이동평균의 현재 추세와 상·하향 교차 이벤트를 함께 반환
+  - 종목 단독 가이드는 진입 또는 청산 방향을, 포트폴리오 가이드는 현재 보유 여부를 반영한 `HOLD` 또는 `SELL`을 반환
   - 판단에는 현재 40주 평균과 직전 40주 평균 비교를 위해 최소 41개 주봉 필요
 - 종목·포트폴리오 전략 가이드 조회
   - 종목별 전략 판단: 행동, 기준 가격, 근거 반환
   - 포트폴리오 보유 종목을 순회해 종목별 전략 판단 목록 반환
+- 포트폴리오 보유 종목 노출 비중 조회
+  - 현재 평가금액과 포트폴리오 전체 평가금액 대비 비중 반환
 - 단위 테스트, Repository 테스트, Controller 테스트
 - H2 인메모리 데이터베이스와 H2 Console
 
@@ -203,6 +206,7 @@ Controller -> Service -> Repository -> Database
 | `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/holdings` | 보유 종목 조회 |
 | `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/valuation` | 현재가 기준 포트폴리오 평가 조회 |
 | `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/strategy-guides` | 보유 종목별 전략 가이드 조회 |
+| `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/exposures` | 보유 종목별 현재 평가금액 노출 비중 조회 |
 | `GET` | `/api/markets/{market}/stocks/{ticker}/candles/daily` | 일봉 캔들 조회 |
 | `GET` | `/api/markets/{market}/stocks/{ticker}/candles/weekly` | 주봉 캔들 조회 |
 | `GET` | `/api/markets/{market}/stocks/{ticker}/strategy-guide` | 한 종목의 전략 가이드 조회 |
