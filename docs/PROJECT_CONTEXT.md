@@ -56,6 +56,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - 응답에는 전략 ID, 버전, 데이터 기준일을 포함한다.
 - 응답에는 `trend`와 `signalEvent`도 포함한다. 교차가 발생한 한 주만이 아니라 현재 추세도 구분한다.
 - `referencePrice`는 전략 판단에 사용한 최신 완료 주봉 종가다. 주문 지정가나 목표가가 아니다.
+- Track A 골든 테스트는 실행 시세 제공자인 Twelve Data의 고정 주봉 스냅샷을 사용한다. Yahoo 기반 리서치와 교차 시점이 다르면 차이를 기록하고, 실행 기준을 임의로 섞지 않는다.
 
 ## 리서치와 정책 문서
 
