@@ -1,9 +1,6 @@
 package com.tradeguide.service.strategy;
 
 import com.tradeguide.domain.strategy.AssetStrategyGuide;
-import com.tradeguide.domain.strategy.StrategyDecision;
-import com.tradeguide.domain.strategy.StrategyAction;
-import com.tradeguide.domain.strategy.StrategyTrend;
 import com.tradeguide.domain.strategy.StrategySignal;
 import com.tradeguide.service.holding.HoldingService;
 import org.springframework.stereotype.Service;
@@ -15,13 +12,16 @@ public class PortfolioStrategyGuideService {
 
     private final HoldingService holdingService;
     private final StrategyGuideService strategyGuideService;
+    private final StrategyDecisionMaker strategyDecisionMaker;
 
     public PortfolioStrategyGuideService(
             HoldingService holdingService,
-            StrategyGuideService strategyGuideService
+            StrategyGuideService strategyGuideService,
+            StrategyDecisionMaker strategyDecisionMaker
     ) {
         this.holdingService = holdingService;
         this.strategyGuideService = strategyGuideService;
+        this.strategyDecisionMaker = strategyDecisionMaker;
     }
 
     public List<AssetStrategyGuide> getPortfolioStrategyGuides(
@@ -40,25 +40,9 @@ public class PortfolioStrategyGuideService {
                     return new AssetStrategyGuide(
                             holding.getMarket(),
                             holding.getTicker(),
-                            toHoldingDecision(signal)
+                            strategyDecisionMaker.decideForHolding(signal)
                     );
                 })
                 .toList();
-    }
-
-    private StrategyDecision toHoldingDecision(StrategySignal signal) {
-        if (signal.getTrend() == StrategyTrend.ABOVE_LONG_AVERAGE) {
-            return new StrategyDecision(
-                    StrategyAction.HOLD,
-                    "상승 추세가 유지되고 있어 현재 보유 수량을 유지합니다.",
-                    signal
-            );
-        }
-
-        return new StrategyDecision(
-                StrategyAction.SELL,
-                "하락 추세가 유지되고 있어 현재 보유 수량의 매도를 검토합니다.",
-                signal
-        );
     }
 }

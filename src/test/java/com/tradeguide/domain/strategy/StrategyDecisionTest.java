@@ -31,8 +31,7 @@ class StrategyDecisionTest {
         );
 
         assertThat(decision.getAction()).isEqualTo(StrategyAction.HOLD);
-        assertThat(decision.getReason())
-                .isEqualTo("상승 추세가 유지되고 있어 현재 보유 수량을 유지합니다.");
+        assertThat(decision.getReason()).isEqualTo("상승 추세가 유지되고 있어 현재 보유 수량을 유지합니다.");
         assertThat(decision.getSignal()).isSameAs(signal);
     }
 }

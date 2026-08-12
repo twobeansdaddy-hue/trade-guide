@@ -1,12 +1,7 @@
 package com.tradeguide.service.strategy;
 
 import com.tradeguide.domain.holding.Holding;
-import com.tradeguide.domain.strategy.AssetStrategyGuide;
-import com.tradeguide.domain.strategy.StrategyAction;
-import com.tradeguide.domain.strategy.StrategyMetadata;
-import com.tradeguide.domain.strategy.StrategySignal;
-import com.tradeguide.domain.strategy.StrategySignalEvent;
-import com.tradeguide.domain.strategy.StrategyTrend;
+import com.tradeguide.domain.strategy.*;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.service.holding.HoldingService;
 import org.junit.jupiter.api.Test;
@@ -32,6 +27,9 @@ class PortfolioStrategyGuideServiceTest {
     @Mock
     private StrategyGuideService strategyGuideService;
 
+    @Mock
+    private StrategyDecisionMaker strategyDecisionMaker;
+
     @InjectMocks
     private PortfolioStrategyGuideService portfolioStrategyGuideService;
 
@@ -43,6 +41,7 @@ class PortfolioStrategyGuideServiceTest {
                 new BigDecimal("10"),
                 new BigDecimal("20")
         );
+
         Holding aaplHolding = new Holding(
                 Market.US,
                 "AAPL",
@@ -62,6 +61,7 @@ class PortfolioStrategyGuideServiceTest {
                 StrategySignalEvent.NONE,
                 4
         );
+
         StrategySignal aaplSignal = new StrategySignal(
                 new BigDecimal("200"),
                 "교차 없음",
@@ -75,13 +75,28 @@ class PortfolioStrategyGuideServiceTest {
                 null
         );
 
+        StrategyDecision soxlDecision = new StrategyDecision(
+                StrategyAction.HOLD,
+                "테스트 보유 판단",
+                soxlSignal
+        );
+
+        StrategyDecision aaplDecision = new StrategyDecision(
+                StrategyAction.SELL,
+                "테스트 보유 판단",
+                aaplSignal
+        );
+
         when(holdingService.getHoldings(1L, 10L))
                 .thenReturn(List.of(soxlHolding, aaplHolding));
-
         when(strategyGuideService.getStrategySignal(Market.US, "SOXL"))
                 .thenReturn(soxlSignal);
         when(strategyGuideService.getStrategySignal(Market.US, "AAPL"))
                 .thenReturn(aaplSignal);
+        when(strategyDecisionMaker.decideForHolding(soxlSignal))
+                .thenReturn(soxlDecision);
+        when(strategyDecisionMaker.decideForHolding(aaplSignal))
+                .thenReturn(aaplDecision);
 
         List<AssetStrategyGuide> result =
                 portfolioStrategyGuideService.getPortfolioStrategyGuides(
@@ -90,25 +105,16 @@ class PortfolioStrategyGuideServiceTest {
                 );
 
         assertThat(result).hasSize(2);
-
         assertThat(result.get(0).getTicker()).isEqualTo("SOXL");
-        assertThat(result.get(0).getStrategyDecision())
-                .extracting(decision -> decision.getAction())
-                .isEqualTo(StrategyAction.HOLD);
-        assertThat(result.get(0).getStrategyDecision().getSignal())
-                .isSameAs(soxlSignal);
+        assertThat(result.get(0).getStrategyDecision()).isSameAs(soxlDecision);
 
         assertThat(result.get(1).getTicker()).isEqualTo("AAPL");
-        assertThat(result.get(1).getStrategyDecision())
-                .extracting(decision -> decision.getAction())
-                .isEqualTo(StrategyAction.SELL);
-        assertThat(result.get(1).getStrategyDecision().getSignal())
-                .isSameAs(aaplSignal);
+        assertThat(result.get(1).getStrategyDecision()).isSameAs(aaplDecision);
 
         verify(holdingService).getHoldings(1L, 10L);
-        verify(strategyGuideService)
-                .getStrategySignal(Market.US, "SOXL");
-        verify(strategyGuideService)
-                .getStrategySignal(Market.US, "AAPL");
+        verify(strategyGuideService).getStrategySignal(Market.US, "SOXL");
+        verify(strategyGuideService).getStrategySignal(Market.US, "AAPL");
+        verify(strategyDecisionMaker).decideForHolding(soxlSignal);
+        verify(strategyDecisionMaker).decideForHolding(aaplSignal);
     }
 }
