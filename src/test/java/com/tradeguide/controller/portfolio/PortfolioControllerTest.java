@@ -16,6 +16,9 @@ import com.tradeguide.exception.MarketDataRateLimitExceededException;
 import com.tradeguide.domain.strategy.AssetStrategyGuide;
 import com.tradeguide.domain.strategy.StrategyAction;
 import com.tradeguide.domain.strategy.StrategyDecision;
+import com.tradeguide.domain.strategy.StrategySignal;
+import com.tradeguide.domain.strategy.StrategySignalEvent;
+import com.tradeguide.domain.strategy.StrategyTrend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -217,16 +220,25 @@ class PortfolioControllerTest {
 
     @Test
     void getsPortfolioStrategyGuides() throws Exception {
-        StrategyDecision decision = new StrategyDecision(
-                StrategyAction.BUY,
+        StrategySignal signal = new StrategySignal(
                 new BigDecimal("25.5"),
                 "10주 이동평균이 40주 이동평균을 상향 돌파했습니다.",
                 new StrategyMetadata(
                         "test-strategy",
                         "test-v1",
                         LocalDate.of(2026, 8, 7)
-                )
+                ),
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.CROSS_UP,
+                0
         );
+
+        StrategyDecision decision = new StrategyDecision(
+                StrategyAction.BUY,
+                "이번 완료 주봉에서 상승 교차가 발생했습니다.",
+                signal
+        );
+
         AssetStrategyGuide strategyGuide = new AssetStrategyGuide(
                 Market.US,
                 "SOXL",
@@ -245,17 +257,13 @@ class PortfolioControllerTest {
                 .andExpect(jsonPath("$[0].market").value("US"))
                 .andExpect(jsonPath("$[0].ticker").value("SOXL"))
                 .andExpect(jsonPath("$[0].decision.action").value("BUY"))
-                .andExpect(jsonPath("$[0].decision.referencePrice")
-                        .value(25.5))
-                .andExpect(jsonPath("$[0].decision.reason").value(
-                        "10주 이동평균이 40주 이동평균을 상향 돌파했습니다."
-                ))
-                .andExpect(jsonPath("$[0].decision.metadata.strategyId")
-                        .value("test-strategy"))
-                .andExpect(jsonPath("$[0].decision.metadata.strategyVersion")
-                        .value("test-v1"))
-                .andExpect(jsonPath("$[0].decision.metadata.dataAsOf")
-                        .value("2026-08-07"));
+                .andExpect(jsonPath("$[0].decision.referencePrice").value(25.5))
+                .andExpect(jsonPath("$[0].decision.reason").value("이번 완료 주봉에서 상승 교차가 발생했습니다."))
+                .andExpect(jsonPath("$[0].decision.metadata.strategyId").value("test-strategy"))
+                .andExpect(jsonPath("$[0].decision.metadata.strategyVersion").value("test-v1"))
+                .andExpect(jsonPath("$[0].decision.metadata.dataAsOf").value("2026-08-07"))
+                .andExpect(jsonPath("$[0].decision.trend").value("ABOVE_LONG_AVERAGE"))
+                .andExpect(jsonPath("$[0].decision.weeksSinceCross").value(0));
 
         verify(portfolioStrategyGuideService)
                 .getPortfolioStrategyGuides(10L, 100L);

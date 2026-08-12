@@ -1,9 +1,6 @@
 package com.tradeguide.dto.strategy;
 
-import com.tradeguide.domain.strategy.StrategyAction;
-import com.tradeguide.domain.strategy.StrategyDecision;
-import com.tradeguide.domain.strategy.StrategySignalEvent;
-import com.tradeguide.domain.strategy.StrategyTrend;
+import com.tradeguide.domain.strategy.*;
 
 import java.math.BigDecimal;
 
@@ -45,14 +42,16 @@ public class StrategyDecisionResponse {
     }
 
     public static StrategyDecisionResponse from(StrategyDecision strategyDecision) {
+        StrategySignal signal = strategyDecision.getSignal();
+
         return new StrategyDecisionResponse(
                 strategyDecision.getAction(),
-                strategyDecision.getReferencePrice(),
+                signal.getReferencePrice(),
                 strategyDecision.getReason(),
-                StrategyMetadataResponse.from(strategyDecision.getMetadata()),
-                strategyDecision.getTrend(),
-                strategyDecision.getSignalEvent(),
-                strategyDecision.getWeeksSinceCross()
+                StrategyMetadataResponse.from(signal.getMetadata()),
+                signal.getTrend(),
+                signal.getSignalEvent(),
+                signal.getWeeksSinceCross()
         );
     }
 
