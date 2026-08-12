@@ -71,7 +71,28 @@
     ],
     "confidence": "low",
     "caveats": "거래 표본이 3건에 불과해 통계적 유의성 없음. 과최적화(파라미터 10주/40주를 사후적으로 유리하게 고른 것이 아니라 50/200일의 표준 근사치를 그대로 사용했으나, 여전히 검증 구간이 짧음) 및 특정 구간 편향 가능성 있음. 세 번째 거래는 아직 청산되지 않은 미실현 수익.",
-    "last_updated": "2026-08-05"
+    "last_updated": "2026-08-05",
+    "data_source_review": {
+      "reviewed_date": "2026-08-12",
+      "status": "unresolved_discrepancy",
+      "note": "이 필드는 위 metrics/trades/summary의 원본 수치를 수정하지 않고 보존한 채, 이후 발견된 데이터 소스 불일치를 기록하기 위해 추가되었습니다.",
+      "issue": "이 백테스트는 Yahoo Finance 주간 'Adjusted Close'(soxl-timing-and-drawdown-backtest.md 방법론 참고)를 사용했다. 반면 프로덕션 전략 엔진(WeeklyMaCrossoverStrategy)이 실제로 사용하는 데이터는 Twelve Data, interval=1week, adjustment=splits(분할만 조정, 배당 재투자 미반영)이다. 두 소스는 조정 방식뿐 아니라 데이터 벤더 자체가 달라 주간 종가 시계열이 정확히 일치하지 않는다.",
+      "cross_date_comparison": {
+        "matching_cross_dates": ["2023-02-27", "2023-10-30", "2023-12-04", "2024-09-09"],
+        "diverging_cross_date": {
+          "research_yahoo_adjusted_close": "2025-07-28",
+          "production_twelvedata_splits_only": "2025-08-04",
+          "gap_weeks": 1,
+          "direction": "리서치(Yahoo 조정종가) 기준 크로스가 프로덕션(Twelve Data, splits-only) 기준보다 1주 더 이르게 발생"
+        }
+      },
+      "impact": "위 trades 배열의 세 번째 거래(entry_date 2025-07-28, return_pct +481.2)와 이를 반영한 metrics.sequential_compounded_return_pct(+871.5), metrics.equity_curve_simulation.strategy_return_pct(+871.5) 등 이 기록의 핵심 수치는 Yahoo 조정종가 기준 진입일(2025-07-28)로 계산된 것이며, 프로덕션과 동일한 소스(Twelve Data, adjustment=splits)로 재계산하면 진입일이 2025-08-04로 달라져 동일한 수치가 재현되지 않는다. 이 기록의 원본 숫자는 이력 보존을 위해 수정하지 않는다.",
+      "recommendation": "향후 SOXL 관련 백테스트는 프로덕션과 동일한 소스(Twelve Data, interval=1week, adjustment=splits)로 재수행하고, 별도 id(예: soxl-ma-crossover-2021-2026-twelvedata)로 새 backtest 레코드를 추가해 이 레코드와 나란히 비교할 수 있게 한다.",
+      "reference": [
+        "src/test/resources/fixtures/market/soxl-weekly-twelvedata-2021-2026.metadata.json",
+        "research/notes/data-source-audit-2026-08-12.md"
+      ]
+    }
   },
   {
     "id": "soxl-rsi-meanrev-2021-2026",
