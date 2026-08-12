@@ -71,3 +71,14 @@ SOXL 주간 데이터(2021-08~2026-08, 263주)로 이동평균 크로스오버(1
 - 원자료·상세 계산 결과: `research/data/backtests.json`의 `soxl-ma-crossover-2021-2026`, `soxl-rsi-meanrev-2021-2026`, `soxl-drawdown-recovery-2021-2026` 항목
 
 > confidence: low-medium — 방향성(추세추종이 대형 낙폭 회피에 유리, RSI 단독은 위험)은 일반 이론과 부합하나, 표본 수(3건/2건/3건)가 매우 적어 통계적 유의성을 주장할 수 없음. 참고 자료로만 활용 권장.
+
+## 데이터 소스 불일치 참고 (2026-08-12 추가, 원본 결과는 수정하지 않음)
+
+구현 측에서 프로덕션 전략 엔진의 골든 테스트 픽스처(`src/test/resources/fixtures/market/soxl-weekly-twelvedata-2021-2026.metadata.json`, 소스: Twelve Data, interval=1week, adjustment=splits — 분할만 조정, 배당 재투자 미반영)와 이 리포트의 이동평균 크로스오버 결과를 대조한 결과, 아래 사실이 확인되었다.
+
+- 이 리포트는 **Yahoo Finance 주간 Adjusted Close**(위 "출처" 참고, 배당·분할 조정 방식이 Twelve Data의 splits-only와 다름)를 사용했다.
+- 크로스 시점 4건(2023-02-27, 2023-10-30, 2023-12-04, 2024-09-09)은 두 소스 간 일치했다.
+- 세 번째 거래의 진입 크로스만 **1주 차이로 불일치**한다 — 이 리포트(Yahoo 조정종가) 기준 2025-07-28 vs 프로덕션(Twelve Data, splits-only) 기준 2025-08-04.
+- 이 1주 차이가 있는 세 번째 거래(+481.2%)가 위 §1·§4의 핵심 지표(합산 복리수익률 **+871.5%**, 승률 100%, 계좌 시뮬레이션 최종자산 97,145,200원 등)를 크게 좌우하므로, 이 수치들은 **프로덕션 데이터 소스로 그대로 재현되지 않는다.**
+- 위 표·수치는 이력 보존을 위해 그대로 두었다. 상세 기록은 `research/data/backtests.json`의 `soxl-ma-crossover-2021-2026` 항목 내 `data_source_review` 필드와 `research/notes/data-source-audit-2026-08-12.md`를 참고.
+- **권고**: 향후 SOXL(및 다른 티커) 이동평균/RSI 백테스트는 프로덕션과 동일한 소스(Twelve Data, interval=1week, adjustment=splits)로 재수행해야 하며, 재수행 결과는 별도 backtest id로 이 기록과 나란히 남긴다.
