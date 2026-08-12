@@ -53,7 +53,7 @@ class StrategyGuideServiceTest {
     private StrategyGuideService strategyGuideService;
 
     @Test
-    void getsStrategyDecision() {
+    void getsStrategySignal() {
         AssetProfile assetProfile = new AssetProfile(
                 Market.US,
                 "SOXL",
@@ -63,15 +63,17 @@ class StrategyGuideServiceTest {
         List<MarketCandle> fetchedCandles = List.of();
         List<MarketCandle> completedCandles = List.of();
 
-        StrategyDecision expected = new StrategyDecision(
-                StrategyAction.BUY,
+        StrategySignal expected = new StrategySignal(
                 new BigDecimal("120"),
-                "테스트 전략 판단",
+                "테스트 전략 신호",
                 new StrategyMetadata(
                         "test-strategy",
                         "test-v1",
                         LocalDate.of(2026, 8, 7)
-                )
+                ),
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.CROSS_UP,
+                0
         );
 
         when(assetProfileRepository.findByMarketAndTicker(
@@ -95,8 +97,8 @@ class StrategyGuideServiceTest {
         when(tradingStrategy.decide(assetProfile, completedCandles))
                 .thenReturn(expected);
 
-        StrategyDecision result =
-                strategyGuideService.getStrategyDecision(
+        StrategySignal result =
+                strategyGuideService.getStrategySignal(
                         Market.US,
                         "SOXL"
                 );
@@ -125,7 +127,7 @@ class StrategyGuideServiceTest {
         )).thenReturn(Optional.empty());
 
         assertThatThrownBy(() ->
-                strategyGuideService.getStrategyDecision(
+                strategyGuideService.getStrategySignal(
                         Market.US,
                         "AAPL"
                 ))
@@ -175,7 +177,7 @@ class StrategyGuideServiceTest {
                 .validate(completedCandles);
 
         assertThatThrownBy(() ->
-                strategyGuideService.getStrategyDecision(Market.US, "SOXL")
+                strategyGuideService.getStrategySignal(Market.US, "SOXL")
         )
                 .isInstanceOf(StaleMarketDataException.class)
                 .hasMessage("최신 완료 주봉 데이터가 오래되었습니다.");

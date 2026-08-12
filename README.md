@@ -45,10 +45,11 @@
 - Track A 전략 엔진의 첫 구현
   - SOXL 등 명시적으로 등록한 `TRACK_A` 자산 대상
   - 주봉 10/40 이동평균의 현재 추세와 상·하향 교차 이벤트를 함께 반환
-  - 종목 단독 가이드는 진입 또는 청산 방향을, 포트폴리오 가이드는 현재 보유 여부를 반영한 `HOLD` 또는 `SELL`을 반환
+  - 종목 단독 가이드는 시장 데이터만 해석한 `StrategySignal`을 반환
+  - 포트폴리오 가이드는 보유 여부를 반영해 `StrategySignal`에서 `HOLD` 또는 `SELL` 행동을 결정
   - 판단에는 현재 40주 평균과 직전 40주 평균 비교를 위해 최소 41개 주봉 필요
 - 종목·포트폴리오 전략 가이드 조회
-  - 종목별 전략 판단: 행동, 기준 가격, 근거 반환
+  - 종목별 시장 신호: 추세, 교차 이벤트, 교차 후 경과 주, 기준 가격, 근거 반환
   - 포트폴리오 보유 종목을 순회해 종목별 전략 판단 목록 반환
 - 포트폴리오 보유 종목 노출 비중 조회
   - 현재 평가금액과 포트폴리오 전체 평가금액 대비 비중 반환
@@ -117,7 +118,8 @@ classDiagram
     HoldingValuation "0..*" --> "1" PortfolioValuation : 합산
     AssetProfile --> Market : 시장과 티커의 전략 분류
     AssetProfile --> InvestmentTrack
-    AssetProfile --> StrategyDecision : 적용 전략 선택
+    AssetProfile --> StrategySignal : 적용 전략 선택
+    StrategySignal --> StrategyDecision : 보유 맥락과 결합
     Holding --> AssetStrategyGuide : 보유 종목별 가이드
     AssetStrategyGuide --> StrategyDecision
 ```
@@ -144,7 +146,8 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 | `HoldingValuation` | 한 종목의 평가 결과 |
 | `PortfolioValuation` | 포트폴리오 전체 평가 결과 |
 | `AssetProfile` | 시장·티커별 투자 트랙을 관리하는 전략 자산 카탈로그 |
-| `StrategyDecision` | 전략 행동, 판단 기준 가격, 판단 근거 |
+| `StrategySignal` | 시장 데이터만으로 계산한 추세, 교차 이벤트, 기준 가격, 근거 |
+| `StrategyDecision` | 보유 종목 맥락을 반영한 최종 행동과 근거 |
 | `AssetStrategyGuide` | 보유 종목과 해당 종목의 전략 판단을 묶은 값 객체 |
 
 ## 계산 규칙
@@ -271,7 +274,10 @@ GET /api/members/1/portfolios/1/strategy-guides
     "decision": {
       "action": "HOLD",
       "referencePrice": 25.5,
-      "reason": "10주와 40주 이동평균의 교차 조건이 충족되지 않았습니다."
+      "reason": "상승 추세가 유지되고 있어 현재 보유 수량을 유지합니다.",
+      "trend": "ABOVE_LONG_AVERAGE",
+      "signalEvent": "NONE",
+      "weeksSinceCross": 4
     }
   }
 ]

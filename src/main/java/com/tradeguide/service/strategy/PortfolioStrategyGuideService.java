@@ -4,6 +4,7 @@ import com.tradeguide.domain.strategy.AssetStrategyGuide;
 import com.tradeguide.domain.strategy.StrategyDecision;
 import com.tradeguide.domain.strategy.StrategyAction;
 import com.tradeguide.domain.strategy.StrategyTrend;
+import com.tradeguide.domain.strategy.StrategySignal;
 import com.tradeguide.service.holding.HoldingService;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,7 @@ public class PortfolioStrategyGuideService {
         return holdingService.getHoldings(memberId, portfolioId)
                 .stream()
                 .map(holding -> {
-                    StrategyDecision strategyDecision = strategyGuideService.getStrategyDecision(
+                    StrategySignal signal = strategyGuideService.getStrategySignal(
                             holding.getMarket(),
                             holding.getTicker()
                     );
@@ -39,33 +40,25 @@ public class PortfolioStrategyGuideService {
                     return new AssetStrategyGuide(
                             holding.getMarket(),
                             holding.getTicker(),
-                            toHoldingDecision(strategyDecision)
+                            toHoldingDecision(signal)
                     );
                 })
                 .toList();
     }
 
-    private StrategyDecision toHoldingDecision(StrategyDecision marketDecision) {
-        if (marketDecision.getTrend() == StrategyTrend.ABOVE_LONG_AVERAGE) {
+    private StrategyDecision toHoldingDecision(StrategySignal signal) {
+        if (signal.getTrend() == StrategyTrend.ABOVE_LONG_AVERAGE) {
             return new StrategyDecision(
                     StrategyAction.HOLD,
-                    marketDecision.getReferencePrice(),
-                    "상승 추세가 유지되고 있어 현재 보유 수량을 유지합니다. "
-                            + marketDecision.getReason(),
-                    marketDecision.getMetadata(),
-                    marketDecision.getTrend(),
-                    marketDecision.getSignalEvent()
+                    "상승 추세가 유지되고 있어 현재 보유 수량을 유지합니다.",
+                    signal
             );
         }
 
         return new StrategyDecision(
                 StrategyAction.SELL,
-                marketDecision.getReferencePrice(),
-                "하락 추세가 유지되고 있어 현재 보유 수량의 매도를 검토합니다. "
-                        + marketDecision.getReason(),
-                marketDecision.getMetadata(),
-                marketDecision.getTrend(),
-                marketDecision.getSignalEvent()
+                "하락 추세가 유지되고 있어 현재 보유 수량의 매도를 검토합니다.",
+                signal
         );
     }
 }

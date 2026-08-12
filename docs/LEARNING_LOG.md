@@ -51,6 +51,8 @@ git pull --ff-only
 - 완료된 주봉만 전략 판단에 반영
 - 전략 ID, 버전, 데이터 기준일 응답
 - 추세 상태와 교차 이벤트를 함께 반환하는 Track A 전략 판단
+- 시장 데이터의 `StrategySignal`과 보유 종목 맥락의 `StrategyDecision` 분리
+- 가장 최근 이동평균 교차 이후 경과 주(`weeksSinceCross`) 계산
 - 보유 종목 여부를 반영한 포트폴리오 전략 가이드
 - 포트폴리오 보유 종목별 평가금액 노출 비중 계산 및 조회 API
 - Twelve Data SOXL 주봉 스냅샷 기반 Track A 골든 테스트

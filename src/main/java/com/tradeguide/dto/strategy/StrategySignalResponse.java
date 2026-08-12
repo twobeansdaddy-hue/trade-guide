@@ -1,15 +1,13 @@
 package com.tradeguide.dto.strategy;
 
-import com.tradeguide.domain.strategy.StrategyAction;
-import com.tradeguide.domain.strategy.StrategyDecision;
+import com.tradeguide.domain.strategy.StrategySignal;
 import com.tradeguide.domain.strategy.StrategySignalEvent;
 import com.tradeguide.domain.strategy.StrategyTrend;
 
 import java.math.BigDecimal;
 
-public class StrategyDecisionResponse {
+public class StrategySignalResponse {
 
-    private final StrategyAction action;
     private final BigDecimal referencePrice;
     private final String reason;
     private final StrategyMetadataResponse metadata;
@@ -17,17 +15,7 @@ public class StrategyDecisionResponse {
     private final StrategySignalEvent signalEvent;
     private final Integer weeksSinceCross;
 
-    public StrategyDecisionResponse(
-            StrategyAction action,
-            BigDecimal referencePrice,
-            String reason,
-            StrategyMetadataResponse metadata
-    ) {
-        this(action, referencePrice, reason, metadata, null, null, null);
-    }
-
-    public StrategyDecisionResponse(
-            StrategyAction action,
+    public StrategySignalResponse(
             BigDecimal referencePrice,
             String reason,
             StrategyMetadataResponse metadata,
@@ -35,7 +23,6 @@ public class StrategyDecisionResponse {
             StrategySignalEvent signalEvent,
             Integer weeksSinceCross
     ) {
-        this.action = action;
         this.referencePrice = referencePrice;
         this.reason = reason;
         this.metadata = metadata;
@@ -44,20 +31,15 @@ public class StrategyDecisionResponse {
         this.weeksSinceCross = weeksSinceCross;
     }
 
-    public static StrategyDecisionResponse from(StrategyDecision strategyDecision) {
-        return new StrategyDecisionResponse(
-                strategyDecision.getAction(),
-                strategyDecision.getReferencePrice(),
-                strategyDecision.getReason(),
-                StrategyMetadataResponse.from(strategyDecision.getMetadata()),
-                strategyDecision.getTrend(),
-                strategyDecision.getSignalEvent(),
-                strategyDecision.getWeeksSinceCross()
+    public static StrategySignalResponse from(StrategySignal signal) {
+        return new StrategySignalResponse(
+                signal.getReferencePrice(),
+                signal.getReason(),
+                StrategyMetadataResponse.from(signal.getMetadata()),
+                signal.getTrend(),
+                signal.getSignalEvent(),
+                signal.getWeeksSinceCross()
         );
-    }
-
-    public StrategyAction getAction() {
-        return action;
     }
 
     public BigDecimal getReferencePrice() {

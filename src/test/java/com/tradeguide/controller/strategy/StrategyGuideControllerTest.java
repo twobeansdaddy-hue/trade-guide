@@ -1,8 +1,7 @@
 package com.tradeguide.controller.strategy;
 
-import com.tradeguide.domain.strategy.StrategyAction;
-import com.tradeguide.domain.strategy.StrategyDecision;
 import com.tradeguide.domain.strategy.StrategyMetadata;
+import com.tradeguide.domain.strategy.StrategySignal;
 import com.tradeguide.domain.strategy.StrategySignalEvent;
 import com.tradeguide.domain.strategy.StrategyTrend;
 import com.tradeguide.domain.trade.Market;
@@ -35,8 +34,7 @@ class StrategyGuideControllerTest {
 
     @Test
     void getsStrategyGuide() throws Exception {
-        StrategyDecision strategyDecision = new StrategyDecision(
-                StrategyAction.BUY,
+        StrategySignal strategySignal = new StrategySignal(
                 new BigDecimal("120.25"),
                 "10주 이동평균이 40주 이동평균을 상향 돌파했습니다.",
                 new StrategyMetadata(
@@ -45,19 +43,19 @@ class StrategyGuideControllerTest {
                         LocalDate.of(2026, 8, 7)
                 ),
                 StrategyTrend.ABOVE_LONG_AVERAGE,
-                StrategySignalEvent.CROSS_UP
+                StrategySignalEvent.CROSS_UP,
+                0
         );
 
-        when(strategyGuideService.getStrategyDecision(
+        when(strategyGuideService.getStrategySignal(
                 Market.US,
                 "SOXL"
-        )).thenReturn(strategyDecision);
+        )).thenReturn(strategySignal);
 
         mockMvc.perform(
                         get("/api/markets/US/stocks/SOXL/strategy-guide")
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.action").value("BUY"))
                 .andExpect(jsonPath("$.referencePrice").value(120.25))
                 .andExpect(jsonPath("$.reason").value(
                         "10주 이동평균이 40주 이동평균을 상향 돌파했습니다."
@@ -69,15 +67,16 @@ class StrategyGuideControllerTest {
                 .andExpect(jsonPath("$.metadata.dataAsOf")
                         .value("2026-08-07"))
                 .andExpect(jsonPath("$.trend").value("ABOVE_LONG_AVERAGE"))
-                .andExpect(jsonPath("$.signalEvent").value("CROSS_UP"));
+                .andExpect(jsonPath("$.signalEvent").value("CROSS_UP"))
+                .andExpect(jsonPath("$.weeksSinceCross").value(0));
 
         verify(strategyGuideService)
-                .getStrategyDecision(Market.US, "SOXL");
+                .getStrategySignal(Market.US, "SOXL");
     }
 
     @Test
     void returnsNotFoundWhenAssetProfileDoesNotExist() throws Exception {
-        when(strategyGuideService.getStrategyDecision(
+        when(strategyGuideService.getStrategySignal(
                 Market.US,
                 "AAPL"
         )).thenThrow(new AssetProfileNotFoundException(
@@ -96,7 +95,7 @@ class StrategyGuideControllerTest {
 
     @Test
     void returnsBadGatewayWhenWeeklyCandleDataIsStale() throws Exception {
-        when(strategyGuideService.getStrategyDecision(
+        when(strategyGuideService.getStrategySignal(
                 Market.US,
                 "SOXL"
         )).thenThrow(new StaleMarketDataException(
@@ -112,6 +111,6 @@ class StrategyGuideControllerTest {
                 ));
 
         verify(strategyGuideService)
-                .getStrategyDecision(Market.US, "SOXL");
+                .getStrategySignal(Market.US, "SOXL");
     }
 }

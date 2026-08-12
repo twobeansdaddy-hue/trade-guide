@@ -1,8 +1,10 @@
 package com.tradeguide.controller.strategy;
 
 import com.tradeguide.domain.strategy.StrategyDecision;
+import com.tradeguide.domain.strategy.StrategySignal;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.dto.strategy.StrategyDecisionResponse;
+import com.tradeguide.dto.strategy.StrategySignalResponse;
 import com.tradeguide.service.strategy.StrategyGuideService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,12 +22,12 @@ public class StrategyGuideController {
     }
 
     @GetMapping
-    public StrategyDecisionResponse getStrategyGuide(
+    public StrategySignalResponse getStrategyGuide(
             @PathVariable Market market,
             @PathVariable String ticker
     ) {
-        StrategyDecision strategyDecision = strategyGuideService.getStrategyDecision(market, ticker);
+        StrategySignal signal = strategyGuideService.getStrategySignal(market, ticker);
 
-        return StrategyDecisionResponse.from(strategyDecision);
+        return StrategySignalResponse.from(signal);
     }
 }

@@ -1,13 +1,7 @@
 package com.tradeguide.service.strategy.tracka;
 
 import com.tradeguide.domain.market.MarketCandle;
-import com.tradeguide.domain.strategy.AssetProfile;
-import com.tradeguide.domain.strategy.InvestmentTrack;
-import com.tradeguide.domain.strategy.StrategyAction;
-import com.tradeguide.domain.strategy.StrategyDecision;
-import com.tradeguide.domain.strategy.StrategyMetadata;
-import com.tradeguide.domain.strategy.StrategySignalEvent;
-import com.tradeguide.domain.strategy.StrategyTrend;
+import com.tradeguide.domain.strategy.*;
 import com.tradeguide.service.indicator.SimpleMovingAverageCalculator;
 import com.tradeguide.service.strategy.TradingStrategy;
 import org.springframework.stereotype.Component;
@@ -37,7 +31,7 @@ public class WeeklyMaCrossoverStrategy implements TradingStrategy {
     }
 
     @Override
-    public StrategyDecision decide(
+    public StrategySignal decide(
             AssetProfile assetProfile,
             List<MarketCandle> candles
     ) {
@@ -53,69 +47,94 @@ public class WeeklyMaCrossoverStrategy implements TradingStrategy {
             );
         }
 
-        List<MarketCandle> previousCandles = candles.subList(0, candles.size() - 1);
+        MarketCandle lastestCandle = candles.get(candles.size() - 1);
+        StrategyTrend trend = determineTrend(candles);
+        StrategySignalEvent signalEvent = determineSignalEvent(candles, candles.size() - 1);
+
+        return new StrategySignal(
+                lastestCandle.getClose(),
+                createReason(trend, signalEvent),
+                new StrategyMetadata(
+                        STRATEGY_ID,
+                        STRATEGY_VERSION,
+                        lastestCandle.getTradingDate()
+                ),
+                trend,
+                signalEvent,
+                findWeeksSinceCross(candles)
+        );
+    }
+
+    private StrategyTrend determineTrend(List<MarketCandle> candles) {
+
+
+        BigDecimal shortAverage = movingAverageCalculator.calculate(candles, SHORT_PERIOD);
+        BigDecimal longAverage = movingAverageCalculator.calculate(candles, LONG_PERIOD);
+
+        if (shortAverage.compareTo(longAverage) > 0) {
+            return StrategyTrend.ABOVE_LONG_AVERAGE;
+        }
+
+        return StrategyTrend.BELOW_LONG_AVERAGE;
+
+    }
+
+    private StrategySignalEvent determineSignalEvent(
+            List<MarketCandle> candles,
+            int currentIndex
+    ) {
+        List<MarketCandle> previousCandles = candles.subList(0, currentIndex);
+        List<MarketCandle> currentCandles = candles.subList(0, currentIndex + 1);
 
         BigDecimal previousShortAverage = movingAverageCalculator.calculate(previousCandles, SHORT_PERIOD);
         BigDecimal previousLongAverage = movingAverageCalculator.calculate(previousCandles, LONG_PERIOD);
-        BigDecimal currentShortAverage = movingAverageCalculator.calculate(candles, SHORT_PERIOD);
-        BigDecimal currentLongAverage = movingAverageCalculator.calculate(candles, LONG_PERIOD);
+        BigDecimal currentShortAverage = movingAverageCalculator.calculate(currentCandles, SHORT_PERIOD);
+        BigDecimal currentLongAverage = movingAverageCalculator.calculate(currentCandles, LONG_PERIOD);
 
-        MarketCandle latestCandle = candles.get(candles.size() - 1);
-        BigDecimal referencePrice = latestCandle.getClose();
-
-        StrategyMetadata metadata = new StrategyMetadata(
-                STRATEGY_ID,
-                STRATEGY_VERSION,
-                latestCandle.getTradingDate()
-        );
-
-        boolean crossedAbove = previousShortAverage.compareTo(previousLongAverage) <= 0
-                && currentShortAverage.compareTo(currentLongAverage) > 0;
-
-        boolean crossedBelow =
-                previousShortAverage.compareTo(previousLongAverage) >= 0
-                        && currentShortAverage.compareTo(currentLongAverage) < 0;
-
-        if (crossedAbove) {
-            return new StrategyDecision(
-                    StrategyAction.BUY,
-                    referencePrice,
-                    "10주 이동평균이 40주 이동평균을 상향 돌파했습니다.",
-                    metadata,
-                    StrategyTrend.ABOVE_LONG_AVERAGE,
-                    StrategySignalEvent.CROSS_UP
-            );
+        if (previousShortAverage.compareTo(previousLongAverage) <= 0
+                && currentShortAverage.compareTo(currentLongAverage) > 0) {
+            return StrategySignalEvent.CROSS_UP;
         }
 
-        if (crossedBelow) {
-            return new StrategyDecision(
-                    StrategyAction.SELL,
-                    referencePrice,
-                    "10주 이동평균이 40주 이동평균을 하향 돌파했습니다.",
-                    metadata,
-                    StrategyTrend.BELOW_LONG_AVERAGE,
-                    StrategySignalEvent.CROSS_DOWN
-            );
+        if (previousShortAverage.compareTo(previousLongAverage) >= 0
+                && currentShortAverage.compareTo(currentLongAverage) < 0) {
+            return StrategySignalEvent.CROSS_DOWN;
         }
 
-        if (currentShortAverage.compareTo(currentLongAverage) > 0) {
-            return new StrategyDecision(
-                    StrategyAction.BUY,
-                    referencePrice,
-                    "10주 이동평균이 40주 이동평균 위에 있어 상승 추세가 유지되고 있습니다.",
-                    metadata,
-                    StrategyTrend.ABOVE_LONG_AVERAGE,
-                    StrategySignalEvent.NONE
-            );
+        return StrategySignalEvent.NONE;
+    }
+
+    private Integer findWeeksSinceCross(List<MarketCandle> candles) {
+        int latestIndex = candles.size() - 1;
+
+        for (int currentIndex = latestIndex; currentIndex >= LONG_PERIOD; currentIndex--) {
+
+            StrategySignalEvent signalEvent = determineSignalEvent(candles, currentIndex);
+
+            if (signalEvent != StrategySignalEvent.NONE) {
+                return latestIndex - currentIndex;
+            }
         }
 
-        return new StrategyDecision(
-                StrategyAction.SELL,
-                referencePrice,
-                "10주 이동평균이 40주 이동평균 아래에 있어 하락 추세가 유지되고 있습니다.",
-                metadata,
-                StrategyTrend.BELOW_LONG_AVERAGE,
-                StrategySignalEvent.NONE
-        );
+        return null;
+    }
+
+    private String createReason(
+            StrategyTrend trend,
+            StrategySignalEvent signalEvent
+    ) {
+        if (signalEvent == StrategySignalEvent.CROSS_UP) {
+            return "10주 이동평균이 40주 이동평균을 상향 돌파했습니다.";
+        }
+
+        if (signalEvent == StrategySignalEvent.CROSS_DOWN) {
+            return "10주 이동평균이 40주 이동평균을 하향 돌파했습니다.";
+        }
+
+        if (trend == StrategyTrend.ABOVE_LONG_AVERAGE) {
+            return "10주 이동평균이 40주 이동평균 위에 있어 상승 추세가 유지되고 있습니다.";
+        }
+
+        return "10주 이동평균이 40주 이동평균 아래에 있어 하락 추세가 유지되고 있습니다.";
     }
 }

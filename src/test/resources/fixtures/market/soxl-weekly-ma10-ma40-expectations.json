@@ -2,37 +2,31 @@
   {
     "date": "2023-02-27",
     "trend": "ABOVE_LONG_AVERAGE",
-    "signalEvent": "CROSS_UP",
-    "action": "BUY"
+    "signalEvent": "CROSS_UP"
   },
   {
     "date": "2023-10-30",
     "trend": "BELOW_LONG_AVERAGE",
-    "signalEvent": "CROSS_DOWN",
-    "action": "SELL"
+    "signalEvent": "CROSS_DOWN"
   },
   {
     "date": "2023-12-04",
     "trend": "ABOVE_LONG_AVERAGE",
-    "signalEvent": "CROSS_UP",
-    "action": "BUY"
+    "signalEvent": "CROSS_UP"
   },
   {
     "date": "2024-09-09",
     "trend": "BELOW_LONG_AVERAGE",
-    "signalEvent": "CROSS_DOWN",
-    "action": "SELL"
+    "signalEvent": "CROSS_DOWN"
   },
   {
     "date": "2025-08-04",
     "trend": "ABOVE_LONG_AVERAGE",
-    "signalEvent": "CROSS_UP",
-    "action": "BUY"
+    "signalEvent": "CROSS_UP"
   },
   {
     "date": "2026-08-03",
     "trend": "ABOVE_LONG_AVERAGE",
-    "signalEvent": "NONE",
-    "action": "BUY"
+    "signalEvent": "NONE"
   }
 ]

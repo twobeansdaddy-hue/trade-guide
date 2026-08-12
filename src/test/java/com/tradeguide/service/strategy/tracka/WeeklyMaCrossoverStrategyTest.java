@@ -3,8 +3,7 @@ package com.tradeguide.service.strategy.tracka;
 import com.tradeguide.domain.market.MarketCandle;
 import com.tradeguide.domain.strategy.AssetProfile;
 import com.tradeguide.domain.strategy.InvestmentTrack;
-import com.tradeguide.domain.strategy.StrategyAction;
-import com.tradeguide.domain.strategy.StrategyDecision;
+import com.tradeguide.domain.strategy.StrategySignal;
 import com.tradeguide.domain.strategy.StrategySignalEvent;
 import com.tradeguide.domain.strategy.StrategyTrend;
 import com.tradeguide.domain.trade.Market;
@@ -25,7 +24,7 @@ class WeeklyMaCrossoverStrategyTest {
             new WeeklyMaCrossoverStrategy(new SimpleMovingAverageCalculator());
 
     @Test
-    void returnsBuyWhenTenWeekAverageCrossesAboveFortyWeekAverage() {
+    void returnsCrossUpSignalWhenTenWeekAverageCrossesAboveFortyWeekAverage() {
         // Given
         AssetProfile assetProfile = new AssetProfile(
                 Market.US,
@@ -35,13 +34,13 @@ class WeeklyMaCrossoverStrategyTest {
         List<MarketCandle> candles = candlesWithGoldenCross();
 
         // When
-        StrategyDecision result = strategy.decide(assetProfile, candles);
+        StrategySignal result = strategy.decide(assetProfile, candles);
 
         // Then
-        assertThat(result.getAction()).isEqualTo(StrategyAction.BUY);
         assertThat(result.getReferencePrice()).isEqualByComparingTo("200");
         assertThat(result.getTrend()).isEqualTo(StrategyTrend.ABOVE_LONG_AVERAGE);
         assertThat(result.getSignalEvent()).isEqualTo(StrategySignalEvent.CROSS_UP);
+        assertThat(result.getWeeksSinceCross()).isZero();
     }
 
     private List<MarketCandle> candlesWithGoldenCross() {
@@ -72,7 +71,7 @@ class WeeklyMaCrossoverStrategyTest {
     }
 
     @Test
-    void returnsSellWhenBelowLongAverageWithoutNewCross() {
+    void returnsBelowTrendWhenBelowLongAverageWithoutNewCross() {
         AssetProfile assetProfile = new AssetProfile(
                 Market.US,
                 "SOXL",
@@ -80,11 +79,11 @@ class WeeklyMaCrossoverStrategyTest {
         );
         List<MarketCandle> candles = candlesWithSameClose(41, "100");
 
-        StrategyDecision result = strategy.decide(assetProfile, candles);
+        StrategySignal result = strategy.decide(assetProfile, candles);
 
-        assertThat(result.getAction()).isEqualTo(StrategyAction.SELL);
         assertThat(result.getTrend()).isEqualTo(StrategyTrend.BELOW_LONG_AVERAGE);
         assertThat(result.getSignalEvent()).isEqualTo(StrategySignalEvent.NONE);
+        assertThat(result.getWeeksSinceCross()).isNull();
     }
 
     @Test
@@ -102,7 +101,7 @@ class WeeklyMaCrossoverStrategyTest {
     }
 
     @Test
-    void returnsSellWhenTenWeekAverageCrossesBelowFortyWeekAverage() {
+    void returnsCrossDownSignalWhenTenWeekAverageCrossesBelowFortyWeekAverage() {
         AssetProfile assetProfile = new AssetProfile(
                 Market.US,
                 "SOXL",
@@ -110,11 +109,11 @@ class WeeklyMaCrossoverStrategyTest {
         );
         List<MarketCandle> candles = candlesWithDeathCross();
 
-        StrategyDecision result = strategy.decide(assetProfile, candles);
+        StrategySignal result = strategy.decide(assetProfile, candles);
 
-        assertThat(result.getAction()).isEqualTo(StrategyAction.SELL);
         assertThat(result.getReferencePrice()).isEqualByComparingTo("50");
         assertThat(result.getSignalEvent()).isEqualTo(StrategySignalEvent.CROSS_DOWN);
+        assertThat(result.getWeeksSinceCross()).isZero();
     }
 
     @Test

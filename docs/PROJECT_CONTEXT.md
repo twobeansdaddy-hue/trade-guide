@@ -45,7 +45,8 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `Holding`은 매매 이력으로 계산하는 현재 보유 상태이며 DB에 저장하지 않는다.
 - `HoldingValuation`, `PortfolioValuation`은 현재가 기반의 평가 결과다.
 - `AssetProfile`은 `market + ticker`와 투자 트랙을 관리하는 시스템 전략 카탈로그다. 사용자별 목표 수익률 설정이 아니다.
-- `StrategyDecision`은 전략 행동, 추세 상태, 교차 이벤트와 근거다.
+- `StrategySignal`은 시장 데이터만으로 계산한 추세 상태, 교차 이벤트, 기준 가격과 근거다.
+- `StrategyDecision`은 보유 여부 같은 사용자 맥락과 `StrategySignal`을 결합한 최종 행동과 근거다.
 - `TradePlan`은 주문 수량, 주문 유형, 지정가, 손절가, 유효 기간을 포함할 미래의 주문 초안이며 아직 구현하지 않았다.
 
 ## 현재 전략 엔진 상태
@@ -56,6 +57,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - 최신 완료 주봉이 현재 시점에 기대되는 주보다 오래되면 `StaleMarketDataException`으로 전략 판단을 차단한다.
 - 응답에는 전략 ID, 버전, 데이터 기준일을 포함한다.
 - 응답에는 `trend`와 `signalEvent`도 포함한다. 교차가 발생한 한 주만이 아니라 현재 추세도 구분한다.
+- `weeksSinceCross`는 가장 최근 교차 이후 경과한 주 수다. 미보유 종목의 추격 매수를 막는 후속 정책에서 사용한다.
 - `referencePrice`는 전략 판단에 사용한 최신 완료 주봉 종가다. 주문 지정가나 목표가가 아니다.
 - Track A 골든 테스트는 실행 시세 제공자인 Twelve Data의 고정 주봉 스냅샷을 사용한다. Yahoo 기반 리서치와 교차 시점이 다르면 차이를 기록하고, 실행 기준을 임의로 섞지 않는다.
 
@@ -67,4 +69,4 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 
 ## 현재 구현 위치
 
-포트폴리오 노출 비중 API, Track A 골든 테스트, 주봉 데이터 신선도 가드까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.
+포트폴리오 노출 비중 API, Track A 골든 테스트, 주봉 데이터 신선도 가드, 시장 신호와 보유 종목 행동의 분리까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.

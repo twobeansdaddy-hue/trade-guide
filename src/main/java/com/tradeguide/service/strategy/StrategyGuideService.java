@@ -3,8 +3,8 @@ package com.tradeguide.service.strategy;
 import com.tradeguide.domain.market.CandleInterval;
 import com.tradeguide.domain.market.MarketCandle;
 import com.tradeguide.domain.strategy.AssetProfile;
-import com.tradeguide.domain.strategy.StrategyDecision;
 import com.tradeguide.domain.trade.Market;
+import com.tradeguide.domain.strategy.StrategySignal;
 import com.tradeguide.exception.AssetProfileNotFoundException;
 import com.tradeguide.repository.strategy.AssetProfileRepository;
 import com.tradeguide.service.market.CompletedWeeklyCandleFilter;
@@ -40,7 +40,7 @@ public class StrategyGuideService {
         this.weeklyCandleFreshnessValidator = weeklyCandleFreshnessValidator;
     }
 
-    public StrategyDecision getStrategyDecision(
+    public StrategySignal getStrategySignal(
             Market market,
             String ticker
     ) {

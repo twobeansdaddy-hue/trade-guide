@@ -3,8 +3,8 @@ package com.tradeguide.service.strategy;
 import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.strategy.AssetStrategyGuide;
 import com.tradeguide.domain.strategy.StrategyAction;
-import com.tradeguide.domain.strategy.StrategyDecision;
 import com.tradeguide.domain.strategy.StrategyMetadata;
+import com.tradeguide.domain.strategy.StrategySignal;
 import com.tradeguide.domain.strategy.StrategySignalEvent;
 import com.tradeguide.domain.strategy.StrategyTrend;
 import com.tradeguide.domain.trade.Market;
@@ -50,8 +50,7 @@ class PortfolioStrategyGuideServiceTest {
                 new BigDecimal("180")
         );
 
-        StrategyDecision soxlDecision = new StrategyDecision(
-                StrategyAction.BUY,
+        StrategySignal soxlSignal = new StrategySignal(
                 new BigDecimal("25"),
                 "상향 돌파",
                 new StrategyMetadata(
@@ -60,10 +59,10 @@ class PortfolioStrategyGuideServiceTest {
                         LocalDate.of(2026, 8, 7)
                 ),
                 StrategyTrend.ABOVE_LONG_AVERAGE,
-                StrategySignalEvent.NONE
+                StrategySignalEvent.NONE,
+                4
         );
-        StrategyDecision aaplDecision = new StrategyDecision(
-                StrategyAction.HOLD,
+        StrategySignal aaplSignal = new StrategySignal(
                 new BigDecimal("200"),
                 "교차 없음",
                 new StrategyMetadata(
@@ -72,16 +71,17 @@ class PortfolioStrategyGuideServiceTest {
                         LocalDate.of(2026, 8, 7)
                 ),
                 StrategyTrend.BELOW_LONG_AVERAGE,
-                StrategySignalEvent.NONE
+                StrategySignalEvent.NONE,
+                null
         );
 
         when(holdingService.getHoldings(1L, 10L))
                 .thenReturn(List.of(soxlHolding, aaplHolding));
 
-        when(strategyGuideService.getStrategyDecision(Market.US, "SOXL"))
-                .thenReturn(soxlDecision);
-        when(strategyGuideService.getStrategyDecision(Market.US, "AAPL"))
-                .thenReturn(aaplDecision);
+        when(strategyGuideService.getStrategySignal(Market.US, "SOXL"))
+                .thenReturn(soxlSignal);
+        when(strategyGuideService.getStrategySignal(Market.US, "AAPL"))
+                .thenReturn(aaplSignal);
 
         List<AssetStrategyGuide> result =
                 portfolioStrategyGuideService.getPortfolioStrategyGuides(
@@ -93,18 +93,22 @@ class PortfolioStrategyGuideServiceTest {
 
         assertThat(result.get(0).getTicker()).isEqualTo("SOXL");
         assertThat(result.get(0).getStrategyDecision())
-                .extracting(StrategyDecision::getAction)
+                .extracting(decision -> decision.getAction())
                 .isEqualTo(StrategyAction.HOLD);
+        assertThat(result.get(0).getStrategyDecision().getSignal())
+                .isSameAs(soxlSignal);
 
         assertThat(result.get(1).getTicker()).isEqualTo("AAPL");
         assertThat(result.get(1).getStrategyDecision())
-                .extracting(StrategyDecision::getAction)
+                .extracting(decision -> decision.getAction())
                 .isEqualTo(StrategyAction.SELL);
+        assertThat(result.get(1).getStrategyDecision().getSignal())
+                .isSameAs(aaplSignal);
 
         verify(holdingService).getHoldings(1L, 10L);
         verify(strategyGuideService)
-                .getStrategyDecision(Market.US, "SOXL");
+                .getStrategySignal(Market.US, "SOXL");
         verify(strategyGuideService)
-                .getStrategyDecision(Market.US, "AAPL");
+                .getStrategySignal(Market.US, "AAPL");
     }
 }

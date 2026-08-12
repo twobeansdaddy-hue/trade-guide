@@ -4,12 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tradeguide.domain.market.MarketCandle;
-import com.tradeguide.domain.strategy.AssetProfile;
-import com.tradeguide.domain.strategy.InvestmentTrack;
-import com.tradeguide.domain.strategy.StrategyAction;
-import com.tradeguide.domain.strategy.StrategyDecision;
-import com.tradeguide.domain.strategy.StrategySignalEvent;
-import com.tradeguide.domain.strategy.StrategyTrend;
+import com.tradeguide.domain.strategy.*;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.service.indicator.SimpleMovingAverageCalculator;
 import org.junit.jupiter.api.Test;
@@ -55,15 +50,14 @@ class WeeklyMaCrossoverGoldenTest {
                     .as("fixture contains %s", expectation.date())
                     .isGreaterThanOrEqualTo(0);
 
-            StrategyDecision decision = strategy.decide(
+            StrategySignal signal = strategy.decide(
                     assetProfile,
                     candles.subList(0, candleIndex + 1)
             );
 
-            assertThat(decision.getTrend()).isEqualTo(expectation.trend());
-            assertThat(decision.getSignalEvent())
+            assertThat(signal.getTrend()).isEqualTo(expectation.trend());
+            assertThat(signal.getSignalEvent())
                     .isEqualTo(expectation.signalEvent());
-            assertThat(decision.getAction()).isEqualTo(expectation.action());
         }
     }
 
@@ -125,8 +119,7 @@ class WeeklyMaCrossoverGoldenTest {
     private record GoldenExpectation(
             LocalDate date,
             StrategyTrend trend,
-            StrategySignalEvent signalEvent,
-            StrategyAction action
+            StrategySignalEvent signalEvent
     ) {
     }
 }
