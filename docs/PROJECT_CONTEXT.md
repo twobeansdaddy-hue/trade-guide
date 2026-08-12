@@ -23,7 +23,7 @@
 - SOXL 같은 일일 레버리지 ETF는 일반 주식과 다른 위험 특성을 가지므로 별도 Track A로 관리한다.
 - 현재 구현된 첫 전략 후보는 완료된 주봉의 10주/40주 이동평균 교차다.
   - 전략은 현재 추세(`10주선`과 `40주선`의 상대 위치)와 교차 이벤트를 함께 판단한다.
-  - 종목 단독 가이드: 상승 추세면 `BUY`, 하락 추세면 `SELL`로 진입 또는 청산 방향을 나타낸다.
+  - 종목 단독 가이드: 시장 데이터만으로 계산한 `StrategySignal`을 반환한다. 행동을 결정하지 않는다.
   - 보유 종목 가이드: 상승 추세면 `HOLD`, 하락 추세면 `SELL`로 현재 보유 여부를 반영한다.
 - 주봉 신호는 미국 동부 시간 기준 금요일 장 마감 이후 확정된 데이터를 기준으로 하며, 다음 거래일 장 시작 전 가이드에 사용한다.
 - MACD, RSI, 분할 매도, ATR 손절 등은 향후 비교·조사 후보이다. 사용자 질문만으로 기본 전략에 추가하지 않는다.
@@ -47,7 +47,9 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `AssetProfile`은 `market + ticker`와 투자 트랙을 관리하는 시스템 전략 카탈로그다. 사용자별 목표 수익률 설정이 아니다.
 - `StrategySignal`은 시장 데이터만으로 계산한 추세 상태, 교차 이벤트, 기준 가격과 근거다.
 - `StrategyDecision`은 보유 여부 같은 사용자 맥락과 `StrategySignal`을 결합한 최종 행동과 근거다.
+- `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 있다. 현재 구현은 보유 종목에서 `HOLD`와 `SELL`만 결정한다. 미보유 종목의 `BUY`와 `WATCH` 규칙은 다음 작업이다.
 - `TradePlan`은 주문 수량, 주문 유형, 지정가, 손절가, 유효 기간을 포함할 미래의 주문 초안이며 아직 구현하지 않았다.
+- `TradeGuideCalculator`와 `/api/trade-guide/calculate`은 초기 학습용 단순 계산 API다. 사용자가 입력한 목표 수익률·최대 손실률을 계산하며, 현재 전략 엔진의 정책이나 결과에 연결하지 않는다.
 
 ## 현재 전략 엔진 상태
 
@@ -61,6 +63,12 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `referencePrice`는 전략 판단에 사용한 최신 완료 주봉 종가다. 주문 지정가나 목표가가 아니다.
 - Track A 골든 테스트는 실행 시세 제공자인 Twelve Data의 고정 주봉 스냅샷을 사용한다. Yahoo 기반 리서치와 교차 시점이 다르면 차이를 기록하고, 실행 기준을 임의로 섞지 않는다.
 
+### 현재 API 계약
+
+- `GET /api/markets/{market}/stocks/{ticker}/strategy-guide`는 `StrategySignalResponse`를 반환한다.
+- `GET /api/members/{memberId}/portfolios/{portfolioId}/strategy-guides`는 보유 종목별 `StrategyDecisionResponse`를 반환한다.
+- `referencePrice`는 최신 완료 주봉 종가이며, 주문 지정가·목표가·손절가는 아니다.
+
 ## 리서치와 정책 문서
 
 - 전략 후보와 근거 데이터: `research/data/strategies.json`
@@ -70,3 +78,9 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 ## 현재 구현 위치
 
 포트폴리오 노출 비중 API, Track A 골든 테스트, 주봉 데이터 신선도 가드, 시장 신호와 보유 종목 행동의 분리까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.
+
+## 현재 제한
+
+- 인증과 권한이 아직 없으므로 `memberId` 경로는 실제 로그인 사용자를 검증하지 않는다.
+- `/api/admin/**`은 로컬 학습용 공개 API다. 운영 배포 전 인증과 관리자 권한을 적용해야 한다.
+- 주봉 히스토리 캐시와 종목별 부분 실패 응답은 아직 없다.
