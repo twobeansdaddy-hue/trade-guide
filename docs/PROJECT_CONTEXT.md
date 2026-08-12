@@ -26,8 +26,10 @@
   - 종목 단독 가이드: 시장 데이터만으로 계산한 `StrategySignal`을 반환한다. 행동을 결정하지 않는다.
   - `StrategyDecisionMaker`가 보유 여부를 반영한 행동을 결정한다.
     - 보유 종목: 상승 추세면 `HOLD`, 하락 추세면 `SELL`
-    - 미보유 후보: 이번 완료 주봉에서 `CROSS_UP`이 발생했을 때만 `BUY`, 그 외에는 `WATCH`
-  - 미보유 후보의 규칙은 이미 상승한 추세를 뒤늦게 추격 매수하지 않기 위한 첫 안전장치다. 가격·수량·손절 기준은 아직 포함하지 않는다.
+    - 미보유 후보: 상승 추세이고 가장 최근 교차 이후 `0~4주`이면 `BUY`, 그 외에는 `WATCH`
+  - `CROSS_UP`은 교차 당주에만 발생하므로, 1~4주 지연 진입은 `trend`와 `weeksSinceCross`로 판단한다.
+  - 이 규칙은 SOXL/TQQQ 지연 진입 리서치의 `low-medium` 신뢰도 결론이며, Track A에만 적용한다. 5~8주 축소 진입과 `REDUCE` 의미 변경은 보류한다.
+  - 가격·수량·손절 기준은 아직 포함하지 않는다.
 - 주봉 신호는 미국 동부 시간 기준 금요일 장 마감 이후 확정된 데이터를 기준으로 하며, 다음 거래일 장 시작 전 가이드에 사용한다.
 - MACD, RSI, 분할 매도, ATR 손절 등은 향후 비교·조사 후보이다. 사용자 질문만으로 기본 전략에 추가하지 않는다.
 - 다음 전략 기능은 레버리지 종목의 노출 비중과 위험 경고이며, 이후 전략별 주문 초안과 백테스트로 확장한다.
@@ -50,7 +52,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `AssetProfile`은 `market + ticker`와 투자 트랙을 관리하는 시스템 전략 카탈로그다. 사용자별 목표 수익률 설정이 아니다.
 - `StrategySignal`은 시장 데이터만으로 계산한 추세 상태, 교차 이벤트, 기준 가격과 근거다.
 - `StrategyDecision`은 보유 여부 같은 사용자 맥락과 `StrategySignal`을 결합한 최종 행동과 근거다.
-- `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 있다. `StrategyDecisionMaker`는 보유 종목의 `HOLD`/`SELL`과 미보유 후보의 `BUY`/`WATCH`를 결정한다. `REDUCE`는 `TradePlan`과 부분 매도 정책이 생길 때까지 사용하지 않는다.
+- `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 있다. `StrategyDecisionMaker`는 보유 종목의 `HOLD`/`SELL`과 미보유 후보의 `BUY`/`WATCH`를 결정한다. 후보 `BUY`는 상승 추세의 교차 후 0~4주에만 허용한다. `REDUCE`는 `TradePlan`과 부분 매도 정책이 생길 때까지 사용하지 않는다.
 - `TradePlan`은 주문 수량, 주문 유형, 지정가, 손절가, 유효 기간을 포함할 미래의 주문 초안이며 아직 구현하지 않았다.
 - `TradeGuideCalculator`와 `/api/trade-guide/calculate`은 초기 학습용 단순 계산 API다. 사용자가 입력한 목표 수익률·최대 손실률을 계산하며, 현재 전략 엔진의 정책이나 결과에 연결하지 않는다.
 

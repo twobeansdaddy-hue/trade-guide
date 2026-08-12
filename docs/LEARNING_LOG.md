@@ -54,7 +54,8 @@ git pull --ff-only
 - 시장 데이터의 `StrategySignal`과 보유 종목 맥락의 `StrategyDecision` 분리
 - 가장 최근 이동평균 교차 이후 경과 주(`weeksSinceCross`) 계산
 - `StrategyDecisionMaker`로 행동 판단 책임 분리
-- 보유 종목은 `HOLD`/`SELL`, 미보유 후보는 이번 주 `CROSS_UP`일 때만 `BUY`, 그 외에는 `WATCH`
+- 보유 종목은 `HOLD`/`SELL`, 미보유 후보는 상승 추세의 교차 후 0~4주에만 `BUY`, 그 외에는 `WATCH`
+- Twelve Data와 Yahoo 조정 종가의 백테스트 차이를 감사 기록으로 남기고, Track A 후보 `BUY` 기간을 0~4주로 재검토·채택
 - 초기 학습용 `TradeGuideCalculator`는 현재 전략 엔진과 분리된 단순 계산 예제로 유지
 - 보유 종목 여부를 반영한 포트폴리오 전략 가이드
 - 포트폴리오 보유 종목별 평가금액 노출 비중 계산 및 조회 API
@@ -64,7 +65,7 @@ git pull --ff-only
 
 ### 진행 중
 
-`StrategyDecisionMaker`의 미보유 후보 규칙은 구현했지만, 후보 종목을 조회하는 API와 후보 유니버스는 아직 없다. 현재 전략 API는 시장 데이터 단독 가이드와 보유 종목 가이드를 구분한다.
+`StrategyDecisionMaker`의 미보유 후보 규칙은 0~4주 진입 창으로 갱신했다. 후보 종목을 조회하는 API와 후보 유니버스는 아직 없다. 현재 전략 API는 시장 데이터 단독 가이드와 보유 종목 가이드를 구분한다.
 
 ### 다음 작업
 
