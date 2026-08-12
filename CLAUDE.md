@@ -1,41 +1,30 @@
-# Trade Guide 개발 브랜치 협업 지침
+# Trade Guide Claude Code 리서치 협업 지침
 
-이 저장소는 Java 21 / Spring Boot / JPA / Gradle 기반의 미국 주식 투자 가이드 학습 프로젝트다.
-자동 주문 서비스가 아니라, 사용자가 직접 검토할 수 있는 시장 신호와 포트폴리오 가이드를 제공한다.
+Claude Code는 이 저장소에서 투자 전략 **리서치 전용**으로 사용한다.
+애플리케이션 코드 구현과 통합은 Codex와 사용자가 담당한다.
 
-## 작업 시작
+## 시작 전 확인
 
-다음 파일과 상태를 먼저 확인한다.
+다음 파일을 읽고, 현재 브랜치와 `git status`를 확인한다.
 
 1. `AGENTS.md`
 2. `docs/PROJECT_CONTEXT.md`
 3. `docs/LEARNING_LOG.md`
 4. `research/STRATEGY_ENGINE_POLICY.md`
-5. 현재 브랜치와 `git status`
 
-## 학습 방식
+## 절대 규칙
 
-- 사용자는 직접 핵심 기능을 구현한다. 한 번에 큰 리팩터링이나 완성 코드를 제시하지 않는다.
-- 구현 전에는 관련 소스와 테스트를 읽어 현재 타입, enum 값, API 계약을 확인한다.
-- 사용자가 `완료`라고 말하면 변경 내용과 테스트 결과를 확인한 뒤 다음 단계로 진행한다.
-- 파일을 만들거나 수정하도록 안내할 때는 반드시 정확한 파일 경로와 역할을 함께 제시한다.
+1. `research/**` 아래만 수정한다. `src/`, `docs/`, 설정 파일, Git 작업 흐름은 읽기 전용이다.
+2. `Edit` 또는 `Write`가 훅에 의해 막히면 우회하지 말고 즉시 사용자에게 경로와 오류를 보고한다.
+3. 커밋, 푸시, 브랜치 병합, 의존성 설치는 하지 않는다.
+4. 리서치 결과에는 데이터 제공자, 주기, 가격 조정 방식, 기준일, confidence, caveats를 남긴다.
+5. 기존 리서치 수치의 오류나 재현 불가를 발견하면 원본 수치를 조용히 바꾸지 않는다. 감사 기록을 추가하고 영향 범위를 설명한다.
 
-## 현재 전략 계약
+## 산출물과 인계
 
-- `StrategySignal`: 시장 데이터만으로 계산한 추세, 교차 이벤트, 기준 가격, 데이터 기준일, 교차 후 경과 주
-- `StrategyDecision`: 보유 여부 같은 사용자 맥락과 `StrategySignal`을 결합한 최종 행동
-- 단독 종목 전략 API는 `StrategySignal`을 반환한다.
-- 포트폴리오 전략 API는 보유 종목에 대해 `StrategyDecision`을 반환한다.
-- `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 이미 있다.
-- `StrategyDecisionMaker`가 행동 규칙을 맡는다. 보유 종목은 상승 추세에서 `HOLD`, 하락 추세에서 `SELL`이며, Track A 미보유 후보는 상승 추세이고 가장 최근 교차 후 0~4주일 때만 `BUY`, 그 외에는 `WATCH`다. `CROSS_UP`은 교차 당주에만 성립하므로 1~4주 지연 진입 조건에 사용하지 않는다.
-- `/api/trade-guide/calculate`은 초기 학습용 계산 API다. 사용자가 입력한 수익률·손실률을 계산할 뿐 현재 전략 엔진과 연결되지 않는다.
+- 리포트: `research/reports/<slug>.md`
+- 구조화 데이터: 기존 스키마를 지키는 `research/data/*.json`
+- 감사·재현 기록: `research/notes/`, `research/data/tools/`, `research/data/cache/`
+- 정책 초안은 리포트에 제안할 수 있다. `STRATEGY_ENGINE_POLICY.md`의 실제 채택·구현은 사용자와 Codex의 검토 뒤에 진행한다.
 
-## 리서치 경계
-
-- `research/`는 별도 리서치 워크플로우의 소유 영역이다. 개발 작업 중 수정하지 않는다.
-- 리서치 문서의 구현 현황 설명이 현재 코드보다 오래됐을 수 있다. 구현 계약은 현재 소스와 `docs/PROJECT_CONTEXT.md`를 우선한다.
-
-## 보안
-
-- API 키와 토큰은 환경 변수로만 주입한다.
-- 인증 전 `/api/admin/**`과 `memberId` 기반 경로는 로컬 학습용이다. 공개 환경에 그대로 배포하지 않는다.
+작업이 끝나면 변경 파일, 핵심 결론, 한계, 구현에 필요한 결정 사항만 짧게 보고하고 다음 주제로 자동 진행하지 않는다.

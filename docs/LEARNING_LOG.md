@@ -33,12 +33,13 @@ git push
 
 ```bash
 git status
-git switch feature/portfolio-foundation
+git switch feature/candidate-entry-window
 git pull --ff-only
 ./gradlew test
 ```
 
 로컬 변경 사항이 남아 있으면 먼저 커밋하거나 처리한 뒤 `pull`한다.
+기능 브랜치가 `main`에 병합된 뒤에는 최신 `main`에서 새 `feature/...` 브랜치를 만든다.
 
 ## 현재 구현 상태
 
@@ -67,6 +68,8 @@ git pull --ff-only
 
 `StrategyDecisionMaker`의 미보유 후보 규칙은 0~4주 진입 창으로 갱신했다. 후보 종목을 조회하는 API와 후보 유니버스는 아직 없다. 현재 전략 API는 시장 데이터 단독 가이드와 보유 종목 가이드를 구분한다.
 
+현재 개발 브랜치는 `feature/candidate-entry-window`이다. Claude Code는 별도 리서치 브랜치·동일 worktree에서 `research/**`만 수정하고, Codex와 사용자가 개발 브랜치에서 정책을 채택·구현한다.
+
 ### 다음 작업
 
 1. 미보유 후보 조회 API와 후보 유니버스의 범위를 설계한다.
@@ -80,6 +83,7 @@ git pull --ff-only
 trade-guide 프로젝트 학습을 이어서 진행한다.
 저장소의 AGENTS.md, docs/PROJECT_CONTEXT.md, docs/LEARNING_LOG.md를 먼저 읽고 현재 상태를 파악한다.
 현재 브랜치와 git status를 확인한 뒤, 미보유 후보 조회 API와 후보 유니버스의 범위를 설계부터 이어서 진행한다.
+Claude 리서치가 필요하면 SETUP.md의 동일 worktree 원칙을 따르고, 리서치 결과를 정책·테스트·구현으로 옮기기 전 명시적으로 검토한다.
 다음 구현을 제안하기 전에 관련 enum, 도메인 객체, 서비스와 테스트를 직접 읽어 현재 계약을 확인한다.
 나는 직접 구현하므로 한 단계씩 구현 가이드를 제공하고, 내가 완료했다고 말한 뒤에 다음 단계를 안내한다.
 ```

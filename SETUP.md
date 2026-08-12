@@ -1,58 +1,32 @@
-# Orca에 리서치 전용 에이전트 적용하기
+# Claude 리서치 작업 환경
 
-## 왜 이렇게 구성했는가
+## 역할 분리
 
-- Orca는 에이전트마다 **별도 git worktree(= 별도 브랜치의 체크아웃)** 를 만들어 돌립니다.
-  그래서 "리서치 전용 브랜치"를 하나 파서 그 워크트리에만 이 구성을 넣으면,
-  메인 개발 브랜치(코드/ChatGPT 작업물)는 전혀 건드리지 않습니다.
-- CLAUDE.md 한 장으로 "코드 수정 금지"라고 적어두는 건 **가이드라인일 뿐, 강제는 아닙니다.**
-  그래서 `.claude/settings.json` + `.claude/hooks/block-non-research-writes.py` 조합으로
-  실제로 `research/` 바깥에 쓰기 시도가 들어오면 도구 호출 자체를 차단하도록 했습니다.
-  (Claude Code의 `permissions.deny` 규칙만으로는 우회되는 사례가 보고된 적이 있어,
-  실제 강제는 PreToolUse 훅이 담당하고 settings.json은 1차 안내 역할입니다.)
+- **Codex와 사용자**: Java/Spring 구현, 테스트, 문서 통합, 커밋·푸시·PR
+- **Claude Code**: 투자 전략 리서치. `research/**` 아래 결과만 작성
 
-## 단계
+이 구분은 학습용 구현을 보호하고, 리서치의 근거·한계를 코드 변경과 분리하기 위한 것이다.
 
-1. **로컬 저장소에서 리서치 전용 브랜치 생성**
-   ```bash
-   cd /Users/beansdaaddy/Desktop/_Study/Java/trade-guide
-   git checkout -b research/strategy-survey
-   ```
+## Claude 작업 시작
 
-2. **이 압축 파일의 내용을 그 브랜치 루트에 풀기**
-   (`CLAUDE.md`, `research/`, `.claude/` 가 프로젝트 루트와 같은 위치에 오도록)
+1. 작업 트리가 깨끗한지 확인한다.
+2. 리서치 전용 브랜치를 최신 `main`에서 만든다. 예: `research/entry-delay-review`
+3. Claude Code 세션은 **그 리서치 브랜치가 체크아웃된 동일한 폴더**에서 시작한다.
+4. Claude에게 `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT_CONTEXT.md`, `docs/LEARNING_LOG.md`, `research/STRATEGY_ENGINE_POLICY.md`를 먼저 읽도록 요청한다.
 
-3. 커밋
-   ```bash
-   git add CLAUDE.md research .claude
-   git commit -m "chore: research-only agent workflow"
-   ```
+중요: Claude 세션이 A 폴더에서 실행 중일 때 B 폴더의 worktree에 쓰도록 요청하지 않는다. 훅의 경로 검증과 실제 작업 폴더가 달라져 정상적인 `research/**` 수정도 차단될 수 있다.
 
-4. **Orca에서 새 워크트리 생성**
-   - Orca 앱에서 `trade-guide` 저장소를 열고, 방금 만든 `research/strategy-survey` 브랜치로
-     새 워크트리를 만듭니다.
-   - 에이전트로는 **Claude Code**를 추천합니다 — 이유:
-     - 프로젝트 루트의 `CLAUDE.md`를 세션 시작 시 자동으로 읽어 위 규칙을 그대로 따릅니다.
-     - `.claude/settings.json`의 훅/권한 설정을 그대로 인식합니다.
-     - 리서치 특성상 웹 검색이 많이 필요한데, 웹 검색 도구 연동이 잘 되어 있습니다.
-   - 다른 CLI 에이전트(Codex 등)를 쓰고 싶으시면, 그 에이전트가 이 훅/설정 방식을
-     지원하는지 먼저 확인하시는 게 좋습니다 (에이전트마다 설정 파일 형식이 다릅니다).
+## 리서치 종료와 개발 반영
 
-5. **첫 프롬프트로 이렇게 시작하세요** (에이전트 터미널에 입력)
-   ```
-   CLAUDE.md와 research/TASKS.md를 읽고, 가장 우선순위 높은 미완료 항목 1개만
-   조사해서 research/reports/에 리포트를 쓰고 research/data/strategies.json에
-   항목을 추가해줘. 끝나면 결과를 요약해서 보고하고 다음 항목 진행 여부를 물어봐줘.
-   ```
+1. Claude는 변경 파일과 결론·한계를 보고한다.
+2. 사용자가 diff를 검토하고 리서치 커밋과 PR을 만든다.
+3. 리서치 PR을 `main`에 병합한다.
+4. Codex는 최신 `main`에서 새 `feature/...` 브랜치를 만들고, 채택된 정책만 테스트와 구현에 반영한다.
 
-6. 리포트/데이터가 쌓이면 **사용자가 직접 diff를 리뷰하고 커밋**하세요.
-   (이 구성에서는 git commit/push도 훅과 별개로 deny 규칙에 걸려 있어 에이전트가
-   직접 커밋하지 않습니다 — 실수로 원치 않는 변경이 커밋되는 걸 막기 위함입니다.)
+리서치 결과가 곧바로 실행 전략은 아니다. `research/STRATEGY_ENGINE_POLICY.md`의 채택 여부와 구현 테스트를 거친 항목만 엔진에 반영한다.
 
-## 나중에 코드 수정 에이전트로 넘어갈 때
+## 오류 대응
 
-지금은 "조사 전용"만 요청하셨으니 이 구성은 코드를 전혀 건드리지 않습니다.
-이후 리서치 결과(`research/data/strategies.json`)를 실제 앱 로직에 반영하는
-개발 에이전트가 필요해지면, 그건 메인 개발 브랜치의 별도 워크트리 + 별도
-`CLAUDE.md`(코드 수정 허용)로 분리해서 진행하는 걸 권장드립니다. 필요하시면
-그 워크플로우도 이어서 설계해드릴게요.
+- Claude 훅이 정상적인 `research/**` 수정을 막으면 Bash나 다른 도구로 우회하지 않는다.
+- Claude는 오류 메시지와 대상 경로를 사용자에게 보고한다.
+- Codex가 훅·문서·브랜치 구성을 점검하고 수정한 뒤 새 Claude 세션에서 다시 시도한다.

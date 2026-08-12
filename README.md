@@ -97,7 +97,9 @@ git push
 
 ```bash
 git status
-git switch feature/portfolio-foundation
+git switch main
+git pull --ff-only
+git switch feature/candidate-entry-window
 git pull --ff-only
 ./gradlew test
 ```
@@ -353,7 +355,8 @@ Gradle 캐시 때문에 변경한 테스트가 실행되지 않은 것처럼 보
 
 ```text
 main
-feature/portfolio-foundation
+feature/기능명
+research/조사주제
 ```
 
 커밋 메시지 예시:
