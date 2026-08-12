@@ -1,0 +1,27 @@
+{
+  "provider": "Twelve Data",
+  "symbol": "SOXL",
+  "interval": "1week",
+  "startDate": "2021-08-02",
+  "endDate": "2026-08-04",
+  "downloadedAt": "2026-08-11",
+  "order": "asc",
+  "adjustment": "splits",
+  "format": "CSV",
+  "delimiter": ";",
+  "weeklyDatetimeMeaning": "Exchange-local date when the weekly bar opened.",
+  "researchComparison": {
+    "source": "research/data/backtests.json",
+    "matchingCrossDates": [
+      "2023-02-27",
+      "2023-10-30",
+      "2023-12-04",
+      "2024-09-09"
+    ],
+    "differentCrossDate": {
+      "research": "2025-07-28",
+      "twelveData": "2025-08-04",
+      "reason": "Data-provider or price-adjustment difference; this fixture follows the production provider."
+    }
+  }
+}

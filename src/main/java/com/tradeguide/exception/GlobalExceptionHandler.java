@@ -37,4 +37,46 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(MarketDataUnavailableException.class)
+    public ResponseEntity<ErrorResponse> handleMarketDataUnavailableException(
+            MarketDataUnavailableException exception
+    ) {
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_GATEWAY)
+                .body(response);
+    }
+
+    @ExceptionHandler(MarketDataRateLimitExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMarketDataRateLimitExceededException(
+            MarketDataRateLimitExceededException exception
+    ) {
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(response);
+    }
+
+    @ExceptionHandler(AssetProfileNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAssetProfileNotFoundException(
+            AssetProfileNotFoundException exception) {
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(response);
+    }
+
+    @ExceptionHandler(AssetProfileAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleAssetProfileAlreadyExistsException(
+            AssetProfileAlreadyExistsException exception) {
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(response);
+    }
+
 }

@@ -1,0 +1,67 @@
+[
+  {
+    "id": "trackb-screen-2026-08-05",
+    "snapshot_date": "2026-08-05",
+    "universe": "S&P 500",
+    "screen_criteria": {
+      "valuation": "PEG < 1 (Peter Lynch 기준 저평가 근사치)",
+      "technical": "현재가가 50일 이동평균선 위 (단기 상승 추세)",
+      "raw_query_url": "https://finviz.com/screener.ashx?v=121&f=idx_sp500,fa_peg_u1,ta_sma50_pa"
+    },
+    "candidates": [
+      { "ticker": "ABBV", "sector": "Healthcare", "peg": 0.68, "pe": 68.93, "price": 243.80, "notes": "Fwd P/E 14.87" },
+      { "ticker": "ADBE", "sector": "Technology", "peg": 0.65, "pe": 14.73, "price": 257.49, "notes": "Fwd P/E 9.36" },
+      { "ticker": "AIG", "sector": "Financial", "peg": 0.88, "pe": 14.01, "price": 79.32, "notes": "Fwd P/E 8.95" },
+      { "ticker": "AMD", "sector": "Technology", "peg": 0.56, "pe": 170.20, "price": 518.58, "notes": "Fwd P/E 37.38, EPS 성장률 매우 높음" },
+      { "ticker": "AMP", "sector": "Financial", "peg": 0.79, "pe": 13.35, "price": 553.58, "notes": "Fwd P/E 10.74" },
+      { "ticker": "APH", "sector": "Technology", "peg": 0.90, "pe": 42.89, "price": 171.33, "notes": "Fwd P/E 26.64" },
+      { "ticker": "APO", "sector": "Financial", "peg": 0.88, "pe": 87.59, "price": 133.20, "notes": "Fwd P/E 12.50" },
+      { "ticker": "ARES", "sector": "Financial", "peg": 0.91, "pe": 66.16, "price": 142.91, "notes": "Fwd P/E 19.64" },
+      { "ticker": "AVGO", "sector": "Technology", "peg": 0.38, "pe": 69.61, "price": 418.16, "notes": "Fwd P/E 21.39, PEG 최저 수준" },
+      { "ticker": "BA", "sector": "Industrials", "peg": 0.66, "pe": 108.01, "price": 237.16, "notes": "EPS This Y -182.97%(적자권), 해석 주의" },
+      { "ticker": "BAC", "sector": "Financial", "peg": 0.77, "pe": 14.48, "price": 62.90, "notes": "Fwd P/E 11.95" },
+      { "ticker": "BEN", "sector": "Financial", "peg": 0.70, "pe": 24.39, "price": 35.77, "notes": "Fwd P/E 11.33" },
+      { "ticker": "BKNG", "sector": "Consumer Cyclical", "peg": 0.97, "pe": 25.54, "price": 194.27, "notes": "Fwd P/E 15.76" },
+      { "ticker": "C", "sector": "Financial", "peg": 0.38, "pe": 14.77, "price": 136.87, "notes": "Fwd P/E 10.70" },
+      { "ticker": "CEG", "sector": "Utilities", "peg": 0.92, "pe": 23.21, "price": 267.25, "notes": "Fwd P/E 20.16" },
+      { "ticker": "CFG", "sector": "Financial", "peg": 0.46, "pe": 16.02, "price": 73.68, "notes": "Fwd P/E 11.34" },
+      { "ticker": "CHTR", "sector": "Communication Services", "peg": 0.27, "pe": 3.98, "price": 153.07, "notes": "PEG 매우 낮음, P/E도 극히 낮음 — 개별 확인 필요" },
+      { "ticker": "CNC", "sector": "Healthcare", "peg": 0.27, "pe": null, "price": 64.07, "notes": "TTM P/E 데이터 없음(적자 또는 특이치), Fwd P/E 12.33" },
+      { "ticker": "COF", "sector": "Financial", "peg": 0.76, "pe": 78.23, "price": 221.91, "notes": "Fwd P/E 9.29" },
+      { "ticker": "COP", "sector": "Energy", "peg": 0.91, "pe": 20.05, "price": 117.94, "notes": "Fwd P/E 13.55" },
+      { "ticker": "CPAY", "sector": "Financial", "peg": 0.70, "pe": 23.70, "price": 396.52, "notes": "Fwd P/E 12.95" },
+      { "ticker": "CRM", "sector": "Technology", "peg": 0.96, "pe": 22.11, "price": 190.99, "notes": "Fwd P/E 12.22" },
+      { "ticker": "CTSH", "sector": "Technology", "peg": 0.92, "pe": 12.05, "price": 56.13, "notes": "Fwd P/E 8.90" },
+      { "ticker": "CVS", "sector": "Healthcare", "peg": 0.97, "pe": 45.85, "price": 104.42, "notes": "Fwd P/E 12.38" },
+      { "ticker": "CVX", "sector": "Energy", "peg": 0.72, "pe": 18.26, "price": 190.40, "notes": "Fwd P/E 14.86" },
+      { "ticker": "DAL", "sector": "Industrials", "peg": 0.50, "pe": 15.41, "price": 92.77, "notes": "Fwd P/E 10.48" },
+      { "ticker": "DASH", "sector": "Technology", "peg": 0.91, "pe": 96.39, "price": 202.37, "notes": "Fwd P/E 45.14, 고성장 고밸류" },
+      { "ticker": "DD", "sector": "Basic Materials", "peg": 0.93, "pe": null, "price": 142.93, "notes": "TTM P/E 데이터 없음, Fwd P/E 18.07" },
+      { "ticker": "DELL", "sector": "Technology", "peg": 0.58, "pe": 37.13, "price": 467.27, "notes": "Fwd P/E 20.90" },
+      { "ticker": "DVA", "sector": "Healthcare", "peg": 0.62, "pe": 21.88, "price": 227.99, "notes": "Fwd P/E 13.15" },
+      { "ticker": "DVN", "sector": "Energy", "peg": 0.52, "pe": 12.22, "price": 44.05, "notes": "Fwd P/E 8.27" },
+      { "ticker": "EG", "sector": "Financial", "peg": 0.40, "pe": 7.81, "price": 369.21, "notes": "Fwd P/E 6.13, PEG/PE 모두 매우 낮음" },
+      { "ticker": "EL", "sector": "Consumer Defensive", "peg": 0.75, "pe": null, "price": 86.97, "notes": "TTM P/E 데이터 없음, Fwd P/E 27.29" },
+      { "ticker": "EOG", "sector": "Energy", "peg": 0.69, "pe": 14.11, "price": 143.52, "notes": "Fwd P/E 9.90" },
+      { "ticker": "EQT", "sector": "Energy", "peg": 0.65, "pe": 12.24, "price": 52.77, "notes": "Fwd P/E 13.14" },
+      { "ticker": "EXE", "sector": "Energy", "peg": 0.58, "pe": 8.03, "price": 93.07, "notes": "Fwd P/E 10.63" },
+      { "ticker": "EXPE", "sector": "Consumer Cyclical", "peg": 0.69, "pe": 27.48, "price": 312.06, "notes": "Fwd P/E 13.55" },
+      { "ticker": "FCX", "sector": "Basic Materials", "peg": 0.48, "pe": 33.14, "price": 67.30, "notes": "Fwd P/E 16.95" },
+      { "ticker": "FIS", "sector": "Technology", "peg": 0.70, "pe": 8.56, "price": 44.26, "notes": "Fwd P/E 6.51" },
+      { "ticker": "FITB", "sector": "Financial", "peg": 0.76, "pe": 19.66, "price": 57.77, "notes": "Fwd P/E 11.71" }
+    ],
+    "num_candidates": 40,
+    "methodology_note": "필터 조건(PEG<1, 종가>50일 이동평균) 전체 매칭 결과는 S&P500 내 91개 종목이었으며, 이 스냅샷은 그중 티커 알파벳순 상위 40개(A~F)를 기록한 것이다. 나머지 51개는 이번 스냅샷에 포함되지 않았다 — 다음 정기 스크리닝에서 전체 목록 캡처 방식을 개선할 예정. PEG<1은 밸류에이션 1차 필터일 뿐 자동 매수 신호가 아니며, 개별 종목의 실적 신뢰도(예: TTM P/E 데이터 없음 표시된 CNC/DD/EL)는 별도 확인이 필요하다.",
+    "forward_tracking": {
+      "check_at": "2026-09-02",
+      "outcome_summary": null
+    },
+    "report_path": "research/reports/two-track-strategy-framework.md",
+    "sources": [
+      { "title": "Finviz Stock Screener - S&P500, PEG<1, Price>50D SMA", "url": "https://finviz.com/screener.ashx?v=121&f=idx_sp500,fa_peg_u1,ta_sma50_pa", "accessed": "2026-08-05" }
+    ],
+    "confidence": "low",
+    "caveats": "이 스크리닝은 시점 스냅샷(2026-08-05)일 뿐이며 매수 추천이 아니다. PEG<1 필터는 컨센서스 EPS 성장률 추정치에 의존하는데 이 추정치 자체의 정확도가 검증되지 않았다(기존 리서치 analyst-consensus-target-price 참고 — 애널리스트 추정에는 구조적 낙관 편향이 있을 수 있음). 50일선 위라는 기술적 조건은 Track B 백테스트(trackb-ma-timing-regular-stocks)에서 단독으로는 단순보유 대비 우위가 확인되지 않은 신호이므로 참고용으로만 취급해야 한다.",
+    "last_updated": "2026-08-05"
+  }
+]

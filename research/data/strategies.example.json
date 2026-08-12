@@ -1,0 +1,25 @@
+[
+  {
+    "id": "ma-golden-dead-cross",
+    "name": "이동평균 골든크로스/데드크로스 타이밍",
+    "category": "timing",
+    "summary": "단기 이동평균선이 장기 이동평균선을 상향/하향 돌파하는 시점을 매수/매도 신호로 사용하는 기술적 타이밍 전략. 추세 추종에는 유효하나 횡보장에서는 거짓 신호(whipsaw)가 잦다.",
+    "target_price_method": null,
+    "buy_sell_signals": {
+      "buy": ["50일선이 200일선을 상향 돌파 (골든크로스)"],
+      "sell": ["50일선이 200일선을 하향 돌파 (데드크로스)"]
+    },
+    "market_regime_fit": ["추세가 뚜렷한 강세장/약세장"],
+    "risk_notes": "횡보장에서는 신호가 자주 발생해 거래비용만 늘어날 수 있음. 다른 지표(거래량, RSI 등)와 병행 권장.",
+    "report_path": "research/reports/ma-golden-dead-cross.md",
+    "sources": [
+      {
+        "title": "예시 출처 — 실제 조사 시 대체",
+        "url": "https://example.com",
+        "accessed": "2026-08-05"
+      }
+    ],
+    "confidence": "medium",
+    "last_updated": "2026-08-05"
+  }
+]
