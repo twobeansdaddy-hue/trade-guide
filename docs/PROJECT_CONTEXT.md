@@ -24,7 +24,10 @@
 - 현재 구현된 첫 전략 후보는 완료된 주봉의 10주/40주 이동평균 교차다.
   - 전략은 현재 추세(`10주선`과 `40주선`의 상대 위치)와 교차 이벤트를 함께 판단한다.
   - 종목 단독 가이드: 시장 데이터만으로 계산한 `StrategySignal`을 반환한다. 행동을 결정하지 않는다.
-  - 보유 종목 가이드: 상승 추세면 `HOLD`, 하락 추세면 `SELL`로 현재 보유 여부를 반영한다.
+  - `StrategyDecisionMaker`가 보유 여부를 반영한 행동을 결정한다.
+    - 보유 종목: 상승 추세면 `HOLD`, 하락 추세면 `SELL`
+    - 미보유 후보: 이번 완료 주봉에서 `CROSS_UP`이 발생했을 때만 `BUY`, 그 외에는 `WATCH`
+  - 미보유 후보의 규칙은 이미 상승한 추세를 뒤늦게 추격 매수하지 않기 위한 첫 안전장치다. 가격·수량·손절 기준은 아직 포함하지 않는다.
 - 주봉 신호는 미국 동부 시간 기준 금요일 장 마감 이후 확정된 데이터를 기준으로 하며, 다음 거래일 장 시작 전 가이드에 사용한다.
 - MACD, RSI, 분할 매도, ATR 손절 등은 향후 비교·조사 후보이다. 사용자 질문만으로 기본 전략에 추가하지 않는다.
 - 다음 전략 기능은 레버리지 종목의 노출 비중과 위험 경고이며, 이후 전략별 주문 초안과 백테스트로 확장한다.
@@ -47,7 +50,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `AssetProfile`은 `market + ticker`와 투자 트랙을 관리하는 시스템 전략 카탈로그다. 사용자별 목표 수익률 설정이 아니다.
 - `StrategySignal`은 시장 데이터만으로 계산한 추세 상태, 교차 이벤트, 기준 가격과 근거다.
 - `StrategyDecision`은 보유 여부 같은 사용자 맥락과 `StrategySignal`을 결합한 최종 행동과 근거다.
-- `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 있다. 현재 구현은 보유 종목에서 `HOLD`와 `SELL`만 결정한다. 미보유 종목의 `BUY`와 `WATCH` 규칙은 다음 작업이다.
+- `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 있다. `StrategyDecisionMaker`는 보유 종목의 `HOLD`/`SELL`과 미보유 후보의 `BUY`/`WATCH`를 결정한다. `REDUCE`는 `TradePlan`과 부분 매도 정책이 생길 때까지 사용하지 않는다.
 - `TradePlan`은 주문 수량, 주문 유형, 지정가, 손절가, 유효 기간을 포함할 미래의 주문 초안이며 아직 구현하지 않았다.
 - `TradeGuideCalculator`와 `/api/trade-guide/calculate`은 초기 학습용 단순 계산 API다. 사용자가 입력한 목표 수익률·최대 손실률을 계산하며, 현재 전략 엔진의 정책이나 결과에 연결하지 않는다.
 
@@ -77,7 +80,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 
 ## 현재 구현 위치
 
-포트폴리오 노출 비중 API, Track A 골든 테스트, 주봉 데이터 신선도 가드, 시장 신호와 보유 종목 행동의 분리까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.
+포트폴리오 노출 비중 API, Track A 골든 테스트, 주봉 데이터 신선도 가드, 시장 신호와 행동의 분리, `StrategyDecisionMaker` 기반 행동 규칙까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.
 
 ## 현재 제한
 

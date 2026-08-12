@@ -26,7 +26,8 @@
 - `StrategyDecision`: 보유 여부 같은 사용자 맥락과 `StrategySignal`을 결합한 최종 행동
 - 단독 종목 전략 API는 `StrategySignal`을 반환한다.
 - 포트폴리오 전략 API는 보유 종목에 대해 `StrategyDecision`을 반환한다.
-- `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 이미 있다. 현재 보유 종목 경로에서는 `HOLD`, `SELL`만 사용한다.
+- `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 이미 있다.
+- `StrategyDecisionMaker`가 행동 규칙을 맡는다. 보유 종목은 상승 추세에서 `HOLD`, 하락 추세에서 `SELL`이며, 미보유 후보는 이번 완료 주봉의 `CROSS_UP`일 때만 `BUY`, 그 외에는 `WATCH`다.
 - `/api/trade-guide/calculate`은 초기 학습용 계산 API다. 사용자가 입력한 수익률·손실률을 계산할 뿐 현재 전략 엔진과 연결되지 않는다.
 
 ## 리서치 경계
