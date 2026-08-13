@@ -15,6 +15,7 @@ import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
 import com.tradeguide.service.risk.PortfolioExposureService;
+import com.tradeguide.service.strategy.PortfolioCandidateStrategyGuideService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,19 +31,22 @@ public class PortfolioController {
     private final PortfolioValuationService portfolioValuationService;
     private final PortfolioStrategyGuideService portfolioStrategyGuideService;
     private final PortfolioExposureService portfolioExposureService;
+    private final PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
 
     public PortfolioController(
             PortfolioService portfolioService,
             HoldingService holdingService,
             PortfolioValuationService portfolioValuationService,
             PortfolioStrategyGuideService portfolioStrategyGuideService,
-            PortfolioExposureService portfolioExposureService
+            PortfolioExposureService portfolioExposureService,
+            PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService
     ) {
         this.portfolioService = portfolioService;
         this.holdingService = holdingService;
         this.portfolioValuationService = portfolioValuationService;
         this.portfolioStrategyGuideService = portfolioStrategyGuideService;
         this.portfolioExposureService = portfolioExposureService;
+        this.portfolioCandidateStrategyGuideService = portfolioCandidateStrategyGuideService;
     }
 
     @PostMapping
@@ -106,6 +110,18 @@ public class PortfolioController {
         return portfolioExposureService.getExposures(memberId, portfolioId)
                 .stream()
                 .map(HoldingExposureResponse::from)
+                .toList();
+    }
+
+    @GetMapping("/{portfolioId}/candidate-strategy-guides")
+    public List<AssetStrategyGuideResponse> getCandidateStrategyGuides(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId
+    ) {
+        return portfolioCandidateStrategyGuideService
+                .getCandidateStrategyGuides(memberId, portfolioId)
+                .stream()
+                .map(AssetStrategyGuideResponse::from)
                 .toList();
     }
 }

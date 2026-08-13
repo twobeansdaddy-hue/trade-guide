@@ -9,6 +9,7 @@ import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.domain.risk.HoldingExposure;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
+import com.tradeguide.service.strategy.PortfolioCandidateStrategyGuideService;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
 import com.tradeguide.service.risk.PortfolioExposureService;
@@ -56,6 +57,8 @@ class PortfolioControllerTest {
     private PortfolioStrategyGuideService portfolioStrategyGuideService;
     @MockitoBean
     private PortfolioExposureService portfolioExposureService;
+    @MockitoBean
+    private PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
 
     @Test
     void createsPortfolio() throws Exception {
@@ -267,6 +270,52 @@ class PortfolioControllerTest {
 
         verify(portfolioStrategyGuideService)
                 .getPortfolioStrategyGuides(10L, 100L);
+    }
+
+    @Test
+    void getsCandidateStrategyGuides() throws Exception {
+        StrategySignal signal = new StrategySignal(
+                new BigDecimal("90"),
+                "테스트 시장 신호",
+                new StrategyMetadata(
+                        "test-strategy",
+                        "test-v1",
+                        LocalDate.of(2026, 8, 10)
+                ),
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE,
+                2
+        );
+
+        StrategyDecision decision = new StrategyDecision(
+                StrategyAction.BUY,
+                "테스트 후보 판단",
+                signal
+        );
+
+        AssetStrategyGuide strategyGuide = new AssetStrategyGuide(
+                Market.US,
+                "TQQQ",
+                decision
+        );
+
+        when(portfolioCandidateStrategyGuideService
+                .getCandidateStrategyGuides(10L, 100L))
+                .thenReturn(List.of(strategyGuide));
+
+        mockMvc.perform(
+                        get("/api/members/10/portfolios/100/candidate-strategy-guides")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].market").value("US"))
+                .andExpect(jsonPath("$[0].ticker").value("TQQQ"))
+                .andExpect(jsonPath("$[0].decision.action").value("BUY"))
+                .andExpect(jsonPath("$[0].decision.referencePrice").value(90))
+                .andExpect(jsonPath("$[0].decision.trend").value("ABOVE_LONG_AVERAGE"))
+                .andExpect(jsonPath("$[0].decision.weeksSinceCross").value(2));
+
+        verify(portfolioCandidateStrategyGuideService)
+                .getCandidateStrategyGuides(10L, 100L);
     }
 
     @Test

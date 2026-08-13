@@ -51,6 +51,7 @@
 - 종목·포트폴리오 전략 가이드 조회
   - 종목별 시장 신호: 추세, 교차 이벤트, 교차 후 경과 주, 기준 가격, 근거 반환
   - 포트폴리오 보유 종목을 순회해 종목별 전략 판단 목록 반환
+  - 등록된 `TRACK_A` 종목에서 현재 포트폴리오 보유 종목을 제외한 후보 가이드 반환
 - 포트폴리오 보유 종목 노출 비중 조회
   - 현재 평가금액과 포트폴리오 전체 평가금액 대비 비중 반환
 - 단위 테스트, Repository 테스트, Controller 테스트
@@ -211,6 +212,7 @@ Controller -> Service -> Repository -> Database
 | `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/holdings` | 보유 종목 조회 |
 | `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/valuation` | 현재가 기준 포트폴리오 평가 조회 |
 | `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/strategy-guides` | 보유 종목별 전략 가이드 조회 |
+| `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/candidate-strategy-guides` | 등록된 `TRACK_A` 중 포트폴리오 미보유 종목의 후보 전략 가이드 조회 |
 | `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/exposures` | 보유 종목별 현재 평가금액 노출 비중 조회 |
 | `GET` | `/api/markets/{market}/stocks/{ticker}/candles/daily` | 일봉 캔들 조회 |
 | `GET` | `/api/markets/{market}/stocks/{ticker}/candles/weekly` | 주봉 캔들 조회 |

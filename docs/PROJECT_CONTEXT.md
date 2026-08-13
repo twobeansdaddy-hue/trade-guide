@@ -71,7 +71,9 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 ### 현재 API 계약
 
 - `GET /api/markets/{market}/stocks/{ticker}/strategy-guide`는 `StrategySignalResponse`를 반환한다.
-- `GET /api/members/{memberId}/portfolios/{portfolioId}/strategy-guides`는 보유 종목별 `StrategyDecisionResponse`를 반환한다.
+- `GET /api/members/{memberId}/portfolios/{portfolioId}/strategy-guides`는 보유 종목별 `AssetStrategyGuideResponse` 목록을 반환한다.
+- `GET /api/members/{memberId}/portfolios/{portfolioId}/candidate-strategy-guides`는 등록된 `TRACK_A` 중 현재 포트폴리오에 보유하지 않은 종목의 `AssetStrategyGuideResponse` 목록을 반환한다.
+- 현재 후보 유니버스는 관리자가 등록한 `TRACK_A` 프로필이며, S&P 500 전체 스크리닝이나 `TRACK_B` 후보 탐색은 아직 구현하지 않았다.
 - `referencePrice`는 최신 완료 주봉 종가이며, 주문 지정가·목표가·손절가는 아니다.
 
 ## 리서치와 정책 문서
