@@ -77,7 +77,7 @@ git pull --ff-only
 ### 다음 작업
 
 1. Track A 손절 후보를 더 긴 기간·추가 레버리지 ETF·수수료 및 슬리피지 가정으로 검증한다. 현재 고정 비율 `-25%` 손절은 추가 검증 필요이고 ATR 기반 손절은 채택하지 않는다.
-2. `TradePlan.quantityRatio`의 기준은 `QuantityRatioBasis`로 명시했다. 다음으로 `PORTFOLIO_VALUE`의 평가 기준과 `RiskPolicy` 도입 여부를 설계한다. 이 결정 전에는 `TradePlanGenerator`가 주문 비율을 자동 계산하지 않는다.
+2. `TradePlan.quantityRatio`의 기준은 `QuantityRatioBasis`로 명시했고, `PortfolioRiskPolicy`의 최소 검증 모델을 만들었다. 다음으로 정책을 `Portfolio`에 영속화할 시점과 설정 API 범위를 설계한다. 이 결정 전에는 `TradePlanGenerator`가 주문 비율을 자동 계산하지 않는다.
 2. Twelve Data API 키를 폐기·재발급하고, 로컬 환경 변수로만 설정한다. 비밀값은 추적되지 않아도 대화나 파일에 남기지 않는다.
 
 ## 새 대화 시작용 인계 문구

@@ -55,6 +55,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 있다. `StrategyDecisionMaker`는 보유 종목의 `HOLD`/`SELL`과 미보유 후보의 `BUY`/`WATCH`를 결정한다. 후보 `BUY`는 상승 추세의 교차 후 0~4주에만 허용한다. `REDUCE`는 주문 초안 생성 규칙과 부분 매도 정책이 확정될 때까지 사용하지 않는다.
 - `TradePlan`은 주문 비율, 비율 기준, 주문 유형, 지정가, 손절가, 유효 기간, 근거와 전략 메타데이터를 담는 주문 초안 도메인 모델이다. DB에 저장하거나 증권사에 전송하지 않는다.
 - `QuantityRatioBasis.PORTFOLIO_VALUE`는 포트폴리오 평가액 기준의 신규 매수 비율이고, `HOLDING_QUANTITY`는 보유 종목 수량 기준의 매도 또는 부분 매도 비율이다.
+- `PortfolioRiskPolicy`는 주문당 최대 손실 비율과 종목당 최대 노출 비율을 검증하는 도메인 값 객체다. 아직 `Portfolio` DB 모델이나 설정 API에 연결하지 않았고, 활성 손절 규칙과 주문 초안 생성기가 생기기 전까지 전략 판단에 영향을 주지 않는다.
 - 주문 초안을 만드는 전략별 가격·수량·손절·유효 기간 규칙은 아직 확정하지 않았으므로 `TradePlanGenerator`는 구현하지 않았다.
 - `REDUCE`는 보유 종목의 부분 매도를 뜻한다. 교차 후 5~8주인 미보유 후보의 축소 진입에는 사용하지 않으며, 해당 구간은 현재 `WATCH`를 유지한다.
 - `TradePlan.quantityRatio`의 분모와 자동 산출식은 아직 채택하지 않았다. 계좌 총자산, 가용 현금, 트랙별 배정 예산, 위험 허용 비율 중 어떤 입력을 사용할지와 `RiskPolicy` 도입 여부를 먼저 결정해야 한다.
