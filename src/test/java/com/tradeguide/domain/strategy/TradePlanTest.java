@@ -18,6 +18,7 @@ class TradePlanTest {
                 Market.US,
                 "SOXL",
                 TradeType.BUY,
+                QuantityRatioBasis.PORTFOLIO_VALUE,
                 new BigDecimal("0.20"),
                 new BigDecimal("25.00"),
                 new BigDecimal("22.00"),
@@ -33,6 +34,8 @@ class TradePlanTest {
         assertThat(tradePlan.getMarket()).isEqualTo(Market.US);
         assertThat(tradePlan.getTicker()).isEqualTo("SOXL");
         assertThat(tradePlan.getTradeType()).isEqualTo(TradeType.BUY);
+        assertThat(tradePlan.getQuantityRatioBasis())
+                .isEqualTo(QuantityRatioBasis.PORTFOLIO_VALUE);
         assertThat(tradePlan.getQuantityRatio())
                 .isEqualByComparingTo("0.20");
         assertThat(tradePlan.getLimitPrice())
@@ -53,6 +56,7 @@ class TradePlanTest {
                 Market.US,
                 "SOXL",
                 TradeType.BUY,
+                QuantityRatioBasis.PORTFOLIO_VALUE,
                 BigDecimal.ZERO,
                 new BigDecimal("25.00"),
                 new BigDecimal("22.00"),
@@ -71,6 +75,7 @@ class TradePlanTest {
                 Market.US,
                 "SOXL",
                 TradeType.BUY,
+                QuantityRatioBasis.PORTFOLIO_VALUE,
                 new BigDecimal("1.01"),
                 new BigDecimal("25.00"),
                 new BigDecimal("22.00"),
@@ -92,6 +97,7 @@ class TradePlanTest {
                 Market.US,
                 "SOXL",
                 TradeType.BUY,
+                QuantityRatioBasis.PORTFOLIO_VALUE,
                 new BigDecimal("0.20"),
                 BigDecimal.ZERO,
                 new BigDecimal("22.00"),
@@ -113,6 +119,7 @@ class TradePlanTest {
                 Market.US,
                 "SOXL",
                 TradeType.BUY,
+                QuantityRatioBasis.PORTFOLIO_VALUE,
                 new BigDecimal("0.20"),
                 new BigDecimal("25.00"),
                 BigDecimal.ZERO,
@@ -134,6 +141,7 @@ class TradePlanTest {
                 Market.US,
                 " ",
                 TradeType.BUY,
+                QuantityRatioBasis.PORTFOLIO_VALUE,
                 new BigDecimal("0.20"),
                 new BigDecimal("25.00"),
                 new BigDecimal("22.00"),
@@ -153,6 +161,7 @@ class TradePlanTest {
     void rejectsMissingRequiredValues() {
         assertThatThrownBy(() -> new TradePlan(
                 null, "SOXL", TradeType.BUY,
+                QuantityRatioBasis.PORTFOLIO_VALUE,
                 new BigDecimal("0.20"), new BigDecimal("25.00"),
                 new BigDecimal("22.00"), LocalDate.of(2026, 8, 17),
                 "필수값 검증", validMetadata()
@@ -162,6 +171,7 @@ class TradePlanTest {
 
         assertThatThrownBy(() -> new TradePlan(
                 Market.US, "SOXL", null,
+                QuantityRatioBasis.PORTFOLIO_VALUE,
                 new BigDecimal("0.20"), new BigDecimal("25.00"),
                 new BigDecimal("22.00"), LocalDate.of(2026, 8, 17),
                 "필수값 검증", validMetadata()
@@ -171,6 +181,17 @@ class TradePlanTest {
 
         assertThatThrownBy(() -> new TradePlan(
                 Market.US, "SOXL", TradeType.BUY,
+                null,
+                new BigDecimal("0.20"), new BigDecimal("25.00"),
+                new BigDecimal("22.00"), LocalDate.of(2026, 8, 17),
+                "필수값 검증", validMetadata()
+        ))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 비율 기준은 필수입니다.");
+
+        assertThatThrownBy(() -> new TradePlan(
+                Market.US, "SOXL", TradeType.BUY,
+                QuantityRatioBasis.PORTFOLIO_VALUE,
                 new BigDecimal("0.20"), new BigDecimal("25.00"),
                 new BigDecimal("22.00"), null,
                 "필수값 검증", validMetadata()
@@ -180,6 +201,7 @@ class TradePlanTest {
 
         assertThatThrownBy(() -> new TradePlan(
                 Market.US, "SOXL", TradeType.BUY,
+                QuantityRatioBasis.PORTFOLIO_VALUE,
                 new BigDecimal("0.20"), new BigDecimal("25.00"),
                 new BigDecimal("22.00"), LocalDate.of(2026, 8, 17),
                 "필수값 검증", null
@@ -194,6 +216,7 @@ class TradePlanTest {
                 Market.US,
                 "SOXL",
                 TradeType.BUY,
+                QuantityRatioBasis.PORTFOLIO_VALUE,
                 new BigDecimal("0.20"),
                 new BigDecimal("25.00"),
                 new BigDecimal("22.00"),

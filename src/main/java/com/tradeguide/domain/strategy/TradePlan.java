@@ -11,6 +11,7 @@ public class TradePlan {
     private final Market market;
     private final String ticker;
     private final TradeType tradeType;
+    private final QuantityRatioBasis quantityRatioBasis;
     private final BigDecimal quantityRatio;
     private final BigDecimal limitPrice;
     private final BigDecimal stopLossPrice;
@@ -22,6 +23,7 @@ public class TradePlan {
             Market market,
             String ticker,
             TradeType tradeType,
+            QuantityRatioBasis quantityRatioBasis,
             BigDecimal quantityRatio,
             BigDecimal limitPrice,
             BigDecimal stopLossPrice,
@@ -39,6 +41,10 @@ public class TradePlan {
 
         if (tradeType == null) {
             throw new IllegalArgumentException("주문 유형은 필수입니다.");
+        }
+
+        if (quantityRatioBasis == null) {
+            throw new IllegalArgumentException("주문 비율 기준은 필수입니다.");
         }
 
         if (validUntil == null) {
@@ -72,6 +78,7 @@ public class TradePlan {
         this.market = market;
         this.ticker = ticker;
         this.tradeType = tradeType;
+        this.quantityRatioBasis = quantityRatioBasis;
         this.quantityRatio = quantityRatio;
         this.limitPrice = limitPrice;
         this.stopLossPrice = stopLossPrice;
@@ -90,6 +97,10 @@ public class TradePlan {
 
     public TradeType getTradeType() {
         return tradeType;
+    }
+
+    public QuantityRatioBasis getQuantityRatioBasis() {
+        return quantityRatioBasis;
     }
 
     public BigDecimal getQuantityRatio() {
