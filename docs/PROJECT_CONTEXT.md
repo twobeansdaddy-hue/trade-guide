@@ -71,8 +71,11 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 ### 현재 API 계약
 
 - `GET /api/markets/{market}/stocks/{ticker}/strategy-guide`는 `StrategySignalResponse`를 반환한다.
-- `GET /api/members/{memberId}/portfolios/{portfolioId}/strategy-guides`는 보유 종목별 `AssetStrategyGuideResponse` 목록을 반환한다.
-- `GET /api/members/{memberId}/portfolios/{portfolioId}/candidate-strategy-guides`는 등록된 `TRACK_A` 중 현재 포트폴리오에 보유하지 않은 종목의 `AssetStrategyGuideResponse` 목록을 반환한다.
+- `GET /api/members/{memberId}/portfolios/{portfolioId}/strategy-guides`와 `GET /api/members/{memberId}/portfolios/{portfolioId}/candidate-strategy-guides`는 모두 `StrategyGuideBatchResponse`를 반환한다.
+  - `guides`는 성공한 `AssetStrategyGuideResponse` 목록이다.
+  - `unavailableAssets`는 시장 데이터 조회 실패, 요청 제한, 오래된 데이터로 판단하지 못한 종목과 메시지 목록이다.
+  - 요청 제한(429)이 발생하면 이후 종목은 외부 API를 추가 호출하지 않고 요청 제한 메시지로 `unavailableAssets`에 기록한다.
+  - 포트폴리오 자체가 없거나 보유 종목 계산에 실패하면 기존 오류 응답을 유지한다.
 - 현재 후보 유니버스는 관리자가 등록한 `TRACK_A` 프로필이며, S&P 500 전체 스크리닝이나 `TRACK_B` 후보 탐색은 아직 구현하지 않았다.
 - `referencePrice`는 최신 완료 주봉 종가이며, 주문 지정가·목표가·손절가는 아니다.
 
@@ -84,10 +87,10 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 
 ## 현재 구현 위치
 
-포트폴리오 노출 비중 API, Track A 골든 테스트, 주봉 데이터 신선도 가드, 시장 신호와 행동의 분리, `StrategyDecisionMaker` 기반 행동 규칙까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.
+포트폴리오 노출 비중 API, Track A 골든 테스트, 주봉 데이터 신선도 가드, 시장 신호와 행동의 분리, `StrategyDecisionMaker` 기반 행동 규칙, 완료 주봉 캐시와 다종목 전략 가이드의 종목별 부분 실패 응답까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.
 
 ## 현재 제한
 
 - 인증과 권한이 아직 없으므로 `memberId` 경로는 실제 로그인 사용자를 검증하지 않는다.
 - `/api/admin/**`은 로컬 학습용 공개 API다. 운영 배포 전 인증과 관리자 권한을 적용해야 한다.
-- 주봉 히스토리 캐시와 종목별 부분 실패 응답은 아직 없다.
+- 완료 주봉 캐시는 애플리케이션 메모리를 사용하므로 애플리케이션 재시작 시 초기화된다. 분산 캐시나 다중 인스턴스 운영은 아직 고려하지 않았다.

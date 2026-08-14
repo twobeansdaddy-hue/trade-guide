@@ -2,7 +2,7 @@ package com.tradeguide.controller.portfolio;
 
 import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.portfolio.Portfolio;
-import com.tradeguide.domain.strategy.StrategyMetadata;
+import com.tradeguide.domain.strategy.*;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
@@ -14,12 +14,6 @@ import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
 import com.tradeguide.service.risk.PortfolioExposureService;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
-import com.tradeguide.domain.strategy.AssetStrategyGuide;
-import com.tradeguide.domain.strategy.StrategyAction;
-import com.tradeguide.domain.strategy.StrategyDecision;
-import com.tradeguide.domain.strategy.StrategySignal;
-import com.tradeguide.domain.strategy.StrategySignalEvent;
-import com.tradeguide.domain.strategy.StrategyTrend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -251,22 +245,59 @@ class PortfolioControllerTest {
         when(portfolioStrategyGuideService.getPortfolioStrategyGuides(
                 10L,
                 100L
-        )).thenReturn(List.of(strategyGuide));
+        )).thenReturn(new StrategyGuideBatch(
+                List.of(strategyGuide),
+                List.of()
+        ));
 
         mockMvc.perform(
                         get("/api/members/10/portfolios/100/strategy-guides")
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].market").value("US"))
-                .andExpect(jsonPath("$[0].ticker").value("SOXL"))
-                .andExpect(jsonPath("$[0].decision.action").value("BUY"))
-                .andExpect(jsonPath("$[0].decision.referencePrice").value(25.5))
-                .andExpect(jsonPath("$[0].decision.reason").value("이번 완료 주봉에서 상승 교차가 발생했습니다."))
-                .andExpect(jsonPath("$[0].decision.metadata.strategyId").value("test-strategy"))
-                .andExpect(jsonPath("$[0].decision.metadata.strategyVersion").value("test-v1"))
-                .andExpect(jsonPath("$[0].decision.metadata.dataAsOf").value("2026-08-07"))
-                .andExpect(jsonPath("$[0].decision.trend").value("ABOVE_LONG_AVERAGE"))
-                .andExpect(jsonPath("$[0].decision.weeksSinceCross").value(0));
+                .andExpect(jsonPath("$.guides[0].market").value("US"))
+                .andExpect(jsonPath("$.guides[0].ticker").value("SOXL"))
+                .andExpect(jsonPath("$.guides[0].decision.action").value("BUY"))
+                .andExpect(jsonPath("$.guides[0].decision.referencePrice").value(25.5))
+                .andExpect(jsonPath("$.guides[0].decision.reason").value("이번 완료 주봉에서 상승 교차가 발생했습니다."))
+                .andExpect(jsonPath("$.guides[0].decision.metadata.strategyId").value("test-strategy"))
+                .andExpect(jsonPath("$.guides[0].decision.metadata.strategyVersion").value("test-v1"))
+                .andExpect(jsonPath("$.guides[0].decision.metadata.dataAsOf").value("2026-08-07"))
+                .andExpect(jsonPath("$.guides[0].decision.trend").value("ABOVE_LONG_AVERAGE"))
+                .andExpect(jsonPath("$.guides[0].decision.weeksSinceCross").value(0))
+                .andExpect(jsonPath("$.unavailableAssets").isEmpty());
+
+        verify(portfolioStrategyGuideService)
+                .getPortfolioStrategyGuides(10L, 100L);
+    }
+
+    @Test
+    void returnsAvailableAndUnavailableAssetsForPortfolioStrategyGuides()
+            throws Exception {
+        StrategyGuideBatch batch = new StrategyGuideBatch(
+                List.of(),
+                List.of(new UnavailableAsset(
+                        Market.US,
+                        "TQQQ",
+                        "시장 데이터 조회에 실패했습니다."
+                ))
+        );
+
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(
+                10L,
+                100L
+        )).thenReturn(batch);
+
+        mockMvc.perform(
+                        get("/api/members/10/portfolios/100/strategy-guides")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.guides").isEmpty())
+                .andExpect(jsonPath("$.unavailableAssets[0].market")
+                        .value("US"))
+                .andExpect(jsonPath("$.unavailableAssets[0].ticker")
+                        .value("TQQQ"))
+                .andExpect(jsonPath("$.unavailableAssets[0].message")
+                        .value("시장 데이터 조회에 실패했습니다."));
 
         verify(portfolioStrategyGuideService)
                 .getPortfolioStrategyGuides(10L, 100L);
@@ -301,18 +332,22 @@ class PortfolioControllerTest {
 
         when(portfolioCandidateStrategyGuideService
                 .getCandidateStrategyGuides(10L, 100L))
-                .thenReturn(List.of(strategyGuide));
+                .thenReturn(new StrategyGuideBatch(
+                        List.of(strategyGuide),
+                        List.of()
+                ));
 
         mockMvc.perform(
                         get("/api/members/10/portfolios/100/candidate-strategy-guides")
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].market").value("US"))
-                .andExpect(jsonPath("$[0].ticker").value("TQQQ"))
-                .andExpect(jsonPath("$[0].decision.action").value("BUY"))
-                .andExpect(jsonPath("$[0].decision.referencePrice").value(90))
-                .andExpect(jsonPath("$[0].decision.trend").value("ABOVE_LONG_AVERAGE"))
-                .andExpect(jsonPath("$[0].decision.weeksSinceCross").value(2));
+                .andExpect(jsonPath("$.guides[0].market").value("US"))
+                .andExpect(jsonPath("$.guides[0].ticker").value("TQQQ"))
+                .andExpect(jsonPath("$.guides[0].decision.action").value("BUY"))
+                .andExpect(jsonPath("$.guides[0].decision.referencePrice").value(90))
+                .andExpect(jsonPath("$.guides[0].decision.trend").value("ABOVE_LONG_AVERAGE"))
+                .andExpect(jsonPath("$.guides[0].decision.weeksSinceCross").value(2))
+                .andExpect(jsonPath("$.unavailableAssets").isEmpty());
 
         verify(portfolioCandidateStrategyGuideService)
                 .getCandidateStrategyGuides(10L, 100L);

@@ -2,14 +2,14 @@ package com.tradeguide.controller.portfolio;
 
 import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.portfolio.Portfolio;
-import com.tradeguide.domain.strategy.AssetStrategyGuide;
 import com.tradeguide.domain.valuation.PortfolioValuation;
+import com.tradeguide.domain.strategy.StrategyGuideBatch;
 import com.tradeguide.dto.holding.HoldingResponse;
 import com.tradeguide.dto.portfolio.PortfolioCreateRequest;
 import com.tradeguide.dto.portfolio.PortfolioResponse;
-import com.tradeguide.dto.strategy.AssetStrategyGuideResponse;
 import com.tradeguide.dto.valuation.PortfolioValuationResponse;
 import com.tradeguide.dto.risk.HoldingExposureResponse;
+import com.tradeguide.dto.strategy.StrategyGuideBatchResponse;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
@@ -87,19 +87,17 @@ public class PortfolioController {
     }
 
     @GetMapping("/{portfolioId}/strategy-guides")
-    public List<AssetStrategyGuideResponse> getPortfolioStrategyGuides(
+    public StrategyGuideBatchResponse getPortfolioStrategyGuides(
             @PathVariable Long memberId,
             @PathVariable Long portfolioId
     ) {
+        StrategyGuideBatch strategyGuideBatch =
+                portfolioStrategyGuideService.getPortfolioStrategyGuides(
+                        memberId,
+                        portfolioId
+                );
 
-        List<AssetStrategyGuide> strategyGuides = portfolioStrategyGuideService.getPortfolioStrategyGuides(
-                memberId,
-                portfolioId
-        );
-
-        return strategyGuides.stream()
-                .map(AssetStrategyGuideResponse::from)
-                .toList();
+        return StrategyGuideBatchResponse.from(strategyGuideBatch);
     }
 
     @GetMapping("/{portfolioId}/exposures")
@@ -114,14 +112,14 @@ public class PortfolioController {
     }
 
     @GetMapping("/{portfolioId}/candidate-strategy-guides")
-    public List<AssetStrategyGuideResponse> getCandidateStrategyGuides(
+    public StrategyGuideBatchResponse getCandidateStrategyGuides(
             @PathVariable Long memberId,
             @PathVariable Long portfolioId
     ) {
-        return portfolioCandidateStrategyGuideService
-                .getCandidateStrategyGuides(memberId, portfolioId)
-                .stream()
-                .map(AssetStrategyGuideResponse::from)
-                .toList();
+        StrategyGuideBatch strategyGuideBatch =
+                portfolioCandidateStrategyGuideService
+                        .getCandidateStrategyGuides(memberId, portfolioId);
+
+        return StrategyGuideBatchResponse.from(strategyGuideBatch);
     }
 }
