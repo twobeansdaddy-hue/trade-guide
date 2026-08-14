@@ -4,28 +4,40 @@
     "type": "backtest",
     "ticker": "SOXL,SOXX",
     "strategy_id": "soxl-volatility-decay",
-    "data_range": { "start": "2021-08-02", "end": "2026-08-04", "frequency": "weekly" },
+    "data_range": {
+      "start": "2021-08-02",
+      "end": "2026-08-04",
+      "frequency": "weekly"
+    },
     "created_date": "2026-08-05",
     "summary": "SOXL(3x)은 5년간 +209.2% 상승했지만 무레버리지 SOXX(1x)는 +263.4% 상승해, 레버리지 상품이 오히려 낮은 누적수익률을 기록. 단순 3배 복리 가정 시 이론치(+660%)와의 격차는 약 450%p. 연환산 변동성은 SOXL 103.3% vs SOXX 34.4%로 정확히 3배.",
     "metrics": {
       "soxl_start_price": 45.24,
-      "soxl_end_price": 139.90,
+      "soxl_end_price": 139.9,
       "soxl_cumulative_return_pct": 209.2,
-      "soxx_start_price": 149.20,
+      "soxx_start_price": 149.2,
       "soxx_end_price": 542.21,
       "soxx_cumulative_return_pct": 263.4,
       "naive_3x_theoretical_return_pct": 660.0,
       "decay_gap_pct_points": 450.7,
       "soxl_annualized_volatility_pct": 103.3,
       "soxx_annualized_volatility_pct": 34.4,
-      "volatility_ratio": 3.00,
+      "volatility_ratio": 3.0,
       "soxl_max_drawdown_pct": -89.8,
       "soxx_max_drawdown_pct": -44.4
     },
     "report_path": "research/reports/soxl-volatility-decay.md",
     "sources": [
-      { "title": "Yahoo Finance - SOXL Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/SOXL/history/", "accessed": "2026-08-05" },
-      { "title": "Yahoo Finance - SOXX Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/SOXX/history/", "accessed": "2026-08-05" }
+      {
+        "title": "Yahoo Finance - SOXL Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/SOXL/history/",
+        "accessed": "2026-08-05"
+      },
+      {
+        "title": "Yahoo Finance - SOXX Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/SOXX/history/",
+        "accessed": "2026-08-05"
+      }
     ],
     "confidence": "medium",
     "caveats": "특정 티커(SOXL/SOXX)·특정 5년 구간(2021~2026)에 한정된 실측치이며, 해당 구간에 2021~2022년 반도체 급락과 2025~2026년 AI 관련 급등락이라는 특이 국면이 포함되어 있어 다른 기간에 그대로 일반화할 수 없음.",
@@ -36,7 +48,11 @@
     "type": "backtest",
     "ticker": "SOXL",
     "strategy_id": "soxl-ma-rsi-timing",
-    "data_range": { "start": "2021-08-02", "end": "2026-08-04", "frequency": "weekly" },
+    "data_range": {
+      "start": "2021-08-02",
+      "end": "2026-08-04",
+      "frequency": "weekly"
+    },
     "created_date": "2026-08-05",
     "summary": "10주/40주 이동평균 크로스오버(주간봉, 50/200일 근사) 백테스트 결과 3건 거래 전부 수익(승률 100%, 평균 +180.3%). 2021~2022년 대형 하락 구간 내내 무포지션을 유지해 -89.8% 낙폭을 회피시킨 점이 핵심 발견.",
     "metrics": {
@@ -61,13 +77,35 @@
       }
     },
     "trades": [
-      { "entry_date": "2023-02-27", "exit_date": "2023-10-30", "entry_price": 15.34, "exit_price": 18.07, "return_pct": 17.8 },
-      { "entry_date": "2023-12-04", "exit_date": "2024-09-09", "entry_price": 23.30, "exit_price": 33.06, "return_pct": 41.9 },
-      { "entry_date": "2025-07-28", "exit_date": null, "entry_price": 24.07, "exit_price": 139.90, "return_pct": 481.2 }
+      {
+        "entry_date": "2023-02-27",
+        "exit_date": "2023-10-30",
+        "entry_price": 15.34,
+        "exit_price": 18.07,
+        "return_pct": 17.8
+      },
+      {
+        "entry_date": "2023-12-04",
+        "exit_date": "2024-09-09",
+        "entry_price": 23.3,
+        "exit_price": 33.06,
+        "return_pct": 41.9
+      },
+      {
+        "entry_date": "2025-07-28",
+        "exit_date": null,
+        "entry_price": 24.07,
+        "exit_price": 139.9,
+        "return_pct": 481.2
+      }
     ],
     "report_path": "research/reports/soxl-timing-and-drawdown-backtest.md",
     "sources": [
-      { "title": "Yahoo Finance - SOXL Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/SOXL/history/", "accessed": "2026-08-05" }
+      {
+        "title": "Yahoo Finance - SOXL Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/SOXL/history/",
+        "accessed": "2026-08-05"
+      }
     ],
     "confidence": "low",
     "caveats": "거래 표본이 3건에 불과해 통계적 유의성 없음. 과최적화(파라미터 10주/40주를 사후적으로 유리하게 고른 것이 아니라 50/200일의 표준 근사치를 그대로 사용했으나, 여전히 검증 구간이 짧음) 및 특정 구간 편향 가능성 있음. 세 번째 거래는 아직 청산되지 않은 미실현 수익.",
@@ -78,7 +116,12 @@
       "note": "이 필드는 위 metrics/trades/summary의 원본 수치를 수정하지 않고 보존한 채, 이후 발견된 데이터 소스 불일치를 기록하기 위해 추가되었습니다.",
       "issue": "이 백테스트는 Yahoo Finance 주간 'Adjusted Close'(soxl-timing-and-drawdown-backtest.md 방법론 참고)를 사용했다. 반면 프로덕션 전략 엔진(WeeklyMaCrossoverStrategy)이 실제로 사용하는 데이터는 Twelve Data, interval=1week, adjustment=splits(분할만 조정, 배당 재투자 미반영)이다. 두 소스는 조정 방식뿐 아니라 데이터 벤더 자체가 달라 주간 종가 시계열이 정확히 일치하지 않는다.",
       "cross_date_comparison": {
-        "matching_cross_dates": ["2023-02-27", "2023-10-30", "2023-12-04", "2024-09-09"],
+        "matching_cross_dates": [
+          "2023-02-27",
+          "2023-10-30",
+          "2023-12-04",
+          "2024-09-09"
+        ],
         "diverging_cross_date": {
           "research_yahoo_adjusted_close": "2025-07-28",
           "production_twelvedata_splits_only": "2025-08-04",
@@ -99,7 +142,11 @@
     "type": "backtest",
     "ticker": "SOXL",
     "strategy_id": "soxl-ma-rsi-timing",
-    "data_range": { "start": "2021-08-02", "end": "2026-08-04", "frequency": "weekly" },
+    "data_range": {
+      "start": "2021-08-02",
+      "end": "2026-08-04",
+      "frequency": "weekly"
+    },
     "created_date": "2026-08-05",
     "summary": "RSI(14주) 과매도(<30) 매수·과매수(>70) 매도 역추세 전략은 2건 거래 중 1건 -46.6%(하락 추세 중 진입), 1건 +213.6%(진짜 바닥 근처 진입)로 결과가 극단적으로 갈림. 승률 50%, 표본 극소.",
     "metrics": {
@@ -118,12 +165,28 @@
       }
     },
     "trades": [
-      { "entry_date": "2022-04-04", "exit_date": "2023-01-23", "entry_price": 27.46, "exit_price": 14.66, "return_pct": -46.6 },
-      { "entry_date": "2025-03-31", "exit_date": "2025-07-07", "entry_price": 8.70, "exit_price": 27.28, "return_pct": 213.6 }
+      {
+        "entry_date": "2022-04-04",
+        "exit_date": "2023-01-23",
+        "entry_price": 27.46,
+        "exit_price": 14.66,
+        "return_pct": -46.6
+      },
+      {
+        "entry_date": "2025-03-31",
+        "exit_date": "2025-07-07",
+        "entry_price": 8.7,
+        "exit_price": 27.28,
+        "return_pct": 213.6
+      }
     ],
     "report_path": "research/reports/soxl-timing-and-drawdown-backtest.md",
     "sources": [
-      { "title": "Yahoo Finance - SOXL Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/SOXL/history/", "accessed": "2026-08-05" }
+      {
+        "title": "Yahoo Finance - SOXL Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/SOXL/history/",
+        "accessed": "2026-08-05"
+      }
     ],
     "confidence": "low",
     "caveats": "거래 표본이 2건뿐이라 결론을 일반화할 수 없음. RSI 단독 역추세 신호는 강한 추세장에서 조기 진입(떨어지는 칼날 잡기) 위험이 실증됨.",
@@ -134,19 +197,55 @@
     "type": "backtest",
     "ticker": "SOXL",
     "strategy_id": "soxl-drawdown-recovery",
-    "data_range": { "start": "2021-08-02", "end": "2026-08-04", "frequency": "weekly" },
+    "data_range": {
+      "start": "2021-08-02",
+      "end": "2026-08-04",
+      "frequency": "weekly"
+    },
     "created_date": "2026-08-05",
     "summary": "-30% 이상 대형 낙폭 3건 확인. 2021~2022년 -89.8% 낙폭은 저점까지 47주, 완전 회복까지 175주(3.4년) 소요. 2026년 초 -30.5% 낙폭은 2주 만에 회복. 2026년 6~7월 -58.9% 낙폭은 이 리포트 작성 시점(2026-08-04) 기준 미회복 상태로, 사용자가 겪고 있는 손실 구간과 일치.",
     "metrics": {
       "episodes": [
-        { "peak_date": "2021-11-15", "peak_price": 66.57, "trough_date": "2022-10-10", "trough_price": 6.76, "drawdown_pct": -89.8, "weeks_to_trough": 47, "recovered_date": "2026-02-16", "weeks_to_recover": 175 },
-        { "peak_date": "2026-02-16", "peak_price": 67.11, "trough_date": "2026-03-23", "trough_price": 46.61, "drawdown_pct": -30.5, "weeks_to_trough": 5, "recovered_date": "2026-04-06", "weeks_to_recover": 2 },
-        { "peak_date": "2026-06-15", "peak_price": 279.29, "trough_date": "2026-07-27", "trough_price": 114.72, "drawdown_pct": -58.9, "weeks_to_trough": 6, "recovered_date": null, "weeks_to_recover": null, "status": "미회복(2026-08-04 기준 $139.90, 고점대비 약 -49.9%)" }
+        {
+          "peak_date": "2021-11-15",
+          "peak_price": 66.57,
+          "trough_date": "2022-10-10",
+          "trough_price": 6.76,
+          "drawdown_pct": -89.8,
+          "weeks_to_trough": 47,
+          "recovered_date": "2026-02-16",
+          "weeks_to_recover": 175
+        },
+        {
+          "peak_date": "2026-02-16",
+          "peak_price": 67.11,
+          "trough_date": "2026-03-23",
+          "trough_price": 46.61,
+          "drawdown_pct": -30.5,
+          "weeks_to_trough": 5,
+          "recovered_date": "2026-04-06",
+          "weeks_to_recover": 2
+        },
+        {
+          "peak_date": "2026-06-15",
+          "peak_price": 279.29,
+          "trough_date": "2026-07-27",
+          "trough_price": 114.72,
+          "drawdown_pct": -58.9,
+          "weeks_to_trough": 6,
+          "recovered_date": null,
+          "weeks_to_recover": null,
+          "status": "미회복(2026-08-04 기준 $139.90, 고점대비 약 -49.9%)"
+        }
       ]
     },
     "report_path": "research/reports/soxl-timing-and-drawdown-backtest.md",
     "sources": [
-      { "title": "Yahoo Finance - SOXL Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/SOXL/history/", "accessed": "2026-08-05" }
+      {
+        "title": "Yahoo Finance - SOXL Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/SOXL/history/",
+        "accessed": "2026-08-05"
+      }
     ],
     "confidence": "medium",
     "caveats": "낙폭 규모와 회복기간의 관계는 원인(매크로 vs 개별섹터 조정)에 따라 다를 수 있어, 과거 회복기간을 현재 진행 중인 낙폭에 그대로 적용해 예단할 수 없음.",
@@ -157,18 +256,22 @@
     "type": "forecast",
     "ticker": "SOXL",
     "strategy_id": "soxl-ma-rsi-timing",
-    "data_range": { "start": "2021-08-02", "end": "2026-08-04", "frequency": "weekly" },
+    "data_range": {
+      "start": "2021-08-02",
+      "end": "2026-08-04",
+      "frequency": "weekly"
+    },
     "created_date": "2026-08-05",
     "summary": "2026-08-04 기준 SOXL 주간 MA10(174.69)이 MA40(104.80) 위에 위치한 골든크로스 상태를 유지 중이며(2025-07-28 크로스 이후 지속), RSI14는 50.8로 중립. 다만 최근 6주간 -22.9% 급락, 52주 고점 대비 -49.9% 낙폭이 진행 중이라 추세 강도는 약화되고 있음. 이번이 첫 예측 기록으로, 4주 후(2026-09-02) 실제 결과를 확인해 데이터를 누적할 예정.",
     "metrics": {
       "ma10": 174.69,
-      "ma40": 104.80,
-      "rsi14": 50.80,
+      "ma40": 104.8,
+      "rsi14": 50.8,
       "return_6wk_pct": -22.91,
       "drawdown_from_52wk_high_pct": -49.91,
       "high_52wk": 279.29,
       "high_52wk_date": "2026-06-15",
-      "latest_close": 139.90,
+      "latest_close": 139.9,
       "latest_date": "2026-08-04"
     },
     "forecast": {
@@ -181,8 +284,16 @@
     },
     "report_path": "research/reports/soxl-timing-and-drawdown-backtest.md",
     "sources": [
-      { "title": "Yahoo Finance - SOXL Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/SOXL/history/?period1=1628128462&period2=9999999999&frequency=1wk", "accessed": "2026-08-05" },
-      { "title": "Yahoo Finance - SOXX Historical Data (Weekly, 참고용)", "url": "https://finance.yahoo.com/quote/SOXX/history/?period1=1628128462&period2=9999999999&frequency=1wk", "accessed": "2026-08-05" }
+      {
+        "title": "Yahoo Finance - SOXL Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/SOXL/history/?period1=1628128462&period2=9999999999&frequency=1wk",
+        "accessed": "2026-08-05"
+      },
+      {
+        "title": "Yahoo Finance - SOXX Historical Data (Weekly, 참고용)",
+        "url": "https://finance.yahoo.com/quote/SOXX/history/?period1=1628128462&period2=9999999999&frequency=1wk",
+        "accessed": "2026-08-05"
+      }
     ],
     "confidence": "low",
     "caveats": "이 예측은 규칙 기반 신호를 기계적으로 기록한 것으로 투자 권유가 아니며, 표본이 누적될수록(여러 주 반복) 신뢰도를 재평가해야 함. 이번이 첫 forecast 기록이라 검증할 이전 예측이 없음.",
@@ -193,11 +304,15 @@
     "type": "backtest",
     "ticker": "SOXL",
     "strategy_id": "soxl-position-sizing-stoploss",
-    "data_range": { "start": "2026-05-04", "end": "2026-08-04", "frequency": "weekly" },
+    "data_range": {
+      "start": "2026-05-04",
+      "end": "2026-08-04",
+      "frequency": "weekly"
+    },
     "created_date": "2026-08-05",
     "summary": "2026-08-04 기준 SOXL 주간 ATR(14)은 $61.68로 종가($139.90)의 44.1%에 달함. 무레버리지 우량주의 통상 ATR/가격 비율(5~10%)의 4~8배 수준으로, 순수 ATR 기반 손절 공식을 그대로 적용하면 손절폭이 비현실적으로 넓어질 수 있음을 실측으로 확인.",
     "metrics": {
-      "latest_close": 139.90,
+      "latest_close": 139.9,
       "atr14_weekly": 61.68,
       "atr_to_price_ratio_pct": 44.1,
       "example_atr_stop_distance_2x": 123.36,
@@ -205,7 +320,11 @@
     },
     "report_path": "research/reports/soxl-position-sizing-stoploss.md",
     "sources": [
-      { "title": "Yahoo Finance - SOXL Historical Data (Weekly OHLC)", "url": "https://finance.yahoo.com/quote/SOXL/history/", "accessed": "2026-08-05" }
+      {
+        "title": "Yahoo Finance - SOXL Historical Data (Weekly OHLC)",
+        "url": "https://finance.yahoo.com/quote/SOXL/history/",
+        "accessed": "2026-08-05"
+      }
     ],
     "confidence": "medium",
     "caveats": "ATR은 과거 14주 변동성의 평균이라 최근 급변동기에는 값이 크게 왜곡될 수 있음(현재 값은 2026년 상반기 대형 낙폭 구간의 높은 변동성을 그대로 반영). 시장이 진정되면 ATR/가격 비율은 낮아질 수 있음.",
@@ -216,7 +335,11 @@
     "type": "backtest",
     "ticker": "AAPL",
     "strategy_id": "trackb-ma-timing-regular-stocks",
-    "data_range": { "start": "2021-08-02", "end": "2026-08-04", "frequency": "weekly" },
+    "data_range": {
+      "start": "2021-08-02",
+      "end": "2026-08-04",
+      "frequency": "weekly"
+    },
     "created_date": "2026-08-05",
     "summary": "AAPL에 10주/40주 이동평균 크로스오버 적용 시 4건 거래, 승률 50%(2승 2패). 전략 복리 수익률 +19.8%로 같은 구간 단순 보유(+116.9%)에 크게 못 미침. 마지막 미청산 거래(+29.4%)가 전체 성과를 견인.",
     "metrics": {
@@ -228,14 +351,42 @@
       "buy_and_hold_since_ma_window_pct": 100.7
     },
     "trades": [
-      { "entry_date": "2022-09-12", "exit_date": "2022-10-03", "entry_price": 147.94, "exit_price": 137.52, "return_pct": -7.0 },
-      { "entry_date": "2023-03-13", "exit_date": "2024-03-11", "entry_price": 152.65, "exit_price": 170.91, "return_pct": 12.0 },
-      { "entry_date": "2024-06-10", "exit_date": "2025-03-31", "entry_price": 210.67, "exit_price": 187.39, "return_pct": -11.1 },
-      { "entry_date": "2025-09-01", "exit_date": null, "entry_price": 239.01, "exit_price": 309.38, "return_pct": 29.4 }
+      {
+        "entry_date": "2022-09-12",
+        "exit_date": "2022-10-03",
+        "entry_price": 147.94,
+        "exit_price": 137.52,
+        "return_pct": -7.0
+      },
+      {
+        "entry_date": "2023-03-13",
+        "exit_date": "2024-03-11",
+        "entry_price": 152.65,
+        "exit_price": 170.91,
+        "return_pct": 12.0
+      },
+      {
+        "entry_date": "2024-06-10",
+        "exit_date": "2025-03-31",
+        "entry_price": 210.67,
+        "exit_price": 187.39,
+        "return_pct": -11.1
+      },
+      {
+        "entry_date": "2025-09-01",
+        "exit_date": null,
+        "entry_price": 239.01,
+        "exit_price": 309.38,
+        "return_pct": 29.4
+      }
     ],
     "report_path": "research/reports/trackb-ma-timing-regular-stocks.md",
     "sources": [
-      { "title": "Yahoo Finance - AAPL Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/AAPL/history/", "accessed": "2026-08-05" }
+      {
+        "title": "Yahoo Finance - AAPL Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/AAPL/history/",
+        "accessed": "2026-08-05"
+      }
     ],
     "confidence": "low",
     "caveats": "거래 표본 4건으로 통계적 유의성 없음. 마지막 거래는 미청산 미실현 수익.",
@@ -246,7 +397,11 @@
     "type": "backtest",
     "ticker": "JPM",
     "strategy_id": "trackb-ma-timing-regular-stocks",
-    "data_range": { "start": "2021-08-02", "end": "2026-08-04", "frequency": "weekly" },
+    "data_range": {
+      "start": "2021-08-02",
+      "end": "2026-08-04",
+      "frequency": "weekly"
+    },
     "created_date": "2026-08-05",
     "summary": "JPM에 동일 규칙 적용 시 2건 거래 모두 수익(승률 100%). 전략 복리 수익률 +160.7%로 표면적으로는 우수하나, 같은 구간(MA 계산가능구간) 단순 보유(+221.2%)에는 미치지 못함 — 신호 지연으로 초입/후반 상승분 일부를 놓친 것으로 추정.",
     "metrics": {
@@ -258,12 +413,28 @@
       "buy_and_hold_since_ma_window_pct": 221.2
     },
     "trades": [
-      { "entry_date": "2022-11-21", "exit_date": "2026-03-16", "entry_price": 125.22, "exit_price": 283.82, "return_pct": 126.7 },
-      { "entry_date": "2026-06-01", "exit_date": null, "entry_price": 310.97, "exit_price": 357.52, "return_pct": 15.0 }
+      {
+        "entry_date": "2022-11-21",
+        "exit_date": "2026-03-16",
+        "entry_price": 125.22,
+        "exit_price": 283.82,
+        "return_pct": 126.7
+      },
+      {
+        "entry_date": "2026-06-01",
+        "exit_date": null,
+        "entry_price": 310.97,
+        "exit_price": 357.52,
+        "return_pct": 15.0
+      }
     ],
     "report_path": "research/reports/trackb-ma-timing-regular-stocks.md",
     "sources": [
-      { "title": "Yahoo Finance - JPM Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/JPM/history/", "accessed": "2026-08-05" }
+      {
+        "title": "Yahoo Finance - JPM Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/JPM/history/",
+        "accessed": "2026-08-05"
+      }
     ],
     "confidence": "low",
     "caveats": "거래 표본 2건으로 통계적 유의성 없음. 두 번째 거래는 미청산 미실현 수익.",
@@ -274,7 +445,11 @@
     "type": "backtest",
     "ticker": "PG",
     "strategy_id": "trackb-ma-timing-regular-stocks",
-    "data_range": { "start": "2021-08-02", "end": "2026-08-04", "frequency": "weekly" },
+    "data_range": {
+      "start": "2021-08-02",
+      "end": "2026-08-04",
+      "frequency": "weekly"
+    },
     "created_date": "2026-08-05",
     "summary": "PG(저변동성 필수소비재)에 동일 규칙 적용 시 5건 거래, 승률 60%지만 건당 평균 수익률 +0.8%로 신호로서의 효용이 거의 없음. 전략 복리 수익률 +3.6% vs 단순보유(MA구간) +6.0%로 근소하게 열위.",
     "metrics": {
@@ -286,18 +461,98 @@
       "buy_and_hold_since_ma_window_pct": 6.0
     },
     "trades": [
-      { "entry_date": "2022-12-19", "exit_date": "2023-11-20", "entry_price": 138.41, "exit_price": 140.77, "return_pct": 1.7 },
-      { "entry_date": "2024-02-05", "exit_date": "2025-02-03", "entry_price": 147.31, "exit_price": 161.06, "return_pct": 9.3 },
-      { "entry_date": "2025-03-24", "exit_date": "2025-04-28", "entry_price": 161.12, "exit_price": 154.88, "return_pct": -3.9 },
-      { "entry_date": "2026-03-02", "exit_date": "2026-04-27", "entry_price": 151.35, "exit_price": 146.17, "return_pct": -3.4 },
-      { "entry_date": "2026-07-20", "exit_date": null, "entry_price": 147.41, "exit_price": 148.01, "return_pct": 0.4 }
+      {
+        "entry_date": "2022-12-19",
+        "exit_date": "2023-11-20",
+        "entry_price": 138.41,
+        "exit_price": 140.77,
+        "return_pct": 1.7
+      },
+      {
+        "entry_date": "2024-02-05",
+        "exit_date": "2025-02-03",
+        "entry_price": 147.31,
+        "exit_price": 161.06,
+        "return_pct": 9.3
+      },
+      {
+        "entry_date": "2025-03-24",
+        "exit_date": "2025-04-28",
+        "entry_price": 161.12,
+        "exit_price": 154.88,
+        "return_pct": -3.9
+      },
+      {
+        "entry_date": "2026-03-02",
+        "exit_date": "2026-04-27",
+        "entry_price": 151.35,
+        "exit_price": 146.17,
+        "return_pct": -3.4
+      },
+      {
+        "entry_date": "2026-07-20",
+        "exit_date": null,
+        "entry_price": 147.41,
+        "exit_price": 148.01,
+        "return_pct": 0.4
+      }
     ],
     "report_path": "research/reports/trackb-ma-timing-regular-stocks.md",
     "sources": [
-      { "title": "Yahoo Finance - PG Historical Data (Weekly)", "url": "https://finance.yahoo.com/quote/PG/history/", "accessed": "2026-08-05" }
+      {
+        "title": "Yahoo Finance - PG Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/PG/history/",
+        "accessed": "2026-08-05"
+      }
     ],
     "confidence": "low",
     "caveats": "거래 표본 5건이나 저변동성 종목 특성상 이동평균이 자주 근접해 크로스 자체가 잦게 발생 — 신호의 실질적 정보량이 낮을 수 있음. 마지막 거래는 미청산.",
     "last_updated": "2026-08-05"
+  },
+  {
+    "id": "track-a-stoploss-drawdown-2026",
+    "type": "backtest",
+    "ticker": "SOXL,TQQQ",
+    "strategy_id": "soxl-ma-rsi-timing",
+    "data_range": {
+      "start": "2010-02-08",
+      "end": "2026-08-13",
+      "frequency": "daily"
+    },
+    "created_date": "2026-08-14",
+    "summary": "Track A(SOXL/TQQQ 주봉 10/40 이동평균) 20개 사이클에 일봉 기준 체결 가정(주봉신호 확정 후 다음 거래일 시가 체결, 손절은 매일 저가로 확인)을 적용해 손절 레이어 후보를 검증. 고정비율 -25% 손절은 평균 MDD를 5.2%p 개선하면서 평균 수익률 포기는 거의 없었으나(-0.5%p) 발동 사례가 4/20으로 얇음. ATR(14,일봉)x2배+상한35% 손절은 배수/상한을 조정해도 일관되게 나쁜 교환비율(MDD 1%p 개선당 수익률 2.5~2.8%p 포기)과 높은 휩쏘율(89~92%)을 보여 채택하지 않음.",
+    "metrics": {
+      "num_cycles": 20,
+      "baseline_avg_return_pct": 110.3,
+      "baseline_median_return_pct": 31.3,
+      "baseline_avg_mdd_close_pct": -51.1,
+      "baseline_avg_mdd_low_pct": -53.8,
+      "candidate_fixed_25pct_avg_return_pct": 110.8,
+      "candidate_fixed_25pct_avg_mdd_close_pct": -45.9,
+      "candidate_fixed_25pct_stops_triggered": 4,
+      "candidate_fixed_25pct_whipsaw_rate_pct": 100,
+      "candidate_atr14x2_cap35_avg_return_pct": 62.2,
+      "candidate_atr14x2_cap35_avg_mdd_close_pct": -31.9,
+      "candidate_atr14x2_cap35_stops_triggered": 13,
+      "candidate_atr14x2_cap35_whipsaw_rate_pct": 92,
+      "mdd_improvement_per_return_given_up_fixed_25pct": "negative (return given up is negative, i.e. net gain)",
+      "mdd_improvement_per_return_given_up_atr14x2_cap35": 2.51
+    },
+    "report_path": "research/reports/track-a-stoploss-drawdown-review.md",
+    "sources": [
+      {
+        "title": "Twelve Data time_series API (production source, daily, SOXL/TQQQ)",
+        "url": "https://api.twelvedata.com/time_series",
+        "accessed": "2026-08-14"
+      },
+      {
+        "title": "Yahoo Finance chart API v8 (cross-check source, daily, SOXL/TQQQ)",
+        "url": "https://query2.finance.yahoo.com/v8/finance/chart/",
+        "accessed": "2026-08-14"
+      }
+    ],
+    "confidence": "low",
+    "caveats": "실질적으로 독립적인 거시 국면은 7~8개 수준. 고정비율 -25% 손절의 우호적 결과는 4건의 발동 사례에만 의존(3승 1패). 수수료/슬리피지/세금 미반영. 분봉 데이터 부재로 하루 안 시가/저가/손절/추세청산의 정확한 순서는 근사(보수적 우선순위 규칙)로만 처리. 레버리지 ETF 2종에 한정된 결과이며 Track B나 다른 레버리지 상품에 일반화 불가. 추적 손절(trailing stop) 후보는 이번 범위에서 미검증.",
+    "last_updated": "2026-08-14"
   }
 ]

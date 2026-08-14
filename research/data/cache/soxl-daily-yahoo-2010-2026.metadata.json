@@ -1,0 +1,15 @@
+{
+  "provider": "Yahoo Finance (query2.finance.yahoo.com v8 chart API)",
+  "symbol": "SOXL",
+  "interval": "1d",
+  "startDate": "2010-03-11",
+  "endDate": "2026-08-13",
+  "downloadedAt": "2026-08-14",
+  "order": "asc",
+  "adjustment": "close/open/high/low는 미조정(원가), adjclose 컬럼만 분할+배당 조정 종가",
+  "format": "CSV",
+  "delimiter": ";",
+  "candleCount": 4132,
+  "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/SOXL?period1=1268317800&period2=<fetch_time>&interval=1d&events=div,splits",
+  "note": "리서치 역할이 curl로 직접 조회한 공개 데이터(로그인/키 불필요). 이후 production 소스(Twelve Data)로 같은 기간 일봉을 별도 확보해(soxl-daily-twelvedata-2010-2026.csv) 교차검증했으며, 두 소스의 open/high/low/close는 사실상 동일했다(둘 다 배당 미반영, 분할만 반영) — research/reports/track-a-stoploss-drawdown-review.md 참고."
+}
