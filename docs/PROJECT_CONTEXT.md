@@ -55,6 +55,9 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 있다. `StrategyDecisionMaker`는 보유 종목의 `HOLD`/`SELL`과 미보유 후보의 `BUY`/`WATCH`를 결정한다. 후보 `BUY`는 상승 추세의 교차 후 0~4주에만 허용한다. `REDUCE`는 주문 초안 생성 규칙과 부분 매도 정책이 확정될 때까지 사용하지 않는다.
 - `TradePlan`은 주문 비율, 주문 유형, 지정가, 손절가, 유효 기간, 근거와 전략 메타데이터를 담는 주문 초안 도메인 모델이다. DB에 저장하거나 증권사에 전송하지 않는다.
 - 주문 초안을 만드는 전략별 가격·수량·손절·유효 기간 규칙은 아직 확정하지 않았으므로 `TradePlanGenerator`는 구현하지 않았다.
+- `REDUCE`는 보유 종목의 부분 매도를 뜻한다. 교차 후 5~8주인 미보유 후보의 축소 진입에는 사용하지 않으며, 해당 구간은 현재 `WATCH`를 유지한다.
+- `TradePlan.quantityRatio`의 분모와 자동 산출식은 아직 채택하지 않았다. 계좌 총자산, 가용 현금, 트랙별 배정 예산, 위험 허용 비율 중 어떤 입력을 사용할지와 `RiskPolicy` 도입 여부를 먼저 결정해야 한다.
+- Track A 손절 후보 중 고정 비율 `-25%`는 추가 검증 필요이며, ATR 기반 손절은 채택하지 않는다. 따라서 현재 전략 엔진과 `TradePlanGenerator`에 손절 규칙을 구현하지 않는다.
 - `TradeGuideCalculator`와 `/api/trade-guide/calculate`은 초기 학습용 단순 계산 API다. 사용자가 입력한 목표 수익률·최대 손실률을 계산하며, 현재 전략 엔진의 정책이나 결과에 연결하지 않는다.
 
 ## 현재 전략 엔진 상태
