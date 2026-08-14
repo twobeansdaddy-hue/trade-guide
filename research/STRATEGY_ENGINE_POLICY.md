@@ -73,7 +73,7 @@ StrategyDecision / TradePlan
   - 근거: `research/reports/track-a-entry-delay-cutoff-review.md`의 SOXL/TQQQ 지연 진입 검토. 신뢰도는 `low-medium`이며 Track A 레버리지 ETF에만 적용한다.
   - 5~8주 축소 진입은 채택하지 않는다. `REDUCE`는 보유 종목의 부분 매도라는 기존 의미를 유지하며, 미보유 후보의 축소 매수에 재사용하지 않는다. 새 액션이나 `positionSizeHint` 같은 별도 필드도 아직 도입하지 않는다. 9주 이상은 `WATCH`를 유지한다.
 - 손절(리스크 종료) 레이어는 현재 채택하지 않는다. SOXL/TQQQ 일봉 기반 20사이클 검증(`research/reports/track-a-stoploss-drawdown-review.md`) 결과 고정 비율 `-25%` 손절은 MDD를 개선하면서 수익 포기가 거의 없었으나 발동 사례가 4건뿐이라 `추가 검증 필요`이고, ATR 기반 + 상한 손절은 휩쏘율이 높고 교환비율이 나빠 `채택하지 않음`이다. 따라서 `StrategyDecision`과 (아직 미구현인) `TradePlanGenerator`에 손절 규칙을 구현하지 않는다.
-- 매수 또는 매도 신호에는 포지션 비율, 손절가 계산식, 최대 비중, 유효 기간을 명시해야 한다.
+- 활성화된 `TradePlan` 생성 규칙은 포지션 비율, 손절가 계산식, 최대 비중, 유효 기간을 명시해야 한다.
 - 분할 매도(예: 3분할)는 검토 가능한 후보 기법일 뿐 현재 채택된 기본 전략이 아니다. 향후 적용하려면 각 단계의 비율, 지정가 또는 조건, 잔여 수량 처리 규칙과 백테스트 근거를 별도로 정의한다.
 
 ## Track B: 일반 주식 신규 후보와 보유 종목
@@ -104,7 +104,7 @@ StrategyDecision / TradePlan
 1. Track A 손절 후보 추가 검증(더 긴 기간·추가 레버리지 ETF·수수료 및 슬리피지 가정)
 2. `TradePlan.quantityRatio`의 분모와 `RiskPolicy` 도입 여부 설계
 3. 위 두 결정 이후 `TradePlanGenerator` 규칙 정의 및 구현 (`TradePlan` 모델 자체는 이미 구현됨)
-4. 전략 ID·버전·데이터 기준 시각을 전략 판단 결과에 추가
+4. confidence와 caveats를 구조화한 전략 판단 응답 설계 (전략 ID·버전·데이터 기준 시각은 이미 응답에 포함됨)
 5. Track B용 펀더멘털/기업 이벤트 데이터 공급자
 6. S&P 500 후보 스크리닝과 결과 추적
 7. 자산 프로필 관리 API에 인증·관리자 권한 적용
