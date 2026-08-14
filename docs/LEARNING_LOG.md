@@ -74,18 +74,20 @@ git pull --ff-only
 
 현재 개발 브랜치는 `feature/candidate-entry-window`이다. Claude Code는 별도 리서치 브랜치·동일 worktree에서 `research/**`만 수정하고, Codex와 사용자가 개발 브랜치에서 정책을 채택·구현한다.
 
+`PortfolioRiskPolicy`는 `Portfolio`에 포함되는 `@Embeddable` 값 객체로 저장되며, 위험 비율은 소수점 여섯 자리까지 보존한다. 현재는 도메인·저장소 테스트만 있고, 위험 한도를 설정하거나 조회하는 서비스와 API는 아직 없다.
+
 ### 다음 작업
 
 1. Track A 손절 후보를 더 긴 기간·추가 레버리지 ETF·수수료 및 슬리피지 가정으로 검증한다. 현재 고정 비율 `-25%` 손절은 추가 검증 필요이고 ATR 기반 손절은 채택하지 않는다.
-2. `TradePlan.quantityRatio`의 기준은 `QuantityRatioBasis`로 명시했고, `PortfolioRiskPolicy`의 최소 검증 모델을 만들었다. 다음으로 정책을 `Portfolio`에 영속화할 시점과 설정 API 범위를 설계한다. 이 결정 전에는 `TradePlanGenerator`가 주문 비율을 자동 계산하지 않는다.
-2. Twelve Data API 키를 폐기·재발급하고, 로컬 환경 변수로만 설정한다. 비밀값은 추적되지 않아도 대화나 파일에 남기지 않는다.
+2. `TradePlan.quantityRatio`의 기준은 `QuantityRatioBasis`로 명시했고, `PortfolioRiskPolicy`를 `Portfolio`에 영속화했다. 다음으로 위험 한도를 설정·조회하는 서비스와 API 범위를 설계한다. 이 결정 전에는 `TradePlanGenerator`가 주문 비율을 자동 계산하지 않는다.
+3. Twelve Data API 키를 폐기·재발급하고, 로컬 환경 변수로만 설정한다. 비밀값은 추적되지 않아도 대화나 파일에 남기지 않는다.
 
 ## 새 대화 시작용 인계 문구
 
 ```text
 trade-guide 프로젝트 학습을 이어서 진행한다.
 저장소의 AGENTS.md, docs/PROJECT_CONTEXT.md, docs/LEARNING_LOG.md를 먼저 읽고 현재 상태를 파악한다.
-현재 브랜치와 git status를 확인한 뒤, `TradePlan`의 주문 가격·수량·유효 기간과 위험 정책을 전략 판단에서 분리해 모델링하는 작업을 설계부터 이어서 진행한다.
+현재 브랜치와 git status를 확인한 뒤, `PortfolioRiskPolicy`의 설정·조회 서비스와 API를 설계부터 이어서 진행한다.
 Claude 리서치가 필요하면 SETUP.md의 동일 worktree 원칙을 따르고, 리서치 결과를 정책·테스트·구현으로 옮기기 전 명시적으로 검토한다.
 다음 구현을 제안하기 전에 관련 enum, 도메인 객체, 서비스와 테스트를 직접 읽어 현재 계약을 확인한다.
 나는 직접 구현하므로 한 단계씩 구현 가이드를 제공하고, 내가 완료했다고 말한 뒤에 다음 단계를 안내한다.

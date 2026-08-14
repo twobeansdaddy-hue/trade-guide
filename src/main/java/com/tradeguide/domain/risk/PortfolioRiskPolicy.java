@@ -1,11 +1,18 @@
 package com.tradeguide.domain.risk;
 
+import jakarta.persistence.Embeddable;
+
 import java.math.BigDecimal;
 
+@Embeddable
 public class PortfolioRiskPolicy {
 
-    private final BigDecimal maxLossPerTradeRatio;
-    private final BigDecimal maxSingleAssetExposureRatio;
+    private BigDecimal maxLossPerTradeRatio;
+    private BigDecimal maxSingleAssetExposureRatio;
+
+    protected PortfolioRiskPolicy() {
+
+    }
 
     public PortfolioRiskPolicy(
             BigDecimal maxLossPerTradeRatio,
