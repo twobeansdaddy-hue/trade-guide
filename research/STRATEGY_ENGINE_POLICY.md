@@ -53,6 +53,8 @@ StrategyDecision / TradePlan
 - 포트폴리오 전략 가이드는 보유 종목마다 전략 판단을 조회해 목록으로 반환한다. 초기 구현에서는 보유 종목 중 전략 프로필이 없는 항목이 있으면 전체 조회를 실패시킨다.
 - Track A 미보유 후보의 `BUY` 조건(`weeksSinceCross <= 4`)은 리서치 근거로 채택·구현됐다. 세부 내용과 근거는 아래 "Track A" 절 참고.
 - `TradePlan`은 시장, 티커, 주문 유형, 주문 비율(`quantityRatio`), 지정가, 손절가, 유효 기간, 근거, 전략 메타데이터를 담는 주문 초안 도메인 모델로 구현됐다. 생성자가 비율(0 초과 1 이하)과 가격(0 초과) 값을 검증한다. 이 값을 실제로 채워 넣는 규칙은 아직 없다.
+- `TradePlan.quantityRatio`의 분모는 `QuantityRatioBasis`로 구분했다. `PORTFOLIO_VALUE`는 신규 매수, `HOLDING_QUANTITY`는 매도·부분 매도 기준이다.
+- `PortfolioRiskPolicy`는 주문당 최대 손실 비율과 종목당 최대 노출 비율을 담는 `@Embeddable` JPA 값 객체로 구현됐다. `Portfolio`에 포함되어 `portfolios` 테이블에 소수점 여섯 자리까지 저장된다. 아직 이 값을 설정·조회하는 서비스와 API가 없고, 전략 판단·손절 규칙·`TradePlanGenerator`에도 영향을 주지 않는다.
 
 ### 현재 제한 사항 및 미구현 항목
 
@@ -88,7 +90,7 @@ StrategyDecision / TradePlan
 
 - `StrategyDecision`은 판단이고, `TradePlan`은 사용자가 검토하는 주문 초안이다. 두 객체를 분리한다.
 - 주문 초안에는 종목, 매수/매도 수량 또는 비율, 주문 유형, 지정가, 손절 발동가, 유효 기간을 포함한다.
-- `TradePlan.quantityRatio` 자동 산출은 보류한다. 리서치가 제안한 계산식(`riskToleranceRatio ÷ 손절폭 비율`)은 계좌 총자산, 가용 현금, 위험 허용 비율을 전제로 하는데 현재 엔진에는 이 입력이 없다. 비율의 분모와 `RiskPolicy` 도입 여부를 먼저 설계하며, 그 전에는 `quantityRatio`를 자동 계산하거나 1을 초과하는 값을 임의로 클램프하지 않는다.
+- `TradePlan.quantityRatio` 자동 산출은 보류한다. 비율의 분모는 `QuantityRatioBasis`(신규 매수는 `PORTFOLIO_VALUE`, 매도·부분 매도는 `HOLDING_QUANTITY`)로 구분했고, 위험 한도는 `PortfolioRiskPolicy`(주문당 최대 손실 비율, 종목당 최대 노출 비율)로 저장할 수 있게 됐다. 다만 이를 설정·조회하는 서비스와 API가 아직 없어 리서치가 제안한 계산식(`riskToleranceRatio ÷ 손절폭 비율`)에 실제 값을 채울 수 없다. 그 서비스·API가 갖춰지기 전에는 `quantityRatio`를 자동 계산하거나 1을 초과하는 값을 임의로 클램프하지 않는다.
 - 익절 주문과 손절 주문을 동시에 제시할 경우 증권사의 OCO 또는 브래킷 주문 지원 여부를 확인한다. 지원되지 않으면 초과 매도 가능성을 경고하고 자동 주문 연동을 금지한다.
 - 초기 토스증권 연동은 계좌/보유 종목 조회와 주문 초안 확인까지만 허용한다. 주문 전송 자동화는 백테스트와 모의 운영 결과를 검토한 뒤 별도 결정한다.
 
@@ -102,8 +104,8 @@ StrategyDecision / TradePlan
 ## 현재 구현 우선순위
 
 1. Track A 손절 후보 추가 검증(더 긴 기간·추가 레버리지 ETF·수수료 및 슬리피지 가정)
-2. `TradePlan.quantityRatio`의 분모와 `RiskPolicy` 도입 여부 설계
-3. 위 두 결정 이후 `TradePlanGenerator` 규칙 정의 및 구현 (`TradePlan` 모델 자체는 이미 구현됨)
+2. `PortfolioRiskPolicy` 설정·조회 서비스와 API 설계 (`quantityRatio`의 분모는 `QuantityRatioBasis`로, 위험 한도 값 객체는 `PortfolioRiskPolicy`로 이미 도입됨 — 다음 단계는 이를 실제로 설정·조회하는 서비스와 API다)
+3. 위 결정 이후 `TradePlanGenerator` 규칙 정의 및 구현 (`TradePlan` 모델 자체는 이미 구현됨)
 4. confidence와 caveats를 구조화한 전략 판단 응답 설계 (전략 ID·버전·데이터 기준 시각은 이미 응답에 포함됨)
 5. Track B용 펀더멘털/기업 이벤트 데이터 공급자
 6. S&P 500 후보 스크리닝과 결과 추적
