@@ -74,12 +74,17 @@ git pull --ff-only
 
 현재 개발 브랜치는 `feature/candidate-entry-window`이다. Claude Code는 별도 리서치 브랜치·동일 worktree에서 `research/**`만 수정하고, Codex와 사용자가 개발 브랜치에서 정책을 채택·구현한다.
 
-`PortfolioRiskPolicy`는 `Portfolio`에 포함되는 `@Embeddable` 값 객체로 저장되며, 위험 비율은 소수점 여섯 자리까지 보존한다. 현재는 도메인·저장소 테스트만 있고, 위험 한도를 설정하거나 조회하는 서비스와 API는 아직 없다.
+`PortfolioRiskPolicy`는 `Portfolio`에 포함되는 `@Embeddable` 값 객체로 저장되며, 위험 비율은 소수점 여섯 자리까지 보존한다. 포트폴리오별 위험 한도는 다음 API로 설정·조회할 수 있다.
+
+- `PUT /api/members/{memberId}/portfolios/{portfolioId}/risk-policy`
+- `GET /api/members/{memberId}/portfolios/{portfolioId}/risk-policy`
+
+요청 DTO는 각 비율을 `0 초과, 1 이하`로 검증하고, `주문당 최대 손실 비율 <= 종목당 최대 노출 비율` 관계 규칙은 도메인 객체가 검증한다. 정책이 설정되지 않은 포트폴리오를 조회하면 `404 Not Found`를 반환한다.
 
 ### 다음 작업
 
 1. Track A 손절 후보를 더 긴 기간·추가 레버리지 ETF·수수료 및 슬리피지 가정으로 검증한다. 현재 고정 비율 `-25%` 손절은 추가 검증 필요이고 ATR 기반 손절은 채택하지 않는다.
-2. `TradePlan.quantityRatio`의 기준은 `QuantityRatioBasis`로 명시했고, `PortfolioRiskPolicy`를 `Portfolio`에 영속화했다. 다음으로 위험 한도를 설정·조회하는 서비스와 API 범위를 설계한다. 이 결정 전에는 `TradePlanGenerator`가 주문 비율을 자동 계산하지 않는다.
+2. `TradePlan.quantityRatio`의 기준은 `QuantityRatioBasis`로 명시했고, `PortfolioRiskPolicy`의 저장·설정·조회 API까지 구현했다. 다음 설계 과제는 위험 한도를 실제 주문 초안 산출에 언제, 어떤 기준으로 연결할지 결정하는 것이다. 이 결정 전에는 `TradePlanGenerator`가 주문 비율을 자동 계산하지 않는다.
 3. Twelve Data API 키를 폐기·재발급하고, 로컬 환경 변수로만 설정한다. 비밀값은 추적되지 않아도 대화나 파일에 남기지 않는다.
 
 ## 새 대화 시작용 인계 문구
@@ -87,7 +92,7 @@ git pull --ff-only
 ```text
 trade-guide 프로젝트 학습을 이어서 진행한다.
 저장소의 AGENTS.md, docs/PROJECT_CONTEXT.md, docs/LEARNING_LOG.md를 먼저 읽고 현재 상태를 파악한다.
-현재 브랜치와 git status를 확인한 뒤, `PortfolioRiskPolicy`의 설정·조회 서비스와 API를 설계부터 이어서 진행한다.
+현재 브랜치와 git status를 확인한 뒤, `PortfolioRiskPolicy` API 구현 상태와 `TradePlanGenerator` 연결 여부를 검토하고 다음 학습 단계를 이어서 진행한다.
 Claude 리서치가 필요하면 SETUP.md의 동일 worktree 원칙을 따르고, 리서치 결과를 정책·테스트·구현으로 옮기기 전 명시적으로 검토한다.
 다음 구현을 제안하기 전에 관련 enum, 도메인 객체, 서비스와 테스트를 직접 읽어 현재 계약을 확인한다.
 나는 직접 구현하므로 한 단계씩 구현 가이드를 제공하고, 내가 완료했다고 말한 뒤에 다음 단계를 안내한다.

@@ -93,7 +93,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 
 ## 현재 구현 위치
 
-포트폴리오 노출 비중 API, Track A 골든 테스트, 주봉 데이터 신선도 가드, 시장 신호와 행동의 분리, `StrategyDecisionMaker` 기반 행동 규칙, 완료 주봉 캐시와 다종목 전략 가이드의 종목별 부분 실패 응답, `TradePlan` 도메인 모델과 기본 유효성 검증, `PortfolioRiskPolicy`의 포트폴리오 저장까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.
+포트폴리오 노출 비중 API, Track A 골든 테스트, 주봉 데이터 신선도 가드, 시장 신호와 행동의 분리, `StrategyDecisionMaker` 기반 행동 규칙, 완료 주봉 캐시와 다종목 전략 가이드의 종목별 부분 실패 응답, `TradePlan` 도메인 모델과 기본 유효성 검증, `PortfolioRiskPolicy`의 포트폴리오 저장 및 설정·조회 API까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.
 
 ## 현재 제한
 
