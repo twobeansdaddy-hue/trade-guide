@@ -5,21 +5,26 @@ import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.domain.strategy.StrategyGuideBatch;
 import com.tradeguide.domain.risk.PortfolioRiskPolicy;
+import com.tradeguide.domain.risk.PortfolioRiskAlert;
 import com.tradeguide.dto.holding.HoldingResponse;
 import com.tradeguide.dto.portfolio.PortfolioCreateRequest;
 import com.tradeguide.dto.portfolio.PortfolioResponse;
 import com.tradeguide.dto.valuation.PortfolioValuationResponse;
-import com.tradeguide.dto.risk.HoldingExposureResponse;
 import com.tradeguide.dto.strategy.StrategyGuideBatchResponse;
+import com.tradeguide.dto.risk.HoldingExposureResponse;
 import com.tradeguide.dto.risk.PortfolioRiskPolicyResponse;
 import com.tradeguide.dto.risk.PortfolioRiskPolicyUpdateRequest;
+import com.tradeguide.dto.risk.PortfolioRiskAlertResponse;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
 import com.tradeguide.service.risk.PortfolioExposureService;
 import com.tradeguide.service.strategy.PortfolioCandidateStrategyGuideService;
+import com.tradeguide.service.risk.PortfolioRiskAlertService;
+
 import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +40,7 @@ public class PortfolioController {
     private final PortfolioStrategyGuideService portfolioStrategyGuideService;
     private final PortfolioExposureService portfolioExposureService;
     private final PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
+    private final PortfolioRiskAlertService portfolioRiskAlertService;
 
     public PortfolioController(
             PortfolioService portfolioService,
@@ -42,7 +48,8 @@ public class PortfolioController {
             PortfolioValuationService portfolioValuationService,
             PortfolioStrategyGuideService portfolioStrategyGuideService,
             PortfolioExposureService portfolioExposureService,
-            PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService
+            PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService,
+            PortfolioRiskAlertService portfolioRiskAlertService
     ) {
         this.portfolioService = portfolioService;
         this.holdingService = holdingService;
@@ -50,6 +57,7 @@ public class PortfolioController {
         this.portfolioStrategyGuideService = portfolioStrategyGuideService;
         this.portfolioExposureService = portfolioExposureService;
         this.portfolioCandidateStrategyGuideService = portfolioCandidateStrategyGuideService;
+        this.portfolioRiskAlertService = portfolioRiskAlertService;
     }
 
     @PostMapping
@@ -151,4 +159,16 @@ public class PortfolioController {
 
         return PortfolioRiskPolicyResponse.from(riskPolicy);
     }
+
+    @GetMapping("/{portfolioId}/risk-alerts")
+    public List<PortfolioRiskAlertResponse> getPortfolioRiskAlerts(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId
+    ) {
+        return portfolioRiskAlertService.getRiskAlerts(memberId, portfolioId)
+                .stream()
+                .map(PortfolioRiskAlertResponse::from)
+                .toList();
+    }
+
 }

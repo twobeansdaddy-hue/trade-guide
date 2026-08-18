@@ -8,6 +8,7 @@ import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.domain.risk.HoldingExposure;
+import com.tradeguide.domain.risk.PortfolioRiskAlert;
 import com.tradeguide.exception.PortfolioRiskPolicyNotFoundException;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
@@ -15,6 +16,7 @@ import com.tradeguide.service.strategy.PortfolioCandidateStrategyGuideService;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
 import com.tradeguide.service.risk.PortfolioExposureService;
+import com.tradeguide.service.risk.PortfolioRiskAlertService;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
 
 import org.junit.jupiter.api.Test;
@@ -44,16 +46,24 @@ class PortfolioControllerTest {
 
     @MockitoBean
     private PortfolioService portfolioService;
+
     @MockitoBean
     private HoldingService holdingService;
+
     @MockitoBean
     private PortfolioValuationService portfolioValuationService;
+
     @MockitoBean
     private PortfolioStrategyGuideService portfolioStrategyGuideService;
+
     @MockitoBean
     private PortfolioExposureService portfolioExposureService;
+
     @MockitoBean
     private PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
+
+    @MockitoBean
+    private PortfolioRiskAlertService portfolioRiskAlertService;
 
     @Test
     void createsPortfolio() throws Exception {
@@ -469,5 +479,50 @@ class PortfolioControllerTest {
                         .value("포트폴리오 위험 한도 정책이 설정되지 않았습니다."));
 
         verify(portfolioService).getRiskPolicy(10L, 100L);
+    }
+
+    @Test
+    void getsPortfolioRiskAlerts() throws Exception {
+        List<PortfolioRiskAlert> alerts = List.of(
+                new PortfolioRiskAlert(
+                        Market.US,
+                        "SOXL",
+                        new BigDecimal("30.00"),
+                        new BigDecimal("12.50"),
+                        "종목별 최대 노출 비율을 초과했습니다."
+                )
+        );
+
+        when(portfolioRiskAlertService.getRiskAlerts(10L, 100L))
+                .thenReturn(alerts);
+
+        mockMvc.perform(get(
+                        "/api/members/10/portfolios/100/risk-alerts"
+                ))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].market").value("US"))
+                .andExpect(jsonPath("$[0].ticker").value("SOXL"))
+                .andExpect(jsonPath("$[0].exposureRate").value(30))
+                .andExpect(jsonPath("$[0].maxExposureRate").value(12.5))
+                .andExpect(jsonPath("$[0].message")
+                        .value("종목별 최대 노출 비율을 초과했습니다."));
+
+        verify(portfolioRiskAlertService).getRiskAlerts(10L, 100L);
+    }
+
+
+    @Test
+    void returnsEmptyListWhenNoPortfolioRiskAlertsExist()
+            throws Exception {
+        when(portfolioRiskAlertService.getRiskAlerts(10L, 100L))
+                .thenReturn(List.of());
+
+        mockMvc.perform(get(
+                        "/api/members/10/portfolios/100/risk-alerts"
+                ))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+
+        verify(portfolioRiskAlertService).getRiskAlerts(10L, 100L);
     }
 }
