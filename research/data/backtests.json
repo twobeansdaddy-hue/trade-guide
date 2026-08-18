@@ -611,5 +611,65 @@
     "confidence": "low",
     "caveats": "워크포워드 분할 기준(2019 vs 2020)에 따라 고정비율 -25% 손절의 학습/검증 구간 손익 방향이 뒤집힘 - 결론이 특정 시기(2023~2026 SOXL/TQQQ 급등)에 크게 의존할 가능성. TNA/FAS는 Yahoo Finance 단일 소스로 프로덕션 교차검증 없음. 수수료는 0으로 가정(실제 미반영), 슬리피지는 추정치. 재진입/추적손절 시나리오는 확장 표본으로 재계산하지 않음. SOXL 2종 소스 중복 카운트 등 기존 표본 중복 한계도 그대로 유지.",
     "last_updated": "2026-08-18"
+  },
+  {
+    "id": "track-a-trailing-stop-2026",
+    "type": "backtest",
+    "ticker": "SOXL,TQQQ,TNA,FAS",
+    "strategy_id": "soxl-ma-rsi-timing",
+    "data_range": {
+      "start": "2008-11-19",
+      "end": "2026-08-17",
+      "frequency": "daily"
+    },
+    "created_date": "2026-08-18",
+    "summary": "track-a-stoploss-revalidation-and-sizing-design.md(고정/ATR 손절, 49사이클)에 이어 추적 손절(진입 이후 일봉 종가 최고값 대비 -20%/-25%/-30%, 장중 고가 미사용)을 같은 49사이클(SOXL x2소스/TQQQ/TNA/FAS, 편도 슬리피지 0.15%p)에서 검증했다. 세 후보 모두 무손절 대비 MDD를 13~22%p 개선하지만, 그 대가로 평균 수익률을 31~52%p 포기해야 해 MDD 1%p 개선당 포기 수익률이 2.18~2.40(순비용)으로 나왔다 - 사실상 공짜였던 고정 -25% 손절(-0.25)보다 뚜렷이 나쁘다. 손절 발동률이 88~92%로 극단적으로 높고 그중 84~93%가 휩쏘였다 - 3배 레버리지 ETF의 다년 상승 사이클 안에서도 흔한 20~30% 내부 조정이 추적 손절을 거의 항상 건드리기 때문이다. 사전 고정한 4개 워크포워드 분할(2018/2019/2020/2021) 전부에서 학습·검증 구간 모두 순비용 방향으로 일관됐고(고정 -25%처럼 부호가 뒤집히지 않음), SOXL 중복 제거(46사이클) 버전에서도 같은 방향이 유지됐다. 채택 기준 5가지 중 MDD 개선(기준1)과 결과 일관성(기준3,4)은 충족하지만 교환비율(기준2)과 실전 참고 가치(기준5)를 충족하지 못해 세 후보 모두 채택 비추천이다. 후보가 하나도 유망하지 않아 재진입 보조 분석은 사전 규칙에 따라 생략했다.",
+    "metrics": {
+      "num_cycles_full": 49,
+      "num_cycles_soxl_dedup": 46,
+      "slippage_pct_one_way": 0.0015,
+      "commission_pct_one_way": 0.0,
+      "trailing_stop_basis": "daily_close_high_water_mark",
+      "baseline_avg_return_pct_full49": 58.4,
+      "baseline_avg_mdd_close_pct_full49": -41.6,
+      "fixed25_give_up_per_mdd_improve_full49": -0.25,
+      "trailing20_avg_return_pct_full49": 6.1,
+      "trailing20_avg_mdd_close_pct_full49": -19.2,
+      "trailing20_stops_triggered_full49": 45,
+      "trailing20_stops_total_full49": 49,
+      "trailing20_whipsaw_rate_pct_full49": 88.9,
+      "trailing20_give_up_per_mdd_improve_full49": 2.34,
+      "trailing25_avg_return_pct_full49": 19.2,
+      "trailing25_avg_mdd_close_pct_full49": -23.6,
+      "trailing25_stops_triggered_full49": 44,
+      "trailing25_whipsaw_rate_pct_full49": 84.1,
+      "trailing25_give_up_per_mdd_improve_full49": 2.18,
+      "trailing30_avg_return_pct_full49": 26.7,
+      "trailing30_avg_mdd_close_pct_full49": -28.4,
+      "trailing30_stops_triggered_full49": 43,
+      "trailing30_whipsaw_rate_pct_full49": 93.0,
+      "trailing30_give_up_per_mdd_improve_full49": 2.4,
+      "trailing20_give_up_per_mdd_improve_dedup46": 2.11,
+      "trailing25_give_up_per_mdd_improve_dedup46": 1.92,
+      "trailing30_give_up_per_mdd_improve_dedup46": 1.95,
+      "walk_forward_splits_used": "2018-01-01,2019-01-01,2020-01-01,2021-01-01",
+      "walk_forward_trailing25_ratio_range_full49": "1.56~3.86 (train), 1.59~2.81 (test), 모든 분할에서 순비용 방향 일관"
+    },
+    "report_path": "research/reports/track-a-trailing-stop-review.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance chart API v8 (SOXL/TQQQ/TNA/FAS daily+weekly, 기존 캐시 재사용)",
+        "url": "https://query2.finance.yahoo.com/v8/finance/chart/",
+        "accessed": "2026-08-18"
+      },
+      {
+        "title": "Twelve Data time_series API (production source, daily/weekly, SOXL only, 기존 캐시 재사용)",
+        "url": "https://api.twelvedata.com/time_series",
+        "accessed": "2026-08-14"
+      }
+    ],
+    "confidence": "medium",
+    "caveats": "추적 손절 3개 후보 모두 채택 비추천 방향이 4개 워크포워드 분할과 SOXL 중복 제거 버전에서 일관되게 재현돼, 직전 리포트(고정비율 손절)의 부호 반전 문제는 이번에는 나타나지 않았다 - 이 때문에 confidence를 직전 리포트(low)보다 높은 medium으로 책정했다. 다만 실질적으로 독립적인 거시 국면 수는 여전히 제한적이고(TNA/FAS는 Yahoo 단일 소스), 수수료는 0으로 가정했으며, 재진입 시나리오는 유망한 후보가 없어 계산하지 않았다. 추적 기준은 일봉 종가 high-water mark만 사용했고(세션 지시에 따른 절대 규칙) 장중 고가 기준은 검증하지 않았다.",
+    "last_updated": "2026-08-18"
   }
 ]
