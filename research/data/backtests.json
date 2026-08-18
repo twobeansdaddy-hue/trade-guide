@@ -671,5 +671,63 @@
     "confidence": "medium",
     "caveats": "추적 손절 3개 후보 모두 채택 비추천 방향이 4개 워크포워드 분할과 SOXL 중복 제거 버전에서 일관되게 재현돼, 직전 리포트(고정비율 손절)의 부호 반전 문제는 이번에는 나타나지 않았다 - 이 때문에 confidence를 직전 리포트(low)보다 높은 medium으로 책정했다. 다만 실질적으로 독립적인 거시 국면 수는 여전히 제한적이고(TNA/FAS는 Yahoo 단일 소스), 수수료는 0으로 가정했으며, 재진입 시나리오는 유망한 후보가 없어 계산하지 않았다. 추적 기준은 일봉 종가 high-water mark만 사용했고(세션 지시에 따른 절대 규칙) 장중 고가 기준은 검증하지 않았다.",
     "last_updated": "2026-08-18"
+  },
+  {
+    "id": "track-a-market-regime-filter-2026",
+    "type": "backtest",
+    "ticker": "SOXL,TQQQ",
+    "strategy_id": "soxl-ma-crossover",
+    "data_range": {
+      "start": "1993-01-25",
+      "end": "2026-08-18",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-08-18",
+    "summary": "Track A(SOXL/TQQQ) weeksSinceCross<=4 후보 진입 정책에 'SPY 마지막 완료 주봉 종가 > SPY 40주 이동평균'인 시장 국면 필터를 추가로 적용했을 때 진입 사이클 수·수익률·MDD가 달라지는지 검증했다. 결론: 기존에 검증된 20개 사이클(soxl_twelvedata 3 + soxl_yahoo 8 + tqqq_yahoo 9) 전부에서, 교차 당주(weeksSinceCross==0, 기존 정책의 실제 진입 시점)에 SPY가 이미 40주선 위에 있었다 - 필터가 단 한 사이클도 배제하거나 지연시키지 않아 베이스라인과 후보 결과가 완전히 동일했다(제외 0/20, MDD 개선 0.0%p, 포기 수익률 0.0%p, 놓친 큰 기회 0/5). SOXL(11)·TQQQ(9) 개별 분해와 4개 워크포워드 분할(2018/2019/2020/2021) 전부에서도 동일하게 재현됐다. 원인은 10/40주 이동평균 교차가 구조적으로 시장 저점 대비 상당히 지연되어 발생하므로, 그 시점엔 변동성이 훨씬 낮은 SPY가 이미 자신의 40주선 위로 회복해 있는 경우가 이 표본에서는 항상 성립했기 때문으로 보인다. 이 결과는 필터가 '나쁘다'는 뜻이 아니라, 이 20개 사이클 표본 위에서는 필터의 효과를 전혀 관측할 수 없었다는 뜻이다 - 채택 여부를 판단할 근거 자체가 부족해 '추가 검증 필요'로 판정한다.",
+    "metrics": {
+      "num_cycles": 20,
+      "num_cycles_soxl": 11,
+      "num_cycles_tqqq": 9,
+      "n_entered_baseline": 20,
+      "n_entered_candidate": 20,
+      "n_excluded_candidate": 0,
+      "baseline_avg_return_pct": 110.01,
+      "baseline_median_return_pct": 41.47,
+      "baseline_avg_mdd_close_pct": -46.98,
+      "baseline_avg_mdd_intraweek_pct": -51.86,
+      "candidate_avg_return_pct": 110.01,
+      "candidate_avg_mdd_close_pct": -46.98,
+      "mdd_improvement_pp": 0.0,
+      "return_given_up_pp": 0.0,
+      "exchange_ratio_return_given_up_per_mdd_pp": null,
+      "big_opportunity_threshold_definition": "baseline_return_pct >= Q3(상위 사분위)",
+      "big_opportunity_n_overall": 5,
+      "big_opportunity_missed_n_overall": 0,
+      "walk_forward_splits_used": "2018-01-01,2019-01-01,2020-01-01,2021-01-01",
+      "walk_forward_result": "4개 분할(학습/검증 각각) 전부에서 제외 0건, 효과 0.0 - 완전히 일관됨(방향성 자체가 '효과 없음'으로 일관)",
+      "soxl_only_n_excluded": 0,
+      "tqqq_only_n_excluded": 0
+    },
+    "report_path": "research/reports/track-a-market-regime-filter-review.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance chart API v8 (SPY weekly, 신규 수집)",
+        "url": "https://query2.finance.yahoo.com/v8/finance/chart/SPY",
+        "accessed": "2026-08-18"
+      },
+      {
+        "title": "Twelve Data time_series API (SOXL weekly, production source, 기존 캐시 재사용)",
+        "url": "https://api.twelvedata.com/time_series",
+        "accessed": "2026-08-12"
+      },
+      {
+        "title": "Yahoo Finance chart API v8 (SOXL/TQQQ weekly, 기존 캐시 재사용)",
+        "url": "https://query2.finance.yahoo.com/v8/finance/chart/",
+        "accessed": "2026-08-12"
+      }
+    ],
+    "confidence": "low-medium",
+    "caveats": "필터가 이 20개 사이클 표본에서 단 한 번도 발동하지 않아(제외 0건), MDD 개선 효과를 실측할 수 없었다 - '효과가 없다'와 '효과를 측정할 표본이 없다'를 구분해야 한다. SPY(Yahoo Finance)와 SOXL/TQQQ(Twelve Data 프로덕션 + Yahoo 확장)의 데이터 소스가 서로 다르다. 실질적으로 독립적인 거시 국면은 여전히 7~8개 수준이고 레버리지 ETF 2종에 한정된다. SPY 40주선 외의 다른 시장 지표나 이동평균 기간은 결과를 본 뒤 추가 탐색하지 않았다(사전 고정 가설 1개만 검증). 손절·재진입·분할매수는 이번 범위에 포함하지 않았다.",
+    "last_updated": "2026-08-18"
   }
 ]

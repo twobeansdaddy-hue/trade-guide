@@ -1,0 +1,16 @@
+{
+  "provider": "Yahoo Finance (query2.finance.yahoo.com v8 chart API)",
+  "symbol": "SPY",
+  "fullName": "SPDR S&P 500 ETF Trust",
+  "interval": "1wk",
+  "startDate": "1993-01-25",
+  "endDate": "2026-08-10",
+  "downloadedAt": "2026-08-18",
+  "order": "asc",
+  "adjustment": "close/open/high/low는 미조정(원가), adjclose 컬럼만 분할+배당 조정 종가",
+  "format": "CSV",
+  "delimiter": ";",
+  "candleCount": 1751,
+  "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/SPY?period1=0&period2=9999999999&interval=1wk&events=div,splits",
+  "note": "market-regime-filter 리서치용(research/reports/track-a-market-regime-filter-review.md). Track A(SOXL/TQQQ) 프로덕션 소스는 Twelve Data이나, 이 리서치 역할은 API 키에 접근하지 않으므로 SPY는 Yahoo Finance 공개 API로 확보했다. SOXL/TQQQ와 SPY의 데이터 소스가 서로 다르다는 한계가 있다. period1=0, period2=9999999999로 요청해 Yahoo가 실제 상장일(firstTradeDate=728317800, 1993-01-29)부터 반환하는 가장 긴 주봉 이력을 받았다. adjclose를 종가로, low는 (adjclose/close) 비율로 환산해 사용(entry_delay_cycle_backtest.py의 raw_close_col='close'와 동일한 방식). 마지막 미완결 주봉(2026-08-10 이후 진행 중)은 완결 주봉 필터가 자동 제외한다."
+}
