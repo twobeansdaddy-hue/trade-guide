@@ -165,11 +165,15 @@ def mdd_over_window(daily_rows, entry_idx, exit_idx, entry_price):
 
 
 def simulate_stop_leg(daily_rows, atr, entry_idx, entry_price, hard_exit_idx,
-                       hard_exit_is_trend, stop_price):
+                       hard_exit_is_trend, stop_price, slippage_pct=0.0):
     """entry_idx(그 날 시가로 이미 체결됨)부터 hard_exit_idx까지 매일 저가로 손절을 확인한다.
 
     hard_exit_idx: 자연 청산(추세 하향교차 체결일 또는 미청산이면 데이터 마지막 날) 인덱스.
     hard_exit_is_trend: hard_exit_idx가 추세 청산 체결(시가 체결)인지 여부. False면 미청산 마크투마켓(종가).
+    slippage_pct: 편도 슬리피지(0.0~1.0). 매도성 체결가(추세청산, 손절)에만 불리한 방향으로 적용한다.
+        기본값 0.0이면 기존 호출부(run_stoploss_report.py)와 완전히 동일한 결과를 낸다.
+        gap_excess_loss_pct는 갭하락 자체의 크기(슬리피지 적용 전 원가 기준)를 그대로 보여주기 위해
+        슬리피지 적용 전 가격으로 계산하고, 슬리피지는 그 이후 별도로 최종 체결가에 얹는다.
 
     반환: dict(exit_idx, exit_price, exit_reason, gap_excess_loss, mdd_close, mdd_low)
     exit_reason: "STOP" | "TREND" | "OPEN_MARK"
@@ -184,16 +188,19 @@ def simulate_stop_leg(daily_rows, atr, entry_idx, entry_price, hard_exit_idx,
 
         if stop_hit:
             if open_j < stop_price:
-                stop_fill = open_j
+                stop_fill_raw = open_j
                 gap = True
             else:
-                stop_fill = stop_price
+                stop_fill_raw = stop_price
                 gap = False
+            stop_fill = apply_sell_slippage(stop_fill_raw, slippage_pct)
 
             if is_hard_exit_day and hard_exit_is_trend:
-                trend_fill = open_j
-                # 같은 날 두 체결이 모두 가능하면 더 낮은(불리한) 쪽 채택 (보수적 기본값)
-                if trend_fill <= stop_fill:
+                trend_fill_raw = open_j
+                trend_fill = apply_sell_slippage(trend_fill_raw, slippage_pct)
+                # 같은 날 두 체결이 모두 가능하면 더 낮은(불리한) 쪽 채택 (보수적 기본값).
+                # 비교는 슬리피지 적용 전 원가 기준(체결 우선순위는 시장가 문제이지 슬리피지 문제가 아님).
+                if trend_fill_raw <= stop_fill_raw:
                     mdd_close, mdd_low = mdd_over_window(daily_rows, entry_idx, j, entry_price)
                     return {
                         "exit_idx": j, "exit_price": trend_fill, "exit_reason": "TREND",
@@ -202,7 +209,7 @@ def simulate_stop_leg(daily_rows, atr, entry_idx, entry_price, hard_exit_idx,
                         "tie_break_note": "같은 날 추세청산과 손절이 겹쳐 더 낮은 가격(추세청산 시가) 채택",
                     }
             mdd_close, mdd_low = mdd_over_window(daily_rows, entry_idx, j, entry_price)
-            gap_excess = ((stop_price - stop_fill) / entry_price * 100.0) if gap else 0.0
+            gap_excess = ((stop_price - stop_fill_raw) / entry_price * 100.0) if gap else 0.0
             return {
                 "exit_idx": j, "exit_price": stop_fill, "exit_reason": "STOP",
                 "gap_excess_loss_pct": gap_excess,
@@ -212,9 +219,10 @@ def simulate_stop_leg(daily_rows, atr, entry_idx, entry_price, hard_exit_idx,
 
         if is_hard_exit_day:
             if hard_exit_is_trend:
-                exit_price = open_j
+                exit_price = apply_sell_slippage(open_j, slippage_pct)
                 reason = "TREND"
             else:
+                # 미청산(open) 사이클의 마크투마켓 평가는 실제 매도 체결이 아니므로 슬리피지를 적용하지 않는다.
                 exit_price = daily_rows[j]["close"]
                 reason = "OPEN_MARK"
             mdd_close, mdd_low = mdd_over_window(daily_rows, entry_idx, j, entry_price)
@@ -265,9 +273,28 @@ def stop_price_atr_cap(entry_price, atr_value, multiplier, cap_pct):
     return entry_price - distance
 
 
-def run_baseline_delay_grid(weekly_candles, cycles, daily_rows, delays, label):
+# ---------------------------------------------------------------------------
+# 수수료/슬리피지 (신규 — track-a-stoploss-revalidation 리포트용)
+# ---------------------------------------------------------------------------
+# 기본값 0.0으로 두어, 이 파라미터를 넘기지 않는 기존 호출부(run_stoploss_report.py)의
+# 결과가 바이트 단위로 그대로 재현되도록 보존한다. 슬리피지는 "체결가"에만 적용하고
+# 손절 트리거 판정(저가<=손절가)이나 MDD 계산에는 적용하지 않는다 — 실제로 손절이
+# 발동했는지 여부와 낙폭 측정은 시장가 자체의 문제이고, 슬리피지는 그 체결을 실제로
+# 얼마에 받았는지에 대한 별도 비용이기 때문이다. 손절가(stop_price) 자체는 실제 체결된
+# (=슬리피지가 반영된) 진입가를 기준으로 계산한다 — 실거래에서 손절 지정가는 본인의
+# 실제 매수 단가를 기준으로 걸기 때문이다.
+def apply_buy_slippage(price, slippage_pct):
+    return price * (1.0 + slippage_pct)
+
+
+def apply_sell_slippage(price, slippage_pct):
+    return price * (1.0 - slippage_pct)
+
+
+def run_baseline_delay_grid(weekly_candles, cycles, daily_rows, delays, label, slippage_pct=0.0):
     """새 체결 가정(다음 거래일 시가)으로 지연 그리드(0..N주) 기준선을 계산한다.
-    (entry_delay_cycle_backtest.py의 종가체결 기준선과 비교하기 위한 절)."""
+    (entry_delay_cycle_backtest.py의 종가체결 기준선과 비교하기 위한 절).
+    slippage_pct 기본값 0.0 -> 기존 호출부와 동일한 결과."""
     out_cycles = []
     for cyc in cycles:
         c = cyc["cross_index"]
@@ -288,9 +315,9 @@ def run_baseline_delay_grid(weekly_candles, cycles, daily_rows, delays, label):
             if entry_idx is None or entry_idx > hard_exit_idx:
                 entries[str(k)] = {"enterable": False, "reason": "no_daily_execution_data"}
                 continue
-            entry_price = daily_rows[entry_idx]["open"]
+            entry_price = apply_buy_slippage(daily_rows[entry_idx]["open"], slippage_pct)
             if hard_exit_is_trend:
-                exit_price = daily_rows[hard_exit_idx]["open"]
+                exit_price = apply_sell_slippage(daily_rows[hard_exit_idx]["open"], slippage_pct)
             else:
                 exit_price = daily_rows[hard_exit_idx]["close"]
             ret = (exit_price / entry_price - 1.0) * 100.0
@@ -314,10 +341,13 @@ def run_baseline_delay_grid(weekly_candles, cycles, daily_rows, delays, label):
     return {"label": label, "cycles": out_cycles}
 
 
-def run_stoploss_candidates(weekly_candles, cycles, daily_rows, atr, label, candidate_configs):
+def run_stoploss_candidates(weekly_candles, cycles, daily_rows, atr, label, candidate_configs,
+                             slippage_pct=0.0):
     """delay=0(=weeksSinceCross==0, 실제 엔진의 최초 진입 시점) 기준으로 손절 후보를 시뮬레이션한다.
     각 candidate_config: {"name":..., "kind":"fixed"/"atr_cap", "pct":..., "multiplier":..., "cap_pct":...}
-    각 후보에 대해 no_reentry / reentry 두 변형을 모두 계산한다."""
+    각 후보에 대해 no_reentry / reentry 두 변형을 모두 계산한다.
+    slippage_pct 기본값 0.0 -> 기존 호출부(run_stoploss_report.py)와 동일한 결과.
+    손절가(stop_price)는 슬리피지가 반영된 실제 체결 진입가(entry0_price) 기준으로 계산한다."""
     results = {cfg["name"]: {"no_reentry": [], "reentry": []} for cfg in candidate_configs}
     baseline_trades = []
 
@@ -332,11 +362,11 @@ def run_stoploss_candidates(weekly_candles, cycles, daily_rows, atr, label, cand
         if entry0_idx is None or entry0_idx > hard_exit_idx:
             continue
 
-        entry0_price = daily_rows[entry0_idx]["open"]
+        entry0_price = apply_buy_slippage(daily_rows[entry0_idx]["open"], slippage_pct)
         entry0_atr = atr[entry0_idx]
 
         if hard_exit_is_trend:
-            baseline_exit_price = daily_rows[hard_exit_idx]["open"]
+            baseline_exit_price = apply_sell_slippage(daily_rows[hard_exit_idx]["open"], slippage_pct)
         else:
             baseline_exit_price = daily_rows[hard_exit_idx]["close"]
         baseline_ret = (baseline_exit_price / entry0_price - 1.0) * 100.0
@@ -365,7 +395,8 @@ def run_stoploss_candidates(weekly_candles, cycles, daily_rows, atr, label, cand
 
             # ---- no_reentry ----
             leg = simulate_stop_leg(daily_rows, atr, entry0_idx, entry0_price,
-                                     hard_exit_idx, hard_exit_is_trend, sp0)
+                                     hard_exit_idx, hard_exit_is_trend, sp0,
+                                     slippage_pct=slippage_pct)
             ret = (leg["exit_price"] / entry0_price - 1.0) * 100.0
             whipsaw = False
             if leg["exit_reason"] == "STOP":
@@ -410,7 +441,7 @@ def run_stoploss_candidates(weekly_candles, cycles, daily_rows, atr, label, cand
             while ptr < len(checkpoints):
                 k, chk_idx = checkpoints[ptr]
                 pos_entry_idx = chk_idx
-                pos_entry_price = daily_rows[chk_idx]["open"]
+                pos_entry_price = apply_buy_slippage(daily_rows[chk_idx]["open"], slippage_pct)
                 pos_atr = atr[chk_idx]
                 if cfg["kind"] == "fixed":
                     pos_stop_price = stop_price_fixed_pct(pos_entry_price, cfg["pct"])
@@ -422,7 +453,8 @@ def run_stoploss_candidates(weekly_candles, cycles, daily_rows, atr, label, cand
                 # 포지션이 없을 때 진입 -> 자연 청산(hard_exit_idx)까지 손절 여부를 그대로 시뮬레이션.
                 # 도중에 스탑이 나면 그 시점 이후의 첫 체크포인트(k'>k, chk_idx'>stop_exit_idx)에서 재진입.
                 leg = simulate_stop_leg(daily_rows, atr, pos_entry_idx, pos_entry_price,
-                                         hard_exit_idx, hard_exit_is_trend, pos_stop_price)
+                                         hard_exit_idx, hard_exit_is_trend, pos_stop_price,
+                                         slippage_pct=slippage_pct)
                 trade_ret = (leg["exit_price"] / pos_entry_price - 1.0) * 100.0
                 trades.append({
                     "checkpoint_week_offset": k,
