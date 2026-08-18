@@ -44,3 +44,8 @@ bin/
 
 ### Local 환경 파일
 src/main/resources/application-local.yml
+
+# Frontend
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.env.local
