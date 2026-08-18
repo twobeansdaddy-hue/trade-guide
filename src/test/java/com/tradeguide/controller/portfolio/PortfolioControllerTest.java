@@ -2,11 +2,13 @@ package com.tradeguide.controller.portfolio;
 
 import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.portfolio.Portfolio;
+import com.tradeguide.domain.risk.PortfolioRiskPolicy;
 import com.tradeguide.domain.strategy.*;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.domain.risk.HoldingExposure;
+import com.tradeguide.exception.PortfolioRiskPolicyNotFoundException;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.strategy.PortfolioCandidateStrategyGuideService;
@@ -30,8 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -373,5 +374,100 @@ class PortfolioControllerTest {
                 .andExpect(jsonPath("$[0].exposureRate").value(30));
 
         verify(portfolioExposureService).getExposures(10L, 100L);
+    }
+
+    @Test
+    void updatesPortfolioRiskPolicy() throws Exception {
+        PortfolioRiskPolicy riskPolicy = new PortfolioRiskPolicy(
+                new BigDecimal("0.025"),
+                new BigDecimal("0.125")
+        );
+
+        when(portfolioService.updateRiskPolicy(
+                10L,
+                100L,
+                new BigDecimal("0.025"),
+                new BigDecimal("0.125")
+        )).thenReturn(riskPolicy);
+
+        mockMvc.perform(put(
+                        "/api/members/10/portfolios/100/risk-policy"
+                )
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "maxLossPerTradeRatio": 0.025,
+                              "maxSingleAssetExposureRatio": 0.125
+                            }
+                            """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.maxLossPerTradeRatio").value(0.025))
+                .andExpect(jsonPath("$.maxSingleAssetExposureRatio").value(0.125));
+
+        verify(portfolioService).updateRiskPolicy(
+                10L,
+                100L,
+                new BigDecimal("0.025"),
+                new BigDecimal("0.125")
+        );
+    }
+
+    @Test
+    void returnsBadRequestWhenRiskPolicyRatioIsOutOfRange()
+            throws Exception {
+        mockMvc.perform(put(
+                        "/api/members/10/portfolios/100/risk-policy"
+                )
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "maxLossPerTradeRatio": 0,
+                              "maxSingleAssetExposureRatio": 0.125
+                            }
+                            """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("주문당 최대 손실 비율은 0보다 커야 합니다."));
+
+        verifyNoInteractions(portfolioService);
+    }
+
+    @Test
+    void getsPortfolioRiskPolicy() throws Exception {
+        PortfolioRiskPolicy riskPolicy = new PortfolioRiskPolicy(
+                new BigDecimal("0.025"),
+                new BigDecimal("0.125")
+        );
+
+        when(portfolioService.getRiskPolicy(10L, 100L))
+                .thenReturn(riskPolicy);
+
+        mockMvc.perform(get(
+                        "/api/members/10/portfolios/100/risk-policy"
+                ))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.maxLossPerTradeRatio").value(0.025))
+                .andExpect(jsonPath("$.maxSingleAssetExposureRatio")
+                        .value(0.125));
+
+        verify(portfolioService).getRiskPolicy(10L, 100L);
+    }
+
+    @Test
+    void returnsNotFoundWhenPortfolioRiskPolicyIsNotConfigured()
+            throws Exception {
+        when(portfolioService.getRiskPolicy(10L, 100L))
+                .thenThrow(new PortfolioRiskPolicyNotFoundException(
+                        "포트폴리오 위험 한도 정책이 설정되지 않았습니다."
+                ));
+
+        mockMvc.perform(get(
+                        "/api/members/10/portfolios/100/risk-policy"
+                ))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message")
+                        .value("포트폴리오 위험 한도 정책이 설정되지 않았습니다."));
+
+        verify(portfolioService).getRiskPolicy(10L, 100L);
     }
 }

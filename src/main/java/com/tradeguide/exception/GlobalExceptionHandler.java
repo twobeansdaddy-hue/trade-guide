@@ -79,4 +79,15 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(PortfolioRiskPolicyNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePortfolioRiskPolicyNotFoundException(
+            PortfolioRiskPolicyNotFoundException exception
+    ) {
+        ErrorResponse response = new ErrorResponse(exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(response);
+    }
+
 }

@@ -4,12 +4,15 @@ import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.domain.strategy.StrategyGuideBatch;
+import com.tradeguide.domain.risk.PortfolioRiskPolicy;
 import com.tradeguide.dto.holding.HoldingResponse;
 import com.tradeguide.dto.portfolio.PortfolioCreateRequest;
 import com.tradeguide.dto.portfolio.PortfolioResponse;
 import com.tradeguide.dto.valuation.PortfolioValuationResponse;
 import com.tradeguide.dto.risk.HoldingExposureResponse;
 import com.tradeguide.dto.strategy.StrategyGuideBatchResponse;
+import com.tradeguide.dto.risk.PortfolioRiskPolicyResponse;
+import com.tradeguide.dto.risk.PortfolioRiskPolicyUpdateRequest;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
@@ -53,12 +56,28 @@ public class PortfolioController {
     public ResponseEntity<PortfolioResponse> createPortfolio(
             @PathVariable Long memberId,
             @Valid @RequestBody PortfolioCreateRequest request
-            ) {
+    ) {
         Portfolio portfolio = portfolioService.createPortfolio(memberId, request.getName());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(PortfolioResponse.from(portfolio));
+    }
+
+    @PutMapping("/{portfolioId}/risk-policy")
+    public PortfolioRiskPolicyResponse updateRiskPolicy(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId,
+            @Valid @RequestBody PortfolioRiskPolicyUpdateRequest request
+    ) {
+        PortfolioRiskPolicy riskPolicy = portfolioService.updateRiskPolicy(
+                memberId,
+                portfolioId,
+                request.getMaxLossPerTradeRatio(),
+                request.getMaxSingleAssetExposureRatio()
+        );
+
+        return PortfolioRiskPolicyResponse.from(riskPolicy);
     }
 
     @GetMapping("/{portfolioId}/holdings")
@@ -121,5 +140,15 @@ public class PortfolioController {
                         .getCandidateStrategyGuides(memberId, portfolioId);
 
         return StrategyGuideBatchResponse.from(strategyGuideBatch);
+    }
+
+    @GetMapping("/{portfolioId}/risk-policy")
+    public PortfolioRiskPolicyResponse getRiskPolicy(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId
+    ) {
+        PortfolioRiskPolicy riskPolicy = portfolioService.getRiskPolicy(memberId, portfolioId);
+
+        return PortfolioRiskPolicyResponse.from(riskPolicy);
     }
 }
