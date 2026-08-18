@@ -77,7 +77,11 @@ StrategyDecision / TradePlan
   - `signalEvent == CROSS_UP`은 교차 당주에만 성립하므로, 1~4주 지연 진입 조건에 함께 사용하지 않는다.
   - 근거: `research/reports/track-a-entry-delay-cutoff-review.md`의 SOXL/TQQQ 지연 진입 검토. 신뢰도는 `low-medium`이며 Track A 레버리지 ETF에만 적용한다.
   - 5~8주 축소 진입은 채택하지 않는다. `REDUCE`는 보유 종목의 부분 매도라는 기존 의미를 유지하며, 미보유 후보의 축소 매수에 재사용하지 않는다. 새 액션이나 `positionSizeHint` 같은 별도 필드도 아직 도입하지 않는다. 9주 이상은 `WATCH`를 유지한다.
-- 손절(리스크 종료) 레이어는 현재 채택하지 않는다. SOXL/TQQQ 일봉 기반 20사이클 검증(`research/reports/track-a-stoploss-drawdown-review.md`) 결과 고정 비율 `-25%` 손절은 MDD를 개선하면서 수익 포기가 거의 없었으나 발동 사례가 4건뿐이라 `추가 검증 필요`이고, ATR 기반 + 상한 손절은 휩쏘율이 높고 교환비율이 나빠 `채택하지 않음`이다. 따라서 `StrategyDecision`과 (아직 미구현인) `TradePlanGenerator`에 손절 규칙을 구현하지 않는다.
+- Track A 손절(리스크 종료) 레이어에는 현재 채택 가능한 규칙이 없다. 세 가지 접근을 검토했다.
+  - 고정 비율 `-20%/-25%/-30%` 손절: 표본을 SOXL/TQQQ 20사이클에서 SOXL/TQQQ/TNA/FAS 49사이클로 넓히고 수수료·슬리피지를 반영해도(`research/reports/track-a-stoploss-revalidation-and-sizing-design.md`), 워크포워드 분할 시점(2019 vs 2020)에 따라 결과 방향이 뒤집혀 `추가 검증 필요`를 유지한다.
+  - ATR 기반(+상한) 손절: 교환비율이 학습·검증 전 구간에서 일관되게 순비용이고 휩쏘율이 높아 `채택 비추천`을 유지한다.
+  - 종가 기준 최고값(high-water mark) 대비 `-20%/-25%/-30%` 추적 손절(`research/reports/track-a-trailing-stop-review.md`): 사전 고정한 워크포워드 4분할(2018/2019/2020/2021)과 SOXL 중복 제거 표본 모두에서 수익 대비 비용과 휩쏘율이 일관되게 나빠 `채택 비추천`이다.
+  - 따라서 `StrategyDecision`과 (아직 미구현인) `TradePlanGenerator`에 손절 규칙을 구현하지 않으며, 손절가를 자동으로 제안하지 않는다.
 - 활성화된 `TradePlan` 생성 규칙은 포지션 비율, 손절가 계산식, 최대 비중, 유효 기간을 명시해야 한다.
 - 분할 매도(예: 3분할)는 검토 가능한 후보 기법일 뿐 현재 채택된 기본 전략이 아니다. 향후 적용하려면 각 단계의 비율, 지정가 또는 조건, 잔여 수량 처리 규칙과 백테스트 근거를 별도로 정의한다.
 
@@ -94,6 +98,7 @@ StrategyDecision / TradePlan
 - `StrategyDecision`은 판단이고, `TradePlan`은 사용자가 검토하는 주문 초안이다. 두 객체를 분리한다.
 - 주문 초안에는 종목, 매수/매도 수량 또는 비율, 주문 유형, 지정가, 손절 발동가, 유효 기간을 포함한다.
 - `TradePlan.quantityRatio` 자동 산출은 보류한다. 비율의 분모는 `QuantityRatioBasis`(신규 매수는 `PORTFOLIO_VALUE`, 매도·부분 매도는 `HOLDING_QUANTITY`)로 구분했고, 위험 한도는 `PortfolioRiskPolicy` API(`PUT`/`GET /api/members/{memberId}/portfolios/{portfolioId}/risk-policy`)로 설정·조회할 수 있게 됐다. 다만 `PortfolioRiskPolicy`는 아직 전략 판단, 손절 규칙, `TradePlanGenerator`, `quantityRatio` 자동 산출 어디에도 연결되지 않았다. 리서치가 제안한 계산식(`riskToleranceRatio ÷ 손절폭 비율`)의 분모(손절폭 비율)는 Track A 손절 규칙이 아직 채택되지 않아 정해지지 않았고, `maxLossPerTradeRatio`를 이 계산식의 `riskToleranceRatio`로 쓸지도 별도 결정이 필요하다. 이 두 가지가 정해지기 전에는 `quantityRatio`를 자동 계산하거나 1을 초과하는 값을 임의로 클램프하지 않는다.
+- `PortfolioRiskPolicy.maxLossPerTradeRatio`는 도메인 검증(`maxLossPerTradeRatio <= maxSingleAssetExposureRatio`)과 테스트 예시값이 정합적으로 보아 포트폴리오 평가액 대비 한 매매의 최대 손실 비율로 해석하는 쪽이 자연스럽다는 관찰이 있다(`research/reports/track-a-stoploss-revalidation-and-sizing-design.md`). 이는 코드 관찰이며 설계 확정이 아니다. 이 값을 손절폭 기반 `quantityRatio` 산식의 입력으로 실제 연결할지는 별도 결정 사항이고, 이 문서는 그 연결을 구현 규칙으로 선언하지 않는다.
 - 익절 주문과 손절 주문을 동시에 제시할 경우 증권사의 OCO 또는 브래킷 주문 지원 여부를 확인한다. 지원되지 않으면 초과 매도 가능성을 경고하고 자동 주문 연동을 금지한다.
 - 초기 토스증권 연동은 계좌/보유 종목 조회와 주문 초안 확인까지만 허용한다. 주문 전송 자동화는 백테스트와 모의 운영 결과를 검토한 뒤 별도 결정한다.
 
@@ -106,9 +111,9 @@ StrategyDecision / TradePlan
 
 ## 현재 구현 우선순위
 
-1. Track A 손절 후보 추가 검증(더 긴 기간·추가 레버리지 ETF·수수료 및 슬리피지 가정) — 다음 단계
+1. 고정 비율·ATR·추적 손절 세 접근 모두 채택 가능한 후보가 없다. 다음 우선순위는 손절 변형을 더 탐색하는 것이 아니라, **손절 없는 Track A 주문 초안을 허용할지와 `TradePlan.stopLossPrice` 필수 제약을 유지할지에 대한 설계 결정**이다 — 다음 단계.
 2. ~~`PortfolioRiskPolicy` 설정·조회 서비스와 API 설계~~ — **완료**. `PUT`/`GET /api/members/{memberId}/portfolios/{portfolioId}/risk-policy`로 구현됐다(요청 DTO 비율 검증, `maxLossPerTradeRatio <= maxSingleAssetExposureRatio` 도메인 검증, 미설정 시 `404 Not Found` 포함). 아직 전략 판단·손절 규칙·`TradePlanGenerator`·`quantityRatio` 자동 산출에는 연결하지 않았다.
-3. 위 1번(Track A 손절 후보 검증) 이후 `TradePlanGenerator` 규칙 정의 및 구현 (`TradePlan` 모델 자체는 이미 구현됨). 활성 손절 규칙과 비율 산출 입력이 아직 확정되지 않았으므로 지금은 구현하지 않는다.
+3. 위 1번의 설계 결정 이후 `TradePlanGenerator` 규칙 정의 및 구현 (`TradePlan` 모델 자체는 이미 구현됨). 활성 손절 규칙과 비율 산출 입력이 아직 확정되지 않았으므로 지금은 구현하지 않는다.
 4. confidence와 caveats를 구조화한 전략 판단 응답 설계 (전략 ID·버전·데이터 기준 시각은 이미 응답에 포함됨)
 5. Track B용 펀더멘털/기업 이벤트 데이터 공급자
 6. S&P 500 후보 스크리닝과 결과 추적
