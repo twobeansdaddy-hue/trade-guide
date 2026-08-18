@@ -32,7 +32,7 @@
   - 가격·수량·손절 기준은 아직 포함하지 않는다.
 - 주봉 신호는 미국 동부 시간 기준 금요일 장 마감 이후 확정된 데이터를 기준으로 하며, 다음 거래일 장 시작 전 가이드에 사용한다.
 - MACD, RSI, 분할 매도, ATR 손절 등은 향후 비교·조사 후보이다. 사용자 질문만으로 기본 전략에 추가하지 않는다.
-- 다음 전략 기능은 레버리지 종목의 노출 비중과 위험 경고이며, 이후 전략별 주문 초안과 백테스트로 확장한다.
+- 포트폴리오 노출 비중과 위험 경고를 제공하며, 이후 전략별 주문 초안과 백테스트로 확장한다.
 
 ### Track B: 일반 미국 주식과 비레버리지 ETF
 
@@ -55,7 +55,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 있다. `StrategyDecisionMaker`는 보유 종목의 `HOLD`/`SELL`과 미보유 후보의 `BUY`/`WATCH`를 결정한다. 후보 `BUY`는 상승 추세의 교차 후 0~4주에만 허용한다. `REDUCE`는 주문 초안 생성 규칙과 부분 매도 정책이 확정될 때까지 사용하지 않는다.
 - `TradePlan`은 주문 비율, 비율 기준, 주문 유형, 지정가, 손절가, 유효 기간, 근거와 전략 메타데이터를 담는 주문 초안 도메인 모델이다. DB에 저장하거나 증권사에 전송하지 않는다.
 - `QuantityRatioBasis.PORTFOLIO_VALUE`는 포트폴리오 평가액 기준의 신규 매수 비율이고, `HOLDING_QUANTITY`는 보유 종목 수량 기준의 매도 또는 부분 매도 비율이다.
-- `PortfolioRiskPolicy`는 주문당 최대 손실 비율과 종목당 최대 노출 비율을 검증하는 JPA 값 객체다. `Portfolio`에 포함되어 `portfolios` 테이블의 소수점 여섯 자리 컬럼으로 저장된다. 아직 설정 API나 전략 엔진 연결은 없으므로 활성 손절 규칙과 주문 초안 생성에는 영향을 주지 않는다.
+- `PortfolioRiskPolicy`는 주문당 최대 손실 비율과 종목당 최대 노출 비율을 검증하는 JPA 값 객체다. `Portfolio`에 포함되어 `portfolios` 테이블의 소수점 여섯 자리 컬럼으로 저장되며, 설정·조회 API와 종목별 노출 초과 경고에 사용된다. 아직 전략 엔진, 활성 손절 규칙, 주문 초안 생성에는 연결하지 않는다.
 - 주문 초안을 만드는 전략별 가격·수량·손절·유효 기간 규칙은 아직 확정하지 않았으므로 `TradePlanGenerator`는 구현하지 않았다.
 - `REDUCE`는 보유 종목의 부분 매도를 뜻한다. 교차 후 5~8주인 미보유 후보의 축소 진입에는 사용하지 않으며, 해당 구간은 현재 `WATCH`를 유지한다.
 - `TradePlan.quantityRatio`의 분모와 자동 산출식은 아직 채택하지 않았다. 계좌 총자산, 가용 현금, 트랙별 배정 예산, 위험 허용 비율 중 어떤 입력을 사용할지와 `RiskPolicy` 도입 여부를 먼저 결정해야 한다.
@@ -93,7 +93,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 
 ## 현재 구현 위치
 
-포트폴리오 노출 비중 API, Track A 골든 테스트, 주봉 데이터 신선도 가드, 시장 신호와 행동의 분리, `StrategyDecisionMaker` 기반 행동 규칙, 완료 주봉 캐시와 다종목 전략 가이드의 종목별 부분 실패 응답, `TradePlan` 도메인 모델과 기본 유효성 검증, `PortfolioRiskPolicy`의 포트폴리오 저장 및 설정·조회 API까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.
+포트폴리오 노출 비중 API와 위험 경고 API, Track A 골든 테스트, 주봉 데이터 신선도 가드, 시장 신호와 행동의 분리, `StrategyDecisionMaker` 기반 행동 규칙, 완료 주봉 캐시와 다종목 전략 가이드의 종목별 부분 실패 응답, `TradePlan` 도메인 모델과 기본 유효성 검증, `PortfolioRiskPolicy`의 포트폴리오 저장 및 설정·조회 API까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.
 
 ## 현재 제한
 
