@@ -1,121 +1,92 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useEffect, useState } from 'react'
+import { getPortfolioRiskAlerts } from './api/portfolioRiskApi'
+import type { PortfolioRiskAlert } from './types/portfolioRisk'
 import './App.css'
 
+const MEMBER_ID = 1
+const PORTFOLIO_ID = 1
+
+function formatRate(rate: number) {
+  return `${rate.toFixed(2)}%`
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [riskAlerts, setRiskAlerts] = useState<PortfolioRiskAlert[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function loadRiskAlerts() {
+      try {
+        const alerts = await getPortfolioRiskAlerts(MEMBER_ID, PORTFOLIO_ID)
+        setRiskAlerts(alerts)
+      } catch (error) {
+        const message =
+            error instanceof Error
+                ? error.message
+                : '위험 경고를 불러오는 중 오류가 발생했습니다.'
+
+        setErrorMessage(message)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadRiskAlerts()
+  }, [])
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
+      <main className="app-shell">
+        <header className="app-header">
+          <p className="eyebrow">TRADE GUIDE</p>
+          <h1>포트폴리오 위험 경고</h1>
+          <p className="page-description">
+            설정한 최대 단일 종목 비중을 초과한 보유 종목입니다.
           </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+        </header>
 
-      <div className="ticks"></div>
+        <section className="risk-section" aria-labelledby="risk-alert-title">
+          <div className="section-heading">
+            <div>
+              <p className="section-label">Portfolio {PORTFOLIO_ID}</p>
+              <h2 id="risk-alert-title">확인 필요</h2>
+            </div>
+            <span className="alert-count">{riskAlerts.length}건</span>
+          </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+          {isLoading ? (
+              <p className="status-message">위험 경고를 불러오는 중입니다.</p>
+          ) : errorMessage ? (
+              <p className="status-message error">{errorMessage}</p>
+          ) : riskAlerts.length > 0 ? (
+              <ul className="risk-alert-list">
+                {riskAlerts.map((alert) => (
+                    <li key={`${alert.market}-${alert.ticker}`} className="risk-alert-item">
+                      <div className="ticker-group">
+                        <span className="market-badge">{alert.market}</span>
+                        <strong>{alert.ticker}</strong>
+                      </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+                      <dl className="risk-details">
+                        <div>
+                          <dt>현재 비중</dt>
+                          <dd>{formatRate(alert.exposureRate)}</dd>
+                        </div>
+                        <div>
+                          <dt>최대 비중</dt>
+                          <dd>{formatRate(alert.maxExposureRate)}</dd>
+                        </div>
+                      </dl>
+
+                      <p className="risk-message">{alert.message}</p>
+                    </li>
+                ))}
+              </ul>
+          ) : (
+              <p className="empty-state">현재 위험 경고가 없습니다.</p>
+          )}
+        </section>
+      </main>
   )
 }
 
