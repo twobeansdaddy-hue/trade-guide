@@ -99,20 +99,21 @@ git pull --ff-only
 
 `GET /api/members/{memberId}/portfolios/{portfolioId}/risk-alerts`는 실제 종목별 노출 비중이 정책의 종목별 최대 노출 비율을 초과한 경우에만 경고 목록을 반환한다. 이 기능은 자동 매도, 손절가 산출, 주문 비율 산출을 수행하지 않는다.
 
-프론트엔드에는 React + TypeScript + Vite를 초기 구성했고, Vite 개발 프록시(`/api` -> `http://localhost:8080`)로 Spring Boot와 연결한다. 포트폴리오 위험 경고 화면은 목록·빈 상태·오류 상태를 표시하며, 백엔드 오류 응답의 `message`를 화면에 표시한다. 현재 새로고침 버튼 변경분은 작업 트리에 있으며, lint와 build 수동 확인 후 별도 커밋으로 정리한다.
+프론트엔드에는 React + TypeScript + Vite를 초기 구성했고, Vite 개발 프록시(`/api` -> `http://localhost:8080`)로 Spring Boot와 연결한다. 포트폴리오 위험 경고 화면은 목록·빈 상태·오류 상태를 표시하며, 백엔드 오류 응답의 `message`를 화면에 표시한다. `↻` 버튼은 브라우저 전체 새로고침 없이 같은 위험 경고 API를 다시 조회하며, 조회 중에는 중복 클릭을 막는다. 이 화면의 정적 UI, API 연동, 오류 메시지 개선, 재조회 기능은 각각 커밋되어 있다.
 
 ### 다음 작업
 
 1. Track A 손절 리서치에서 고정 비율 손절은 추가 검증 필요, ATR·추적 손절은 채택 비추천으로 판정됐다. 현재 채택 가능한 손절 규칙은 없으므로 추가 변형 탐색 대신, 손절 없는 주문 초안을 허용할지와 `TradePlan.stopLossPrice` 필수 제약을 유지할지 설계 결정을 내린다.
 2. `TradePlan.quantityRatio`의 기준은 `QuantityRatioBasis`로 명시했고, `PortfolioRiskPolicy`의 저장·설정·조회 API와 노출 초과 경고 조회까지 구현했다. 활성 손절 규칙과 수량 산식이 확정되기 전에는 `TradePlanGenerator`가 주문 비율을 자동 계산하지 않는다.
 3. Twelve Data API 키를 폐기·재발급하고, 로컬 환경 변수로만 설정한다. 비밀값은 추적되지 않아도 대화나 파일에 남기지 않는다.
+4. 다음 프론트엔드 학습은 새 기능 구현보다 위험 경고 화면의 데이터 흐름을 회상하는 것부터 시작한다. `useState`, `useEffect`, `loadRiskAlerts`, API 모듈, 조건부 렌더링이 연결되는 순서를 사용자가 설명한 뒤 한 가지 작은 변경만 진행한다.
 
 ## 새 대화 시작용 인계 문구
 
 ```text
 trade-guide 프로젝트 학습을 이어서 진행한다.
 저장소의 AGENTS.md, docs/PROJECT_CONTEXT.md, docs/LEARNING_LOG.md를 먼저 읽고 현재 상태를 파악한다.
-현재 브랜치와 git status를 확인한 뒤, 포트폴리오 위험 경고 구현 상태와 `TradePlan.stopLossPrice` 필수 제약에 대한 설계 결정을 검토하고 다음 학습 단계를 이어서 진행한다.
+현재 브랜치와 git status를 확인한 뒤, 포트폴리오 위험 경고 화면의 React 데이터 흐름을 먼저 회상한다. 새 기능을 바로 제안하지 말고 `useState`, `useEffect`, `loadRiskAlerts`, API 모듈, 조건부 렌더링의 연결을 한 가지씩 확인한 뒤 한 가지 작은 학습 단위만 진행한다.
 Claude 리서치가 필요하면 SETUP.md의 동일 worktree 원칙을 따르고, 리서치 결과를 정책·테스트·구현으로 옮기기 전 명시적으로 검토한다.
 다음 구현을 제안하기 전에 관련 enum, 도메인 객체, 서비스와 테스트를 직접 읽어 현재 계약을 확인한다.
 나는 직접 구현하므로 한 단계씩 구현 가이드를 제공하고, 내가 완료했다고 말한 뒤에 다음 단계를 안내한다.
