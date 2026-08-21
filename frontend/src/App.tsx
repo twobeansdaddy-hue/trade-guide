@@ -1,39 +1,42 @@
-import { useEffect, useState } from 'react'
-import { getPortfolioRiskAlerts } from './api/portfolioRiskApi'
-import type { PortfolioRiskAlert } from './types/portfolioRisk'
-import './App.css'
+import { useCallback, useEffect, useState } from "react";
+import { getPortfolioRiskAlerts } from "./api/portfolioRiskApi";
+import type { PortfolioRiskAlert } from "./types/portfolioRisk";
+import "./App.css";
 
-const MEMBER_ID = 1
-const PORTFOLIO_ID = 1
+const MEMBER_ID = 1;
+const PORTFOLIO_ID = 1;
 
 function formatRate(rate: number) {
-  return `${rate.toFixed(2)}%`
+  return `${rate.toFixed(2)}%`;
 }
 
 function App() {
-  const [riskAlerts, setRiskAlerts] = useState<PortfolioRiskAlert[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [riskAlerts, setRiskAlerts] = useState<PortfolioRiskAlert[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const loadRiskAlerts = useCallback(async () => {
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    try {
+      const alerts = await getPortfolioRiskAlerts(MEMBER_ID, PORTFOLIO_ID);
+      setRiskAlerts(alerts);
+    } catch (error) {
+      const message =
+          error instanceof Error
+              ? error.message
+              : "위험 경고를 불러오는 중 오류가 발생했습니다.";
+
+      setErrorMessage(message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    async function loadRiskAlerts() {
-      try {
-        const alerts = await getPortfolioRiskAlerts(MEMBER_ID, PORTFOLIO_ID)
-        setRiskAlerts(alerts)
-      } catch (error) {
-        const message =
-            error instanceof Error
-                ? error.message
-                : '위험 경고를 불러오는 중 오류가 발생했습니다.'
-
-        setErrorMessage(message)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadRiskAlerts()
-  }, [])
+    void loadRiskAlerts();
+  }, [loadRiskAlerts]);
 
   return (
       <main className="app-shell">
@@ -51,17 +54,37 @@ function App() {
               <p className="section-label">Portfolio {PORTFOLIO_ID}</p>
               <h2 id="risk-alert-title">확인 필요</h2>
             </div>
-            <span className="alert-count">{riskAlerts.length}건</span>
+
+            <div className="section-actions">
+              <span className="alert-count">{riskAlerts.length}건</span>
+              <button
+                  type="button"
+                  className="refresh-button"
+                  onClick={loadRiskAlerts}
+                  disabled={isLoading}
+                  aria-label="위험 경고 새로고침"
+                  title="위험 경고 새로고침"
+              >
+                ↻
+              </button>
+            </div>
           </div>
 
           {isLoading ? (
-              <p className="status-message">위험 경고를 불러오는 중입니다.</p>
+              <p className="status-message" aria-live="polite">
+                위험 경고를 불러오는 중입니다.
+              </p>
           ) : errorMessage ? (
-              <p className="status-message error">{errorMessage}</p>
+              <p className="status-message error" role="alert">
+                {errorMessage}
+              </p>
           ) : riskAlerts.length > 0 ? (
               <ul className="risk-alert-list">
                 {riskAlerts.map((alert) => (
-                    <li key={`${alert.market}-${alert.ticker}`} className="risk-alert-item">
+                    <li
+                        key={`${alert.market}-${alert.ticker}`}
+                        className="risk-alert-item"
+                    >
                       <div className="ticker-group">
                         <span className="market-badge">{alert.market}</span>
                         <strong>{alert.ticker}</strong>
@@ -87,7 +110,7 @@ function App() {
           )}
         </section>
       </main>
-  )
+  );
 }
 
-export default App
+export default App;
