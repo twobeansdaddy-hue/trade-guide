@@ -208,3 +208,78 @@ h2 {
   cursor: wait;
   opacity: 0.55;
 }
+
+.risk-policy-editor {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 28px;
+  padding: 24px 0;
+  border-top: 1px solid #d9dce2;
+  border-bottom: 1px solid #d9dce2;
+}
+
+.risk-policy-editor h2,
+.form-error-message,
+.form-success-message,
+.risk-policy-editor button {
+  grid-column: 1 / -1;
+}
+
+.risk-policy-editor label {
+  display: grid;
+  gap: 8px;
+  color: #4c5360;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.risk-policy-editor input {
+  width: 100%;
+  border: 1px solid #c9cdd4;
+  border-radius: 4px;
+  padding: 10px 12px;
+  color: #17191d;
+  background: #ffffff;
+}
+
+.risk-policy-editor input:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.risk-policy-editor button {
+  justify-self: start;
+  border: 0;
+  border-radius: 4px;
+  padding: 10px 14px;
+  color: #ffffff;
+  background: #2563eb;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.risk-policy-editor button:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.risk-policy-editor button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.form-error-message {
+  color: #b42318;
+  font-size: 14px;
+}
+
+.form-success-message {
+  color: #28643c;
+  font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  .risk-policy-editor {
+    grid-template-columns: 1fr;
+  }
+}
