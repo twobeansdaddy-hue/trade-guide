@@ -283,3 +283,50 @@ h2 {
     grid-template-columns: 1fr;
   }
 }
+
+.valuation-section {
+  margin-top: 28px;
+}
+
+.valuation-section h2 {
+  margin-bottom: 16px;
+}
+
+.portfolio-valuation {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+}
+
+.portfolio-valuation div {
+  display: grid;
+  gap: 6px;
+}
+
+.portfolio-valuation dt {
+  color: #6a717d;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.portfolio-valuation dd {
+  margin: 0;
+  color: #17191d;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.valuation-value.positive {
+  color: #28643c;
+}
+
+.valuation-value.negative {
+  color: #b42318;
+}
+
+@media (max-width: 640px) {
+  .portfolio-valuation {
+    grid-template-columns: 1fr;
+  }
+}
