@@ -156,6 +156,80 @@
     line-height: 1.5;
 }
 
+.transaction-form {
+    display: grid;
+    gap: 28px;
+    max-width: 820px;
+    margin-top: 32px;
+}
+
+.transaction-form section {
+    padding-bottom: 28px;
+    border-bottom: 1px solid #dfe6e6;
+}
+
+.transaction-form h2 {
+    margin: 0 0 18px;
+    color: #1b2931;
+    font-size: 19px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.form-grid label {
+    display: grid;
+    gap: 8px;
+    color: #43535f;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.form-grid input,
+.form-grid select {
+    width: 100%;
+    border: 1px solid #c7d2d1;
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: #17232c;
+    background: #fff;
+}
+
+.form-grid input:focus,
+.form-grid select:focus {
+    outline: 2px solid #158476;
+    outline-offset: 2px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.form-actions button {
+    border: 0;
+    border-radius: 6px;
+    padding: 11px 14px;
+    color: #fff;
+    background: #167568;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.form-actions button:disabled {
+    cursor: wait;
+    opacity: 0.6;
+}
+
+.form-actions .secondary-button {
+    border: 1px solid #c7d2d1;
+    color: #52616c;
+    background: #fff;
+}
+
 .topbar {
     display: flex;
     align-items: center;
@@ -716,6 +790,7 @@ dt {
     .onboarding-page { min-height: auto; padding: 18px 0; }
     .onboarding-panel { padding: 28px 22px; }
     .onboarding-panel h1 { font-size: 24px; }
+    .form-grid { grid-template-columns: 1fr; }
     .topbar { min-height: 64px; padding: 0 18px; }
     .topbar p,
     .portfolio-selector > span { display: none; }
