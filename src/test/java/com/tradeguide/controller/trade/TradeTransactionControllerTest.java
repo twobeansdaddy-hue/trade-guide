@@ -4,6 +4,7 @@ import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.trade.TradeTransaction;
 import com.tradeguide.domain.trade.TradeType;
 import com.tradeguide.service.trade.TradeTransactionService;
+import com.tradeguide.service.auth.MemberAccessService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,6 +33,9 @@ class TradeTransactionControllerTest {
 
     @MockitoBean
     private TradeTransactionService tradeTransactionService;
+
+    @MockitoBean
+    private MemberAccessService memberAccessService;
 
     @Test
     void createsTradeTransaction() throws Exception {

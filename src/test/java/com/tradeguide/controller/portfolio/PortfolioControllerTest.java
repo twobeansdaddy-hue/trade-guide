@@ -17,6 +17,7 @@ import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
 import com.tradeguide.service.risk.PortfolioExposureService;
 import com.tradeguide.service.risk.PortfolioRiskAlertService;
+import com.tradeguide.service.auth.MemberAccessService;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
 
 import org.junit.jupiter.api.Test;
@@ -66,6 +67,9 @@ class PortfolioControllerTest {
 
     @MockitoBean
     private PortfolioRiskAlertService portfolioRiskAlertService;
+
+    @MockitoBean
+    private MemberAccessService memberAccessService;
 
     @Test
     void createsPortfolio() throws Exception {
