@@ -10,9 +10,9 @@
 
 ## 2. Asset-Listing 모델
 
-- 현재 `AssetProfile(market + ticker)` 전략 카탈로그와 거래 가능한 상장 정보(`AssetListing`)를 분리한다.
+- `AssetProfile(market + ticker)` 전략 카탈로그와 거래 가능한 상장 정보(`AssetListing`)를 분리했다.
 - `AssetListing`은 자산 식별자, 시장, 티커, 표시명, 상장 상태 같은 사실만 소유한다. 전략 트랙·정책은 `AssetProfile`에 남긴다.
-- 보유 내역과 시세 조회가 상장 정보를 참조하도록 마이그레이션하되, 기존 API의 `market`/`ticker` 계약은 호환 기간 동안 유지한다.
+- 다음 단계에서는 보유 내역과 시세 조회가 상장 정보를 직접 참조하도록 마이그레이션하되, 기존 API의 `market`/`ticker` 계약은 호환 기간 동안 유지한다.
 
 ## 3. 운영 인증 완성
 
