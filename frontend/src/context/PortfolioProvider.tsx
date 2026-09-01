@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {getCurrentMember} from "../api/authApi";
-import {getPortfolios} from "../api/portfolioApi";
+import {createPortfolio as requestCreatePortfolio, getPortfolios} from "../api/portfolioApi";
 import type {AuthenticatedMember} from "../types/auth";
 import type {Portfolio} from "../types/portfolio";
 import {PortfolioContext} from "./portfolioContext";
@@ -42,6 +42,16 @@ export function PortfolioProvider({children}: {children: React.ReactNode}) {
         void loadWorkspace();
     }, []);
 
+    async function createPortfolio(name: string) {
+        if (viewer === null) {
+            throw new Error("로그인 정보를 확인할 수 없습니다.");
+        }
+
+        const portfolio = await requestCreatePortfolio(viewer.id, name);
+        setPortfolios((current) => [...current, portfolio]);
+        setSelectedPortfolioId(portfolio.id);
+    }
+
     return <PortfolioContext.Provider value={{
         memberId: viewer?.id ?? 0,
         viewer,
@@ -51,5 +61,6 @@ export function PortfolioProvider({children}: {children: React.ReactNode}) {
         isAuthenticationRequired,
         errorMessage,
         selectPortfolio: setSelectedPortfolioId,
+        createPortfolio,
     }}>{children}</PortfolioContext.Provider>;
 }
