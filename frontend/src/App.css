@@ -3,6 +3,80 @@
     background: #f5f7f8;
 }
 
+.sign-in-page {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    padding: 28px;
+    background:
+        linear-gradient(135deg, #eff7f4 0%, #f8faf9 48%, #f4f7fb 100%);
+}
+
+.sign-in-panel {
+    width: min(100%, 560px);
+    padding: 46px;
+    border: 1px solid #dce7e4;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 18px 42px rgba(20, 46, 40, 0.08);
+}
+
+.sign-in-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #17232c;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.sign-in-panel .eyebrow {
+    margin: 42px 0 10px;
+}
+
+.sign-in-panel h1 {
+    margin: 0;
+    color: #17232c;
+    font-size: 30px;
+    line-height: 1.35;
+}
+
+.sign-in-description {
+    margin: 18px 0 0;
+    color: #62727e;
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+.sign-in-button {
+    display: block;
+    margin-top: 30px;
+    border-radius: 6px;
+    padding: 13px 16px;
+    color: #fff;
+    background: #167568;
+    font-size: 14px;
+    font-weight: 800;
+    text-align: center;
+    text-decoration: none;
+}
+
+.sign-in-button:hover {
+    background: #0e6157;
+}
+
+.sign-in-button:focus-visible {
+    outline: 2px solid #158476;
+    outline-offset: 3px;
+}
+
+.sign-in-note {
+    margin: 14px 0 0;
+    color: #83909a;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
 .topbar {
     display: flex;
     align-items: center;
@@ -556,6 +630,10 @@ dt {
 }
 
 @media (max-width: 760px) {
+    .sign-in-page { padding: 18px; }
+    .sign-in-panel { padding: 30px 24px; }
+    .sign-in-panel .eyebrow { margin-top: 34px; }
+    .sign-in-panel h1 { font-size: 25px; }
     .topbar { min-height: 64px; padding: 0 18px; }
     .topbar p,
     .portfolio-selector > span { display: none; }

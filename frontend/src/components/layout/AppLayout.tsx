@@ -1,5 +1,6 @@
 import {NavLink, Outlet} from "react-router-dom";
 import {usePortfolioContext} from "../../context/portfolioContext";
+import SignInPage from "../../pages/SignInPage";
 
 const navigation = [
     {to: "/", label: "대시보드", end: true},
@@ -9,7 +10,12 @@ const navigation = [
 ];
 
 export default function AppLayout() {
-    const {portfolios, selectedPortfolioId, isLoading, errorMessage, selectPortfolio} = usePortfolioContext();
+    const {portfolios, selectedPortfolioId, viewer, isLoading, isAuthenticationRequired, errorMessage, selectPortfolio} = usePortfolioContext();
+
+    if (isAuthenticationRequired) {
+        return <SignInPage/>;
+    }
+
     return (
         <div className="application-frame">
             <header className="topbar">
@@ -18,7 +24,7 @@ export default function AppLayout() {
                     <span>Trade Guide</span>
                 </NavLink>
                 <div className="topbar-actions">
-                    <p>의사결정 지원</p>
+                    <p>{viewer?.nickname ?? "의사결정 지원"}</p>
                     <label className="portfolio-selector">
                         <span>포트폴리오</span>
                         <select value={selectedPortfolioId ?? ""} disabled={isLoading || portfolios.length === 0} onChange={(event) => selectPortfolio(Number(event.target.value))}>
@@ -36,7 +42,7 @@ export default function AppLayout() {
                     ))}
                 </nav>
                 <main className="page-content">
-                    {errorMessage ? <p className="status-message error" role="alert">{errorMessage}</p> : selectedPortfolioId === null && !isLoading ? <p className="status-message">등록된 포트폴리오가 없습니다.</p> : <Outlet/>}
+                    {isLoading ? <p className="status-message" aria-live="polite">작업공간을 준비하고 있습니다.</p> : errorMessage ? <p className="status-message error" role="alert">{errorMessage}</p> : selectedPortfolioId === null ? <p className="status-message">등록된 포트폴리오가 없습니다.</p> : <Outlet/>}
                 </main>
             </div>
         </div>

@@ -102,6 +102,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 
 ## 현재 제한
 
-- 인증과 권한이 아직 없으므로 `memberId` 경로는 실제 로그인 사용자를 검증하지 않는다.
-- `/api/admin/**`은 로컬 학습용 공개 API다. 운영 배포 전 인증과 관리자 권한을 적용해야 한다.
+- Google OIDC 기반 로그인 사용자와 `Member` 연결, `/api/members/{memberId}/...` 소유권 검증은 구현됐다. 기본 로컬 프로필은 학습 편의를 위해 인증을 끄며, 운영 프로필에서는 `tradeguide.auth.enabled=true`와 Google 클라이언트 비밀값을 제공해야 한다.
+- React는 로컬 개발에서만 `VITE_LOCAL_MEMBER_ID`를 사용한다. 이 값이 없으면 `/api/auth/me`로 로그인 사용자를 조회하고, 인증되지 않았을 때 Google 로그인 화면을 표시한다.
+- `/api/admin/**`은 인증 활성화 상태에서 차단한다. 역할 기반 관리자 기능과 운영자용 자산 카탈로그 관리는 아직 구현하지 않았다.
 - 완료 주봉 캐시는 애플리케이션 메모리를 사용하므로 애플리케이션 재시작 시 초기화된다. 분산 캐시나 다중 인스턴스 운영은 아직 고려하지 않았다.
