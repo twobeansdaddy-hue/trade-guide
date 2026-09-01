@@ -11,7 +11,7 @@
 
 ## 제품 방향
 
-- 초기 대상 시장은 미국 주식이다. 이후 다른 시장으로 확장할 수 있게 `Market`과 시세 제공자 인터페이스를 분리한다.
+- 초기 대상 시장은 미국 주식이다. `Market`은 현재 `US`, `KR`을 지원하며, 이후 다른 시장도 열거형과 시세 제공자 구현을 확장해 추가한다.
 - 보유 종목뿐 아니라 장기적으로 신규 후보도 다룬다. 신규 후보는 무제한 전체 시장이 아니라 처음에는 S&P 500처럼 제한된 유니버스에서 탐색한다.
 - 가이드는 현재가, 전략 신호, 시장 상황, 외부 이벤트를 조합해 설명 가능한 근거를 제공해야 한다.
 - 예약 주문에 필요한 가격·수량·유효 기간은 장기 목표지만, 전략 판단과 같은 객체로 섞지 않는다.
@@ -49,7 +49,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `TradeTransaction`은 원본 매매 기록이다.
 - `Holding`은 매매 이력으로 계산하는 현재 보유 상태이며 DB에 저장하지 않는다.
 - `HoldingValuation`, `PortfolioValuation`은 현재가 기반의 평가 결과다.
-- `AssetProfile`은 `market + ticker`와 투자 트랙을 관리하는 시스템 전략 카탈로그다. 사용자별 목표 수익률 설정이 아니다.
+- `AssetListing`은 `market + ticker`, 표시명, 상장 상태를 관리하는 거래 가능한 종목 기준 엔터티다. `AssetProfile`은 하나의 상장 종목과 투자 트랙을 연결하는 시스템 전략 카탈로그이며, 사용자별 목표 수익률 설정이 아니다.
 - `StrategySignal`은 시장 데이터만으로 계산한 추세 상태, 교차 이벤트, 기준 가격과 근거다.
 - `StrategyDecision`은 보유 여부 같은 사용자 맥락과 `StrategySignal`을 결합한 최종 행동과 근거다.
 - `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 있다. `StrategyDecisionMaker`는 보유 종목의 `HOLD`/`SELL`과 미보유 후보의 `BUY`/`WATCH`를 결정한다. 후보 `BUY`는 상승 추세의 교차 후 0~4주에만 허용한다. `REDUCE`는 주문 초안 생성 규칙과 부분 매도 정책이 확정될 때까지 사용하지 않는다.

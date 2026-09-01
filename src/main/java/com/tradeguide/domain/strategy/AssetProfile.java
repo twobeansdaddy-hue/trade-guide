@@ -1,5 +1,7 @@
 package com.tradeguide.domain.strategy;
 
+import com.tradeguide.domain.asset.AssetListing;
+import com.tradeguide.domain.asset.ListingStatus;
 import com.tradeguide.domain.trade.Market;
 import jakarta.persistence.*;
 
@@ -7,8 +9,8 @@ import jakarta.persistence.*;
 @Table(
         name = "asset_profiles",
         uniqueConstraints = @UniqueConstraint(
-                name = "uk_asset_profiles_market_ticker",
-                columnNames = {"market", "ticker"}
+                name = "uk_asset_profiles_listing",
+                columnNames = "listing_id"
         )
 )
 public class AssetProfile {
@@ -17,12 +19,9 @@ public class AssetProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Market market;
-
-    @Column(nullable = false)
-    private String ticker;
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "listing_id", nullable = false)
+    private AssetListing listing;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -35,8 +34,12 @@ public class AssetProfile {
             Market market,
             String ticker,
             InvestmentTrack investmentTrack) {
-        this.market = market;
-        this.ticker = ticker;
+        this.listing = new AssetListing(
+                market,
+                ticker,
+                ticker,
+                ListingStatus.ACTIVE
+        );
         this.investmentTrack = investmentTrack;
     }
 
@@ -45,11 +48,15 @@ public class AssetProfile {
     }
 
     public Market getMarket() {
-        return market;
+        return listing.getMarket();
     }
 
     public String getTicker() {
-        return ticker;
+        return listing.getTicker();
+    }
+
+    public AssetListing getListing() {
+        return listing;
     }
 
     public InvestmentTrack getInvestmentTrack() {
