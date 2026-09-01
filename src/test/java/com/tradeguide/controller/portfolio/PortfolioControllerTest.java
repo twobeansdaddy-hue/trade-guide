@@ -95,6 +95,19 @@ class PortfolioControllerTest {
     }
 
     @Test
+    void getsPortfolios() throws Exception {
+        Portfolio portfolio = mock(Portfolio.class);
+        when(portfolio.getId()).thenReturn(1L);
+        when(portfolio.getName()).thenReturn("US Stocks");
+        when(portfolioService.getPortfolios(1L)).thenReturn(List.of(portfolio));
+
+        mockMvc.perform(get("/api/members/1/portfolios"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].name").value("US Stocks"));
+    }
+
+    @Test
     void returnsBadRequestWhenNameIsBlank() throws Exception {
         mockMvc.perform(post("/api/members/1/portfolios")
                         .contentType(MediaType.APPLICATION_JSON)

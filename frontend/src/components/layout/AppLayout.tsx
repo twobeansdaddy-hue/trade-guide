@@ -1,4 +1,5 @@
 import {NavLink, Outlet} from "react-router-dom";
+import {usePortfolioContext} from "../../context/portfolioContext";
 
 const navigation = [
     {to: "/", label: "대시보드", end: true},
@@ -8,11 +9,12 @@ const navigation = [
 ];
 
 export default function AppLayout() {
+    const {portfolios, selectedPortfolioId, isLoading, errorMessage, selectPortfolio} = usePortfolioContext();
     return (
         <div className="application-frame">
             <header className="topbar">
                 <NavLink className="brand" to="/">TRADE GUIDE</NavLink>
-                <p>미국 주식 의사결정 지원</p>
+                <div className="topbar-actions"><p>미국 주식 의사결정 지원</p><label className="portfolio-selector">포트폴리오<select value={selectedPortfolioId ?? ""} disabled={isLoading || portfolios.length === 0} onChange={(event) => selectPortfolio(Number(event.target.value))}>{portfolios.map((portfolio) => <option key={portfolio.id} value={portfolio.id}>{portfolio.name}</option>)}</select></label></div>
             </header>
             <div className="workspace">
                 <nav className="sidebar" aria-label="주요 메뉴">
@@ -22,7 +24,7 @@ export default function AppLayout() {
                         </NavLink>
                     ))}
                 </nav>
-                <main className="page-content"><Outlet/></main>
+                <main className="page-content">{errorMessage ? <p className="status-message error" role="alert">{errorMessage}</p> : selectedPortfolioId === null && !isLoading ? <p className="status-message">등록된 포트폴리오가 없습니다.</p> : <Outlet/>}</main>
             </div>
         </div>
     );
