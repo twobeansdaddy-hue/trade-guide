@@ -1,6 +1,6 @@
 import type {PortfolioRiskAlert} from "../types/portfolioRisk";
 import type {PortfolioRiskPolicy} from "../types/portfolioRiskPolicy";
-import {getErrorMessage} from "./apiError";
+import {getJsonResponse} from "./apiError";
 
 export async function getPortfolioRiskAlerts(
     memberId: number,
@@ -10,11 +10,10 @@ export async function getPortfolioRiskAlerts(
         `/api/members/${memberId}/portfolios/${portfolioId}/risk-alerts`,
     );
 
-    if (!response.ok) {
-        throw new Error(await getErrorMessage(response, "위험 경고를 불러오지 못했습니다."));
-    }
-
-    return (await response.json()) as PortfolioRiskAlert[];
+    return getJsonResponse<PortfolioRiskAlert[]>(
+        response,
+        "위험 경고를 불러오지 못했습니다.",
+    );
 }
 
 export async function getPortfolioRiskPolicy(
@@ -25,11 +24,10 @@ export async function getPortfolioRiskPolicy(
         `/api/members/${memberId}/portfolios/${portfolioId}/risk-policy`,
     );
 
-    if (!response.ok) {
-        throw new Error(await getErrorMessage(response, "위험 한도를 불러오지 못했습니다."));
-    }
-
-    return (await response.json()) as PortfolioRiskPolicy;
+    return getJsonResponse<PortfolioRiskPolicy>(
+        response,
+        "위험 한도를 불러오지 못했습니다.",
+    );
 }
 
 export async function updatePortfolioRiskPolicy(
@@ -48,9 +46,8 @@ export async function updatePortfolioRiskPolicy(
         },
     );
 
-    if (!response.ok) {
-        throw new Error(await getErrorMessage(response, "위험 한도를 저장하지 못했습니다."));
-    }
-
-    return (await response.json()) as PortfolioRiskPolicy;
+    return getJsonResponse<PortfolioRiskPolicy>(
+        response,
+        "위험 한도를 저장하지 못했습니다.",
+    );
 }

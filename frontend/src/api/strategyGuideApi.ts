@@ -1,14 +1,10 @@
-import {getErrorMessage} from "./apiError";
+import {getJsonResponse} from "./apiError";
 import type {StrategyGuideBatch} from "../types/strategyGuide";
 
 async function getStrategyGuideBatch(path: string, fallbackMessage: string): Promise<StrategyGuideBatch> {
     const response = await fetch(path);
 
-    if (!response.ok) {
-        throw new Error(await getErrorMessage(response, fallbackMessage));
-    }
-
-    return (await response.json()) as StrategyGuideBatch;
+    return getJsonResponse<StrategyGuideBatch>(response, fallbackMessage);
 }
 
 export function getPortfolioStrategyGuides(memberId: number, portfolioId: number) {
