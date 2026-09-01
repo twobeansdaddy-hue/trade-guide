@@ -1,6 +1,7 @@
 import {NavLink, Outlet} from "react-router-dom";
 import {usePortfolioContext} from "../../context/portfolioContext";
 import SignInPage from "../../pages/SignInPage";
+import PortfolioOnboardingPage from "../../pages/PortfolioOnboardingPage";
 
 const navigation = [
     {to: "/", label: "대시보드", end: true},
@@ -42,7 +43,7 @@ export default function AppLayout() {
                     ))}
                 </nav>
                 <main className="page-content">
-                    {isLoading ? <p className="status-message" aria-live="polite">작업공간을 준비하고 있습니다.</p> : errorMessage ? <p className="status-message error" role="alert">{errorMessage}</p> : selectedPortfolioId === null ? <p className="status-message">등록된 포트폴리오가 없습니다.</p> : <Outlet/>}
+                    {isLoading ? <p className="status-message" aria-live="polite">작업공간을 준비하고 있습니다.</p> : errorMessage ? <p className="status-message error" role="alert">{errorMessage}</p> : selectedPortfolioId === null ? <PortfolioOnboardingPage/> : <Outlet/>}
                 </main>
             </div>
         </div>

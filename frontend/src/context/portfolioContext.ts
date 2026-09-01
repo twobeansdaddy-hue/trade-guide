@@ -11,6 +11,7 @@ export type PortfolioContextValue = {
     isAuthenticationRequired: boolean
     errorMessage: string | null
     selectPortfolio: (portfolioId: number) => void
+    createPortfolio: (name: string) => Promise<void>
 }
 
 export const PortfolioContext = createContext<PortfolioContextValue | null>(null);
