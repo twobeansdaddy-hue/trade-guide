@@ -8,7 +8,10 @@ type Props = {guides: AssetStrategyGuide[]; unavailableAssets: UnavailableAsset[
 export default function StrategyGuideList({guides, unavailableAssets, emptyMessage}: Props) {
     return <>
         {guides.length === 0 ? <p className="empty-state">{emptyMessage}</p> : <ul className="guide-list">{guides.map(({market, ticker, decision}) => <li key={`${market}-${ticker}`} className="guide-card">
-            <div className="guide-card-heading"><div><strong>{ticker}</strong><span>{market}</span></div><span className={`action-badge ${decision.action.toLowerCase()}`}>{actionLabels[decision.action]}</span></div>
+            <div className="guide-card-heading">
+                <div className="guide-asset"><span className="market-badge">{market}</span><strong>{ticker}</strong></div>
+                <span className={`action-badge ${decision.action.toLowerCase()}`}>{actionLabels[decision.action]}</span>
+            </div>
             <p className="guide-reason">{decision.reason}</p>
             <dl className="guide-details"><div><dt>기준 가격</dt><dd>{formatUsd(decision.referencePrice)}</dd></div><div><dt>기준일</dt><dd>{decision.metadata.dataAsOf}</dd></div><div><dt>전략</dt><dd>{decision.metadata.strategyId} v{decision.metadata.strategyVersion}</dd></div>{decision.weeksSinceCross !== null ? <div><dt>최근 교차 후</dt><dd>{decision.weeksSinceCross}주</dd></div> : null}</dl>
         </li>)}</ul>}
