@@ -46,18 +46,24 @@ StrategyDecision / TradePlan
 - `AssetProfile`은 `market + ticker`를 업무 식별값으로 하는 전략 자산 카탈로그다. 사용자별 목표 수익률이나 손실 한도를 저장하는 객체가 아니다.
 - 자산 프로필은 현재 로컬 개발용 관리자 API로 등록·조회할 수 있다. 인증과 권한이 아직 없으므로 `/api/admin/**`은 공개 운영 환경에 노출하면 안 된다.
 - `TRACK_A`의 첫 구현체는 `WeeklyMaCrossoverStrategy`다. 현재 조회된 주봉 데이터로 10주와 40주 이동평균을 비교한다.
-  - 직전 시점에서 10주선이 40주선 이하이고 현재는 초과: `BUY`
-  - 직전 시점에서 10주선이 40주선 이상이고 현재는 미만: `SELL`
-  - 그 외: `HOLD`
+  - 시장 신호는 현재 추세와 `CROSS_UP`/`CROSS_DOWN` 이벤트를 반환한다.
+  - 보유 여부를 반영한 행동은 `StrategyDecisionMaker`가 별도로 결정한다.
   - 현재와 직전의 40주 평균을 계산하므로 최소 41개의 주봉이 필요하다.
 - `StrategyGuideService`는 자산 프로필 조회, 주봉 시세 조회, 트랙별 전략 선택, 판단 반환을 조합한다.
 - 포트폴리오 전략 가이드는 보유 종목마다 전략 판단을 조회해 목록으로 반환한다. 초기 구현에서는 보유 종목 중 전략 프로필이 없는 항목이 있으면 전체 조회를 실패시킨다.
+- Track A 미보유 후보의 `BUY` 조건(`weeksSinceCross <= 4`)은 리서치 근거로 채택·구현됐다. 세부 내용과 근거는 아래 "Track A" 절 참고.
+- `TradePlan`은 시장, 티커, 주문 유형, 주문 비율(`quantityRatio`), 지정가, 손절가, 유효 기간, 근거, 전략 메타데이터를 담는 주문 초안 도메인 모델로 구현됐다. 생성자가 비율(0 초과 1 이하)과 가격(0 초과) 값을 검증한다. 이 값을 실제로 채워 넣는 규칙은 아직 없다.
+- `TradePlan.quantityRatio`의 분모는 `QuantityRatioBasis`로 구분했다. `PORTFOLIO_VALUE`는 신규 매수, `HOLDING_QUANTITY`는 매도·부분 매도 기준이다.
+- `PortfolioRiskPolicy`는 주문당 최대 손실 비율(`maxLossPerTradeRatio`)과 종목당 최대 노출 비율(`maxSingleAssetExposureRatio`)을 담는 `@Embeddable` JPA 값 객체로 구현됐다. `Portfolio`에 포함되어 `portfolios` 테이블에 소수점 여섯 자리까지 저장된다. 다음 API로 설정·조회할 수 있다.
+  - `PUT /api/members/{memberId}/portfolios/{portfolioId}/risk-policy`
+  - `GET /api/members/{memberId}/portfolios/{portfolioId}/risk-policy`
+  요청 DTO는 각 비율을 0 초과 1 이하로 검증하고, `maxLossPerTradeRatio <= maxSingleAssetExposureRatio` 관계는 도메인 객체가 검증한다. 위험 정책이 설정되지 않은 포트폴리오를 조회하면 `404 Not Found`다. 아직 전략 판단, 손절 규칙, `TradePlanGenerator`, `quantityRatio` 자동 산출 어디에도 연결하지 않았다.
 
 ### 현재 제한 사항 및 미구현 항목
 
 - `referencePrice`는 판단에 사용한 최신 완료 주봉 캔들의 종가다. 목표가, 지정가, 손절가가 아니다.
 - 주봉 전략은 미국 동부 시간 기준 금요일 16:15 이후와 주말에 마지막 주봉을 완료 봉으로 반영한다. 조기 폐장일과 미국 휴장일은 아직 별도 거래소 캘린더로 처리하지 않는다.
-- `TradePlan`은 아직 없다. 주문 수량 또는 비율, 주문 유형, 지정가, 손절 발동가, 유효 기간을 담는 별도 모델로 구현해야 한다.
+- `TradePlan` 모델은 구현됐지만, DB 저장, 증권사 주문 전송, 전략별로 `TradePlan` 필드값을 실제로 채우는 `TradePlanGenerator`는 아직 구현하지 않았다. `TradePlan.stopLossPrice`는 0보다 커야 하는 필수 필드인데, 아래 "Track A" 절에서 보듯 손절 규칙이 아직 채택되지 않았으므로 손절 값의 출처가 정해지기 전에는 `TradePlanGenerator`를 구현할 수 없다.
 - 전략 판단 응답에는 전략 ID, 버전, 마지막 완료 주봉의 데이터 기준일을 포함한다. 신뢰도와 한계 설명은 아직 구조화된 응답 모델에 포함하지 않았다.
 - `TRACK_B`, 신규 후보 스크리닝, 기업 이벤트·펀더멘털 연동은 아직 구현하지 않았다.
 
@@ -66,8 +72,55 @@ StrategyDecision / TradePlan
 - 초기 대상은 명시적으로 등록한 종목만 사용한다. 자동 분류는 베타 또는 ATR 기준이 검증된 뒤에 도입한다.
 - SOXL의 첫 구현 후보는 주봉 10/40 이동평균 크로스오버다. 일봉 50/200 이동평균으로 임의 대체하지 않는다.
 - 주봉 신호는 금요일 미국 장 마감 후 확정되며, 다음 거래일 장 시작 전 가이드에 반영한다.
-- 매수 또는 매도 신호에는 포지션 비율, 손절가 계산식, 최대 비중, 유효 기간을 명시해야 한다.
+- 미보유 후보의 신규 진입은 상승 추세이고 가장 최근 교차 이후 `0~4주`일 때 `BUY`로 판단한다.
+  - 조건식: `trend == ABOVE_LONG_AVERAGE && weeksSinceCross != null && weeksSinceCross <= 4`
+  - `signalEvent == CROSS_UP`은 교차 당주에만 성립하므로, 1~4주 지연 진입 조건에 함께 사용하지 않는다.
+  - 근거: `research/reports/track-a-entry-delay-cutoff-review.md`의 SOXL/TQQQ 지연 진입 검토. 신뢰도는 `low-medium`이며 Track A 레버리지 ETF에만 적용한다.
+  - 5~8주 축소 진입은 채택하지 않는다. `REDUCE`는 보유 종목의 부분 매도라는 기존 의미를 유지하며, 미보유 후보의 축소 매수에 재사용하지 않는다. 새 액션이나 `positionSizeHint` 같은 별도 필드도 아직 도입하지 않는다. 9주 이상은 `WATCH`를 유지한다.
+- Track A 손절(리스크 종료) 레이어에는 현재 채택 가능한 규칙이 없다. 세 가지 접근을 검토했다.
+  - 고정 비율 `-20%/-25%/-30%` 손절: 표본을 SOXL/TQQQ 20사이클에서 SOXL/TQQQ/TNA/FAS 49사이클로 넓히고 수수료·슬리피지를 반영해도(`research/reports/track-a-stoploss-revalidation-and-sizing-design.md`), 워크포워드 분할 시점(2019 vs 2020)에 따라 결과 방향이 뒤집혀 `추가 검증 필요`를 유지한다.
+  - ATR 기반(+상한) 손절: 교환비율이 학습·검증 전 구간에서 일관되게 순비용이고 휩쏘율이 높아 `채택 비추천`을 유지한다.
+  - 종가 기준 최고값(high-water mark) 대비 `-20%/-25%/-30%` 추적 손절(`research/reports/track-a-trailing-stop-review.md`): 사전 고정한 워크포워드 4분할(2018/2019/2020/2021)과 SOXL 중복 제거 표본 모두에서 수익 대비 비용과 휩쏘율이 일관되게 나빠 `채택 비추천`이다.
+  - 따라서 `StrategyDecision`과 (아직 미구현인) `TradePlanGenerator`에 손절 규칙을 구현하지 않으며, 손절가를 자동으로 제안하지 않는다.
+- 활성화된 `TradePlan` 생성 규칙은 포지션 비율, 손절가 계산식, 최대 비중, 유효 기간을 명시해야 한다.
 - 분할 매도(예: 3분할)는 검토 가능한 후보 기법일 뿐 현재 채택된 기본 전략이 아니다. 향후 적용하려면 각 단계의 비율, 지정가 또는 조건, 잔여 수량 처리 규칙과 백테스트 근거를 별도로 정의한다.
+
+## Track A 엔진 v1 범위와 v2 보류 항목
+
+사용자와 합의한 Track A 엔진 v1의 확정 범위와, 근거 부족으로 의도적으로 보류한 v2 항목을 구분한다.
+아래 v2 항목은 "미구현"(아직 만들 시간이 없었음)이 아니라, 채택할 근거가 없어 지금은 엔진에 넣지
+않기로 결정한 것이다.
+
+### v1 확정 범위 (구현됨)
+
+- 완료 주봉 기준 10/40 이동평균 전략과 후보 진입 `0~4주` 규칙(`weeksSinceCross <= 4`).
+- 보유 종목은 `HOLD` 또는 `SELL`, 미보유 후보는 `BUY` 또는 `WATCH` 판단만 제공한다.
+- 포트폴리오 위험 관리는 종목별 최대 노출 비율(`PortfolioRiskPolicy.maxSingleAssetExposureRatio`)과
+  실제 노출 비중을 비교해 초과 경고를 제공하는 수준까지다(노출 비중 API·위험 경고 API 구현됨).
+- 자동 주문은 하지 않는다. 모든 결과는 사용자가 검토하는 의사결정 지원 정보다.
+
+### 주문 초안(TradePlan) 경계
+
+- `TradePlan`은 사용자가 예약 주문에 그대로 참고할 수 있는 **완결된** 주문 초안이어야 한다. 손절가
+  없는 주문 초안은 완결된 게 아니므로, `TradePlan.stopLossPrice`는 필수 제약으로 유지한다.
+- 현재 Track A에는 채택 가능한 손절 규칙이 없으므로(아래 v2 항목 참고) `TradePlanGenerator`를
+  구현하지 않는다. 손절가 없는 주문 초안을 생성하거나, 임의의 손절가·주문 비율을 제안하지 않는다.
+- `PortfolioRiskPolicy.maxLossPerTradeRatio`는 주문 비율(`quantityRatio`) 자동 산출에 아직 사용하지
+  않는다.
+
+### v2 보류 항목 (근거 부족으로 의도적 보류)
+
+이 항목들은 위 "현재 제한 사항 및 미구현 항목"과 "Track A" 절에도 등장하지만, 그 절들의 "아직 구현
+안 함"이라는 서술과 달리 이 절은 **근거가 부족해서 지금 의도적으로 만들지 않기로 했다**는 성격을
+분명히 하기 위한 것이다.
+
+- **손절(리스크 종료) 레이어**: 고정비율·ATR·추적손절 세 접근을 모두 검증했으나 채택 가능한 후보가
+  없다(위 "Track A" 절 참고). 더 검증해서 언젠가 자동으로 만들 계획이 예정된 게 아니라, 지금
+  시점에는 손절 규칙 자체를 엔진에 넣지 않기로 결정한 상태다.
+- **`quantityRatio` 자동 산출 공식**: 손절폭이라는 입력 자체가 없어 계산할 수 없다. `PortfolioRiskPolicy`가
+  저장·조회는 가능해졌지만, 이 값을 산식에 연결할지는 별도 설계 결정이며 v1 범위 밖이다.
+- **`TradePlanGenerator`(완결된 주문 초안 자동 생성)**: 위 두 항목이 보류 상태라 구현하지 않는다.
+  `TradePlan` 도메인 모델 자체는 이미 구현됐지만, 그 필드를 실제로 채우는 로직은 v2로 미룬다.
 
 ## Track B: 일반 주식 신규 후보와 보유 종목
 
@@ -81,6 +134,8 @@ StrategyDecision / TradePlan
 
 - `StrategyDecision`은 판단이고, `TradePlan`은 사용자가 검토하는 주문 초안이다. 두 객체를 분리한다.
 - 주문 초안에는 종목, 매수/매도 수량 또는 비율, 주문 유형, 지정가, 손절 발동가, 유효 기간을 포함한다.
+- `TradePlan.quantityRatio` 자동 산출은 보류한다. 비율의 분모는 `QuantityRatioBasis`(신규 매수는 `PORTFOLIO_VALUE`, 매도·부분 매도는 `HOLDING_QUANTITY`)로 구분했고, 위험 한도는 `PortfolioRiskPolicy` API(`PUT`/`GET /api/members/{memberId}/portfolios/{portfolioId}/risk-policy`)로 설정·조회할 수 있게 됐다. 다만 `PortfolioRiskPolicy`는 아직 전략 판단, 손절 규칙, `TradePlanGenerator`, `quantityRatio` 자동 산출 어디에도 연결되지 않았다. 리서치가 제안한 계산식(`riskToleranceRatio ÷ 손절폭 비율`)의 분모(손절폭 비율)는 Track A 손절 규칙이 아직 채택되지 않아 정해지지 않았고, `maxLossPerTradeRatio`를 이 계산식의 `riskToleranceRatio`로 쓸지도 별도 결정이 필요하다. 이 두 가지가 정해지기 전에는 `quantityRatio`를 자동 계산하거나 1을 초과하는 값을 임의로 클램프하지 않는다.
+- `PortfolioRiskPolicy.maxLossPerTradeRatio`는 도메인 검증(`maxLossPerTradeRatio <= maxSingleAssetExposureRatio`)과 테스트 예시값이 정합적으로 보아 포트폴리오 평가액 대비 한 매매의 최대 손실 비율로 해석하는 쪽이 자연스럽다는 관찰이 있다(`research/reports/track-a-stoploss-revalidation-and-sizing-design.md`). 이는 코드 관찰이며 설계 확정이 아니다. 이 값을 손절폭 기반 `quantityRatio` 산식의 입력으로 실제 연결할지는 별도 결정 사항이고, 이 문서는 그 연결을 구현 규칙으로 선언하지 않는다.
 - 익절 주문과 손절 주문을 동시에 제시할 경우 증권사의 OCO 또는 브래킷 주문 지원 여부를 확인한다. 지원되지 않으면 초과 매도 가능성을 경고하고 자동 주문 연동을 금지한다.
 - 초기 토스증권 연동은 계좌/보유 종목 조회와 주문 초안 확인까지만 허용한다. 주문 전송 자동화는 백테스트와 모의 운영 결과를 검토한 뒤 별도 결정한다.
 
@@ -93,11 +148,13 @@ StrategyDecision / TradePlan
 
 ## 현재 구현 우선순위
 
-1. `TradePlan` 모델과 주문 초안 생성 규칙 정의
-2. 전략 ID·버전·데이터 기준 시각을 전략 판단 결과에 추가
-3. Track B용 펀더멘털/기업 이벤트 데이터 공급자
-4. S&P 500 후보 스크리닝과 결과 추적
-5. 자산 프로필 관리 API에 인증·관리자 권한 적용
+1. 고정 비율·ATR·추적 손절 세 접근 모두 채택 가능한 후보가 없다. 다음 우선순위는 손절 변형을 더 탐색하는 것이 아니라, **손절 없는 Track A 주문 초안을 허용할지와 `TradePlan.stopLossPrice` 필수 제약을 유지할지에 대한 설계 결정**이다 — 다음 단계.
+2. ~~`PortfolioRiskPolicy` 설정·조회 서비스와 API 설계~~ — **완료**. `PUT`/`GET /api/members/{memberId}/portfolios/{portfolioId}/risk-policy`로 구현됐다(요청 DTO 비율 검증, `maxLossPerTradeRatio <= maxSingleAssetExposureRatio` 도메인 검증, 미설정 시 `404 Not Found` 포함). 아직 전략 판단·손절 규칙·`TradePlanGenerator`·`quantityRatio` 자동 산출에는 연결하지 않았다.
+3. 위 1번의 설계 결정 이후 `TradePlanGenerator` 규칙 정의 및 구현 (`TradePlan` 모델 자체는 이미 구현됨). 활성 손절 규칙과 비율 산출 입력이 아직 확정되지 않았으므로 지금은 구현하지 않는다.
+4. confidence와 caveats를 구조화한 전략 판단 응답 설계 (전략 ID·버전·데이터 기준 시각은 이미 응답에 포함됨)
+5. Track B용 펀더멘털/기업 이벤트 데이터 공급자
+6. S&P 500 후보 스크리닝과 결과 추적
+7. 자산 프로필 관리 API에 인증·관리자 권한 적용
 
 ## 전략 채택 상태
 

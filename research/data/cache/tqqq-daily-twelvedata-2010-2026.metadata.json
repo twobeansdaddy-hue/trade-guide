@@ -1,0 +1,15 @@
+{
+  "provider": "Twelve Data",
+  "symbol": "TQQQ",
+  "interval": "1day",
+  "startDate": "2010-02-11",
+  "endDate": "2026-08-13",
+  "downloadedAt": "2026-08-14",
+  "order": "asc",
+  "adjustment": "splits (no explicit adjustment query param sent, matching production TwelveDataMarketHistoryProvider.java request format exactly; assumed same account-level default as the existing weekly production fixture, which documents adjustment=splits)",
+  "format": "CSV",
+  "delimiter": ";",
+  "candleCount": 4151,
+  "requestUrl": "https://api.twelvedata.com/time_series?symbol=TQQQ&interval=1day&outputsize=5000&order=asc",
+  "note": "Fetched directly with the project's Twelve Data API key (src/main/resources/application-local.yml) by the orchestrating session, mirroring the exact request shape used by src/main/java/com/tradeguide/service/market/TwelveDataMarketHistoryProvider.java. The key itself is not stored in this file or anywhere under research/. This is the production data source (not a Yahoo Finance approximation)."
+}

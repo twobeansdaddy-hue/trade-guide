@@ -24,11 +24,11 @@ public class StrategyDecisionMaker {
 
     public StrategyDecision decideForCandidate(StrategySignal signal) {
         if (signal.getTrend() == StrategyTrend.ABOVE_LONG_AVERAGE
-                && signal.getSignalEvent() == StrategySignalEvent.CROSS_UP
-                && Integer.valueOf(0).equals(signal.getWeeksSinceCross())) {
+                && signal.getWeeksSinceCross() != null
+                && signal.getWeeksSinceCross() <= 4) {
             return new StrategyDecision(
                     StrategyAction.BUY,
-                    "이번 완료 주봉에서 상승 교차가 발생해 신규 진입을 검토합니다.",
+                    "상승 추세가 유지되고 있고 최근 교차 후 4주 이내여서 신규 진입을 검토합니다.",
                     signal
             );
         }

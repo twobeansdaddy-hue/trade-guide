@@ -1,0 +1,16 @@
+{
+  "provider": "Yahoo Finance (query2.finance.yahoo.com v8 chart API)",
+  "symbol": "FAS",
+  "fullName": "Direxion Daily Financial Bull 3X Shares (Russell 1000 Financial Services, 3x leveraged)",
+  "interval": "1wk",
+  "startDate": "2008-11-17",
+  "endDate": "2026-08-17",
+  "downloadedAt": "2026-08-18",
+  "order": "asc",
+  "adjustment": "close/open/high/low는 미조정(원가), adjclose 컬럼만 분할+배당 조정 종가",
+  "format": "CSV",
+  "delimiter": ";",
+  "candleCount": 927,
+  "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/FAS?period1=1227105000&period2=<fetch_time>&interval=1wk&events=div,splits",
+  "note": "주봉 신호(10/40 SMA 교차) 계산용. entry_delay_cycle_backtest.py의 완결 주봉 필터(주 시작일+4일<=오늘)가 마지막 미완결 행(2026-08-17)을 자동 제외한다. adjclose를 close로, low는 (adjclose/close) 비율로 환산해 사용(raw_close_col='close')."
+}

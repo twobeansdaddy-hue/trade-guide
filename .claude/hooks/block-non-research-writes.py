@@ -9,10 +9,11 @@ the model as the reason). Exit code 0 = allow.
 Registered in .claude/settings.json under hooks.PreToolUse (matcher: "Edit|Write").
 """
 import json
-import os
 import sys
+from pathlib import Path
 
 ALLOWED_PREFIX = "research"  # only writes under research/** are allowed
+WORKTREE_ROOT = Path(__file__).resolve().parents[2]
 
 
 def main() -> None:
@@ -24,7 +25,7 @@ def main() -> None:
 
     tool_input = payload.get("tool_input", {}) or {}
     file_path = tool_input.get("file_path", "")
-    cwd = payload.get("cwd", os.getcwd())
+    cwd = payload.get("cwd", str(WORKTREE_ROOT))
 
     if not file_path:
         print(
@@ -34,17 +35,22 @@ def main() -> None:
         )
         sys.exit(2)
 
-    abs_path = file_path if os.path.isabs(file_path) else os.path.join(cwd, file_path)
-    abs_path = os.path.normpath(abs_path)
-    abs_cwd = os.path.normpath(cwd)
+    target_path = Path(file_path)
+
+    if not target_path.is_absolute():
+        target_path = Path(cwd) / target_path
+
+        # Some nested sessions report a parent checkout as cwd. A relative
+        # research path still belongs to this hook's own worktree.
+        if not target_path.resolve().is_relative_to(WORKTREE_ROOT):
+            target_path = WORKTREE_ROOT / file_path
 
     try:
-        rel_path = os.path.relpath(abs_path, abs_cwd)
+        rel_path = target_path.resolve().relative_to(WORKTREE_ROOT)
     except ValueError:
-        # different drive on Windows, etc. — treat as outside
-        rel_path = ".." 
+        rel_path = Path("..")
 
-    rel_path_posix = rel_path.replace(os.sep, "/")
+    rel_path_posix = rel_path.as_posix()
 
     if rel_path_posix.startswith("..") or not (
         rel_path_posix == ALLOWED_PREFIX or rel_path_posix.startswith(ALLOWED_PREFIX + "/")

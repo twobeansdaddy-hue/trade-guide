@@ -49,27 +49,29 @@ class StrategyDecisionMakerTest {
     }
 
     @Test
-    void returnsBuyForCandidateOnCurrentCrossUp() {
+    void returnsBuyForCandidateWithinFourWeeksAfterCross() {
         StrategySignal signal = signal(
                 StrategyTrend.ABOVE_LONG_AVERAGE,
-                StrategySignalEvent.CROSS_UP,
-                0
+                StrategySignalEvent.NONE,
+                4
         );
 
         StrategyDecision decision =
                 strategyDecisionMaker.decideForCandidate(signal);
 
         assertThat(decision.getAction()).isEqualTo(StrategyAction.BUY);
-        assertThat(decision.getReason()).isEqualTo("이번 완료 주봉에서 상승 교차가 발생해 신규 진입을 검토합니다.");
+        assertThat(decision.getReason()).isEqualTo(
+                "상승 추세가 유지되고 있고 최근 교차 후 4주 이내여서 신규 진입을 검토합니다."
+        );
         assertThat(decision.getSignal()).isSameAs(signal);
     }
 
     @Test
-    void returnsWatchForCandidateWhenCrossUpIsNotCurrent() {
+    void returnsWatchForCandidateMoreThanFourWeeksAfterCross() {
         StrategySignal signal = signal(
                 StrategyTrend.ABOVE_LONG_AVERAGE,
                 StrategySignalEvent.NONE,
-                3
+                5
         );
 
         StrategyDecision decision =
@@ -92,6 +94,23 @@ class StrategyDecisionMakerTest {
                 strategyDecisionMaker.decideForCandidate(signal);
 
         assertThat(decision.getAction()).isEqualTo(StrategyAction.WATCH);
+        assertThat(decision.getSignal()).isSameAs(signal);
+    }
+
+    @Test
+    void returnsWatchForCandidateWhenCrossHistoryIsUnknown() {
+        StrategySignal signal = signal(
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE,
+                null
+        );
+
+        StrategyDecision decision =
+                strategyDecisionMaker.decideForCandidate(signal);
+
+        assertThat(decision.getAction()).isEqualTo(StrategyAction.WATCH);
+        assertThat(decision.getReason())
+                .isEqualTo("신규 진입 조건이 충족되지 않아 관찰합니다.");
         assertThat(decision.getSignal()).isSameAs(signal);
     }
 

@@ -2,23 +2,22 @@ package com.tradeguide.controller.portfolio;
 
 import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.portfolio.Portfolio;
-import com.tradeguide.domain.strategy.StrategyMetadata;
+import com.tradeguide.domain.risk.PortfolioRiskPolicy;
+import com.tradeguide.domain.strategy.*;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.domain.risk.HoldingExposure;
+import com.tradeguide.domain.risk.PortfolioRiskAlert;
+import com.tradeguide.exception.PortfolioRiskPolicyNotFoundException;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
+import com.tradeguide.service.strategy.PortfolioCandidateStrategyGuideService;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
 import com.tradeguide.service.risk.PortfolioExposureService;
+import com.tradeguide.service.risk.PortfolioRiskAlertService;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
-import com.tradeguide.domain.strategy.AssetStrategyGuide;
-import com.tradeguide.domain.strategy.StrategyAction;
-import com.tradeguide.domain.strategy.StrategyDecision;
-import com.tradeguide.domain.strategy.StrategySignal;
-import com.tradeguide.domain.strategy.StrategySignalEvent;
-import com.tradeguide.domain.strategy.StrategyTrend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +34,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,14 +46,24 @@ class PortfolioControllerTest {
 
     @MockitoBean
     private PortfolioService portfolioService;
+
     @MockitoBean
     private HoldingService holdingService;
+
     @MockitoBean
     private PortfolioValuationService portfolioValuationService;
+
     @MockitoBean
     private PortfolioStrategyGuideService portfolioStrategyGuideService;
+
     @MockitoBean
     private PortfolioExposureService portfolioExposureService;
+
+    @MockitoBean
+    private PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
+
+    @MockitoBean
+    private PortfolioRiskAlertService portfolioRiskAlertService;
 
     @Test
     void createsPortfolio() throws Exception {
@@ -248,25 +256,112 @@ class PortfolioControllerTest {
         when(portfolioStrategyGuideService.getPortfolioStrategyGuides(
                 10L,
                 100L
-        )).thenReturn(List.of(strategyGuide));
+        )).thenReturn(new StrategyGuideBatch(
+                List.of(strategyGuide),
+                List.of()
+        ));
 
         mockMvc.perform(
                         get("/api/members/10/portfolios/100/strategy-guides")
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].market").value("US"))
-                .andExpect(jsonPath("$[0].ticker").value("SOXL"))
-                .andExpect(jsonPath("$[0].decision.action").value("BUY"))
-                .andExpect(jsonPath("$[0].decision.referencePrice").value(25.5))
-                .andExpect(jsonPath("$[0].decision.reason").value("이번 완료 주봉에서 상승 교차가 발생했습니다."))
-                .andExpect(jsonPath("$[0].decision.metadata.strategyId").value("test-strategy"))
-                .andExpect(jsonPath("$[0].decision.metadata.strategyVersion").value("test-v1"))
-                .andExpect(jsonPath("$[0].decision.metadata.dataAsOf").value("2026-08-07"))
-                .andExpect(jsonPath("$[0].decision.trend").value("ABOVE_LONG_AVERAGE"))
-                .andExpect(jsonPath("$[0].decision.weeksSinceCross").value(0));
+                .andExpect(jsonPath("$.guides[0].market").value("US"))
+                .andExpect(jsonPath("$.guides[0].ticker").value("SOXL"))
+                .andExpect(jsonPath("$.guides[0].decision.action").value("BUY"))
+                .andExpect(jsonPath("$.guides[0].decision.referencePrice").value(25.5))
+                .andExpect(jsonPath("$.guides[0].decision.reason").value("이번 완료 주봉에서 상승 교차가 발생했습니다."))
+                .andExpect(jsonPath("$.guides[0].decision.metadata.strategyId").value("test-strategy"))
+                .andExpect(jsonPath("$.guides[0].decision.metadata.strategyVersion").value("test-v1"))
+                .andExpect(jsonPath("$.guides[0].decision.metadata.dataAsOf").value("2026-08-07"))
+                .andExpect(jsonPath("$.guides[0].decision.trend").value("ABOVE_LONG_AVERAGE"))
+                .andExpect(jsonPath("$.guides[0].decision.weeksSinceCross").value(0))
+                .andExpect(jsonPath("$.unavailableAssets").isEmpty());
 
         verify(portfolioStrategyGuideService)
                 .getPortfolioStrategyGuides(10L, 100L);
+    }
+
+    @Test
+    void returnsAvailableAndUnavailableAssetsForPortfolioStrategyGuides()
+            throws Exception {
+        StrategyGuideBatch batch = new StrategyGuideBatch(
+                List.of(),
+                List.of(new UnavailableAsset(
+                        Market.US,
+                        "TQQQ",
+                        "시장 데이터 조회에 실패했습니다."
+                ))
+        );
+
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(
+                10L,
+                100L
+        )).thenReturn(batch);
+
+        mockMvc.perform(
+                        get("/api/members/10/portfolios/100/strategy-guides")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.guides").isEmpty())
+                .andExpect(jsonPath("$.unavailableAssets[0].market")
+                        .value("US"))
+                .andExpect(jsonPath("$.unavailableAssets[0].ticker")
+                        .value("TQQQ"))
+                .andExpect(jsonPath("$.unavailableAssets[0].message")
+                        .value("시장 데이터 조회에 실패했습니다."));
+
+        verify(portfolioStrategyGuideService)
+                .getPortfolioStrategyGuides(10L, 100L);
+    }
+
+    @Test
+    void getsCandidateStrategyGuides() throws Exception {
+        StrategySignal signal = new StrategySignal(
+                new BigDecimal("90"),
+                "테스트 시장 신호",
+                new StrategyMetadata(
+                        "test-strategy",
+                        "test-v1",
+                        LocalDate.of(2026, 8, 10)
+                ),
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE,
+                2
+        );
+
+        StrategyDecision decision = new StrategyDecision(
+                StrategyAction.BUY,
+                "테스트 후보 판단",
+                signal
+        );
+
+        AssetStrategyGuide strategyGuide = new AssetStrategyGuide(
+                Market.US,
+                "TQQQ",
+                decision
+        );
+
+        when(portfolioCandidateStrategyGuideService
+                .getCandidateStrategyGuides(10L, 100L))
+                .thenReturn(new StrategyGuideBatch(
+                        List.of(strategyGuide),
+                        List.of()
+                ));
+
+        mockMvc.perform(
+                        get("/api/members/10/portfolios/100/candidate-strategy-guides")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.guides[0].market").value("US"))
+                .andExpect(jsonPath("$.guides[0].ticker").value("TQQQ"))
+                .andExpect(jsonPath("$.guides[0].decision.action").value("BUY"))
+                .andExpect(jsonPath("$.guides[0].decision.referencePrice").value(90))
+                .andExpect(jsonPath("$.guides[0].decision.trend").value("ABOVE_LONG_AVERAGE"))
+                .andExpect(jsonPath("$.guides[0].decision.weeksSinceCross").value(2))
+                .andExpect(jsonPath("$.unavailableAssets").isEmpty());
+
+        verify(portfolioCandidateStrategyGuideService)
+                .getCandidateStrategyGuides(10L, 100L);
     }
 
     @Test
@@ -289,5 +384,145 @@ class PortfolioControllerTest {
                 .andExpect(jsonPath("$[0].exposureRate").value(30));
 
         verify(portfolioExposureService).getExposures(10L, 100L);
+    }
+
+    @Test
+    void updatesPortfolioRiskPolicy() throws Exception {
+        PortfolioRiskPolicy riskPolicy = new PortfolioRiskPolicy(
+                new BigDecimal("0.025"),
+                new BigDecimal("0.125")
+        );
+
+        when(portfolioService.updateRiskPolicy(
+                10L,
+                100L,
+                new BigDecimal("0.025"),
+                new BigDecimal("0.125")
+        )).thenReturn(riskPolicy);
+
+        mockMvc.perform(put(
+                        "/api/members/10/portfolios/100/risk-policy"
+                )
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "maxLossPerTradeRatio": 0.025,
+                              "maxSingleAssetExposureRatio": 0.125
+                            }
+                            """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.maxLossPerTradeRatio").value(0.025))
+                .andExpect(jsonPath("$.maxSingleAssetExposureRatio").value(0.125));
+
+        verify(portfolioService).updateRiskPolicy(
+                10L,
+                100L,
+                new BigDecimal("0.025"),
+                new BigDecimal("0.125")
+        );
+    }
+
+    @Test
+    void returnsBadRequestWhenRiskPolicyRatioIsOutOfRange()
+            throws Exception {
+        mockMvc.perform(put(
+                        "/api/members/10/portfolios/100/risk-policy"
+                )
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "maxLossPerTradeRatio": 0,
+                              "maxSingleAssetExposureRatio": 0.125
+                            }
+                            """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("주문당 최대 손실 비율은 0보다 커야 합니다."));
+
+        verifyNoInteractions(portfolioService);
+    }
+
+    @Test
+    void getsPortfolioRiskPolicy() throws Exception {
+        PortfolioRiskPolicy riskPolicy = new PortfolioRiskPolicy(
+                new BigDecimal("0.025"),
+                new BigDecimal("0.125")
+        );
+
+        when(portfolioService.getRiskPolicy(10L, 100L))
+                .thenReturn(riskPolicy);
+
+        mockMvc.perform(get(
+                        "/api/members/10/portfolios/100/risk-policy"
+                ))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.maxLossPerTradeRatio").value(0.025))
+                .andExpect(jsonPath("$.maxSingleAssetExposureRatio")
+                        .value(0.125));
+
+        verify(portfolioService).getRiskPolicy(10L, 100L);
+    }
+
+    @Test
+    void returnsNotFoundWhenPortfolioRiskPolicyIsNotConfigured()
+            throws Exception {
+        when(portfolioService.getRiskPolicy(10L, 100L))
+                .thenThrow(new PortfolioRiskPolicyNotFoundException(
+                        "포트폴리오 위험 한도 정책이 설정되지 않았습니다."
+                ));
+
+        mockMvc.perform(get(
+                        "/api/members/10/portfolios/100/risk-policy"
+                ))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message")
+                        .value("포트폴리오 위험 한도 정책이 설정되지 않았습니다."));
+
+        verify(portfolioService).getRiskPolicy(10L, 100L);
+    }
+
+    @Test
+    void getsPortfolioRiskAlerts() throws Exception {
+        List<PortfolioRiskAlert> alerts = List.of(
+                new PortfolioRiskAlert(
+                        Market.US,
+                        "SOXL",
+                        new BigDecimal("30.00"),
+                        new BigDecimal("12.50"),
+                        "종목별 최대 노출 비율을 초과했습니다."
+                )
+        );
+
+        when(portfolioRiskAlertService.getRiskAlerts(10L, 100L))
+                .thenReturn(alerts);
+
+        mockMvc.perform(get(
+                        "/api/members/10/portfolios/100/risk-alerts"
+                ))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].market").value("US"))
+                .andExpect(jsonPath("$[0].ticker").value("SOXL"))
+                .andExpect(jsonPath("$[0].exposureRate").value(30))
+                .andExpect(jsonPath("$[0].maxExposureRate").value(12.5))
+                .andExpect(jsonPath("$[0].message")
+                        .value("종목별 최대 노출 비율을 초과했습니다."));
+
+        verify(portfolioRiskAlertService).getRiskAlerts(10L, 100L);
+    }
+
+
+    @Test
+    void returnsEmptyListWhenNoPortfolioRiskAlertsExist()
+            throws Exception {
+        when(portfolioRiskAlertService.getRiskAlerts(10L, 100L))
+                .thenReturn(List.of());
+
+        mockMvc.perform(get(
+                        "/api/members/10/portfolios/100/risk-alerts"
+                ))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+
+        verify(portfolioRiskAlertService).getRiskAlerts(10L, 100L);
     }
 }

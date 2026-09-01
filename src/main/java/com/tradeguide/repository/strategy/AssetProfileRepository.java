@@ -1,9 +1,11 @@
 package com.tradeguide.repository.strategy;
 
 import com.tradeguide.domain.strategy.AssetProfile;
+import com.tradeguide.domain.strategy.InvestmentTrack;
 import com.tradeguide.domain.trade.Market;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface AssetProfileRepository extends JpaRepository<AssetProfile, Long> {
@@ -15,5 +17,9 @@ public interface AssetProfileRepository extends JpaRepository<AssetProfile, Long
     boolean existsByMarketAndTicker(
             Market market,
             String ticker
+    );
+
+    List<AssetProfile> findAllByInvestmentTrack(
+            InvestmentTrack investmentTrack
     );
 }

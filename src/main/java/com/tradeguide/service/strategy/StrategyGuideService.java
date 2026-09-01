@@ -7,6 +7,7 @@ import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.strategy.StrategySignal;
 import com.tradeguide.exception.AssetProfileNotFoundException;
 import com.tradeguide.repository.strategy.AssetProfileRepository;
+import com.tradeguide.service.market.CompletedWeeklyCandleCache;
 import com.tradeguide.service.market.CompletedWeeklyCandleFilter;
 import com.tradeguide.service.market.MarketHistoryService;
 import com.tradeguide.service.market.WeeklyCandleFreshnessValidator;
@@ -25,19 +26,22 @@ public class StrategyGuideService {
     private final StrategySelector strategySelector;
     private final CompletedWeeklyCandleFilter completedWeeklyCandleFilter;
     private final WeeklyCandleFreshnessValidator weeklyCandleFreshnessValidator;
+    private final CompletedWeeklyCandleCache completedWeeklyCandleCache;
 
     public StrategyGuideService(
             AssetProfileRepository assetProfileRepository,
             MarketHistoryService marketHistoryService,
             StrategySelector strategySelector,
             CompletedWeeklyCandleFilter completedWeeklyCandleFilter,
-            WeeklyCandleFreshnessValidator weeklyCandleFreshnessValidator
+            WeeklyCandleFreshnessValidator weeklyCandleFreshnessValidator,
+            CompletedWeeklyCandleCache completedWeeklyCandleCache
     ) {
         this.assetProfileRepository = assetProfileRepository;
         this.marketHistoryService = marketHistoryService;
         this.strategySelector = strategySelector;
         this.completedWeeklyCandleFilter = completedWeeklyCandleFilter;
         this.weeklyCandleFreshnessValidator = weeklyCandleFreshnessValidator;
+        this.completedWeeklyCandleCache = completedWeeklyCandleCache;
     }
 
     public StrategySignal getStrategySignal(
@@ -49,11 +53,16 @@ public class StrategyGuideService {
                 .findByMarketAndTicker(market, ticker)
                 .orElseThrow(() -> new AssetProfileNotFoundException(market, ticker));
 
-        List<MarketCandle> candles = marketHistoryService.getCandles(
+        List<MarketCandle> candles = completedWeeklyCandleCache.getOrLoad(
                 assetProfile.getMarket(),
                 assetProfile.getTicker(),
-                CandleInterval.WEEKLY,
-                WEEKLY_CANDLE_OUTPUT_SIZE
+                WEEKLY_CANDLE_OUTPUT_SIZE,
+                () -> marketHistoryService.getCandles(
+                        assetProfile.getMarket(),
+                        assetProfile.getTicker(),
+                        CandleInterval.WEEKLY,
+                        WEEKLY_CANDLE_OUTPUT_SIZE
+                )
         );
 
         List<MarketCandle> completedCandles = completedWeeklyCandleFilter.filter(candles);

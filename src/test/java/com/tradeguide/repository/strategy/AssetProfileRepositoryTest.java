@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,5 +49,23 @@ class AssetProfileRepositoryTest {
                 );
 
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    void findsAllAssetProfilesByInvestmentTrack() {
+        assetProfileRepository.saveAll(List.of(
+                new AssetProfile(Market.US, "SOXL", InvestmentTrack.TRACK_A),
+                new AssetProfile(Market.US, "TQQQ", InvestmentTrack.TRACK_A),
+                new AssetProfile(Market.US, "AAPL", InvestmentTrack.TRACK_B)
+        ));
+
+        List<AssetProfile> profiles =
+                assetProfileRepository.findAllByInvestmentTrack(
+                        InvestmentTrack.TRACK_A
+                );
+
+        assertThat(profiles)
+                .extracting(AssetProfile::getTicker)
+                .containsExactlyInAnyOrder("SOXL", "TQQQ");
     }
 }

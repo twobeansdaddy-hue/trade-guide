@@ -38,6 +38,7 @@
 - Twelve Data 일봉·주봉 캔들 조회
   - `DAILY`, `WEEKLY` 캔들 구분
   - 주봉 이동평균 계산에 사용할 최근 캔들 데이터 조회
+  - 전략 판단용 완료 주봉은 최신 완료 주봉 기준일이 바뀔 때까지 메모리에 보관
 - 전략 자산 프로필 관리
   - `market + ticker`를 유니크 키로 하는 `AssetProfile` 저장
   - 티커 대문자 정규화와 중복 등록 `409 Conflict` 처리
@@ -50,7 +51,8 @@
   - 판단에는 현재 40주 평균과 직전 40주 평균 비교를 위해 최소 41개 주봉 필요
 - 종목·포트폴리오 전략 가이드 조회
   - 종목별 시장 신호: 추세, 교차 이벤트, 교차 후 경과 주, 기준 가격, 근거 반환
-  - 포트폴리오 보유 종목을 순회해 종목별 전략 판단 목록 반환
+  - 보유 종목과 등록된 `TRACK_A` 후보를 각각 조회
+  - 다종목 조회는 성공한 가이드와 시장 데이터를 조회하지 못한 종목을 함께 반환
 - 포트폴리오 보유 종목 노출 비중 조회
   - 현재 평가금액과 포트폴리오 전체 평가금액 대비 비중 반환
 - 단위 테스트, Repository 테스트, Controller 테스트
@@ -97,7 +99,9 @@ git push
 
 ```bash
 git status
-git switch feature/portfolio-foundation
+git switch main
+git pull --ff-only
+git switch feature/candidate-entry-window
 git pull --ff-only
 ./gradlew test
 ```
@@ -208,7 +212,8 @@ Controller -> Service -> Repository -> Database
 | `POST` | `/api/members/{memberId}/portfolios/{portfolioId}/transactions` | 매매 기록 등록 |
 | `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/holdings` | 보유 종목 조회 |
 | `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/valuation` | 현재가 기준 포트폴리오 평가 조회 |
-| `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/strategy-guides` | 보유 종목별 전략 가이드 조회 |
+| `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/strategy-guides` | 보유 종목별 전략 가이드와 조회 불가 종목 목록 조회 |
+| `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/candidate-strategy-guides` | 등록된 `TRACK_A` 중 포트폴리오 미보유 후보 가이드와 조회 불가 종목 목록 조회 |
 | `GET` | `/api/members/{memberId}/portfolios/{portfolioId}/exposures` | 보유 종목별 현재 평가금액 노출 비중 조회 |
 | `GET` | `/api/markets/{market}/stocks/{ticker}/candles/daily` | 일봉 캔들 조회 |
 | `GET` | `/api/markets/{market}/stocks/{ticker}/candles/weekly` | 주봉 캔들 조회 |
@@ -267,23 +272,28 @@ GET /api/members/1/portfolios/1/strategy-guides
 ```
 
 ```json
-[
-  {
-    "market": "US",
-    "ticker": "SOXL",
-    "decision": {
-      "action": "HOLD",
-      "referencePrice": 25.5,
-      "reason": "상승 추세가 유지되고 있어 현재 보유 수량을 유지합니다.",
-      "trend": "ABOVE_LONG_AVERAGE",
-      "signalEvent": "NONE",
-      "weeksSinceCross": 4
+{
+  "guides": [
+    {
+      "market": "US",
+      "ticker": "SOXL",
+      "decision": {
+        "action": "HOLD",
+        "referencePrice": 25.5,
+        "reason": "상승 추세가 유지되고 있어 현재 보유 수량을 유지합니다.",
+        "trend": "ABOVE_LONG_AVERAGE",
+        "signalEvent": "NONE",
+        "weeksSinceCross": 4
+      }
     }
-  }
-]
+  ],
+  "unavailableAssets": []
+}
 ```
 
 `referencePrice`는 현재 전략 판단에 사용한 최신 완료 주봉 캔들의 종가다. 예약 주문의 지정가나 목표가가 아니며, 주문 초안은 이후 `TradePlan` 단계에서 별도로 구현한다. 주봉 전략은 미국 동부 시간 기준 금요일 16:15 이후와 주말에 완료된 마지막 주봉만 사용한다. 조기 폐장일과 휴장일은 아직 별도 처리하지 않는다.
+
+다종목 전략 조회에서 특정 종목의 시장 데이터가 없거나 오래되면, 다른 종목의 가이드는 `guides`에 반환하고 해당 종목과 오류 메시지는 `unavailableAssets`에 반환한다. Twelve Data 요청 제한(429)이 발생하면 남은 종목은 추가 호출하지 않고 `unavailableAssets`에 요청 제한 메시지로 기록한다.
 
 ## 실행 및 테스트
 
@@ -353,7 +363,8 @@ Gradle 캐시 때문에 변경한 테스트가 실행되지 않은 것처럼 보
 
 ```text
 main
-feature/portfolio-foundation
+feature/기능명
+research/조사주제
 ```
 
 커밋 메시지 예시:

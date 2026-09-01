@@ -1,0 +1,1043 @@
+{
+  "methodology": {
+    "hypothesis": "SPY 마지막 완료 주봉 종가 > SPY 40주 이동평균일 때만 Track A 신규 BUY 허용 (weeksSinceCross 0~4주 매주 재평가, 최초 동시 성립 주에 진입)",
+    "baseline": "weeksSinceCross<=4 정책, 시장 국면 필터 없음, 진입은 항상 delay=0(교차 당주)",
+    "spy_data_source": "Yahoo Finance (query2.finance.yahoo.com v8 chart API), interval=1wk, adjclose 사용 — SOXL/TQQQ 프로덕션 소스(Twelve Data)와 다른 소스",
+    "big_opportunity_definition": "베이스라인(무필터) 사이클 수익률 분포의 상위 사분위수(Q3, 상위 25%) 이상인 사이클을 '큰 수익 기회'로 정의. 결과를 보기 전에 이 정의(분포 기반 상대 임계치)를 고정했다."
+  },
+  "overall": {
+    "label": "전체 통합 (SOXL+TQQQ, 20개 사이클)",
+    "n_cycles": 20,
+    "n_entered": 20,
+    "n_excluded": 0,
+    "excluded_cycles": [],
+    "baseline": {
+      "avg_return_pct": 110.01,
+      "median_return_pct": 41.47,
+      "avg_mdd_close_pct": -46.98,
+      "avg_mdd_intraweek_pct": -51.86
+    },
+    "candidate_all_cycles": {
+      "note": "제외된 사이클을 수익률 0%, MDD 0%로 취급한 전체 N개 사이클 평균 (필터 적용 후 실제 경제적 결과)",
+      "avg_return_pct": 110.01,
+      "median_return_pct": 41.47,
+      "avg_mdd_close_pct": -46.98,
+      "avg_mdd_intraweek_pct": -51.86
+    },
+    "candidate_entered_only": {
+      "note": "진입한 사이클만의 평균 (트레이드 품질 비교용, 표본 수가 n_entered로 줄어듦)",
+      "avg_return_pct": 110.01,
+      "median_return_pct": 41.47,
+      "avg_mdd_close_pct": -46.98,
+      "avg_mdd_intraweek_pct": -51.86
+    },
+    "mdd_improvement_pp": 0.0,
+    "return_given_up_pp": 0.0,
+    "exchange_ratio_return_given_up_per_mdd_pp": null,
+    "big_opportunity_threshold_q3_baseline_return_pct": 190.42,
+    "big_opportunity_n": 5,
+    "big_opportunity_missed_n": 0,
+    "big_opportunity_missed_rate_pct": 0.0
+  },
+  "by_ticker": {
+    "SOXL": {
+      "label": "SOXL만",
+      "n_cycles": 11,
+      "n_entered": 11,
+      "n_excluded": 0,
+      "excluded_cycles": [],
+      "baseline": {
+        "avg_return_pct": 158.46,
+        "median_return_pct": 41.89,
+        "avg_mdd_close_pct": -52.76,
+        "avg_mdd_intraweek_pct": -57.58
+      },
+      "candidate_all_cycles": {
+        "note": "제외된 사이클을 수익률 0%, MDD 0%로 취급한 전체 N개 사이클 평균 (필터 적용 후 실제 경제적 결과)",
+        "avg_return_pct": 158.46,
+        "median_return_pct": 41.89,
+        "avg_mdd_close_pct": -52.76,
+        "avg_mdd_intraweek_pct": -57.58
+      },
+      "candidate_entered_only": {
+        "note": "진입한 사이클만의 평균 (트레이드 품질 비교용, 표본 수가 n_entered로 줄어듦)",
+        "avg_return_pct": 158.46,
+        "median_return_pct": 41.89,
+        "avg_mdd_close_pct": -52.76,
+        "avg_mdd_intraweek_pct": -57.58
+      },
+      "mdd_improvement_pp": 0.0,
+      "return_given_up_pp": 0.0,
+      "exchange_ratio_return_given_up_per_mdd_pp": null,
+      "big_opportunity_threshold_q3_baseline_return_pct": 445.51,
+      "big_opportunity_n": 3,
+      "big_opportunity_missed_n": 0,
+      "big_opportunity_missed_rate_pct": 0.0
+    },
+    "TQQQ": {
+      "label": "TQQQ만",
+      "n_cycles": 9,
+      "n_entered": 9,
+      "n_excluded": 0,
+      "excluded_cycles": [],
+      "baseline": {
+        "avg_return_pct": 50.81,
+        "median_return_pct": 13.73,
+        "avg_mdd_close_pct": -39.91,
+        "avg_mdd_intraweek_pct": -44.88
+      },
+      "candidate_all_cycles": {
+        "note": "제외된 사이클을 수익률 0%, MDD 0%로 취급한 전체 N개 사이클 평균 (필터 적용 후 실제 경제적 결과)",
+        "avg_return_pct": 50.81,
+        "median_return_pct": 13.73,
+        "avg_mdd_close_pct": -39.91,
+        "avg_mdd_intraweek_pct": -44.88
+      },
+      "candidate_entered_only": {
+        "note": "진입한 사이클만의 평균 (트레이드 품질 비교용, 표본 수가 n_entered로 줄어듦)",
+        "avg_return_pct": 50.81,
+        "median_return_pct": 13.73,
+        "avg_mdd_close_pct": -39.91,
+        "avg_mdd_intraweek_pct": -44.88
+      },
+      "mdd_improvement_pp": 0.0,
+      "return_given_up_pp": 0.0,
+      "exchange_ratio_return_given_up_per_mdd_pp": null,
+      "big_opportunity_threshold_q3_baseline_return_pct": 115.17,
+      "big_opportunity_n": 2,
+      "big_opportunity_missed_n": 0,
+      "big_opportunity_missed_rate_pct": 0.0
+    }
+  },
+  "walk_forward": {
+    "2018-01-01": {
+      "train": {
+        "label": "train (< 2018-01-01)",
+        "n_cycles": 7,
+        "n_entered": 7,
+        "n_excluded": 0,
+        "excluded_cycles": [],
+        "baseline": {
+          "avg_return_pct": 139.2,
+          "median_return_pct": 115.52,
+          "avg_mdd_close_pct": -36.8,
+          "avg_mdd_intraweek_pct": -43.11
+        },
+        "candidate_all_cycles": {
+          "note": "제외된 사이클을 수익률 0%, MDD 0%로 취급한 전체 N개 사이클 평균 (필터 적용 후 실제 경제적 결과)",
+          "avg_return_pct": 139.2,
+          "median_return_pct": 115.52,
+          "avg_mdd_close_pct": -36.8,
+          "avg_mdd_intraweek_pct": -43.11
+        },
+        "candidate_entered_only": {
+          "note": "진입한 사이클만의 평균 (트레이드 품질 비교용, 표본 수가 n_entered로 줄어듦)",
+          "avg_return_pct": 139.2,
+          "median_return_pct": 115.52,
+          "avg_mdd_close_pct": -36.8,
+          "avg_mdd_intraweek_pct": -43.11
+        },
+        "mdd_improvement_pp": 0.0,
+        "return_given_up_pp": 0.0,
+        "exchange_ratio_return_given_up_per_mdd_pp": null,
+        "big_opportunity_threshold_q3_baseline_return_pct": 215.77,
+        "big_opportunity_n": 2,
+        "big_opportunity_missed_n": 0,
+        "big_opportunity_missed_rate_pct": 0.0
+      },
+      "test": {
+        "label": "test (>= 2018-01-01)",
+        "n_cycles": 13,
+        "n_entered": 13,
+        "n_excluded": 0,
+        "excluded_cycles": [],
+        "baseline": {
+          "avg_return_pct": 94.3,
+          "median_return_pct": 41.05,
+          "avg_mdd_close_pct": -52.46,
+          "avg_mdd_intraweek_pct": -56.58
+        },
+        "candidate_all_cycles": {
+          "note": "제외된 사이클을 수익률 0%, MDD 0%로 취급한 전체 N개 사이클 평균 (필터 적용 후 실제 경제적 결과)",
+          "avg_return_pct": 94.3,
+          "median_return_pct": 41.05,
+          "avg_mdd_close_pct": -52.46,
+          "avg_mdd_intraweek_pct": -56.58
+        },
+        "candidate_entered_only": {
+          "note": "진입한 사이클만의 평균 (트레이드 품질 비교용, 표본 수가 n_entered로 줄어듦)",
+          "avg_return_pct": 94.3,
+          "median_return_pct": 41.05,
+          "avg_mdd_close_pct": -52.46,
+          "avg_mdd_intraweek_pct": -56.58
+        },
+        "mdd_improvement_pp": 0.0,
+        "return_given_up_pp": 0.0,
+        "exchange_ratio_return_given_up_per_mdd_pp": null,
+        "big_opportunity_threshold_q3_baseline_return_pct": 113.16,
+        "big_opportunity_n": 3,
+        "big_opportunity_missed_n": 0,
+        "big_opportunity_missed_rate_pct": 0.0
+      },
+      "train_n": 7,
+      "test_n": 13
+    },
+    "2019-01-01": {
+      "train": {
+        "label": "train (< 2019-01-01)",
+        "n_cycles": 7,
+        "n_entered": 7,
+        "n_excluded": 0,
+        "excluded_cycles": [],
+        "baseline": {
+          "avg_return_pct": 139.2,
+          "median_return_pct": 115.52,
+          "avg_mdd_close_pct": -36.8,
+          "avg_mdd_intraweek_pct": -43.11
+        },
+        "candidate_all_cycles": {
+          "note": "제외된 사이클을 수익률 0%, MDD 0%로 취급한 전체 N개 사이클 평균 (필터 적용 후 실제 경제적 결과)",
+          "avg_return_pct": 139.2,
+          "median_return_pct": 115.52,
+          "avg_mdd_close_pct": -36.8,
+          "avg_mdd_intraweek_pct": -43.11
+        },
+        "candidate_entered_only": {
+          "note": "진입한 사이클만의 평균 (트레이드 품질 비교용, 표본 수가 n_entered로 줄어듦)",
+          "avg_return_pct": 139.2,
+          "median_return_pct": 115.52,
+          "avg_mdd_close_pct": -36.8,
+          "avg_mdd_intraweek_pct": -43.11
+        },
+        "mdd_improvement_pp": 0.0,
+        "return_given_up_pp": 0.0,
+        "exchange_ratio_return_given_up_per_mdd_pp": null,
+        "big_opportunity_threshold_q3_baseline_return_pct": 215.77,
+        "big_opportunity_n": 2,
+        "big_opportunity_missed_n": 0,
+        "big_opportunity_missed_rate_pct": 0.0
+      },
+      "test": {
+        "label": "test (>= 2019-01-01)",
+        "n_cycles": 13,
+        "n_entered": 13,
+        "n_excluded": 0,
+        "excluded_cycles": [],
+        "baseline": {
+          "avg_return_pct": 94.3,
+          "median_return_pct": 41.05,
+          "avg_mdd_close_pct": -52.46,
+          "avg_mdd_intraweek_pct": -56.58
+        },
+        "candidate_all_cycles": {
+          "note": "제외된 사이클을 수익률 0%, MDD 0%로 취급한 전체 N개 사이클 평균 (필터 적용 후 실제 경제적 결과)",
+          "avg_return_pct": 94.3,
+          "median_return_pct": 41.05,
+          "avg_mdd_close_pct": -52.46,
+          "avg_mdd_intraweek_pct": -56.58
+        },
+        "candidate_entered_only": {
+          "note": "진입한 사이클만의 평균 (트레이드 품질 비교용, 표본 수가 n_entered로 줄어듦)",
+          "avg_return_pct": 94.3,
+          "median_return_pct": 41.05,
+          "avg_mdd_close_pct": -52.46,
+          "avg_mdd_intraweek_pct": -56.58
+        },
+        "mdd_improvement_pp": 0.0,
+        "return_given_up_pp": 0.0,
+        "exchange_ratio_return_given_up_per_mdd_pp": null,
+        "big_opportunity_threshold_q3_baseline_return_pct": 113.16,
+        "big_opportunity_n": 3,
+        "big_opportunity_missed_n": 0,
+        "big_opportunity_missed_rate_pct": 0.0
+      },
+      "train_n": 7,
+      "test_n": 13
+    },
+    "2020-01-01": {
+      "train": {
+        "label": "train (< 2020-01-01)",
+        "n_cycles": 9,
+        "n_entered": 9,
+        "n_excluded": 0,
+        "excluded_cycles": [],
+        "baseline": {
+          "avg_return_pct": 102.17,
+          "median_return_pct": 13.73,
+          "avg_mdd_close_pct": -45.15,
+          "avg_mdd_intraweek_pct": -50.74
+        },
+        "candidate_all_cycles": {
+          "note": "제외된 사이클을 수익률 0%, MDD 0%로 취급한 전체 N개 사이클 평균 (필터 적용 후 실제 경제적 결과)",
+          "avg_return_pct": 102.17,
+          "median_return_pct": 13.73,
+          "avg_mdd_close_pct": -45.15,
+          "avg_mdd_intraweek_pct": -50.74
+        },
+        "candidate_entered_only": {
+          "note": "진입한 사이클만의 평균 (트레이드 품질 비교용, 표본 수가 n_entered로 줄어듦)",
+          "avg_return_pct": 102.17,
+          "median_return_pct": 13.73,
+          "avg_mdd_close_pct": -45.15,
+          "avg_mdd_intraweek_pct": -50.74
+        },
+        "mdd_improvement_pp": 0.0,
+        "return_given_up_pp": 0.0,
+        "exchange_ratio_return_given_up_per_mdd_pp": null,
+        "big_opportunity_threshold_q3_baseline_return_pct": 215.58,
+        "big_opportunity_n": 2,
+        "big_opportunity_missed_n": 0,
+        "big_opportunity_missed_rate_pct": 0.0
+      },
+      "test": {
+        "label": "test (>= 2020-01-01)",
+        "n_cycles": 11,
+        "n_entered": 11,
+        "n_excluded": 0,
+        "excluded_cycles": [],
+        "baseline": {
+          "avg_return_pct": 116.44,
+          "median_return_pct": 41.89,
+          "avg_mdd_close_pct": -48.48,
+          "avg_mdd_intraweek_pct": -52.78
+        },
+        "candidate_all_cycles": {
+          "note": "제외된 사이클을 수익률 0%, MDD 0%로 취급한 전체 N개 사이클 평균 (필터 적용 후 실제 경제적 결과)",
+          "avg_return_pct": 116.44,
+          "median_return_pct": 41.89,
+          "avg_mdd_close_pct": -48.48,
+          "avg_mdd_intraweek_pct": -52.78
+        },
+        "candidate_entered_only": {
+          "note": "진입한 사이클만의 평균 (트레이드 품질 비교용, 표본 수가 n_entered로 줄어듦)",
+          "avg_return_pct": 116.44,
+          "median_return_pct": 41.89,
+          "avg_mdd_close_pct": -48.48,
+          "avg_mdd_intraweek_pct": -52.78
+        },
+        "mdd_improvement_pp": 0.0,
+        "return_given_up_pp": 0.0,
+        "exchange_ratio_return_given_up_per_mdd_pp": null,
+        "big_opportunity_threshold_q3_baseline_return_pct": 114.82,
+        "big_opportunity_n": 3,
+        "big_opportunity_missed_n": 0,
+        "big_opportunity_missed_rate_pct": 0.0
+      },
+      "train_n": 9,
+      "test_n": 11
+    },
+    "2021-01-01": {
+      "train": {
+        "label": "train (< 2021-01-01)",
+        "n_cycles": 11,
+        "n_entered": 11,
+        "n_excluded": 0,
+        "excluded_cycles": [],
+        "baseline": {
+          "avg_return_pct": 104.16,
+          "median_return_pct": 111.49,
+          "avg_mdd_close_pct": -45.33,
+          "avg_mdd_intraweek_pct": -50.57
+        },
+        "candidate_all_cycles": {
+          "note": "제외된 사이클을 수익률 0%, MDD 0%로 취급한 전체 N개 사이클 평균 (필터 적용 후 실제 경제적 결과)",
+          "avg_return_pct": 104.16,
+          "median_return_pct": 111.49,
+          "avg_mdd_close_pct": -45.33,
+          "avg_mdd_intraweek_pct": -50.57
+        },
+        "candidate_entered_only": {
+          "note": "진입한 사이클만의 평균 (트레이드 품질 비교용, 표본 수가 n_entered로 줄어듦)",
+          "avg_return_pct": 104.16,
+          "median_return_pct": 111.49,
+          "avg_mdd_close_pct": -45.33,
+          "avg_mdd_intraweek_pct": -50.57
+        },
+        "mdd_improvement_pp": 0.0,
+        "return_given_up_pp": 0.0,
+        "exchange_ratio_return_given_up_per_mdd_pp": null,
+        "big_opportunity_threshold_q3_baseline_return_pct": 215.39,
+        "big_opportunity_n": 3,
+        "big_opportunity_missed_n": 0,
+        "big_opportunity_missed_rate_pct": 0.0
+      },
+      "test": {
+        "label": "test (>= 2021-01-01)",
+        "n_cycles": 9,
+        "n_entered": 9,
+        "n_excluded": 0,
+        "excluded_cycles": [],
+        "baseline": {
+          "avg_return_pct": 117.16,
+          "median_return_pct": 41.05,
+          "avg_mdd_close_pct": -48.99,
+          "avg_mdd_intraweek_pct": -53.44
+        },
+        "candidate_all_cycles": {
+          "note": "제외된 사이클을 수익률 0%, MDD 0%로 취급한 전체 N개 사이클 평균 (필터 적용 후 실제 경제적 결과)",
+          "avg_return_pct": 117.16,
+          "median_return_pct": 41.05,
+          "avg_mdd_close_pct": -48.99,
+          "avg_mdd_intraweek_pct": -53.44
+        },
+        "candidate_entered_only": {
+          "note": "진입한 사이클만의 평균 (트레이드 품질 비교용, 표본 수가 n_entered로 줄어듦)",
+          "avg_return_pct": 117.16,
+          "median_return_pct": 41.05,
+          "avg_mdd_close_pct": -48.99,
+          "avg_mdd_intraweek_pct": -53.44
+        },
+        "mdd_improvement_pp": 0.0,
+        "return_given_up_pp": 0.0,
+        "exchange_ratio_return_given_up_per_mdd_pp": null,
+        "big_opportunity_threshold_q3_baseline_return_pct": 247.51,
+        "big_opportunity_n": 2,
+        "big_opportunity_missed_n": 0,
+        "big_opportunity_missed_rate_pct": 0.0
+      },
+      "train_n": 11,
+      "test_n": 9
+    }
+  },
+  "per_dataset": {
+    "soxl_twelvedata": {
+      "label": "SOXL / Twelve Data / interval=1week / adjustment=splits",
+      "cycles": [
+        {
+          "dataset": "soxl_twelvedata",
+          "ticker": "SOXL",
+          "cross_date": "2023-02-27",
+          "exit_date": "2023-10-30",
+          "open": false,
+          "baseline": {
+            "entry_date": "2023-02-27",
+            "entry_price": 15.68,
+            "exit_price": 18.38,
+            "return_pct": 17.22,
+            "mdd_close_pct": -46.36,
+            "mdd_intraweek_pct": -50.23
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2023-02-27",
+            "entry_price": 15.68,
+            "return_pct": 17.22,
+            "mdd_close_pct": -46.36,
+            "mdd_intraweek_pct": -50.23,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2023-02-27",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "soxl_twelvedata",
+          "ticker": "SOXL",
+          "cross_date": "2023-12-04",
+          "exit_date": "2024-09-09",
+          "open": false,
+          "baseline": {
+            "entry_date": "2023-12-04",
+            "entry_price": 23.7,
+            "exit_price": 33.43,
+            "return_pct": 41.05,
+            "mdd_close_pct": -59.4,
+            "mdd_intraweek_pct": -63.25
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2023-12-04",
+            "entry_price": 23.7,
+            "return_pct": 41.05,
+            "mdd_close_pct": -59.4,
+            "mdd_intraweek_pct": -63.25,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2023-12-04",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "soxl_twelvedata",
+          "ticker": "SOXL",
+          "cross_date": "2025-08-04",
+          "exit_date": "2026-08-03",
+          "open": true,
+          "baseline": {
+            "entry_date": "2025-08-04",
+            "entry_price": 25.71,
+            "exit_price": 140.25,
+            "return_pct": 445.51,
+            "mdd_close_pct": -58.92,
+            "mdd_intraweek_pct": -67.24
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2025-08-04",
+            "entry_price": 25.71,
+            "return_pct": 445.51,
+            "mdd_close_pct": -58.92,
+            "mdd_intraweek_pct": -67.24,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2025-08-04",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        }
+      ],
+      "cycle_count": 3
+    },
+    "soxl_yahoo": {
+      "label": "SOXL / Yahoo Finance / weekly / Adjusted Close",
+      "cycles": [
+        {
+          "dataset": "soxl_yahoo",
+          "ticker": "SOXL",
+          "cross_date": "2012-02-20",
+          "exit_date": "2012-06-04",
+          "open": false,
+          "baseline": {
+            "entry_date": "2012-02-20",
+            "entry_price": 0.6107,
+            "exit_price": 0.3967,
+            "return_pct": -35.04,
+            "mdd_close_pct": -48.82,
+            "mdd_intraweek_pct": -50.89
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2012-02-20",
+            "entry_price": 0.6107,
+            "return_pct": -35.04,
+            "mdd_close_pct": -48.82,
+            "mdd_intraweek_pct": -50.89,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2012-02-20",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "soxl_yahoo",
+          "ticker": "SOXL",
+          "cross_date": "2013-01-21",
+          "exit_date": "2015-07-27",
+          "open": false,
+          "baseline": {
+            "entry_date": "2013-01-21",
+            "entry_price": 0.5119,
+            "exit_price": 1.6143,
+            "return_pct": 215.39,
+            "mdd_close_pct": -37.81,
+            "mdd_intraweek_pct": -43.3
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2013-01-21",
+            "entry_price": 0.5119,
+            "return_pct": 215.39,
+            "mdd_close_pct": -37.81,
+            "mdd_intraweek_pct": -43.3,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2013-01-21",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "soxl_yahoo",
+          "ticker": "SOXL",
+          "cross_date": "2016-04-18",
+          "exit_date": "2018-08-13",
+          "open": false,
+          "baseline": {
+            "entry_date": "2016-04-18",
+            "entry_price": 1.5731,
+            "exit_price": 9.0554,
+            "return_pct": 475.64,
+            "mdd_close_pct": -35.4,
+            "mdd_intraweek_pct": -40.75
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2016-04-18",
+            "entry_price": 1.5731,
+            "return_pct": 475.64,
+            "mdd_close_pct": -35.4,
+            "mdd_intraweek_pct": -40.75,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2016-04-18",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "soxl_yahoo",
+          "ticker": "SOXL",
+          "cross_date": "2019-03-25",
+          "exit_date": "2020-03-30",
+          "open": false,
+          "baseline": {
+            "entry_date": "2019-03-25",
+            "entry_price": 8.8391,
+            "exit_price": 5.2678,
+            "return_pct": -40.4,
+            "mdd_close_pct": -79.74,
+            "mdd_intraweek_pct": -83.05
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2019-03-25",
+            "entry_price": 8.8391,
+            "return_pct": -40.4,
+            "mdd_close_pct": -79.74,
+            "mdd_intraweek_pct": -83.05,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2019-03-25",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "soxl_yahoo",
+          "ticker": "SOXL",
+          "cross_date": "2020-08-10",
+          "exit_date": "2022-02-28",
+          "open": false,
+          "baseline": {
+            "entry_date": "2020-08-10",
+            "entry_price": 15.9542,
+            "exit_price": 33.742,
+            "return_pct": 111.49,
+            "mdd_close_pct": -49.31,
+            "mdd_intraweek_pct": -54.0
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2020-08-10",
+            "entry_price": 15.9542,
+            "return_pct": 111.49,
+            "mdd_close_pct": -49.31,
+            "mdd_intraweek_pct": -54.0,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2020-08-10",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "soxl_yahoo",
+          "ticker": "SOXL",
+          "cross_date": "2023-02-27",
+          "exit_date": "2023-10-30",
+          "open": false,
+          "baseline": {
+            "entry_date": "2023-02-27",
+            "entry_price": 15.3431,
+            "exit_price": 18.07,
+            "return_pct": 17.77,
+            "mdd_close_pct": -46.27,
+            "mdd_intraweek_pct": -50.15
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2023-02-27",
+            "entry_price": 15.3431,
+            "return_pct": 17.77,
+            "mdd_close_pct": -46.27,
+            "mdd_intraweek_pct": -50.15,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2023-02-27",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "soxl_yahoo",
+          "ticker": "SOXL",
+          "cross_date": "2023-12-04",
+          "exit_date": "2024-09-09",
+          "open": false,
+          "baseline": {
+            "entry_date": "2023-12-04",
+            "entry_price": 23.3002,
+            "exit_price": 33.0596,
+            "return_pct": 41.89,
+            "mdd_close_pct": -59.4,
+            "mdd_intraweek_pct": -63.25
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2023-12-04",
+            "entry_price": 23.3002,
+            "return_pct": 41.89,
+            "mdd_close_pct": -59.4,
+            "mdd_intraweek_pct": -63.25,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2023-12-04",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "soxl_yahoo",
+          "ticker": "SOXL",
+          "cross_date": "2025-07-28",
+          "exit_date": "2026-08-11",
+          "open": true,
+          "baseline": {
+            "entry_date": "2025-07-28",
+            "entry_price": 24.073,
+            "exit_price": 133.0,
+            "return_pct": 452.49,
+            "mdd_close_pct": -58.92,
+            "mdd_intraweek_pct": -67.24
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2025-07-28",
+            "entry_price": 24.073,
+            "return_pct": 452.49,
+            "mdd_close_pct": -58.92,
+            "mdd_intraweek_pct": -67.24,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2025-07-28",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        }
+      ],
+      "cycle_count": 8
+    },
+    "tqqq_yahoo": {
+      "label": "TQQQ / Yahoo Finance / weekly / Adjusted Close",
+      "cycles": [
+        {
+          "dataset": "tqqq_yahoo",
+          "ticker": "TQQQ",
+          "cross_date": "2012-01-30",
+          "exit_date": "2012-11-26",
+          "open": false,
+          "baseline": {
+            "entry_date": "2012-01-30",
+            "entry_price": 0.4596,
+            "exit_price": 0.5227,
+            "return_pct": 13.73,
+            "mdd_close_pct": -30.97,
+            "mdd_intraweek_pct": -34.15
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2012-01-30",
+            "entry_price": 0.4596,
+            "return_pct": 13.73,
+            "mdd_close_pct": -30.97,
+            "mdd_intraweek_pct": -34.15,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2012-01-30",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "tqqq_yahoo",
+          "ticker": "TQQQ",
+          "cross_date": "2013-01-28",
+          "exit_date": "2015-09-21",
+          "open": false,
+          "baseline": {
+            "entry_date": "2013-01-28",
+            "entry_price": 0.5699,
+            "exit_price": 1.7997,
+            "return_pct": 215.77,
+            "mdd_close_pct": -29.59,
+            "mdd_intraweek_pct": -48.17
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2013-01-28",
+            "entry_price": 0.5699,
+            "return_pct": 215.77,
+            "mdd_close_pct": -29.59,
+            "mdd_intraweek_pct": -48.17,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2013-01-28",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "tqqq_yahoo",
+          "ticker": "TQQQ",
+          "cross_date": "2015-11-23",
+          "exit_date": "2016-01-18",
+          "open": false,
+          "baseline": {
+            "entry_date": "2015-11-23",
+            "entry_price": 2.4168,
+            "exit_price": 1.7732,
+            "return_pct": -26.63,
+            "mdd_close_pct": -33.62,
+            "mdd_intraweek_pct": -40.83
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2015-11-23",
+            "entry_price": 2.4168,
+            "return_pct": -26.63,
+            "mdd_close_pct": -33.62,
+            "mdd_intraweek_pct": -40.83,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2015-11-23",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "tqqq_yahoo",
+          "ticker": "TQQQ",
+          "cross_date": "2016-07-25",
+          "exit_date": "2018-11-19",
+          "open": false,
+          "baseline": {
+            "entry_date": "2016-07-25",
+            "entry_price": 2.338,
+            "exit_price": 5.0389,
+            "return_pct": 115.52,
+            "mdd_close_pct": -41.37,
+            "mdd_intraweek_pct": -43.71
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2016-07-25",
+            "entry_price": 2.338,
+            "return_pct": 115.52,
+            "mdd_close_pct": -41.37,
+            "mdd_intraweek_pct": -43.71,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2016-07-25",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "tqqq_yahoo",
+          "ticker": "TQQQ",
+          "cross_date": "2019-04-15",
+          "exit_date": "2020-04-06",
+          "open": false,
+          "baseline": {
+            "entry_date": "2019-04-15",
+            "entry_price": 7.616,
+            "exit_price": 6.5121,
+            "return_pct": -14.49,
+            "mdd_close_pct": -69.0,
+            "mdd_intraweek_pct": -71.83
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2019-04-15",
+            "entry_price": 7.616,
+            "return_pct": -14.49,
+            "mdd_close_pct": -69.0,
+            "mdd_intraweek_pct": -71.83,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2019-04-15",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "tqqq_yahoo",
+          "ticker": "TQQQ",
+          "cross_date": "2020-06-15",
+          "exit_date": "2022-02-14",
+          "open": false,
+          "baseline": {
+            "entry_date": "2020-06-15",
+            "entry_price": 11.1875,
+            "exit_price": 24.033,
+            "return_pct": 114.82,
+            "mdd_close_pct": -43.05,
+            "mdd_intraweek_pct": -45.61
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2020-06-15",
+            "entry_price": 11.1875,
+            "return_pct": 114.82,
+            "mdd_close_pct": -43.05,
+            "mdd_intraweek_pct": -45.61,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2020-06-15",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "tqqq_yahoo",
+          "ticker": "TQQQ",
+          "cross_date": "2023-03-27",
+          "exit_date": "2025-03-31",
+          "open": false,
+          "baseline": {
+            "entry_date": "2023-03-27",
+            "entry_price": 13.6138,
+            "exit_price": 20.3555,
+            "return_pct": 49.52,
+            "mdd_close_pct": -54.12,
+            "mdd_intraweek_pct": -54.19
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2023-03-27",
+            "entry_price": 13.6138,
+            "return_pct": 49.52,
+            "mdd_close_pct": -54.12,
+            "mdd_intraweek_pct": -54.19,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2023-03-27",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "tqqq_yahoo",
+          "ticker": "TQQQ",
+          "cross_date": "2025-07-07",
+          "exit_date": "2026-03-23",
+          "open": false,
+          "baseline": {
+            "entry_date": "2025-07-07",
+            "entry_price": 41.59,
+            "exit_price": 38.6909,
+            "return_pct": -6.97,
+            "mdd_close_pct": -33.34,
+            "mdd_intraweek_pct": -33.71
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2025-07-07",
+            "entry_price": 41.59,
+            "return_pct": -6.97,
+            "mdd_close_pct": -33.34,
+            "mdd_intraweek_pct": -33.71,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2025-07-07",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        },
+        {
+          "dataset": "tqqq_yahoo",
+          "ticker": "TQQQ",
+          "cross_date": "2026-05-04",
+          "exit_date": "2026-08-11",
+          "open": true,
+          "baseline": {
+            "entry_date": "2026-05-04",
+            "entry_price": 76.1048,
+            "exit_price": 73.06,
+            "return_pct": -4.0,
+            "mdd_close_pct": -24.14,
+            "mdd_intraweek_pct": -31.74
+          },
+          "candidate": {
+            "entered": true,
+            "weeks_since_cross_at_entry": 0,
+            "entry_date": "2026-05-04",
+            "entry_price": 76.1048,
+            "return_pct": -4.0,
+            "mdd_close_pct": -24.14,
+            "mdd_intraweek_pct": -31.74,
+            "weekly_checks": [
+              {
+                "weeks_since_cross": 0,
+                "date": "2026-05-04",
+                "spy_above_40w": true
+              }
+            ]
+          }
+        }
+      ],
+      "cycle_count": 9
+    }
+  },
+  "spy_missing_dates": []
+}
