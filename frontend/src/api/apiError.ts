@@ -2,6 +2,20 @@ export type ApiErrorResponse = {
     message?: string
 }
 
+export class ApiError extends Error {
+    public readonly status: number;
+
+    constructor(status: number, message: string) {
+        super(message);
+        this.name = "ApiError";
+        this.status = status;
+    }
+}
+
+export function hasApiStatus(error: unknown, status: number): boolean {
+    return error instanceof ApiError && error.status === status;
+}
+
 export async function getErrorMessage(
     response: Response,
     fallbackMessage: string,
@@ -24,7 +38,10 @@ export async function getJsonResponse<T>(
     fallbackMessage: string,
 ): Promise<T> {
     if (!response.ok) {
-        throw new Error(await getErrorMessage(response, fallbackMessage));
+        throw new ApiError(
+            response.status,
+            await getErrorMessage(response, fallbackMessage),
+        );
     }
 
     if (!response.headers.get("content-type")?.includes("application/json")) {

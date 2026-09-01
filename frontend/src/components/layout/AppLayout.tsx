@@ -6,6 +6,7 @@ import PortfolioOnboardingPage from "../../pages/PortfolioOnboardingPage";
 const navigation = [
     {to: "/", label: "대시보드", end: true},
     {to: "/holdings", label: "보유 종목"},
+    {to: "/transactions/new", label: "매매 기록"},
     {to: "/strategy-guides", label: "전략 가이드"},
     {to: "/settings", label: "설정"},
 ];
