@@ -26,6 +26,7 @@ export default function AppLayout() {
                 </NavLink>
                 <div className="topbar-actions">
                     <p>{viewer?.nickname ?? "의사결정 지원"}</p>
+                    {selectedPortfolioId !== null ? <NavLink className="topbar-link" to="/portfolios/new">새 포트폴리오</NavLink> : null}
                     <label className="portfolio-selector">
                         <span>포트폴리오</span>
                         <select value={selectedPortfolioId ?? ""} disabled={isLoading || portfolios.length === 0} onChange={(event) => selectPortfolio(Number(event.target.value))}>
