@@ -22,12 +22,14 @@ import com.tradeguide.service.valuation.PortfolioValuationService;
 import com.tradeguide.service.risk.PortfolioExposureService;
 import com.tradeguide.service.strategy.PortfolioCandidateStrategyGuideService;
 import com.tradeguide.service.risk.PortfolioRiskAlertService;
+import com.tradeguide.service.auth.MemberAccessService;
 
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -41,6 +43,7 @@ public class PortfolioController {
     private final PortfolioExposureService portfolioExposureService;
     private final PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
     private final PortfolioRiskAlertService portfolioRiskAlertService;
+    private final MemberAccessService memberAccessService;
 
     public PortfolioController(
             PortfolioService portfolioService,
@@ -49,7 +52,8 @@ public class PortfolioController {
             PortfolioStrategyGuideService portfolioStrategyGuideService,
             PortfolioExposureService portfolioExposureService,
             PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService,
-            PortfolioRiskAlertService portfolioRiskAlertService
+            PortfolioRiskAlertService portfolioRiskAlertService,
+            MemberAccessService memberAccessService
     ) {
         this.portfolioService = portfolioService;
         this.holdingService = holdingService;
@@ -58,6 +62,12 @@ public class PortfolioController {
         this.portfolioExposureService = portfolioExposureService;
         this.portfolioCandidateStrategyGuideService = portfolioCandidateStrategyGuideService;
         this.portfolioRiskAlertService = portfolioRiskAlertService;
+        this.memberAccessService = memberAccessService;
+    }
+
+    @ModelAttribute
+    void requireMemberAccess(@PathVariable Long memberId, Authentication authentication) {
+        memberAccessService.requireMemberAccess(authentication, memberId);
     }
 
     @PostMapping

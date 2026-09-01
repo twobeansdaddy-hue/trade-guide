@@ -1,6 +1,7 @@
 package com.tradeguide.config;
 
 import com.tradeguide.service.auth.GoogleOidcUserService;
+import org.springframework.http.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +32,9 @@ public class SecurityConfig {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/me").authenticated()
+                        .requestMatchers("/api/admin/**").denyAll()
+                        .requestMatchers(HttpMethod.POST, "/api/members").denyAll()
+                        .requestMatchers("/api/members/**").authenticated()
                         .anyRequest().permitAll())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .defaultAuthenticationEntryPointFor(
