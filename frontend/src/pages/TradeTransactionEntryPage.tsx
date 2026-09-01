@@ -1,6 +1,7 @@
 import {useState, type FormEvent} from "react";
 import {useNavigate} from "react-router-dom";
 import {createTradeTransaction} from "../api/tradeTransactionApi";
+import AssetSearchInput from "../components/asset/AssetSearchInput";
 import {usePortfolioContext} from "../context/portfolioContext";
 import type {Market, TradeType} from "../types/tradeTransaction";
 
@@ -69,7 +70,7 @@ export default function TradeTransactionEntryPage() {
                     <div className="form-grid">
                         <label>시장<select value={market} onChange={(event) => setMarket(event.target.value as Market)}><option value="US">미국 (US)</option><option value="KR">한국 (KR)</option></select></label>
                         <label>거래 유형<select value={tradeType} onChange={(event) => setTradeType(event.target.value as TradeType)}><option value="BUY">매수</option><option value="SELL">매도</option></select></label>
-                        <label>종목 코드<input value={ticker} onChange={(event) => setTicker(event.target.value)} placeholder="예: SOXL" maxLength={32} autoComplete="off"/></label>
+                        <AssetSearchInput market={market} ticker={ticker} onTickerChange={setTicker}/>
                         <label>체결 시각<input type="datetime-local" value={tradedAt} onChange={(event) => setTradedAt(event.target.value)}/></label>
                     </div>
                 </section>
