@@ -82,6 +82,14 @@ public class PortfolioController {
                 .body(PortfolioResponse.from(portfolio));
     }
 
+    @GetMapping
+    public List<PortfolioResponse> getPortfolios(@PathVariable Long memberId) {
+        return portfolioService.getPortfolios(memberId)
+                .stream()
+                .map(PortfolioResponse::from)
+                .toList();
+    }
+
     @PutMapping("/{portfolioId}/risk-policy")
     public PortfolioRiskPolicyResponse updateRiskPolicy(
             @PathVariable Long memberId,

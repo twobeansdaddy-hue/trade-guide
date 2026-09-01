@@ -9,6 +9,7 @@ import com.tradeguide.exception.PortfolioRiskPolicyNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class PortfolioService {
@@ -34,6 +35,13 @@ public class PortfolioService {
         Portfolio portfolio = new Portfolio(member, name);
 
         return portfolioRepository.save(portfolio);
+    }
+
+    public List<Portfolio> getPortfolios(Long memberId) {
+        if (!memberRepository.existsById(memberId)) {
+            throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
+        }
+        return portfolioRepository.findAllByMember_Id(memberId);
     }
 
     public PortfolioRiskPolicy updateRiskPolicy(

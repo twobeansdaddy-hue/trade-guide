@@ -1,5 +1,6 @@
 .application-frame { min-height: 100vh; }
 .topbar { display: flex; align-items: center; justify-content: space-between; height: 64px; padding: 0 32px; border-bottom: 1px solid #dfe3e8; background: #fff; }
+.topbar-actions { display: flex; align-items: center; gap: 18px; }.portfolio-selector { display: flex; align-items: center; gap: 8px; color: #52606d; font-size: 12px; font-weight: 700; }.portfolio-selector select { min-width: 160px; border: 1px solid #bfc9d3; border-radius: 6px; padding: 7px 9px; color: #17212b; background: #fff; font: inherit; }
 .topbar p, .page-header p { margin: 0; color: #64707d; font-size: 14px; }
 .brand { color: #17212b; font-size: 15px; font-weight: 800; letter-spacing: .08em; text-decoration: none; }
 .workspace { display: grid; grid-template-columns: 208px minmax(0, 1fr); max-width: 1440px; min-height: calc(100vh - 64px); margin: 0 auto; }
