@@ -13,3 +13,7 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+
+  h2:
+    console:
+      enabled: false
