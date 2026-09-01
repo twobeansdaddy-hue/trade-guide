@@ -14,11 +14,11 @@
 - `AssetListing`은 자산 식별자, 시장, 티커, 표시명, 상장 상태 같은 사실만 소유한다. 전략 트랙·정책은 `AssetProfile`에 남긴다.
 - 보유 내역과 시세 조회가 상장 정보를 참조하도록 마이그레이션하되, 기존 API의 `market`/`ticker` 계약은 호환 기간 동안 유지한다.
 
-## 3. AuthIdentity
+## 3. 운영 인증 완성
 
-- `Member`와 로그인 제공자 식별자를 분리한 `AuthIdentity`를 도입한다.
-- 공급자, 외부 subject, 연결 상태, 생성 시각을 저장하고 `(provider, subject)` 유니크 제약을 둔다.
-- HTTP 인증 주체에서 member를 결정하게 만든 뒤, 현재 경로의 `memberId`는 권한 검증 또는 제거 방향을 별도 승인 후 결정한다.
+- `Member`와 로그인 제공자 식별자를 분리한 `AuthIdentity`, Google OIDC 로그인, URL의 `memberId` 소유권 검증은 구현됐다.
+- 운영 환경에서 Google OAuth 동의 화면, 승인 리디렉션 URI, 세션 쿠키, 프론트엔드와 백엔드의 동일 출처 또는 프록시 경로를 배포 구성으로 검증한다.
+- 역할 기반 관리자 권한과 URL에서 `memberId`를 제거하는 API 전환은 별도 설계 후 진행한다.
 
 ## 4. Toss 읽기 전용 연동
 
