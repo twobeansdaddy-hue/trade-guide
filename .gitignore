@@ -51,3 +51,6 @@ src/main/resources/application-local.yml
 /frontend/dist/
 /frontend/.env.local
 /.idea/.name
+
+# Temporary Claude Code task scope. The tracked example documents its shape.
+/.claude/agent-scope.json

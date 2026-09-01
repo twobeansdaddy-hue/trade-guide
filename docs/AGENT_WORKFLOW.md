@@ -1,5 +1,9 @@
 # Trade Guide Agent Workflow
 
+`docs/AI_COLLABORATION_POLICY.md` is the source of truth for agent roles,
+scope, security, and handoff requirements. This document summarizes the daily
+implementation workflow.
+
 ## Operating Mode
 
 The project is in agent development mode. The immediate goal is to deliver a usable web MVP quickly while preserving sound API, domain, security, and testing decisions. Agents may implement an assigned feature end to end; they do not wait for the user to write each code change.
@@ -20,11 +24,11 @@ Claude Design output belongs under `docs/design/`. Treat it as a proposed interf
 
 ## Agent Roles
 
-- **Codex (GPT)**: implementation and integration lead. Owns repository-wide changes, API contract checks, tests, build verification, and final code review.
-- **Claude**: design exploration, strategy research, architecture review, and isolated implementation tasks explicitly delegated by the user or Codex. Do not edit the same files as another active agent.
-- **Gemini**: visual/UX critique, alternate design review, documentation review, and focused research. Do not make repository edits unless explicitly assigned an isolated file set.
+- **Codex (GPT)**: implementation and integration lead. Owns cross-cutting repository changes, API contract checks, tests, build verification, and final code review.
+- **Claude**: design exploration, strategy research, architecture review, and scoped implementation tasks whose temporary local allowlist is prepared by Codex. Do not edit the same files as another active agent.
+- **Gemini**: visual/UX critique, alternate design review, documentation review, and focused research. It is read-only by default.
 
-One active owner per feature and file set. Before delegating work, state the owner, allowed files, expected output, and whether the task is read-only, design-only, or implementation work.
+One active owner per feature and file set. Before delegating work, create a task contract from `docs/agent-tasks/TEMPLATE.md` that states the owner, allowed files, expected output, work mode, and acceptance checks. For Claude writes, create its matching local scope using `scripts/agent-harness.sh`.
 
 ## Product and Architecture Guardrails
 
@@ -43,7 +47,7 @@ One active owner per feature and file set. Before delegating work, state the own
 5. Update README, project context, or learning log only when the implementation changes their factual content.
 6. Report changed files, verification performed, remaining limitations, and a suggested commit boundary.
 
-Agents must not commit, push, force-push, reset, revert user work, merge branches, or install dependencies without explicit user approval.
+Claude and Gemini must not commit, push, force-push, reset, revert user work, merge branches, or install dependencies. In agent-development mode, Codex may create a feature branch and deliver a verified feature commit; it reports the Git result and stops whenever the user requests review-only or a pause.
 
 ## Design System Expectations
 
@@ -51,4 +55,3 @@ Agents must not commit, push, force-push, reset, revert user work, merge branche
 - Use responsive layouts, semantic HTML, keyboard-accessible controls, visible focus states, and text plus color for status.
 - Record reusable design tokens and component states from Claude Design before duplicating visual styles across pages.
 - Add a UI library only when it solves a confirmed need. Avoid adding several overlapping frameworks.
-

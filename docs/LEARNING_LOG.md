@@ -66,6 +66,8 @@ git pull --ff-only
 
 2026-09-01부터 이 프로젝트는 학습 우선 모드에서 에이전트 개발 모드로 전환했다. 목표는 기존 Java/Spring Boot와 React/TypeScript 구조를 바탕으로 웹서비스 MVP를 빠르게 완성하는 것이다. Claude Design으로 사이트 디자인을 수립하고, Codex는 설계 검토, 구현, 테스트, 문서화를 주도한다. 향후 Flutter 앱을 고려해 백엔드 HTTP API와 도메인 모델을 웹 UI와 분리해 유지한다.
 
+2026-09-02부터 다중 AI 협업은 역할과 파일 범위를 분리한다. Codex는 구현 통합과 품질 관문, Claude는 리서치·디자인·명시 범위 구현, Gemini는 독립 UX/문서 검토를 담당한다. Claude Code는 작업마다 로컬 쓰기 허용 경로를 받은 경우에만 구현을 수정하며, 기본값은 `research/**`만 쓸 수 있는 안전한 리서치 모드다. 기준 문서는 `docs/AI_COLLABORATION_POLICY.md`이며 실행 방법은 `SETUP.md`에 기록한다.
+
 ### 완료
 
 - 회원, 포트폴리오, 매매 기록, 보유 종목 계산

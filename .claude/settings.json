@@ -4,8 +4,8 @@
       "Read",
       "WebSearch",
       "WebFetch",
-      "Write(research/**)",
-      "Edit(research/**)"
+      "Write",
+      "Edit"
     ],
     "deny": [
       "Bash(git push*)",
@@ -23,7 +23,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/block-non-research-writes.py"
+            "command": "python3 .claude/hooks/enforce-agent-write-scope.py"
           }
         ]
       }

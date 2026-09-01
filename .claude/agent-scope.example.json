@@ -1,0 +1,8 @@
+{
+  "mode": "scoped-implementation",
+  "taskId": "example-backend-task",
+  "allowedPaths": [
+    "src/main/java/com/tradeguide/service/example/",
+    "src/test/java/com/tradeguide/service/example/"
+  ]
+}
