@@ -1,7 +1,9 @@
 import {useState, type FormEvent} from "react";
+import {useNavigate} from "react-router-dom";
 import {usePortfolioContext} from "../context/portfolioContext";
 
 export default function PortfolioOnboardingPage() {
+    const navigate = useNavigate();
     const {createPortfolio} = usePortfolioContext();
     const [name, setName] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -21,6 +23,7 @@ export default function PortfolioOnboardingPage() {
 
         try {
             await createPortfolio(normalizedName);
+            navigate("/");
         } catch (reason) {
             setErrorMessage(reason instanceof Error ? reason.message : "포트폴리오를 만들지 못했습니다.");
             setIsSubmitting(false);

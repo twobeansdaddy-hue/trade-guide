@@ -326,6 +326,15 @@
     gap: 22px;
 }
 
+.topbar-link {
+    color: #126457;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.topbar-link:hover { text-decoration: underline; }
+
 .topbar p,
 .page-header p {
     margin: 0;

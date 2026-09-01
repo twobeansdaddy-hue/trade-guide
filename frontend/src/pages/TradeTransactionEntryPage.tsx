@@ -52,7 +52,7 @@ export default function TradeTransactionEntryPage() {
                 fee: numericFee,
                 tradedAt: new Date(tradedAt).toISOString(),
             });
-            navigate("/holdings");
+            navigate("/holdings", {state: {successMessage: "매매 기록을 등록했습니다. 평가 금액은 현재가 기준으로 계산됩니다."}});
         } catch (reason) {
             setErrorMessage(reason instanceof Error ? reason.message : "매매 기록을 등록하지 못했습니다.");
             setIsSubmitting(false);
