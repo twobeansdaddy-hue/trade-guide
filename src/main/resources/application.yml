@@ -26,3 +26,7 @@ spring:
 
 twelve-data:
   api-key: ${TWELVE_DATA_API_KEY:}
+
+tradeguide:
+  auth:
+    enabled: false
