@@ -68,7 +68,7 @@
 - 과거 데이터 기반 백테스트와 전략 성과 비교
 - 사용자 인증 및 권한 관리
 - React/TypeScript 기반 웹 화면
-- 운영 데이터베이스, 환경 변수와 배포 구성
+- PostgreSQL 운영 데이터베이스와 Flyway 스키마 마이그레이션
 
 ## 기술 스택
 
@@ -78,6 +78,7 @@
 - Spring Validation
 - Spring Data JPA / Hibernate
 - H2 Database
+- PostgreSQL / Flyway
 - JUnit 5 / Mockito / AssertJ
 - Gradle 9.3.0
 
@@ -107,6 +108,26 @@ git pull --ff-only
 ```
 
 `application-local.yml`, `.env`, API Key와 같은 비밀값은 GitHub에 올리지 않는다. 각 PC에서 별도로 설정한다. 진행 상황과 다음 학습 단계는 [학습 로그](docs/LEARNING_LOG.md)에 기록한다.
+
+## PostgreSQL 로컬 실행
+
+기본 프로필은 계속 `local`이며, H2 인메모리 DB와 Hibernate `create`를 사용한다. 따라서 기존 학습·테스트 흐름은 평소처럼 `./gradlew test` 또는 `./gradlew bootRun`으로 실행한다.
+
+PostgreSQL 확인이 필요할 때만 아래처럼 실행한다. Compose의 기본 호스트 포트는 H2 Console이나 다른 PostgreSQL과의 충돌을 줄이기 위해 **5433**이며, 컨테이너 내부 포트는 5432다.
+
+```bash
+cp .env.example .env
+# .env의 POSTGRES_PASSWORD를 고유한 로컬 값으로 변경
+docker compose up -d
+
+# .env 값을 셸 환경 변수로도 제공한 뒤 postgres 프로필로 실행
+set -a
+source .env
+set +a
+./gradlew bootRun --args='--spring.profiles.active=postgres'
+```
+
+`postgres` 프로필에서는 Flyway가 `V1__create_initial_schema.sql`을 적용하고 Hibernate는 기존 엔티티와 스키마의 일치 여부만 `validate`한다. 기동 로그의 `Successfully applied` 메시지와 PostgreSQL의 `flyway_schema_history` 테이블로 적용 여부를 확인할 수 있다. 종료와 데이터 초기화는 각각 `docker compose down`, `docker compose down -v`를 사용한다(뒤 명령은 로컬 PostgreSQL 볼륨을 삭제한다).
 
 ## 도메인 모델
 
