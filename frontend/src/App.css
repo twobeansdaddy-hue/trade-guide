@@ -763,6 +763,48 @@ dt {
 .holding-table tr:last-child td { border-bottom: 0; }
 .holding-cards { display: none; }
 
+.holding-summary-list {
+    display: grid;
+    gap: 1px;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid #e0e7e6;
+    border-radius: 8px;
+    padding: 0;
+    background: #e8efed;
+    list-style: none;
+}
+
+.holding-summary-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 18px;
+    background: #fff;
+}
+
+.holding-summary-asset,
+.holding-summary-performance {
+    display: grid;
+    gap: 6px;
+}
+
+.holding-summary-asset > span,
+.holding-summary-performance > span {
+    color: #61727d;
+    font-size: 12px;
+}
+
+.holding-summary-performance {
+    justify-items: end;
+}
+
+.holding-summary-performance strong {
+    font-size: 16px;
+    font-variant-numeric: tabular-nums;
+}
+
 .holding-cards li,
 .guide-card {
     border: 1px solid #e0e7e6;

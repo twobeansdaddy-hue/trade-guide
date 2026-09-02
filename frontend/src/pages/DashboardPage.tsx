@@ -1,7 +1,7 @@
 import {Link} from "react-router-dom";
 import RequestError from "../components/common/RequestError";
 import RiskAlertItem from "../components/risk/RiskAlertItem";
-import HoldingValuationList from "../components/valuation/HoldingValuationList";
+import HoldingSummaryList from "../components/valuation/HoldingSummaryList";
 import {hasApiStatus} from "../api/apiError";
 import {getPortfolioRiskAlerts} from "../api/portfolioRiskApi";
 import {getPortfolioValuation} from "../api/portfolioValuationApi";
@@ -39,10 +39,10 @@ function DashboardContent({memberId, portfolioId}: {memberId: number; portfolioI
             </section>
             <section className="content-section">
                 <div className="section-heading">
-                    <div><p className="section-label">HOLDINGS</p><h2>보유 종목 현황</h2></div>
+                    <div><p className="section-label">HOLDINGS</p><h2>주요 보유 종목</h2></div>
                     <Link className="section-link" to="/holdings">전체 보기</Link>
                 </div>
-                {valuationResource.data.holdingValuations.length > 0 ? <HoldingValuationList holdings={valuationResource.data.holdingValuations}/> : <div className="empty-state empty-state-action"><p>아직 등록된 매매 기록이 없습니다.</p><Link className="quiet-action" to="/transactions/new">매매 기록 등록</Link></div>}
+                {valuationResource.data.holdingValuations.length > 0 ? <HoldingSummaryList holdings={valuationResource.data.holdingValuations}/> : <div className="empty-state empty-state-action"><p>아직 등록된 매매 기록이 없습니다.</p><Link className="quiet-action" to="/transactions/new">매매 기록 등록</Link></div>}
             </section>
         </> : null}
         <section className="content-section risk-section">
