@@ -25,6 +25,9 @@ class AssetListingServiceTest {
     @Mock
     private AssetSearchProvider assetSearchProvider;
 
+    @Mock
+    private AssetSearchCache assetSearchCache;
+
     @InjectMocks
     private AssetListingService assetListingService;
 
@@ -40,8 +43,11 @@ class AssetListingServiceTest {
         com.tradeguide.domain.asset.AssetListing soxl = new com.tradeguide.domain.asset.AssetListing(Market.US, "SOXL", "Direxion Daily Semiconductor Bull 3X Shares", ListingStatus.ACTIVE);
         when(assetListingRepository.searchActiveListings(Market.US, ListingStatus.ACTIVE, "so"))
                 .thenReturn(List.of(soxl));
-        when(assetSearchProvider.search(Market.US, "so", 10))
-                .thenReturn(List.of(new AssetSearchResult(Market.US, "SOFI", "SoFi Technologies")));
+        when(assetSearchCache.getOrLoad(
+                org.mockito.ArgumentMatchers.eq(Market.US),
+                org.mockito.ArgumentMatchers.eq("so"),
+                org.mockito.ArgumentMatchers.any()
+        )).thenReturn(List.of(new AssetSearchResult(Market.US, "SOFI", "SoFi Technologies")));
 
         assertThat(assetListingService.searchActiveListings(Market.US, " so "))
                 .extracting(AssetSearchResult::ticker)
