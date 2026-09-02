@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -125,6 +126,17 @@ class TradeTransactionControllerTest {
                 .andExpect(jsonPath("$[0].tradeType").value("BUY"));
 
         verify(tradeTransactionService).getTradeTransactions(10L, 100L);
+    }
+
+    @Test
+    void deletesTradeTransaction() throws Exception {
+        mockMvc.perform(
+                        delete("/api/members/10/portfolios/100/transactions/500")
+                )
+                .andExpect(status().isNoContent());
+
+        verify(tradeTransactionService)
+                .deleteTradeTransaction(10L, 100L, 500L);
     }
 
     @Test

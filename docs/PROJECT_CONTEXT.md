@@ -91,6 +91,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
   - 포트폴리오 자체가 없거나 보유 종목 계산에 실패하면 기존 오류 응답을 유지한다.
 - 현재 후보 유니버스는 관리자가 등록한 `TRACK_A` 프로필이며, S&P 500 전체 스크리닝이나 `TRACK_B` 후보 탐색은 아직 구현하지 않았다.
 - `referencePrice`는 최신 완료 주봉 종가이며, 주문 지정가·목표가·손절가는 아니다.
+- `POST`/`GET`/`DELETE /api/members/{memberId}/portfolios/{portfolioId}/transactions`는 수동 매매 기록을 생성·조회·삭제한다. 삭제 전에는 남은 거래 이력으로 보유 수량을 다시 계산하며, 이후 매도가 초과 매도가 되는 경우 삭제를 차단한다.
 
 ## 리서치와 정책 문서
 

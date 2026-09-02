@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -168,5 +169,66 @@ class TradeTransactionServiceTest {
 
         assertThat(tradeTransactionService.getTradeTransactions(10L, 100L))
                 .containsExactly(transaction);
+    }
+
+    @Test
+    void deletesTradeTransactionWhenRemainingHistoryIsValid() {
+        Portfolio portfolio = new Portfolio(
+                new Member("beans@example.com", "beans"),
+                "US Stocks"
+        );
+        TradeTransaction transaction = org.mockito.Mockito.mock(
+                TradeTransaction.class
+        );
+        when(transaction.getId()).thenReturn(500L);
+
+        when(portfolioRepository.findByMember_IdAndId(10L, 100L))
+                .thenReturn(Optional.of(portfolio));
+        when(tradeTransactionRepository.findByPortfolio_IdAndId(100L, 500L))
+                .thenReturn(Optional.of(transaction));
+        when(tradeTransactionRepository
+                .findAllByPortfolio_IdOrderByTradedAtAsc(100L))
+                .thenReturn(List.of(transaction));
+
+        tradeTransactionService.deleteTradeTransaction(10L, 100L, 500L);
+
+        verify(holdingCalculator).calculate(argThat(List::isEmpty));
+        verify(tradeTransactionRepository).delete(transaction);
+    }
+
+    @Test
+    void doesNotDeleteTradeTransactionWhenRemainingHistoryBecomesInvalid() {
+        Portfolio portfolio = new Portfolio(
+                new Member("beans@example.com", "beans"),
+                "US Stocks"
+        );
+        TradeTransaction transaction = org.mockito.Mockito.mock(
+                TradeTransaction.class
+        );
+        TradeTransaction laterTransaction = org.mockito.Mockito.mock(
+                TradeTransaction.class
+        );
+        when(transaction.getId()).thenReturn(500L);
+        when(laterTransaction.getId()).thenReturn(501L);
+
+        when(portfolioRepository.findByMember_IdAndId(10L, 100L))
+                .thenReturn(Optional.of(portfolio));
+        when(tradeTransactionRepository.findByPortfolio_IdAndId(100L, 500L))
+                .thenReturn(Optional.of(transaction));
+        when(tradeTransactionRepository
+                .findAllByPortfolio_IdOrderByTradedAtAsc(100L))
+                .thenReturn(List.of(transaction, laterTransaction));
+        when(holdingCalculator.calculate(anyList()))
+                .thenThrow(new IllegalArgumentException(
+                        "매도 수량이 보유 수량보다 많습니다."
+                ));
+
+        assertThatThrownBy(() ->
+                tradeTransactionService.deleteTradeTransaction(10L, 100L, 500L)
+        )
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("매도 수량이 보유 수량보다 많습니다.");
+
+        verify(tradeTransactionRepository, never()).delete(transaction);
     }
 }

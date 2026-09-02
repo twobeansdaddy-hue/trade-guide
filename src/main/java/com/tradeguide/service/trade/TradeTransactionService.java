@@ -8,6 +8,7 @@ import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.trade.TradeTransactionRepository;
 import com.tradeguide.service.holding.HoldingCalculator;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -32,6 +33,7 @@ public class TradeTransactionService {
         this.holdingCalculator = holdingCalculator;
     }
 
+    @Transactional
     public TradeTransaction createTradeTransaction(
             Long memberId,
             Long portfolioId,
@@ -91,6 +93,36 @@ public class TradeTransactionService {
 
         return tradeTransactionRepository
                 .findAllByPortfolio_IdOrderByTradedAtDesc(portfolioId);
+    }
+
+    @Transactional
+    public void deleteTradeTransaction(
+            Long memberId,
+            Long portfolioId,
+            Long transactionId
+    ) {
+        portfolioRepository
+                .findByMember_IdAndId(memberId, portfolioId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "포트폴리오를 찾을 수 없습니다."
+                ));
+
+        TradeTransaction transaction = tradeTransactionRepository
+                .findByPortfolio_IdAndId(portfolioId, transactionId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "매매 기록을 찾을 수 없습니다."
+                ));
+
+        List<TradeTransaction> remainingTransactions = new ArrayList<>(
+                tradeTransactionRepository
+                        .findAllByPortfolio_IdOrderByTradedAtAsc(portfolioId)
+        );
+        remainingTransactions.removeIf(
+                current -> current.getId().equals(transactionId)
+        );
+
+        holdingCalculator.calculate(remainingTransactions);
+        tradeTransactionRepository.delete(transaction);
     }
 
     private void validateInput(
