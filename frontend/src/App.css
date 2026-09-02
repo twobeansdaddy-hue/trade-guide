@@ -72,7 +72,7 @@
 
 .sign-in-note {
     margin: 14px 0 0;
-    color: #83909a;
+    color: #60717d;
     font-size: 12px;
     line-height: 1.5;
 }
@@ -151,7 +151,7 @@
 
 .onboarding-note {
     margin: 20px 0 0;
-    color: #81909a;
+    color: #60717d;
     font-size: 12px;
     line-height: 1.5;
 }
@@ -236,7 +236,7 @@
     outline-offset: -2px;
 }
 .asset-search-results span,
-.search-message { color: #74828c; font-size: 12px; }
+.search-message { color: #5a6c79; font-size: 12px; }
 .search-message { margin: 7px 0 0; line-height: 1.4; }
 .search-message.error { color: #a62e28; }
 
@@ -344,7 +344,7 @@
 .topbar p,
 .page-header p {
     margin: 0;
-    color: #697786;
+    color: #526574;
     font-size: 14px;
 }
 
@@ -420,7 +420,7 @@
 
 .eyebrow,
 .section-label {
-    color: #73818e !important;
+    color: #596c79 !important;
     font-size: 11px !important;
     font-weight: 800;
     letter-spacing: 0.1em;
@@ -499,7 +499,7 @@ dt {
 
 .summary-grid small {
     align-self: end;
-    color: #81909a;
+    color: #60717d;
     font-size: 12px;
 }
 
