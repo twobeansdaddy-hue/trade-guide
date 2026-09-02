@@ -50,6 +50,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `Holding`은 매매 이력으로 계산하는 현재 보유 상태이며 DB에 저장하지 않는다.
 - `HoldingValuation`, `PortfolioValuation`은 현재가 기반의 평가 결과다.
 - `AssetListing`은 `market + ticker`, 표시명, 상장 상태를 관리하는 거래 가능한 종목 기준 엔터티다. `AssetProfile`은 하나의 상장 종목과 투자 트랙을 연결하는 시스템 전략 카탈로그이며, 사용자별 목표 수익률 설정이 아니다.
+- 미국 종목 검색은 `AssetListing`의 활성 종목을 우선 반환하고 Twelve Data `symbol_search` 결과를 함께 사용한다. 외부 검색 결과는 조회용이며 자동으로 DB에 저장하지 않는다. 동일 시장·검색어의 외부 결과는 5분간 캐시한다.
 - `StrategySignal`은 시장 데이터만으로 계산한 추세 상태, 교차 이벤트, 기준 가격과 근거다.
 - `StrategyDecision`은 보유 여부 같은 사용자 맥락과 `StrategySignal`을 결합한 최종 행동과 근거다.
 - `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 있다. `StrategyDecisionMaker`는 보유 종목의 `HOLD`/`SELL`과 미보유 후보의 `BUY`/`WATCH`를 결정한다. 후보 `BUY`는 상승 추세의 교차 후 0~4주에만 허용한다. `REDUCE`는 주문 초안 생성 규칙과 부분 매도 정책이 확정될 때까지 사용하지 않는다.
@@ -65,6 +66,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 ## 현재 전략 엔진 상태
 
 - Twelve Data에서 현재가, 일봉, 주봉을 조회한다.
+- Twelve Data에서 미국 주식·ETF의 종목명 또는 티커 검색도 조회한다. 한국 시장 검색과 통화 표시는 별도 제공자·환율·통화 모델 설계 전까지 완전 지원으로 표시하지 않는다.
 - 주봉 10/40 이동평균 전략은 `TRACK_A` 자산에 적용한다.
 - 진행 중인 주봉이 신호에 섞이지 않도록 완료 주봉 필터를 적용했다.
 - 최신 완료 주봉이 현재 시점에 기대되는 주보다 오래되면 `StaleMarketDataException`으로 전략 판단을 차단한다.
