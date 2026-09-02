@@ -190,6 +190,7 @@
 
 .asset-search {
     position: relative;
+    min-width: 0;
 }
 
 .asset-search > label {
@@ -202,6 +203,8 @@
 
 .asset-search-results {
     position: absolute;
+    top: 68px;
+    left: 0;
     z-index: 2;
     width: 100%;
     max-height: 220px;
@@ -235,9 +238,13 @@
     outline: 2px solid #158476;
     outline-offset: -2px;
 }
+.asset-search-feedback {
+    min-height: 17px;
+    margin-top: 7px;
+}
 .asset-search-results span,
 .search-message { color: #5a6c79; font-size: 12px; }
-.search-message { margin: 7px 0 0; line-height: 1.4; }
+.search-message { margin: 0; line-height: 1.4; }
 .search-message.error { color: #a62e28; }
 
 .form-grid input,
