@@ -779,6 +779,13 @@ dt {
     line-height: 1.55;
 }
 
+.data-as-of {
+    margin: 16px 0 0;
+    color: #526875;
+    font-size: 13px;
+    font-weight: 700;
+}
+
 .unavailable-assets {
     margin-top: 16px;
     border: 1px solid #f0d8a8;
@@ -865,6 +872,65 @@ dt {
 .form-success-message { margin: 0; font-size: 14px; }
 .form-error-message { color: #a62e28; }
 .form-success-message { color: #13734f; }
+
+.exposure-section {
+    margin-top: 42px;
+    padding-top: 28px;
+    border-top: 1px solid #dfe6e6;
+}
+
+.exposure-list {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.exposure-list li {
+    padding: 16px 0;
+    border-bottom: 1px solid #e4ebea;
+}
+
+.exposure-list li:first-child { padding-top: 0; }
+
+.exposure-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.exposure-heading > strong {
+    color: #26343c;
+    font-size: 16px;
+    font-variant-numeric: tabular-nums;
+}
+
+.exposure-heading > strong.negative { color: #bd3028; }
+
+.exposure-bar {
+    height: 7px;
+    margin-top: 12px;
+    overflow: hidden;
+    border-radius: 99px;
+    background: #e7edec;
+}
+
+.exposure-bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #167568;
+}
+
+.exposure-bar span.exceeds-limit { background: #d94137; }
+
+.exposure-list p {
+    margin: 9px 0 0;
+    color: #637481;
+    font-size: 13px;
+}
 
 @media (max-width: 900px) {
     .page-content { padding: 38px 30px 64px; }

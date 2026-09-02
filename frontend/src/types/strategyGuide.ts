@@ -9,8 +9,8 @@ export type StrategyDecision = {
         strategyVersion: string;
         dataAsOf: string;
     };
-    trend: "ABOVE_LONG_AVERAGE" | "BELOW_LONG_AVERAGE";
-    signalEvent: "CROSS_UP" | "CROSS_DOWN" | "NONE";
+    trend: "ABOVE_LONG_AVERAGE" | "BELOW_LONG_AVERAGE" | null;
+    signalEvent: "CROSS_UP" | "CROSS_DOWN" | "NONE" | null;
     weeksSinceCross: number | null;
 };
 

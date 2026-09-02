@@ -1,4 +1,5 @@
 import type {PortfolioRiskAlert} from "../types/portfolioRisk";
+import type {PortfolioExposure} from "../types/portfolioExposure";
 import type {PortfolioRiskPolicy} from "../types/portfolioRiskPolicy";
 import {getJsonResponse} from "./apiError";
 
@@ -27,6 +28,20 @@ export async function getPortfolioRiskPolicy(
     return getJsonResponse<PortfolioRiskPolicy>(
         response,
         "위험 한도를 불러오지 못했습니다.",
+    );
+}
+
+export async function getPortfolioExposures(
+    memberId: number,
+    portfolioId: number,
+): Promise<PortfolioExposure[]> {
+    const response = await fetch(
+        `/api/members/${memberId}/portfolios/${portfolioId}/exposures`,
+    );
+
+    return getJsonResponse<PortfolioExposure[]>(
+        response,
+        "보유 종목 비중을 불러오지 못했습니다.",
     );
 }
 
