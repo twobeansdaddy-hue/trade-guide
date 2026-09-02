@@ -1,4 +1,4 @@
-import {useEffect, useId, useState} from "react";
+import {useEffect, useId, useState, type KeyboardEvent} from "react";
 import {searchAssetListings} from "../../api/assetListingApi";
 import type {AssetListing} from "../../types/assetListing";
 import type {Market} from "../../types/tradeTransaction";
@@ -17,6 +17,11 @@ type SearchResult = {
     errorMessage: string | null;
 };
 
+type HighlightedResult = {
+    searchKey: string;
+    index: number;
+};
+
 export default function AssetSearchInput({market, ticker, onTickerChange}: Props) {
     const [searchResult, setSearchResult] = useState<SearchResult>({
         key: "",
@@ -24,6 +29,10 @@ export default function AssetSearchInput({market, ticker, onTickerChange}: Props
         errorMessage: null,
     });
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [highlightedResult, setHighlightedResult] = useState<HighlightedResult>({
+        searchKey: "",
+        index: -1,
+    });
     const inputId = useId();
     const resultsId = useId();
     const feedbackId = useId();
@@ -64,6 +73,7 @@ export default function AssetSearchInput({market, ticker, onTickerChange}: Props
     const selectAsset = (asset: AssetListing) => {
         onTickerChange(asset.ticker);
         setIsSearchOpen(false);
+        setHighlightedResult({searchKey, index: -1});
     };
 
     const showResults = query.length > 0 && isSearchOpen;
@@ -71,6 +81,59 @@ export default function AssetSearchInput({market, ticker, onTickerChange}: Props
     const results = isCurrentResult ? searchResult.results : [];
     const errorMessage = isCurrentResult ? searchResult.errorMessage : null;
     const isSearching = query.length > 0 && !isCurrentResult;
+    const isResultListVisible = showResults && results.length > 0;
+    const highlightedIndex = highlightedResult.searchKey === searchKey
+        ? highlightedResult.index
+        : -1;
+    const highlightedOptionId = highlightedIndex >= 0 && isResultListVisible
+        ? `${resultsId}-option-${highlightedIndex}`
+        : undefined;
+
+    const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Escape") {
+            setIsSearchOpen(false);
+            setHighlightedResult({searchKey, index: -1});
+            return;
+        }
+
+        if (event.key === "ArrowDown") {
+            if (query.length === 0) return;
+
+            if (!isSearchOpen) {
+                setIsSearchOpen(true);
+                return;
+            }
+
+            if (!isResultListVisible) return;
+
+            event.preventDefault();
+            setHighlightedResult((current) => ({
+                searchKey,
+                index: Math.min(
+                    (current.searchKey === searchKey ? current.index : -1) + 1,
+                    results.length - 1,
+                ),
+            }));
+            return;
+        }
+
+        if (event.key === "ArrowUp" && isResultListVisible) {
+            event.preventDefault();
+            setHighlightedResult((current) => ({
+                searchKey,
+                index: Math.max(
+                    (current.searchKey === searchKey ? current.index : -1) - 1,
+                    0,
+                ),
+            }));
+            return;
+        }
+
+        if (event.key === "Enter" && isResultListVisible && highlightedIndex >= 0) {
+            event.preventDefault();
+            selectAsset(results[highlightedIndex]);
+        }
+    };
 
     return <div className="asset-search">
         <label htmlFor={inputId}>종목 검색</label>
@@ -78,10 +141,8 @@ export default function AssetSearchInput({market, ticker, onTickerChange}: Props
             <input id={inputId} value={ticker} onChange={(event) => {
                 onTickerChange(event.target.value.toUpperCase());
                 setIsSearchOpen(true);
-            }} onFocus={() => setIsSearchOpen(true)} onKeyDown={(event) => {
-                if (event.key === "Escape") setIsSearchOpen(false);
-            }} placeholder="티커 또는 종목명을 입력" maxLength={32} autoComplete="off" aria-controls={results.length > 0 ? resultsId : undefined} aria-describedby={showResults ? feedbackId : undefined} aria-expanded={showResults}/>
-            {showResults && results.length > 0 ? <ul id={resultsId} className="asset-search-results" aria-label="종목 검색 결과">{results.map((asset) => <li key={`${asset.market}-${asset.ticker}`}><button type="button" onClick={() => selectAsset(asset)}><strong>{asset.ticker}</strong><span>{asset.displayName}</span></button></li>)}</ul> : null}
+            }} onFocus={() => setIsSearchOpen(true)} onKeyDown={handleKeyDown} placeholder="티커 또는 종목명을 입력" maxLength={32} autoComplete="off" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-controls={isResultListVisible ? resultsId : undefined} aria-describedby={showResults ? feedbackId : undefined} aria-activedescendant={highlightedOptionId} aria-expanded={showResults}/>
+            {isResultListVisible ? <ul id={resultsId} className="asset-search-results" role="listbox" aria-label="종목 검색 결과">{results.map((asset, index) => <li key={`${asset.market}-${asset.ticker}`} id={`${resultsId}-option-${index}`} role="option" aria-selected={highlightedIndex === index} onMouseDown={(event) => event.preventDefault()} onClick={() => selectAsset(asset)}><strong>{asset.ticker}</strong><span>{asset.displayName}</span></li>)}</ul> : null}
         </div>
         {showResults ? <div id={feedbackId} className="asset-search-feedback" aria-live="polite">
             {showResults && isSearching ? <p className="search-message">종목을 검색하는 중입니다.</p> : null}

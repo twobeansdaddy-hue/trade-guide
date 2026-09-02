@@ -222,7 +222,7 @@
     list-style: none;
 }
 
-.asset-search-results button {
+.asset-search-results [role="option"] {
     display: grid;
     width: 100%;
     gap: 3px;
@@ -235,10 +235,10 @@
     text-align: left;
 }
 
-.asset-search-results button:hover,
-.asset-search-results button:focus-visible { background: #edf5f3; }
+.asset-search-results [role="option"]:hover,
+.asset-search-results [role="option"][aria-selected="true"] { background: #edf5f3; }
 
-.asset-search-results button:focus-visible {
+.asset-search-results [role="option"][aria-selected="true"] {
     outline: 2px solid #158476;
     outline-offset: -2px;
 }
