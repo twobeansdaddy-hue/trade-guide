@@ -14,7 +14,7 @@ function createDefaultTradeTime() {
 export default function TradeTransactionEntryPage() {
     const navigate = useNavigate();
     const {memberId, selectedPortfolioId} = usePortfolioContext();
-    const [market, setMarket] = useState<Market>("US");
+    const market: Market = "US";
     const [ticker, setTicker] = useState("");
     const [tradeType, setTradeType] = useState<TradeType>("BUY");
     const [quantity, setQuantity] = useState("");
@@ -68,7 +68,11 @@ export default function TradeTransactionEntryPage() {
                 <section>
                     <h2>거래 정보</h2>
                     <div className="form-grid">
-                        <label>시장<select value={market} onChange={(event) => setMarket(event.target.value as Market)}><option value="US">미국 (US)</option><option value="KR">한국 (KR)</option></select></label>
+                        <div className="market-scope">
+                            <span>시장</span>
+                            <strong>미국 주식 (US)</strong>
+                            <small>한국 시장은 준비 중입니다.</small>
+                        </div>
                         <label>거래 유형<select value={tradeType} onChange={(event) => setTradeType(event.target.value as TradeType)}><option value="BUY">매수</option><option value="SELL">매도</option></select></label>
                         <AssetSearchInput market={market} ticker={ticker} onTickerChange={setTicker}/>
                         <label>체결 시각<input type="datetime-local" value={tradedAt} onChange={(event) => setTradedAt(event.target.value)}/></label>
