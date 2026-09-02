@@ -25,6 +25,7 @@ with open(scope_file, "w", encoding="utf-8") as output:
             "mode": mode,
             "taskId": task_id,
             "allowedPaths": allowed_paths,
+            "responseLanguage": "ko-KR",
         },
         output,
         indent=2,

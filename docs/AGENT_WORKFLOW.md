@@ -49,6 +49,12 @@ One active owner per feature and file set. Before delegating work, create a task
 
 Claude and Gemini must not commit, push, force-push, reset, revert user work, merge branches, or install dependencies. In agent-development mode, Codex may create a feature branch and deliver a verified feature commit; it reports the Git result and stops whenever the user requests review-only or a pause.
 
+## 사용자 언어
+
+- 사용자에게 표시되는 작업 제목, 진행 보고, 완료 보고, 새 문서 본문은 한국어를 기본으로 한다.
+- 코드 식별자, 명령어, API 이름, 외부 서비스 고유명사는 정확성을 위해 영어 표기를 유지할 수 있다.
+- Claude 작업 범위 파일의 `responseLanguage` 값은 사용자 보고 언어의 실행 기준이다.
+
 ## Design System Expectations
 
 - Prefer a calm, dense, operational financial interface over a marketing landing page.
