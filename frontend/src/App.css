@@ -201,9 +201,13 @@
     font-weight: 700;
 }
 
+.asset-search-input-wrap {
+    position: relative;
+}
+
 .asset-search-results {
     position: absolute;
-    top: 68px;
+    top: 100%;
     left: 0;
     z-index: 2;
     width: 100%;
@@ -239,7 +243,6 @@
     outline-offset: -2px;
 }
 .asset-search-feedback {
-    min-height: 17px;
     margin-top: 7px;
 }
 .asset-search-results span,

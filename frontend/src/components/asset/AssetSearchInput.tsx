@@ -24,7 +24,9 @@ export default function AssetSearchInput({market, ticker, onTickerChange}: Props
         errorMessage: null,
     });
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const inputId = useId();
     const resultsId = useId();
+    const feedbackId = useId();
     const query = ticker.trim();
     const searchKey = `${market}:${query}`;
 
@@ -71,17 +73,20 @@ export default function AssetSearchInput({market, ticker, onTickerChange}: Props
     const isSearching = query.length > 0 && !isCurrentResult;
 
     return <div className="asset-search">
-        <label>종목 검색<input value={ticker} onChange={(event) => {
-            onTickerChange(event.target.value.toUpperCase());
-            setIsSearchOpen(true);
-        }} onFocus={() => setIsSearchOpen(true)} onKeyDown={(event) => {
-            if (event.key === "Escape") setIsSearchOpen(false);
-        }} placeholder="티커 또는 종목명을 입력" maxLength={32} autoComplete="off" aria-controls={resultsId} aria-expanded={showResults && results.length > 0}/></label>
-        <div className="asset-search-feedback" aria-live="polite">
-            {showResults && isSearching ? <p className="search-message">종목을 검색하는 중입니다.</p> : null}
-            {showResults && errorMessage ? <p className="search-message error" role="alert">{errorMessage}</p> : null}
-            {showResults && !isSearching && results.length === 0 && !errorMessage ? <p className="search-message">등록된 종목이 없으면 입력한 코드로 직접 등록할 수 있습니다.</p> : null}
+        <label htmlFor={inputId}>종목 검색</label>
+        <div className="asset-search-input-wrap">
+            <input id={inputId} value={ticker} onChange={(event) => {
+                onTickerChange(event.target.value.toUpperCase());
+                setIsSearchOpen(true);
+            }} onFocus={() => setIsSearchOpen(true)} onKeyDown={(event) => {
+                if (event.key === "Escape") setIsSearchOpen(false);
+            }} placeholder="티커 또는 종목명을 입력" maxLength={32} autoComplete="off" aria-controls={results.length > 0 ? resultsId : undefined} aria-describedby={showResults ? feedbackId : undefined} aria-expanded={showResults}/>
+            {showResults && results.length > 0 ? <ul id={resultsId} className="asset-search-results" aria-label="종목 검색 결과">{results.map((asset) => <li key={`${asset.market}-${asset.ticker}`}><button type="button" onClick={() => selectAsset(asset)}><strong>{asset.ticker}</strong><span>{asset.displayName}</span></button></li>)}</ul> : null}
         </div>
-        {showResults && results.length > 0 ? <ul id={resultsId} className="asset-search-results" aria-label="종목 검색 결과">{results.map((asset) => <li key={`${asset.market}-${asset.ticker}`}><button type="button" onClick={() => selectAsset(asset)}><strong>{asset.ticker}</strong><span>{asset.displayName}</span></button></li>)}</ul> : null}
+        {showResults ? <div id={feedbackId} className="asset-search-feedback" aria-live="polite">
+            {showResults && isSearching ? <p className="search-message">종목을 검색하는 중입니다.</p> : null}
+            {showResults && errorMessage ? <p className="search-message error">{errorMessage}</p> : null}
+            {showResults && !isSearching && results.length === 0 && !errorMessage ? <p className="search-message">등록된 종목이 없으면 입력한 코드로 직접 등록할 수 있습니다.</p> : null}
+        </div> : null}
     </div>;
 }
