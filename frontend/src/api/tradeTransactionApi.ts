@@ -28,3 +28,18 @@ export async function getTradeTransactions(
         "매매 기록을 불러오지 못했습니다.",
     );
 }
+
+export async function deleteTradeTransaction(
+    memberId: number,
+    portfolioId: number,
+    transactionId: number,
+): Promise<void> {
+    const response = await fetch(
+        `/api/members/${memberId}/portfolios/${portfolioId}/transactions/${transactionId}`,
+        {method: "DELETE"},
+    );
+
+    if (!response.ok) {
+        await getJsonResponse<void>(response, "매매 기록을 삭제하지 못했습니다.");
+    }
+}
