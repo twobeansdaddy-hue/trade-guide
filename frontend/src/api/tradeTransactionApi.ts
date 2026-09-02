@@ -14,3 +14,17 @@ export async function createTradeTransaction(
 
     return getJsonResponse<TradeTransaction>(response, "매매 기록을 등록하지 못했습니다.");
 }
+
+export async function getTradeTransactions(
+    memberId: number,
+    portfolioId: number,
+): Promise<TradeTransaction[]> {
+    const response = await fetch(
+        `/api/members/${memberId}/portfolios/${portfolioId}/transactions`,
+    );
+
+    return getJsonResponse<TradeTransaction[]>(
+        response,
+        "매매 기록을 불러오지 못했습니다.",
+    );
+}
