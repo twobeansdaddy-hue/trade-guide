@@ -16,13 +16,16 @@ public class AssetListingService {
 
     private final AssetListingRepository assetListingRepository;
     private final AssetSearchProvider assetSearchProvider;
+    private final AssetSearchCache assetSearchCache;
 
     public AssetListingService(
             AssetListingRepository assetListingRepository,
-            AssetSearchProvider assetSearchProvider
+            AssetSearchProvider assetSearchProvider,
+            AssetSearchCache assetSearchCache
     ) {
         this.assetListingRepository = assetListingRepository;
         this.assetSearchProvider = assetSearchProvider;
+        this.assetSearchCache = assetSearchCache;
     }
 
     public List<AssetSearchResult> searchActiveListings(Market market, String query) {
@@ -42,8 +45,15 @@ public class AssetListingService {
                         listing.getDisplayName()
                 ))
                 .toList();
-        List<AssetSearchResult> externalResults = assetSearchProvider
-                .search(market, query.trim(), MAX_SEARCH_RESULTS);
+        List<AssetSearchResult> externalResults = assetSearchCache.getOrLoad(
+                market,
+                query.trim(),
+                () -> assetSearchProvider.search(
+                        market,
+                        query.trim(),
+                        MAX_SEARCH_RESULTS
+                )
+        );
 
         LinkedHashMap<String, AssetSearchResult> results = new LinkedHashMap<>();
         localResults.forEach(result -> results.put(result.ticker(), result));
