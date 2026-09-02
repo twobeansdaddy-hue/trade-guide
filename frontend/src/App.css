@@ -188,6 +188,33 @@
     font-weight: 700;
 }
 
+.market-scope {
+    display: grid;
+    align-content: start;
+    gap: 7px;
+    color: #43535f;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.market-scope strong {
+    min-height: 41px;
+    box-sizing: border-box;
+    border: 1px solid #d5dfdd;
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: #526875;
+    background: #f4f7f6;
+    font-size: 14px;
+}
+
+.market-scope small {
+    color: #667783;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
 .asset-search {
     position: relative;
     min-width: 0;
