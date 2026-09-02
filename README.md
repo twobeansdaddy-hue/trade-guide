@@ -120,14 +120,15 @@ cp .env.example .env
 # .env의 POSTGRES_PASSWORD를 고유한 로컬 값으로 변경
 docker compose up -d
 
-# .env 값을 셸 환경 변수로도 제공한 뒤 postgres 프로필로 실행
+# .env 값을 셸 환경 변수로 제공하고 local, postgres 프로필을 함께 실행
+# local 프로필은 Twelve Data 설정과 개발용 회원을 제공한다.
 set -a
 source .env
 set +a
-./gradlew bootRun --args='--spring.profiles.active=postgres'
+./gradlew bootRun --args='--spring.profiles.active=local,postgres'
 ```
 
-`postgres` 프로필에서는 Flyway가 `V1__create_initial_schema.sql`을 적용하고 Hibernate는 기존 엔티티와 스키마의 일치 여부만 `validate`한다. 기동 로그의 `Successfully applied` 메시지와 PostgreSQL의 `flyway_schema_history` 테이블로 적용 여부를 확인할 수 있다. 종료와 데이터 초기화는 각각 `docker compose down`, `docker compose down -v`를 사용한다(뒤 명령은 로컬 PostgreSQL 볼륨을 삭제한다).
+`postgres` 프로필에서는 Flyway가 `V1__create_initial_schema.sql`을 적용하고 Hibernate는 기존 엔티티와 스키마의 일치 여부만 `validate`한다. `local` 프로필이 함께 활성화되면 빈 로컬 DB에는 개발용 회원을 한 번 생성하므로, 프론트의 `VITE_LOCAL_MEMBER_ID=1`로 첫 포트폴리오 생성 화면을 확인할 수 있다. 배포 환경에는 적용되지 않는다. 기동 로그의 `Successfully applied` 메시지와 PostgreSQL의 `flyway_schema_history` 테이블로 적용 여부를 확인할 수 있다. 종료와 데이터 초기화는 각각 `docker compose down`, `docker compose down -v`를 사용한다(뒤 명령은 로컬 PostgreSQL 볼륨을 삭제한다).
 
 ## 도메인 모델
 
