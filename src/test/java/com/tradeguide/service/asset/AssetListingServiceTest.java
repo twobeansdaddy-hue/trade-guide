@@ -1,6 +1,6 @@
 package com.tradeguide.service.asset;
 
-import com.tradeguide.domain.asset.AssetListing;
+import com.tradeguide.domain.asset.AssetSearchResult;
 import com.tradeguide.domain.asset.ListingStatus;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.repository.asset.AssetListingRepository;
@@ -22,6 +22,9 @@ class AssetListingServiceTest {
     @Mock
     private AssetListingRepository assetListingRepository;
 
+    @Mock
+    private AssetSearchProvider assetSearchProvider;
+
     @InjectMocks
     private AssetListingService assetListingService;
 
@@ -34,12 +37,14 @@ class AssetListingServiceTest {
 
     @Test
     void searchesOnlyActiveListingsInRequestedMarket() {
-        AssetListing soxl = new AssetListing(Market.US, "SOXL", "Direxion Daily Semiconductor Bull 3X Shares", ListingStatus.ACTIVE);
+        com.tradeguide.domain.asset.AssetListing soxl = new com.tradeguide.domain.asset.AssetListing(Market.US, "SOXL", "Direxion Daily Semiconductor Bull 3X Shares", ListingStatus.ACTIVE);
         when(assetListingRepository.searchActiveListings(Market.US, ListingStatus.ACTIVE, "so"))
                 .thenReturn(List.of(soxl));
+        when(assetSearchProvider.search(Market.US, "so", 10))
+                .thenReturn(List.of(new AssetSearchResult(Market.US, "SOFI", "SoFi Technologies")));
 
         assertThat(assetListingService.searchActiveListings(Market.US, " so "))
-                .extracting(AssetListing::getTicker)
-                .containsExactly("SOXL");
+                .extracting(AssetSearchResult::ticker)
+                .containsExactly("SOXL", "SOFI");
     }
 }
