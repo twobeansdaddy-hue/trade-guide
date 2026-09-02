@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -101,6 +102,29 @@ class TradeTransactionControllerTest {
                 new BigDecimal("0.10"),
                 tradedAt
         );
+    }
+
+    @Test
+    void getsTradeTransactionsInRecentOrder() throws Exception {
+        TradeTransaction transaction = mock(TradeTransaction.class);
+        when(transaction.getId()).thenReturn(1L);
+        when(transaction.getMarket()).thenReturn(Market.US);
+        when(transaction.getTicker()).thenReturn("AAPL");
+        when(transaction.getTradeType()).thenReturn(TradeType.BUY);
+        when(transaction.getQuantity()).thenReturn(new BigDecimal("10"));
+        when(transaction.getExecutedPrice()).thenReturn(new BigDecimal("100.00"));
+        when(transaction.getFee()).thenReturn(BigDecimal.ZERO);
+        when(transaction.getTradedAt()).thenReturn(Instant.parse("2026-08-03T13:30:00Z"));
+        when(tradeTransactionService.getTradeTransactions(10L, 100L))
+                .thenReturn(java.util.List.of(transaction));
+
+        mockMvc.perform(get("/api/members/10/portfolios/100/transactions"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].ticker").value("AAPL"))
+                .andExpect(jsonPath("$[0].tradeType").value("BUY"));
+
+        verify(tradeTransactionService).getTradeTransactions(10L, 100L);
     }
 
     @Test

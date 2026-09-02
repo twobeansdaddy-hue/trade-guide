@@ -77,6 +77,22 @@ public class TradeTransactionService {
         return tradeTransactionRepository.save(transaction);
     }
 
+    public List<TradeTransaction> getTradeTransactions(
+            Long memberId,
+            Long portfolioId
+    ) {
+        portfolioRepository
+                .findByMember_IdAndId(memberId, portfolioId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "포트폴리오를 찾을 수 없습니다."
+                        )
+                );
+
+        return tradeTransactionRepository
+                .findAllByPortfolio_IdOrderByTradedAtDesc(portfolioId);
+    }
+
     private void validateInput(
             Market market,
             String ticker,

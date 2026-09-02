@@ -142,4 +142,31 @@ class TradeTransactionServiceTest {
                 holdingCalculator
         );
     }
+
+    @Test
+    void getsTradeTransactionsWhenPortfolioIsOwnedByMember() {
+        Portfolio portfolio = new Portfolio(
+                new Member("beans@example.com", "beans"),
+                "US Stocks"
+        );
+        TradeTransaction transaction = new TradeTransaction(
+                portfolio,
+                Market.US,
+                "AAPL",
+                TradeType.BUY,
+                new BigDecimal("10"),
+                new BigDecimal("100.00"),
+                BigDecimal.ZERO,
+                Instant.parse("2026-08-03T13:30:00Z")
+        );
+
+        when(portfolioRepository.findByMember_IdAndId(10L, 100L))
+                .thenReturn(Optional.of(portfolio));
+        when(tradeTransactionRepository
+                .findAllByPortfolio_IdOrderByTradedAtDesc(100L))
+                .thenReturn(List.of(transaction));
+
+        assertThat(tradeTransactionService.getTradeTransactions(10L, 100L))
+                .containsExactly(transaction);
+    }
 }

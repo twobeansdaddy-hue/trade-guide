@@ -938,6 +938,69 @@ dt {
     font-size: 13px;
 }
 
+.transaction-history-section {
+    margin-top: 42px;
+    padding-top: 28px;
+    border-top: 1px solid #dfe6e6;
+}
+
+.transaction-history-list {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.transaction-history-list > li {
+    border: 1px solid #e0e7e6;
+    border-radius: 8px;
+    padding: 18px;
+    background: #fff;
+}
+
+.transaction-history-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.transaction-type {
+    border-radius: 99px;
+    padding: 5px 9px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.transaction-type.buy { color: #126342; background: #e3f4ea; }
+.transaction-type.sell { color: #a62e28; background: #fde9e7; }
+
+.transaction-history-list dl {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 18px 0 0;
+}
+
+.transaction-history-list dl div {
+    display: grid;
+    gap: 5px;
+}
+
+.transaction-history-list dt {
+    color: #72818c;
+    font-size: 12px;
+}
+
+.transaction-history-list dd {
+    margin: 0;
+    color: #26343c;
+    font-size: 14px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
 @media (max-width: 900px) {
     .page-content { padding: 38px 30px 64px; }
     .guide-list { grid-template-columns: 1fr; }
@@ -973,4 +1036,5 @@ dt {
     .holding-table-wrap { display: none; }
     .holding-cards { display: grid; }
     .risk-policy-editor { grid-template-columns: 1fr; }
+    .transaction-history-list dl { grid-template-columns: 1fr; }
 }

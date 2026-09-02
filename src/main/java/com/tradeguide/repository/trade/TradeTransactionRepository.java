@@ -8,4 +8,6 @@ import java.util.List;
 public interface TradeTransactionRepository extends JpaRepository<TradeTransaction, Long> {
     List<TradeTransaction> findAllByPortfolio_IdOrderByTradedAtAsc(Long portfolioId);
 
+    List<TradeTransaction> findAllByPortfolio_IdOrderByTradedAtDesc(Long portfolioId);
+
 }
