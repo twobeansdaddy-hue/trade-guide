@@ -524,7 +524,7 @@
 
 .summary-grid span,
 dt {
-    color: #70808d;
+    color: #647380;
     font-size: 13px;
 }
 
@@ -575,7 +575,7 @@ dt {
 }
 
 .alert-count { color: #bd3028; }
-.muted-count { color: #697986; }
+.muted-count { color: #5f707c; }
 
 .status-message,
 .empty-state {
@@ -747,7 +747,7 @@ dt {
 }
 
 .holding-table thead th {
-    color: #72818c;
+    color: #66757f;
     background: #f8faf9;
     font-size: 11px;
     font-weight: 800;
@@ -936,7 +936,11 @@ dt {
 .risk-policy-editor button:focus-visible,
 .nav-link:focus-visible,
 .brand:focus-visible,
-.quiet-action:focus-visible {
+.quiet-action:focus-visible,
+.onboarding-panel button:focus-visible,
+.form-actions button:focus-visible,
+.topbar-link:focus-visible,
+.section-link:focus-visible {
     outline: 2px solid #158476;
     outline-offset: 2px;
 }
@@ -1142,4 +1146,16 @@ dt {
     .holding-cards { display: grid; }
     .risk-policy-editor { grid-template-columns: 1fr; }
     .transaction-history-list dl { grid-template-columns: 1fr; }
+    .holding-card-heading,
+    .guide-card-heading,
+    .transaction-history-heading,
+    .exposure-heading,
+    .holding-summary-list li,
+    .transaction-actions { flex-wrap: wrap; }
+}
+
+@media (max-width: 420px) {
+    .holding-cards dl,
+    .guide-details { grid-template-columns: 1fr; }
+    .risk-details { gap: 14px 20px; }
 }
