@@ -19,9 +19,22 @@
 
 ## 3. 운영 인증 완성
 
-- `Member`와 로그인 제공자 식별자를 분리한 `AuthIdentity`, Google OIDC 로그인, URL의 `memberId` 소유권 검증은 구현됐다.
+- `Member`와 로그인 제공자 식별자를 분리한 `AuthIdentity`, Google OIDC 로그인, URL의 `memberId` 소유권 검증(`MemberAccessService`)은 구현됐다.
+- React 로그인 UI(`SignInPage`)와 `/api/auth/me` 연동(`authApi.getCurrentMember`, `PortfolioProvider`)도 이미 구현됐다. `VITE_LOCAL_MEMBER_ID`가 없으면 `/api/auth/me`를 조회하고, 401이면 `SignInPage`의 `/oauth2/authorization/google` 버튼으로 로그인 화면을 보여준다.
 - 운영 환경에서 Google OAuth 동의 화면, 승인 리디렉션 URI, 세션 쿠키, 프론트엔드와 백엔드의 동일 출처 또는 프록시 경로를 배포 구성으로 검증한다.
 - 역할 기반 관리자 권한과 URL에서 `memberId`를 제거하는 API 전환은 별도 설계 후 진행한다.
+
+### 운영 배포 시 사용자가 별도로 해야 하는 Google Cloud Console 설정 (체크리스트)
+
+아래 항목은 Claude가 대신 수행할 수 없다. 실제 클라이언트 ID/보안 비밀은 코드, 문서, 로그, 대화에 기록하지 않는다.
+
+- [ ] Google Cloud Console에서 OAuth 동의 화면을 구성하고 `openid`, `profile`, `email` 범위를 확인한다.
+- [ ] "웹 애플리케이션" 유형의 OAuth 2.0 클라이언트 ID를 생성한다.
+- [ ] "승인된 리디렉션 URI"에 운영 도메인 기준 `{배포 도메인}/login/oauth2/code/google`을 등록한다(Spring Security 기본 콜백 경로). 로컬 개발용 `http://localhost:8080/login/oauth2/code/google`은 필요하면 별도로 등록한다.
+- [ ] "승인된 자바스크립트 원본"에 프론트엔드가 실제로 서빙되는 origin을 등록한다. 백엔드와 다른 origin으로 배포하면 세션 쿠키 공유가 깨질 수 있으므로, 가능하면 동일 출처 또는 리버스 프록시 경로로 배치한다.
+- [ ] 발급된 `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`은 운영 서버의 환경 변수로만 주입한다. `tradeguide.auth.enabled=true`도 함께 설정한다(`SecurityConfig`는 두 값이 비어 있으면 기동 시 `IllegalStateException`을 던진다).
+- [ ] HTTPS 배포에서 세션 쿠키에 `Secure` 속성이 적용되는지, 리버스 프록시가 TLS를 종료하는 경우 `X-Forwarded-*` 헤더 처리 설정이 되어 있는지 확인한다.
+- [ ] 배포 후 `/oauth2/authorization/google` → Google 동의 화면 → `/login/oauth2/code/google` 콜백 → `GET /api/auth/me` 흐름을 실제로 로그인해 수동 검증한다.
 
 ## 4. Toss 읽기 전용 연동
 
