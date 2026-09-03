@@ -17,7 +17,8 @@ summarize the rules that each agent needs at session start.
 - **Codex** owns implementation coordination, integration, API-contract
   consistency, test gates, and final repository review.
 - **Claude** owns evidence-based research, design exploration, architecture
-  review, and explicitly scoped implementation work.
+  review, and explicitly scoped implementation work as Codex's coding
+  collaborator.
 - **Gemini** owns independent test design, regression and defect discovery,
   visual/UX critique, and alternative product or documentation review. It is
   read-only by default.
@@ -51,7 +52,9 @@ vertical slice.
 2. **Claude implements bounded work.** Delegate a self-contained frontend
    feature, backend package, matching tests, or design investigation through a
    scoped task contract. Claude must not share writable files with another
-   active worker.
+   active worker. Claude and Codex are coding collaborators: Claude may own an
+   isolated implementation slice, while Codex owns its integration, contract
+   decisions, and final acceptance.
 3. **Gemini verifies independently.** Give Gemini the completed feature or a
    proposed change and ask for reproducible test scenarios, API edge cases,
    regression risks, visual/accessibility defects, and concrete evidence. It

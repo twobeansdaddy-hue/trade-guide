@@ -25,7 +25,7 @@ Claude Design output belongs under `docs/design/`. Treat it as a proposed interf
 ## Agent Roles
 
 - **Codex (GPT)**: implementation and integration lead. Owns cross-cutting repository changes, API contract checks, tests, build verification, and final code review.
-- **Claude**: design exploration, strategy research, architecture review, and scoped implementation tasks whose temporary local allowlist is prepared by Codex. Do not edit the same files as another active agent.
+- **Claude**: Codex와 함께 구현을 수행하는 협업 개발자다. 디자인 탐색, 전략 리서치, 아키텍처 검토와 함께, Codex가 준비한 임시 허용 범위 안에서 프론트엔드·백엔드·테스트의 독립 기능 단위를 구현한다. 같은 파일을 다른 활성 에이전트와 동시에 수정하지 않는다.
 - **Gemini**: independent test design, regression/defect discovery, visual/UX critique, alternate design review, documentation review, and focused research. It is read-only by default and may run only non-destructive checks named in its task contract.
 
 One active owner per feature and file set. Before delegating work, create a task contract from `docs/agent-tasks/TEMPLATE.md` that states the owner, allowed files, expected output, work mode, and acceptance checks. For Claude writes, create its matching local scope using `scripts/agent-harness.sh`. For Gemini reviews, use `./scripts/agent-harness.sh gemini-review <task-id>` to leave a local read-only scope record.
