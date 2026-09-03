@@ -729,5 +729,97 @@
     "confidence": "low-medium",
     "caveats": "필터가 이 20개 사이클 표본에서 단 한 번도 발동하지 않아(제외 0건), MDD 개선 효과를 실측할 수 없었다 - '효과가 없다'와 '효과를 측정할 표본이 없다'를 구분해야 한다. SPY(Yahoo Finance)와 SOXL/TQQQ(Twelve Data 프로덕션 + Yahoo 확장)의 데이터 소스가 서로 다르다. 실질적으로 독립적인 거시 국면은 여전히 7~8개 수준이고 레버리지 ETF 2종에 한정된다. SPY 40주선 외의 다른 시장 지표나 이동평균 기간은 결과를 본 뒤 추가 탐색하지 않았다(사전 고정 가설 1개만 검증). 손절·재진입·분할매수는 이번 범위에 포함하지 않았다.",
     "last_updated": "2026-08-18"
+  },
+  {
+    "id": "track-a-volatility-targeting-2026",
+    "type": "backtest",
+    "ticker": "SOXL,TQQQ,TNA,FAS",
+    "strategy_id": "track-a-volatility-target-position-sizing",
+    "data_range": {
+      "start": "2009-09-08",
+      "end": "2026-08-17",
+      "frequency": "daily"
+    },
+    "created_date": "2026-09-03",
+    "summary": "strategy-engine-evidence-review.md 6.2절에 사전 등록(pre-registration)한 후보 B(변동성 타깃 포지션 사이징)를 파라미터 변경 없이 그대로 실행했다. 규칙은 진입 직전 완료 일봉 60개 로그수익률의 연율 변동성에 대해 배수 = min(1.0, 0.40/추정변동성), 사이클 중 재조정 없음, 편도 슬리피지 0.15%p, 수수료 0%이며 표본은 기존 49사이클(SOXL x2소스/TQQQ/TNA/FAS)이다. 진입 시점은 weeksSinceCross == 0(교차 당주, delay=0) 한 곳만 시뮬레이션했다 - 제품 규칙이 허용하는 weeksSinceCross 1~4주 진입은 계산하지 않았으므로 이 결론은 '엔진이 BUY를 처음 내는 시점에 적용하면 채택 조건 미충족'이지 '0~4주 어느 시점에 들어가도 미충족'이 아니다(리포트 2.1절). 결과는 평균 MDD(종가) -41.6% -> -33.5%(8.09%p 개선), 평균 수익률 +58.4% -> +36.6%(21.86%p 포기)로 교환비율 2.70이 나와 채택 기준(1.5 이하)을 크게 벗어났고, 사전 고정한 워크포워드 4분할 8개 구간 중 2020-01-01 검증 구간이 3.19로 '채택 비추천' 임계값(3.0)을 넘어 분할별 방향도 일관되지 않았다. 하위 10% 꼬리 MDD 개선은 6.56%p로 기준(5%p)을 통과했지만, 최악 낙폭 5개 사이클 중 3개(FAS 2019-04-08, TNA 2019-12-02, TQQQ 2019-04-15 - 전부 코로나 폭락 직전 진입)는 진입 직전 추정 변동성이 32.9~37.5%로 목표 40%보다 낮아 배수가 1.0이었고 -86.0%/-85.2%/-69.9% 낙폭을 전혀 줄이지 못했다. 사후 진단(판정 미사용)에서 변동성 신호를 제거한 고정 배수 0.7082 대조군이 교환비율 2.27, 꼬리 개선 13.66%p로 변동성 타깃(2.70 / 6.56%p)을 앞서, 이번 표본의 개선분 대부분이 변동성 반응이 아니라 단순 노출 축소로 설명됐다. 사전 등록 판정은 '추가 검증 필요'이며 채택 조건 미충족이므로 채택하지 않는다.",
+    "metrics": {
+      "strategy_id_note": "이 레코드가 검증한 전략은 Track A 10/40 추세 진입 위에 얹은 '진입 직전 60일 실현 변동성 기반 포지션 사이징(목표 연 40%, 배수 min(1.0, 0.40/추정변동성), 사이클 중 재조정 없음)'이다. 최초 기록 시 soxl-ma-rsi-timing(신호 타이밍 전략)의 strategy_id를 그대로 물려받았으나 검증 대상은 신호가 아니라 사이징 규칙이므로 2026-09-03 track-a-volatility-target-position-sizing으로 교정했다. 현재 strategies.json에는 이 id의 항목이 아직 없다 - 기존 soxl-position-sizing-stoploss는 SOXL ATR 기반 손절 결합 사이징이라 규칙이 다르고, strategies.json은 이번 작업의 쓰기 허용 범위가 아니어서 항목을 신설하지 않았다. strategies.json 항목 추가는 별도 작업으로 남긴다.",
+      "entry_timing_simulated": "weeksSinceCross == 0 (CROSS_UP 주, delay=0) 단일 시점",
+      "entry_rule_scope_note": "제품 진입 규칙(StrategyDecisionMaker.decideForCandidate)은 trend==ABOVE_LONG_AVERAGE && weeksSinceCross <= 4로 교차 당주 포함 5개 주에 BUY를 유지하지만, 이번 백테스트는 그중 0주 진입만 시뮬레이션했다. 0주는 엔진이 그 사이클에서 BUY를 처음 내는 시점이고 기존 Track A 리포트(손절·추적손절·국면필터)도 모두 같은 delay=0 기준선을 쓰므로 비교틀은 유지되지만, 이 결과는 '0~4주 구간 전체 검증'이 아니다. 1~4주 진입에서는 변동성 룩백 60일 창이 5~20거래일 밀려 추정 변동성과 배수 m이 달라지므로 배수 분포와 꼬리 효과는 미검증이다. 특히 꼬리 3건의 '배수 1.0' 관측은 0주 시점 창에 대한 관측이다. 상세는 리포트 2.1절.",
+      "verdict_preregistered": "추가 검증 필요 (채택 후보 조건 미충족 -> 채택 안 함, 진입 시점 weeksSinceCross==0 한정)",
+      "verdict_practical_recommendation": "현재 파라미터 조합은 채택 비추천",
+      "num_cycles_full": 49,
+      "num_cycles_soxl_dedup": 46,
+      "num_cycles_excluded_for_short_history": 0,
+      "vol_lookback_daily_log_return_obs": 60,
+      "target_annual_vol_pct": 40.0,
+      "position_multiplier_formula": "min(1.0, 0.40 / est_annual_vol)",
+      "intra_cycle_rebalancing": false,
+      "slippage_pct_one_way": 0.0015,
+      "commission_pct_one_way": 0.0,
+      "cash_return_assumption_pct": 0.0,
+      "mean_est_annual_vol_pct": 59.9,
+      "median_position_multiplier": 0.6864,
+      "mean_position_multiplier": 0.7082,
+      "num_cycles_multiplier_equals_1": 7,
+      "baseline_avg_return_pct_full49": 58.4,
+      "baseline_median_return_pct_full49": 3.1,
+      "baseline_avg_mdd_close_pct_full49": -41.6,
+      "voltarget_avg_return_pct_full49": 36.6,
+      "voltarget_median_return_pct_full49": 3.1,
+      "voltarget_avg_mdd_close_pct_full49": -33.5,
+      "voltarget_mdd_improve_pct_points_full49": 8.09,
+      "voltarget_return_give_up_pct_points_full49": 21.86,
+      "voltarget_give_up_per_mdd_improve_full49": 2.7,
+      "voltarget_tail10pct_mdd_improve_pct_points_paired_full49": 6.56,
+      "voltarget_tail10pct_mdd_improve_pct_points_distributional_full49": 3.88,
+      "tail10pct_cycles_with_zero_protection": "3 / 5 (FAS 2019-04-08 vol 32.9% m=1.0 MDD -86.0%, TNA 2019-12-02 vol 37.3% m=1.0 MDD -85.2%, TQQQ 2019-04-15 vol 37.5% m=1.0 MDD -69.9%)",
+      "voltarget_give_up_per_mdd_improve_dedup46": 2.29,
+      "voltarget_tail10pct_mdd_improve_pct_points_dedup46": 6.32,
+      "walk_forward_splits_used": "2018-01-01,2019-01-01,2020-01-01,2021-01-01",
+      "walk_forward_ratio_range_full49": "train 2.09~2.84, test 2.54~3.19 (8개 구간 모두 채택기준 1.5 초과, 2020-01-01 test는 3.19로 비추천 임계값 초과)",
+      "walk_forward_mdd_improve_range_pct_points_full49": "6.74~9.62 (8개 구간 전부 양수 -> 순비용 구간 0개)",
+      "control_constant_multiplier": 0.7082,
+      "control_give_up_per_mdd_improve_full49": 2.27,
+      "control_tail10pct_mdd_improve_pct_points_full49": 13.66,
+      "control_note": "사후 평균 배수를 고정한 진단용 대조군이며 실시간 실행 가능한 규칙이 아니다. 변동성 신호의 기여분 분리 목적으로만 사용했고 판정에는 쓰지 않았다.",
+      "per_ticker_give_up_per_mdd_improve": "SOXL(TwelveData) 4.97, SOXL(Yahoo) 4.73, TQQQ 1.99, TNA 0.98, FAS 1.49",
+      "entry_vol_vs_cycle_mdd_pearson": -0.336,
+      "entry_vol_vs_cycle_mdd_spearman": -0.421,
+      "auxiliary_cycle_sharpe_like_baseline": 0.45,
+      "auxiliary_cycle_sharpe_like_voltarget": 0.443,
+      "auxiliary_cycle_sortino_like_baseline": 2.779,
+      "auxiliary_cycle_sortino_like_voltarget": 1.987,
+      "auxiliary_note": "샤프·소르티노는 사전 등록에서 보조 기록으로 지정됐고 채택 사유로 쓰지 않는다(Cederburg et al. 2020).",
+      "self_check_cycles_matched_existing_baseline": 49,
+      "adjclose_sensitivity_max_multiplier_diff": 0.0018,
+      "script": "research/data/tools/backtest_track_a_volatility_targeting.py"
+    },
+    "report_path": "research/reports/track-a-volatility-targeting-backtest.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance chart API v8 (SOXL/TQQQ/TNA/FAS daily+weekly, 기존 캐시 재사용, 신규 수집 없음)",
+        "url": "https://query2.finance.yahoo.com/v8/finance/chart/",
+        "accessed": "2026-08-18"
+      },
+      {
+        "title": "Twelve Data time_series API (production source, SOXL daily/weekly, 기존 캐시 재사용, 신규 수집 없음)",
+        "url": "https://api.twelvedata.com/time_series",
+        "accessed": "2026-08-14"
+      },
+      {
+        "title": "사전 등록 계획 — strategy-engine-evidence-review.md 6.2절 후보 B",
+        "url": "research/reports/strategy-engine-evidence-review.md",
+        "accessed": "2026-09-03"
+      },
+      {
+        "title": "진입 컷오프 근거 — track-a-entry-delay-cutoff-review.md (weeksSinceCross <= 4의 출처, 진입 지연 0~12주 실측)",
+        "url": "research/reports/track-a-entry-delay-cutoff-review.md",
+        "accessed": "2026-09-03"
+      }
+    ],
+    "confidence": "low",
+    "caveats": "사전 등록 판정은 '추가 검증 필요'이지만 채택 후보 조건(교환비율 1.5 이하, 4개 분할 방향 불변)을 충족하지 못했으므로 채택하지 않는다. 표본은 49사이클이나 실질적으로 독립적인 거시 에피소드는 7~8개 수준이고, 특히 꼬리 판정(하위 10%)은 사이클 5개에 의존하며 그중 3개가 2020년 코로나 폭락이라는 단일 사건이다 - 꼬리 결론의 방향은 뚜렷하지만 일반성은 약하다. TNA/FAS 데이터는 2008-11부터지만 40주 SMA 계산 때문에 첫 진입이 2009-09-08이라 2008년 금융위기 자체는 진입 사이클로 표본에 들어오지 않는다. TNA/FAS는 Yahoo 단일 소스이고 SOXL은 2개 소스가 중복 계수된다(중복 제거 46사이클에서도 결론 동일). 수수료 0%와 현금 이자 0%를 가정했으며 후자는 사이징에 불리한 보수적 가정이다. 미청산 5개 사이클(SOXL 2건은 각각 +490.2%/+457.6%)이 평균 수익률에 큰 영향을 준다. 진입 시점은 weeksSinceCross == 0 하나로 고정돼 있어 제품 규칙이 허용하는 1~4주 진입의 배수 분포와 꼬리 효과는 미검증이다(리포트 2.1절). 판정을 뒤집은 지표(교환비율 2.70, 분할별 방향 불일치)와 고정 배수 대조군 우위는 같은 진입 시점에서 배수만 바꿔 얻은 결과라 이 한계의 영향을 받지 않고, 기존 track-a-entry-delay-cutoff-review.md도 0~4주 사이 수익률 분포가 사실상 동일하고 진입을 늦춰도 MDD가 거의 줄지 않는다고 기록했으므로 비채택 결론의 방향은 유지되지만, 이 레코드를 '0~4주 전 구간 검증'으로 읽으면 과잉 해석이다. 사전 등록 원칙에 따라 다른 룩백(20/120일), 다른 목표 변동성, 배수 하한, 사이클 중 재조정, 손절 결합, 자산별 차등 목표치, 진입 지연 1~4주는 결과를 본 뒤에도 탐색하지 않았다 - 재검증에는 새 사전 등록이 필요하다. 이 레코드는 정책이나 구현 변경을 뜻하지 않는다.",
+    "last_updated": "2026-09-03"
   }
 ]
