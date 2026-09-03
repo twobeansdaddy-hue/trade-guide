@@ -13,7 +13,9 @@
 - `AssetProfile(market + ticker)` 전략 카탈로그와 거래 가능한 상장 정보(`AssetListing`)를 분리했다.
 - `AssetListing`은 자산 식별자, 시장, 티커, 표시명, 상장 상태 같은 사실만 소유한다. 전략 트랙·정책은 `AssetProfile`에 남긴다.
 - 미국 종목 검색은 현재 `AssetListing`과 Twelve Data의 조회 결과를 합쳐 제공한다. 외부 검색 결과를 즉시 영속화하지 않아 카탈로그 수집과 사용자 검색을 분리한다.
-- 다음 단계에서는 보유 내역과 시세 조회가 상장 정보를 직접 참조하도록 마이그레이션하되, 기존 API의 `market`/`ticker` 계약은 호환 기간 동안 유지한다.
+- 보유 종목 평가(`PortfolioValuationService`)는 현재가를 조회하기 전에 `AssetListing`이 존재하고 `ACTIVE` 상태인지 검증한다. 상장 정보가 없거나 비활성 상태면 외부 시세 API를 호출하지 않고 즉시 오류로 응답한다. 기존 `market`/`ticker` 응답 계약은 그대로 유지했다.
+- V4 Flyway migration은 이미 매매 기록이 존재하는 `market`/`ticker` 조합 중 `asset_listings`에 없는 것을 `ACTIVE` 상태로 채워, 기존 PostgreSQL 데이터의 보유 평가가 이번 검증으로 갑자기 막히지 않도록 했다.
+- 매매 기록 생성(`TradeTransactionService`)은 이제 `AssetListingService.ensureActiveListingForTrade`로 거래하려는 `market`/`ticker`의 `ACTIVE` 상장 정보를 보장한 뒤에만 저장한다. 이미 `ACTIVE`인 상장은 재사용하고, 없으면 `AssetSearchProvider` 검색 결과 중 `market`/`ticker`가 정확히 일치하는 항목으로만 새 `ACTIVE` 상장을 생성한다. 일치하는 항목이 없거나 기존 상장이 `INACTIVE`이면 거래를 저장하지 않고 입력 오류로 응답하며, 비활성 상장을 자동으로 재활성화하지 않는다. 단순 검색 조회 경로(`searchActiveListings`)는 계속 외부 결과를 영속화하지 않는다.
 
 ## 3. 운영 인증 완성
 

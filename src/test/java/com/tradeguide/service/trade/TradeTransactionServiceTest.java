@@ -7,6 +7,7 @@ import com.tradeguide.domain.trade.TradeTransaction;
 import com.tradeguide.domain.trade.TradeType;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.trade.TradeTransactionRepository;
+import com.tradeguide.service.asset.AssetListingService;
 import com.tradeguide.service.holding.HoldingCalculator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,6 +41,9 @@ class TradeTransactionServiceTest {
 
     @Mock
     private HoldingCalculator holdingCalculator;
+
+    @Mock
+    private AssetListingService assetListingService;
 
     @InjectMocks
     private TradeTransactionService tradeTransactionService;
@@ -75,9 +79,44 @@ class TradeTransactionServiceTest {
         assertThat(transaction.getTicker()).isEqualTo("AAPL");
         assertThat(transaction.getTradeType()).isEqualTo(TradeType.BUY);
 
+        verify(assetListingService)
+                .ensureActiveListingForTrade(Market.US, "AAPL");
         verify(holdingCalculator).calculate(anyList());
         verify(tradeTransactionRepository)
                 .save(any(TradeTransaction.class));
+    }
+
+    @Test
+    void rejectsTradeWhenNoActiveListingCanBeEnsured() {
+        Portfolio portfolio = new Portfolio(
+                new Member("beans@example.com", "beans"),
+                "US Stocks"
+        );
+
+        when(portfolioRepository.findByMember_IdAndId(10L, 100L))
+                .thenReturn(Optional.of(portfolio));
+        when(assetListingService.ensureActiveListingForTrade(Market.US, "ZZZZ"))
+                .thenThrow(new IllegalArgumentException(
+                        "거래 가능한 상장 정보를 찾을 수 없습니다: US / ZZZZ"
+                ));
+
+        assertThatThrownBy(() ->
+                tradeTransactionService.createTradeTransaction(
+                        10L,
+                        100L,
+                        Market.US,
+                        "ZZZZ",
+                        TradeType.BUY,
+                        new BigDecimal("1"),
+                        new BigDecimal("10.00"),
+                        BigDecimal.ZERO,
+                        Instant.parse("2026-08-03T13:30:00Z")
+                )
+        )
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("거래 가능한 상장 정보를 찾을 수 없습니다");
+
+        verifyNoInteractions(tradeTransactionRepository, holdingCalculator);
     }
 
     @Test
@@ -140,7 +179,8 @@ class TradeTransactionServiceTest {
 
         verifyNoInteractions(
                 tradeTransactionRepository,
-                holdingCalculator
+                holdingCalculator,
+                assetListingService
         );
     }
 

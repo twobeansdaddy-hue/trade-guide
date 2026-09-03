@@ -6,6 +6,7 @@ import com.tradeguide.domain.trade.TradeTransaction;
 import com.tradeguide.domain.trade.TradeType;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.trade.TradeTransactionRepository;
+import com.tradeguide.service.asset.AssetListingService;
 import com.tradeguide.service.holding.HoldingCalculator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,15 +23,18 @@ public class TradeTransactionService {
     private final PortfolioRepository portfolioRepository;
     private final TradeTransactionRepository tradeTransactionRepository;
     private final HoldingCalculator holdingCalculator;
+    private final AssetListingService assetListingService;
 
     public TradeTransactionService(
             PortfolioRepository portfolioRepository,
             TradeTransactionRepository tradeTransactionRepository,
-            HoldingCalculator holdingCalculator
+            HoldingCalculator holdingCalculator,
+            AssetListingService assetListingService
     ) {
         this.portfolioRepository = portfolioRepository;
         this.tradeTransactionRepository = tradeTransactionRepository;
         this.holdingCalculator = holdingCalculator;
+        this.assetListingService = assetListingService;
     }
 
     @Transactional
@@ -63,10 +67,13 @@ public class TradeTransactionService {
                         )
                 );
 
+        String normalizedTicker = ticker.trim().toUpperCase(Locale.ROOT);
+        assetListingService.ensureActiveListingForTrade(market, normalizedTicker);
+
         TradeTransaction transaction = new TradeTransaction(
                 portfolio,
                 market,
-                ticker.trim().toUpperCase(Locale.ROOT),
+                normalizedTicker,
                 tradeType,
                 quantity,
                 executedPrice,

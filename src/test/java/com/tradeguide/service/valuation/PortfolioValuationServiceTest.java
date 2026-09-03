@@ -1,10 +1,13 @@
 package com.tradeguide.service.valuation;
 
+import com.tradeguide.domain.asset.AssetListing;
+import com.tradeguide.domain.asset.ListingStatus;
 import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.market.MarketPrice;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
+import com.tradeguide.repository.asset.AssetListingRepository;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.market.MarketPriceProvider;
 import org.junit.jupiter.api.Test;
@@ -16,8 +19,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -29,6 +36,9 @@ class PortfolioValuationServiceTest {
 
     @Mock
     private MarketPriceProvider marketPriceProvider;
+
+    @Mock
+    private AssetListingRepository assetListingRepository;
 
     @Mock
     private HoldingValuationCalculator holdingValuationCalculator;
@@ -47,6 +57,12 @@ class PortfolioValuationServiceTest {
                 "AAPL",
                 new BigDecimal("10"),
                 new BigDecimal("100")
+        );
+        AssetListing listing = new AssetListing(
+                Market.US,
+                "AAPL",
+                "Apple Inc.",
+                ListingStatus.ACTIVE
         );
         MarketPrice marketPrice = new MarketPrice(
                 Market.US,
@@ -75,6 +91,8 @@ class PortfolioValuationServiceTest {
 
         when(holdingService.getHoldings(10L, 100L))
                 .thenReturn(List.of(holding));
+        when(assetListingRepository.findByMarketAndTicker(Market.US, "AAPL"))
+                .thenReturn(Optional.of(listing));
         when(marketPriceProvider.getCurrentPrice(Market.US, "AAPL"))
                 .thenReturn(marketPrice);
         when(holdingValuationCalculator.calculate(holding, marketPrice))
@@ -93,5 +111,57 @@ class PortfolioValuationServiceTest {
         verify(holdingValuationCalculator).calculate(holding, marketPrice);
         verify(portfolioValuationCalculator)
                 .calculate(List.of(holdingValuation));
+    }
+
+    @Test
+    void rejectsHoldingWithoutAssetListingWithoutCallingMarketPriceProvider() {
+        // given
+        Holding holding = new Holding(
+                Market.US,
+                "DELISTEDX",
+                new BigDecimal("10"),
+                new BigDecimal("100")
+        );
+
+        when(holdingService.getHoldings(10L, 100L))
+                .thenReturn(List.of(holding));
+        when(assetListingRepository.findByMarketAndTicker(Market.US, "DELISTEDX"))
+                .thenReturn(Optional.empty());
+
+        // when / then
+        assertThatThrownBy(() ->
+                portfolioValuationService.getPortfolioValuation(10L, 100L))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        verify(marketPriceProvider, never()).getCurrentPrice(any(), any());
+    }
+
+    @Test
+    void rejectsHoldingWithInactiveListingWithoutCallingMarketPriceProvider() {
+        // given
+        Holding holding = new Holding(
+                Market.US,
+                "OLDCO",
+                new BigDecimal("10"),
+                new BigDecimal("100")
+        );
+        AssetListing inactiveListing = new AssetListing(
+                Market.US,
+                "OLDCO",
+                "Old Co.",
+                ListingStatus.INACTIVE
+        );
+
+        when(holdingService.getHoldings(10L, 100L))
+                .thenReturn(List.of(holding));
+        when(assetListingRepository.findByMarketAndTicker(Market.US, "OLDCO"))
+                .thenReturn(Optional.of(inactiveListing));
+
+        // when / then
+        assertThatThrownBy(() ->
+                portfolioValuationService.getPortfolioValuation(10L, 100L))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        verify(marketPriceProvider, never()).getCurrentPrice(any(), any());
     }
 }
