@@ -18,8 +18,9 @@ summarize the rules that each agent needs at session start.
   consistency, test gates, and final repository review.
 - **Claude** owns evidence-based research, design exploration, architecture
   review, and explicitly scoped implementation work.
-- **Gemini** owns independent visual/UX critique and alternative product or
-  documentation review. It is read-only by default.
+- **Gemini** owns independent test design, regression and defect discovery,
+  visual/UX critique, and alternative product or documentation review. It is
+  read-only by default.
 
 No agent may treat a research conclusion, a design mockup, or a review comment
 as an adopted product rule without the user decision recorded in the relevant
@@ -31,12 +32,39 @@ policy or project-context document.
 | --- | --- | --- | --- |
 | Codex | Integration and implementation | Feature-owned backend, frontend, tests, and factual documentation | Invent investment rules or expose secrets |
 | Claude | Research, design, and review | `research/**` in research mode; `docs/design/**` in design mode; an explicit implementation allowlist in implementation mode | Modify unassigned files, Git history, or local secrets |
-| Gemini | Independent review | No repository files by default | Implement directly, change policies, or approve its own review |
+| Gemini | Independent verification and review | No repository files by default; may run non-destructive checks named by its task contract | Implement directly, change policies, or approve its own review |
 | User | Product owner | Any file and final decisions | Share API keys or production credentials in prompts |
 
 Only one active agent owns a file set. A task contract must state the owner,
 work mode, allowed paths, expected output, and verification command before an
 agent begins writing.
+
+## Efficient Delivery Model
+
+Use the agents as a small delivery team rather than asking one agent to repeat
+every role. The coordinator chooses the smallest safe arrangement for each
+vertical slice.
+
+1. **Codex plans and integrates.** Confirm the product boundary, API contract,
+   ownership, and acceptance checks. Codex resolves cross-cutting changes,
+   validates external findings, runs the final gate, and owns Git delivery.
+2. **Claude implements bounded work.** Delegate a self-contained frontend
+   feature, backend package, matching tests, or design investigation through a
+   scoped task contract. Claude must not share writable files with another
+   active worker.
+3. **Gemini verifies independently.** Give Gemini the completed feature or a
+   proposed change and ask for reproducible test scenarios, API edge cases,
+   regression risks, visual/accessibility defects, and concrete evidence. It
+   may run the task contract's read-only checks but does not edit or approve
+   code.
+4. **Codex accepts or rejects findings.** A Gemini or Claude finding is not a
+   defect until Codex reproduces it against the current branch. Codex either
+   fixes the confirmed issue or records why it is not applicable.
+
+Do not delegate a trivial rename, a one-line question, or a change that needs
+an immediate user product decision. Delegate when independent review reduces
+the chance of a regression, or when Claude can complete a clearly isolated
+implementation while Codex prepares the next integration step.
 
 ## Claude Work Modes
 
@@ -95,6 +123,22 @@ integration gate.
 
 The verification result must distinguish checks that passed, checks that were
 not run, and manual flows that were confirmed.
+
+### Independent Gemini verification
+
+For a feature with meaningful UI, API, state, or validation behavior, schedule
+a Gemini review before final delivery when practical. Its task contract must
+include the branch or commit to inspect and request:
+
+- happy-path, empty, loading, validation, authorization, and provider-failure
+  scenarios that apply to the feature;
+- exact reproduction steps, endpoint or screen, and expected versus observed
+  result for each finding;
+- file and line references, screenshots, or command output when available;
+- a clear separation between confirmed defects, risks, and suggestions.
+
+Codex should batch Gemini findings into one corrective slice. Do not create a
+separate commit for every stylistic suggestion.
 
 ## Git And Security Boundaries
 

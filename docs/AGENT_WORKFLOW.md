@@ -26,9 +26,9 @@ Claude Design output belongs under `docs/design/`. Treat it as a proposed interf
 
 - **Codex (GPT)**: implementation and integration lead. Owns cross-cutting repository changes, API contract checks, tests, build verification, and final code review.
 - **Claude**: design exploration, strategy research, architecture review, and scoped implementation tasks whose temporary local allowlist is prepared by Codex. Do not edit the same files as another active agent.
-- **Gemini**: visual/UX critique, alternate design review, documentation review, and focused research. It is read-only by default.
+- **Gemini**: independent test design, regression/defect discovery, visual/UX critique, alternate design review, documentation review, and focused research. It is read-only by default and may run only non-destructive checks named in its task contract.
 
-One active owner per feature and file set. Before delegating work, create a task contract from `docs/agent-tasks/TEMPLATE.md` that states the owner, allowed files, expected output, work mode, and acceptance checks. For Claude writes, create its matching local scope using `scripts/agent-harness.sh`.
+One active owner per feature and file set. Before delegating work, create a task contract from `docs/agent-tasks/TEMPLATE.md` that states the owner, allowed files, expected output, work mode, and acceptance checks. For Claude writes, create its matching local scope using `scripts/agent-harness.sh`. For Gemini reviews, use `./scripts/agent-harness.sh gemini-review <task-id>` to leave a local read-only scope record.
 
 ## Product and Architecture Guardrails
 
@@ -46,6 +46,12 @@ One active owner per feature and file set. Before delegating work, create a task
 4. Verify relevant backend tests, frontend lint/build, and a manual UI/API flow when applicable.
 5. Update README, project context, or learning log only when the implementation changes their factual content.
 6. Report changed files, verification performed, remaining limitations, and a suggested commit boundary.
+
+For non-trivial vertical slices, use the delivery loop: Codex scopes and
+integrates -> Claude implements an isolated file set when useful -> Gemini
+independently tests and reports reproducible findings -> Codex confirms and
+bundles necessary fixes -> Codex runs the final gate and delivers. Do not
+delegate tiny edits or wait for a review that adds no meaningful coverage.
 
 Claude and Gemini must not commit, push, force-push, reset, revert user work, merge branches, or install dependencies. In agent-development mode, Codex may create a feature branch and deliver a verified feature commit; it reports the Git result and stops whenever the user requests review-only or a pause.
 

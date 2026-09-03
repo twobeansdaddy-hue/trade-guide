@@ -54,3 +54,4 @@ src/main/resources/application-local.yml
 
 # Temporary Claude Code task scope. The tracked example documents its shape.
 /.claude/agent-scope.json
+/.gemini/agent-scope.json
