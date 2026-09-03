@@ -25,10 +25,10 @@ Claude Design output belongs under `docs/design/`. Treat it as a proposed interf
 ## Agent Roles
 
 - **Codex (GPT)**: implementation and integration lead. Owns cross-cutting repository changes, API contract checks, tests, build verification, and final code review.
-- **Claude**: design exploration, strategy research, architecture review, and scoped implementation tasks whose temporary local allowlist is prepared by Codex. Do not edit the same files as another active agent.
-- **Gemini**: visual/UX critique, alternate design review, documentation review, and focused research. It is read-only by default.
+- **Claude**: Codex와 함께 구현을 수행하는 협업 개발자다. 디자인 탐색, 전략 리서치, 아키텍처 검토와 함께, Codex가 준비한 임시 허용 범위 안에서 프론트엔드·백엔드·테스트의 독립 기능 단위를 구현한다. 같은 파일을 다른 활성 에이전트와 동시에 수정하지 않는다.
+- **Gemini**: independent test design, regression/defect discovery, visual/UX critique, alternate design review, documentation review, and focused research. It is read-only by default and may run only non-destructive checks named in its task contract.
 
-One active owner per feature and file set. Before delegating work, create a task contract from `docs/agent-tasks/TEMPLATE.md` that states the owner, allowed files, expected output, work mode, and acceptance checks. For Claude writes, create its matching local scope using `scripts/agent-harness.sh`.
+One active owner per feature and file set. Before delegating work, create a task contract from `docs/agent-tasks/TEMPLATE.md` that states the owner, allowed files, expected output, work mode, and acceptance checks. For Claude writes, create its matching local scope using `scripts/agent-harness.sh`. For Gemini reviews, use `./scripts/agent-harness.sh gemini-review <task-id>` to leave a local read-only scope record.
 
 ## Product and Architecture Guardrails
 
@@ -46,6 +46,12 @@ One active owner per feature and file set. Before delegating work, create a task
 4. Verify relevant backend tests, frontend lint/build, and a manual UI/API flow when applicable.
 5. Update README, project context, or learning log only when the implementation changes their factual content.
 6. Report changed files, verification performed, remaining limitations, and a suggested commit boundary.
+
+For non-trivial vertical slices, use the delivery loop: Codex scopes and
+integrates -> Claude implements an isolated file set when useful -> Gemini
+independently tests and reports reproducible findings -> Codex confirms and
+bundles necessary fixes -> Codex runs the final gate and delivers. Do not
+delegate tiny edits or wait for a review that adds no meaningful coverage.
 
 Claude and Gemini must not commit, push, force-push, reset, revert user work, merge branches, or install dependencies. In agent-development mode, Codex may create a feature branch and deliver a verified feature commit; it reports the Git result and stops whenever the user requests review-only or a pause.
 
