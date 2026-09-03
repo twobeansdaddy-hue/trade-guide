@@ -27,6 +27,9 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
+
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.flywaydb:flyway-core")
     runtimeOnly("com.h2database:h2")
@@ -35,5 +38,22 @@ dependencies {
 }
 
 tasks.test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags("postgres")
+    }
+}
+
+// Requires Docker. Boots a real PostgreSQL container via Testcontainers, applies every
+// Flyway migration, and validates the JPA entity mappings against the resulting schema.
+// Kept out of `test`/`check` so ordinary local runs never need Docker.
+// Run with: ./gradlew postgresIntegrationTest
+tasks.register<Test>("postgresIntegrationTest") {
+    description = "Runs Flyway migration and JPA schema validation against a Testcontainers PostgreSQL instance (requires Docker)."
+    group = "verification"
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+    useJUnitPlatform {
+        includeTags("postgres")
+    }
+    shouldRunAfter(tasks.test)
 }

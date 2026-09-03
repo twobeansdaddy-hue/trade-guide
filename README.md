@@ -130,6 +130,14 @@ set +a
 
 `postgres` 프로필에서는 Flyway가 `V1__create_initial_schema.sql`을 적용하고 Hibernate는 기존 엔티티와 스키마의 일치 여부만 `validate`한다. `local` 프로필이 함께 활성화되면 빈 로컬 DB에는 개발용 회원을 한 번 생성하므로, 프론트의 `VITE_LOCAL_MEMBER_ID=1`로 첫 포트폴리오 생성 화면을 확인할 수 있다. 배포 환경에는 적용되지 않는다. 기동 로그의 `Successfully applied` 메시지와 PostgreSQL의 `flyway_schema_history` 테이블로 적용 여부를 확인할 수 있다. 종료와 데이터 초기화는 각각 `docker compose down`, `docker compose down -v`를 사용한다(뒤 명령은 로컬 PostgreSQL 볼륨을 삭제한다).
 
+### PostgreSQL/Flyway 통합 테스트
+
+Testcontainers로 임시 PostgreSQL 컨테이너를 띄워 모든 Flyway 마이그레이션 적용과 JPA 스키마 `validate`를 함께 검증한다. Docker가 필요하므로 기본 `./gradlew test`에는 포함하지 않고 전용 태스크로 분리했다.
+
+```bash
+./gradlew postgresIntegrationTest
+```
+
 ## 도메인 모델
 
 ```mermaid
