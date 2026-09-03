@@ -81,7 +81,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - Google OIDC 인증 기반은 `tradeguide.auth.enabled=false`가 기본이며, 이 상태에서는 기존 API와 React MVP가 인증 없이 동작한다. `enabled=true`와 `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`이 모두 제공되면 `/oauth2/authorization/google` 로그인과 `GET /api/auth/me`가 활성화된다.
 - `enabled=true`일 때 `/api/members/{memberId}/...`는 로그인 사용자를 요구하며, 인증 식별자로 찾은 `Member.id`와 URL의 `memberId`가 다르면 `403 Forbidden`을 반환한다. 현재는 포트폴리오와 거래 기록 API에 적용했다.
 - `enabled=true`일 때 역할 모델이 없는 관리자 API와 기존 `POST /api/members`는 외부 접근을 막는다. 관리자 권한 모델이 도입되기 전 임의 사용자 생성·관리 기능을 노출하지 않기 위해서다.
-- 역할 기반 관리자 API, 경로에서 `memberId` 제거, React 로그인 UI, Toss 연동, `AssetListing` 모델은 다음 단계다.
+- 역할 기반 관리자 API와 경로에서 `memberId`를 제거하는 API 전환은 다음 단계다. Toss 연동은 읽기 전용 동기화의 설계와 API 계약을 확정한 뒤 진행한다.
 
 - `GET /api/markets/{market}/stocks/{ticker}/strategy-guide`는 `StrategySignalResponse`를 반환한다.
 - `GET /api/members/{memberId}/portfolios/{portfolioId}/strategy-guides`와 `GET /api/members/{memberId}/portfolios/{portfolioId}/candidate-strategy-guides`는 모두 `StrategyGuideBatchResponse`를 반환한다.
