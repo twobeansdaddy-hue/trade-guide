@@ -1,4 +1,4 @@
-import {useEffect, useId, useState, type KeyboardEvent} from "react";
+import {useEffect, useId, useRef, useState, type KeyboardEvent} from "react";
 import {searchAssetListings} from "../../api/assetListingApi";
 import type {AssetListing} from "../../types/assetListing";
 import type {Market} from "../../types/tradeTransaction";
@@ -33,6 +33,7 @@ export default function AssetSearchInput({market, ticker, onTickerChange}: Props
         searchKey: "",
         index: -1,
     });
+    const resultListRef = useRef<HTMLUListElement>(null);
     const inputId = useId();
     const resultsId = useId();
     const feedbackId = useId();
@@ -82,22 +83,51 @@ export default function AssetSearchInput({market, ticker, onTickerChange}: Props
     const errorMessage = isCurrentResult ? searchResult.errorMessage : null;
     const isSearching = query.length > 0 && !isCurrentResult;
     const isResultListVisible = showResults && results.length > 0;
-    const highlightedIndex = highlightedResult.searchKey === searchKey
+    const highlightedIndex = highlightedResult.searchKey === searchKey && isResultListVisible
         ? highlightedResult.index
         : -1;
-    const highlightedOptionId = highlightedIndex >= 0 && isResultListVisible
+    const highlightedOptionId = highlightedIndex >= 0
         ? `${resultsId}-option-${highlightedIndex}`
         : undefined;
 
+    useEffect(() => {
+        if (highlightedIndex < 0) return;
+
+        const highlightedOption = resultListRef.current?.children[highlightedIndex];
+
+        if (highlightedOption instanceof HTMLElement) {
+            highlightedOption.scrollIntoView({block: "nearest"});
+        }
+    }, [highlightedIndex]);
+
+    const closeResults = () => {
+        setIsSearchOpen(false);
+        setHighlightedResult({searchKey, index: -1});
+    };
+
+    const moveHighlight = (step: 1 | -1) => {
+        setHighlightedResult((current) => {
+            const previousIndex = current.searchKey === searchKey ? current.index : -1;
+            const nextIndex = step === 1
+                ? (previousIndex + 1) % results.length
+                : (previousIndex <= 0 ? results.length : previousIndex) - 1;
+
+            return {searchKey, index: nextIndex};
+        });
+    };
+
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Escape") {
-            setIsSearchOpen(false);
-            setHighlightedResult({searchKey, index: -1});
+            if (showResults) event.preventDefault();
+
+            closeResults();
             return;
         }
 
         if (event.key === "ArrowDown") {
             if (query.length === 0) return;
+
+            event.preventDefault();
 
             if (!isSearchOpen) {
                 setIsSearchOpen(true);
@@ -106,32 +136,27 @@ export default function AssetSearchInput({market, ticker, onTickerChange}: Props
 
             if (!isResultListVisible) return;
 
-            event.preventDefault();
-            setHighlightedResult((current) => ({
-                searchKey,
-                index: Math.min(
-                    (current.searchKey === searchKey ? current.index : -1) + 1,
-                    results.length - 1,
-                ),
-            }));
+            moveHighlight(1);
             return;
         }
 
-        if (event.key === "ArrowUp" && isResultListVisible) {
+        if (event.key === "ArrowUp") {
+            if (!isResultListVisible) return;
+
             event.preventDefault();
-            setHighlightedResult((current) => ({
-                searchKey,
-                index: Math.max(
-                    (current.searchKey === searchKey ? current.index : -1) - 1,
-                    0,
-                ),
-            }));
+            moveHighlight(-1);
             return;
         }
 
-        if (event.key === "Enter" && isResultListVisible && highlightedIndex >= 0) {
+        if (event.key === "Enter" && isResultListVisible) {
             event.preventDefault();
-            selectAsset(results[highlightedIndex]);
+
+            if (highlightedIndex >= 0) {
+                selectAsset(results[highlightedIndex]);
+                return;
+            }
+
+            closeResults();
         }
     };
 
@@ -141,8 +166,8 @@ export default function AssetSearchInput({market, ticker, onTickerChange}: Props
             <input id={inputId} value={ticker} onChange={(event) => {
                 onTickerChange(event.target.value.toUpperCase());
                 setIsSearchOpen(true);
-            }} onFocus={() => setIsSearchOpen(true)} onKeyDown={handleKeyDown} placeholder="티커 또는 종목명을 입력" maxLength={32} autoComplete="off" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-controls={isResultListVisible ? resultsId : undefined} aria-describedby={showResults ? feedbackId : undefined} aria-activedescendant={highlightedOptionId} aria-expanded={showResults}/>
-            {isResultListVisible ? <ul id={resultsId} className="asset-search-results" role="listbox" aria-label="종목 검색 결과">{results.map((asset, index) => <li key={`${asset.market}-${asset.ticker}`} id={`${resultsId}-option-${index}`} role="option" aria-selected={highlightedIndex === index} onMouseDown={(event) => event.preventDefault()} onClick={() => selectAsset(asset)}><strong>{asset.ticker}</strong><span>{asset.displayName}</span></li>)}</ul> : null}
+            }} onFocus={() => setIsSearchOpen(true)} onKeyDown={handleKeyDown} placeholder="티커 또는 종목명을 입력" maxLength={32} autoComplete="off" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-controls={isResultListVisible ? resultsId : undefined} aria-describedby={showResults ? feedbackId : undefined} aria-activedescendant={highlightedOptionId} aria-expanded={isResultListVisible}/>
+            {isResultListVisible ? <ul ref={resultListRef} id={resultsId} className="asset-search-results" role="listbox" aria-label="종목 검색 결과">{results.map((asset, index) => <li key={`${asset.market}-${asset.ticker}`} id={`${resultsId}-option-${index}`} role="option" aria-selected={highlightedIndex === index} onMouseDown={(event) => event.preventDefault()} onClick={() => selectAsset(asset)}><strong>{asset.ticker}</strong><span>{asset.displayName}</span></li>)}</ul> : null}
         </div>
         {showResults ? <div id={feedbackId} className="asset-search-feedback" aria-live="polite">
             {showResults && isSearching ? <p className="search-message">종목을 검색하는 중입니다.</p> : null}

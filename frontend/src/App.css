@@ -260,6 +260,7 @@
     background: transparent;
     cursor: pointer;
     text-align: left;
+    scroll-margin: 4px;
 }
 
 .asset-search-results [role="option"]:hover,
