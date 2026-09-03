@@ -821,5 +821,178 @@
     "confidence": "low",
     "caveats": "사전 등록 판정은 '추가 검증 필요'이지만 채택 후보 조건(교환비율 1.5 이하, 4개 분할 방향 불변)을 충족하지 못했으므로 채택하지 않는다. 표본은 49사이클이나 실질적으로 독립적인 거시 에피소드는 7~8개 수준이고, 특히 꼬리 판정(하위 10%)은 사이클 5개에 의존하며 그중 3개가 2020년 코로나 폭락이라는 단일 사건이다 - 꼬리 결론의 방향은 뚜렷하지만 일반성은 약하다. TNA/FAS 데이터는 2008-11부터지만 40주 SMA 계산 때문에 첫 진입이 2009-09-08이라 2008년 금융위기 자체는 진입 사이클로 표본에 들어오지 않는다. TNA/FAS는 Yahoo 단일 소스이고 SOXL은 2개 소스가 중복 계수된다(중복 제거 46사이클에서도 결론 동일). 수수료 0%와 현금 이자 0%를 가정했으며 후자는 사이징에 불리한 보수적 가정이다. 미청산 5개 사이클(SOXL 2건은 각각 +490.2%/+457.6%)이 평균 수익률에 큰 영향을 준다. 진입 시점은 weeksSinceCross == 0 하나로 고정돼 있어 제품 규칙이 허용하는 1~4주 진입의 배수 분포와 꼬리 효과는 미검증이다(리포트 2.1절). 판정을 뒤집은 지표(교환비율 2.70, 분할별 방향 불일치)와 고정 배수 대조군 우위는 같은 진입 시점에서 배수만 바꿔 얻은 결과라 이 한계의 영향을 받지 않고, 기존 track-a-entry-delay-cutoff-review.md도 0~4주 사이 수익률 분포가 사실상 동일하고 진입을 늦춰도 MDD가 거의 줄지 않는다고 기록했으므로 비채택 결론의 방향은 유지되지만, 이 레코드를 '0~4주 전 구간 검증'으로 읽으면 과잉 해석이다. 사전 등록 원칙에 따라 다른 룩백(20/120일), 다른 목표 변동성, 배수 하한, 사이클 중 재조정, 손절 결합, 자산별 차등 목표치, 진입 지연 1~4주는 결과를 본 뒤에도 탐색하지 않았다 - 재검증에는 새 사전 등록이 필요하다. 이 레코드는 정책이나 구현 변경을 뜻하지 않는다.",
     "last_updated": "2026-09-03"
+  },
+  {
+    "id": "track-a-underlying-etf-signal-2026",
+    "type": "backtest",
+    "ticker": "SOXL/SOXX,TQQQ/QQQ,TNA/IWM,FAS/XLF",
+    "strategy_id": "track-a-underlying-etf-signal-source",
+    "data_range": {
+      "start": "1998-12-21",
+      "end": "2026-08-24",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-03",
+    "summary": "strategy-engine-evidence-review.md 6.1절에 사전 등록한 후보 A(Track A의 10/40 주봉 신호를 레버리지 ETF 가격이 아니라 기초 지수 ETF 가격으로 계산해도 사이클 판정과 결과가 실질적으로 동일한가)를 파라미터 변경 없이 그대로 실행했다. 매핑 SOXL<-SOXX / TQQQ<-QQQ / TNA<-IWM / FAS<-XLF 4쌍을 고정하고, 진입은 CROSS_UP 주 종가, 청산은 이후 첫 CROSS_DOWN 주 종가, 편도 슬리피지 0.15%p, 수수료 0%, 기준일 2026-08-31로 두었으며, 두 팔 모두 거래 대상은 레버리지 ETF로 같게 하고 신호 산출 시계열만 바꿨다. 결과는 사전 등록 기각 조건('일치율 60% 미만')에 네 쌍 전부가 걸려 **기각(사용 불가)**이다 - 겹치는 구간의 교차 주 ±1주 대칭 일치율이 SOXL<-SOXX 29.4%, TQQQ<-QQQ 25.0%, TNA<-IWM 23.1%, FAS<-XLF 36.7%로 지지 기준 80%는 물론 기각 경계 60%에도 크게 못 미쳤고, 특히 진입 신호(CROSS_UP)만 보면 0.0~15.4%였다. 기전도 명확했다: 레버리지 ETF의 CROSS_UP은 기초 ETF보다 중앙값 3~4주 늦고(정렬된 37쌍 중 35쌍에서 레버리지가 더 늦음) CROSS_DOWN은 중앙값 1~2주 빨라, 레버리지 신호는 더 늦게 들어가 더 일찍 나오는 체계적으로 다른 신호다(Cheng & Madhavan 2009의 경로 의존성 예측 방향과 일치하지만, 결과는 '동일하다'는 가설의 반증이다). 사전 등록의 두 번째 지표인 사이클 수익률 차이는 ±1주 안에 짝이 맞는 사이클이 네 쌍 합쳐 4개(SOXL 1, TQQQ 0, TNA 2, FAS 1)뿐이라 사실상 판정 불가였고(|중앙값 차이| 1.75%p는 n=4라 의미 없음), 기각 판정은 사전 등록 기각 조건이 OR이므로 일치율 조건 단독으로 성립한다. 워크포워드 4분할 8개 구간 중 계산 가능한 6개 전부, 그리고 학습(~2013-12-31)/검증(2014-01-01~) 양쪽 모두 기각으로 방향이 뒤집히지 않았다(나머지 2개는 그 시점에 레버리지 ETF가 존재하지 않아 no_data). 레버리지 ETF 상장 후 104주를 제외한 민감도에서도 25.0~34.8%로 결론이 유지돼 상장 직후 왜곡 때문이 아니다. 이 기각은 '기초 ETF 신호가 더 나쁘다'가 아니라 '두 신호를 서로 바꿔 쓸 수 없다'는 뜻이며, 따라서 후보 A를 1순위로 놓았던 이유(지지되면 75사이클 확장 표본으로 이후 모든 Track A 연구를 다시 돌릴 수 있다)가 성립하지 않는다 - Track A의 표본 병목은 이 경로로 해소되지 않는다.",
+    "metrics": {
+      "strategy_id_note": "이 레코드가 검증한 것은 새 전략이 아니라 기존 Track A 10/40 주봉 규칙의 **신호 산출 입력 시계열**을 레버리지 ETF에서 기초 지수 ETF로 바꿀 수 있는지다. 규칙(10/40, weeksSinceCross <= 4, CROSS_DOWN 청산)은 하나도 바꾸지 않았고 새 파라미터도 도입하지 않았다. strategies.json에는 이 id의 항목이 아직 없다 - strategies.json은 이번 작업의 쓰기 허용 범위가 아니어서 항목을 신설하지 않았다(track-a-volatility-targeting-2026과 동일한 처리).",
+      "verdict_preregistered": "기각 (사용 불가) — 네 쌍 모두 일치율 < 60%",
+      "verdict_practical_recommendation": "신호 산출 기준을 기초 지수 ETF로 바꾸지 않는다. 확장 표본 75사이클을 현행 엔진(레버리지 ETF 신호) 표본으로 대체 사용하지 않는다.",
+      "arms": {
+        "arm_leveraged_signal": "레버리지 ETF 주봉으로 신호 계산 -> 레버리지 ETF 매매 (현행 엔진 기준선)",
+        "arm_underlying_signal": "기초 지수 ETF 주봉으로 신호 계산 -> 레버리지 ETF 매매 (후보)"
+      },
+      "entry_rule": "CROSS_UP 주(weeksSinceCross == 0) 종가 x (1 + 0.0015)",
+      "exit_rule": "이후 첫 CROSS_DOWN 주 종가 x (1 - 0.0015). 미청산 사이클은 거래 시계열의 마지막 완료 주봉으로 마크투마켓(슬리피지 미적용)",
+      "signal_window_end": "2026-08-31 (완결 주봉 필터 적용 -> 기초 ETF 마지막 완료 주봉 2026-08-24)",
+      "slippage_pct_one_way": 0.0015,
+      "commission_pct_one_way": 0.0,
+      "match_tolerance_weeks": 1,
+      "match_rate_definition": "대칭 일치율 = 2 x 매칭수 / (기초 교차수 + 레버리지 교차수). 기초 기준·레버리지 기준 일치율도 함께 기록했고 어느 정의로도 네 쌍 모두 60% 미만이다.",
+      "symmetric_match_rate_all_pct": {
+        "SOXL<-SOXX": 29.4,
+        "TQQQ<-QQQ": 25.0,
+        "TNA<-IWM": 23.1,
+        "FAS<-XLF": 36.7
+      },
+      "symmetric_match_rate_cross_up_pct": {
+        "SOXL<-SOXX": 11.8,
+        "TQQQ<-QQQ": 0.0,
+        "TNA<-IWM": 15.4,
+        "FAS<-XLF": 8.0
+      },
+      "symmetric_match_rate_cross_down_pct": {
+        "SOXL<-SOXX": 47.1,
+        "TQQQ<-QQQ": 50.0,
+        "TNA<-IWM": 30.8,
+        "FAS<-XLF": 66.7
+      },
+      "overlap_windows": {
+        "SOXL<-SOXX": [
+          "2010-12-13",
+          "2026-08-10"
+        ],
+        "TQQQ<-QQQ": [
+          "2010-11-15",
+          "2026-08-10"
+        ],
+        "TNA<-IWM": [
+          "2009-08-24",
+          "2026-08-17"
+        ],
+        "FAS<-XLF": [
+          "2009-08-24",
+          "2026-08-17"
+        ]
+      },
+      "cross_up_lag_median_weeks_leveraged_minus_underlying": {
+        "SOXL<-SOXX": 3.0,
+        "TQQQ<-QQQ": 3.0,
+        "TNA<-IWM": 4.0,
+        "FAS<-XLF": 3.0
+      },
+      "cross_down_lag_median_weeks_leveraged_minus_underlying": {
+        "SOXL<-SOXX": -1.0,
+        "TQQQ<-QQQ": -1.0,
+        "TNA<-IWM": -2.0,
+        "FAS<-XLF": 0.0
+      },
+      "cross_up_aligned_pairs_with_leveraged_later": "35 / 37",
+      "num_paired_cycles_within_1_week": 4,
+      "num_paired_cycles_by_pair": {
+        "SOXL<-SOXX": 1,
+        "TQQQ<-QQQ": 0,
+        "TNA<-IWM": 2,
+        "FAS<-XLF": 1
+      },
+      "abs_of_median_return_diff_pct_points": 1.75,
+      "median_abs_return_diff_pct_points": 3.13,
+      "max_abs_return_diff_pct_points": 31.64,
+      "return_diff_criterion_status": "판정 불가 (n=4). 사전 등록 기각 조건이 OR이므로 일치율 조건 단독으로 기각이 성립한다.",
+      "walk_forward_splits": [
+        "2006-01-01",
+        "2010-01-01",
+        "2014-01-01",
+        "2018-01-01"
+      ],
+      "walk_forward_verdicts": [
+        "no_data",
+        "reject",
+        "no_data",
+        "reject",
+        "reject",
+        "reject",
+        "reject",
+        "reject"
+      ],
+      "walk_forward_direction_consistent": true,
+      "walk_forward_no_data_reason": "2006·2010 분할의 학습 구간에는 SOXL/TQQQ/TNA/FAS가 아직 존재하지 않아 비교할 레버리지 신호가 없다(구조적 사실이며 실행 실패가 아니다).",
+      "train_test_split": {
+        "train_end": "2013-12-31",
+        "test_start": "2014-01-01",
+        "train_min_match_rate_pct": 20.0,
+        "test_min_match_rate_pct": 16.7,
+        "train_verdict": "reject",
+        "test_verdict": "reject"
+      },
+      "sensitivity_excluding_leveraged_first_104_weeks_all_match_pct": {
+        "SOXL<-SOXX": 26.7,
+        "TQQQ<-QQQ": 29.4,
+        "TNA<-IWM": 25.0,
+        "FAS<-XLF": 34.8
+      },
+      "existing_track_a_sample_overlap": "짝지어진 4사이클 전부가 기존 Track A 표본 구간 안에 있다(중복 제거 표본은 공집합). 두 신호를 비교하려면 레버리지 ETF가 존재해야 하고 그 구간이 곧 기존 표본이기 때문이며, 이는 후보 A의 구조적 한계다.",
+      "aux_extended_sample_note": "아래는 사전 등록 '보조 기록(판정에는 쓰지 않음)'이다. 기초 ETF **자체**를 10/40 규칙으로 매매했을 때의 실측치이며 레버리지 ETF 수익률이 아니다. 레버리지 수익률 합성은 하지 않았다. 이 수치를 근거로 10/40이나 4주 컷오프를 바꾸자고 제안하지 않는다.",
+      "aux_extended_sample_cycles": 75,
+      "aux_extended_sample_cycles_by_etf": {
+        "SOXX": 16,
+        "QQQ": 21,
+        "IWM": 19,
+        "XLF": 19
+      },
+      "aux_extended_sample_cycles_before_leveraged_etf_existed": 33,
+      "aux_extended_sample_win_rate_pct": 56.0,
+      "aux_extended_sample_mean_return_pct": 14.5,
+      "aux_extended_sample_median_return_pct": 4.3,
+      "aux_extended_sample_mean_mdd_close_pct": -14.1,
+      "aux_extended_sample_worst_mdd_close_pct": -40.0,
+      "self_check": "12개 항목 전부 통과. 기초 ETF 첫 주봉 4개(2001-07-09/1999-03-08/2000-05-22/1998-12-21)와 CROSS_UP 사이클 수 4개(16/21/19/19, 합계 75)가 사전 등록 문서의 사전 확인값과 정확히 일치했다. 두 팔의 거래 대상 동일성(같은 교차일 진입가 일치), 완결 주봉 필터, ISO 주 중복 행 제거의 안전성도 검증했다."
+    },
+    "report_path": "research/reports/track-a-underlying-etf-signal-backtest.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance chart API v8 — SOXX/QQQ/IWM/XLF 주봉 (신규 수집, interval=1wk, events=div,splits)",
+        "url": "https://query2.finance.yahoo.com/v8/finance/chart/",
+        "accessed": "2026-09-03"
+      },
+      {
+        "title": "Yahoo Finance chart API v8 — SOXL/TQQQ/TNA/FAS 주봉 (기존 캐시 재사용, 신규 수집 없음)",
+        "url": "https://query2.finance.yahoo.com/v8/finance/chart/",
+        "accessed": "2026-08-18"
+      },
+      {
+        "title": "사전 등록 계획 — strategy-engine-evidence-review.md 6.1절 후보 A",
+        "url": "research/reports/strategy-engine-evidence-review.md",
+        "accessed": "2026-09-03"
+      },
+      {
+        "title": "데이터 소스 조정 방식 차이와 1주 교차 시점 차이 — data-source-audit-2026-08-12.md",
+        "url": "research/notes/data-source-audit-2026-08-12.md",
+        "accessed": "2026-09-03"
+      },
+      {
+        "title": "Yahoo 주봉 캐시 마지막 행 아티팩트 기록 — track-a-entry-delay-cutoff-review.md",
+        "url": "research/reports/track-a-entry-delay-cutoff-review.md",
+        "accessed": "2026-09-03"
+      },
+      {
+        "title": "Cheng, M. & Madhavan, A. (2009). The Dynamics of Leveraged and Inverse Exchange-Traded Funds — 레버리지 ETF 가격의 경로 의존성",
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1539120",
+        "accessed": "2026-09-03"
+      }
+    ],
+    "confidence": "medium",
+    "caveats": "1차 판정 지표가 수익률이 아니라 교차 날짜 비교라 표본 잡음에 덜 민감하고, 기각 폭이 크며(60% 경계에 대해 23~37%), 워크포워드 계산 가능 6개 구간과 학습·검증 양쪽 전부 같은 방향이어서 confidence를 medium으로 뒀다. high로 올리지 않은 이유는 다음과 같다. ① 사전 등록의 두 번째 지표(사이클 수익률 차이)는 짝지어진 사이클이 4개뿐이라 사실상 미측정이다 - 기각 판정은 OR 조건으로 성립하지만 '얼마나 다른가'의 수익률 크기는 이 표본으로 말할 수 없다. ② 데이터가 Yahoo adjclose(분할+배당 조정)이고 프로덕션 소스(Twelve Data, splits)와 조정 방식이 다르다. 두 팔 사이는 같은 소스로 통일했으나 프로덕션 소스로 다시 돌리면 개별 교차일이 1주 정도 움직일 수 있다(관측된 3~4주 편차보다 작아 결론이 뒤집힐 여지는 낮다고 보지만 검증하지 않았다). ③ 겹치는 구간이 쌍당 16~17년, 교차 이벤트 16~30개이고 실질적으로 독립적인 거시 국면은 그보다 훨씬 적다. ④ XLF는 2016년 부동산 섹터 분리 이후 구성이 달라졌고 FAS의 기초 지수(Russell 1000 Financial Services)와도 완전히 같지 않다 - 이 쌍이 일치율 최고인 36.7%인데 지수 불일치의 방향은 분리하지 않았다. ⑤ 진입은 사전 등록 문구('조건이 성립하는 첫 주의 종가')대로 weeksSinceCross == 0만 계산했고 1~4주 진입은 미검증이다. 해석 시 주의: 이 기각은 '기초 ETF 신호가 더 나쁘다'가 아니라 '두 신호를 서로 바꿔 쓸 수 없다'는 뜻이며, 어느 쪽 신호가 더 나은지는 이 백테스트가 검정하지 않았다(그 질문에는 새 사전 등록이 필요하다). 확장 표본 75사이클의 성과 수치는 기초 ETF 자체의 실측치이고 레버리지 수익률을 합성하지 않았으므로, 현행 엔진의 표본으로 대체 사용할 수 없다. 사전 등록 원칙에 따라 허용오차 확대(±2·3·4주), 상장 후 104주 제외, 순서 정렬 짝짓기, 팔별 집계는 전부 보조 진단으로 분리했고 판정에 사용하지 않았으며, 사전 등록 임계값·유니버스·매핑·기간·분할 시점은 하나도 바꾸지 않았다. 이 레코드는 정책이나 구현 변경을 뜻하지 않는다.",
+    "last_updated": "2026-09-03"
   }
 ]
