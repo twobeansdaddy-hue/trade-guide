@@ -30,3 +30,5 @@ twelve-data:
 tradeguide:
   auth:
     enabled: false
+  broker:
+    encryption-key: ${BROKER_CREDENTIAL_ENCRYPTION_KEY:}

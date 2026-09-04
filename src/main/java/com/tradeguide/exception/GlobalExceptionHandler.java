@@ -69,6 +69,15 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(BrokerConnectionUnavailableException.class)
+    public ResponseEntity<ErrorResponse> handleBrokerConnectionUnavailableException(
+            BrokerConnectionUnavailableException exception
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(new ErrorResponse(exception.getMessage()));
+    }
+
     @ExceptionHandler(AssetProfileNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleAssetProfileNotFoundException(
             AssetProfileNotFoundException exception) {

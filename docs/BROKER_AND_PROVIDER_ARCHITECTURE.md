@@ -211,7 +211,10 @@ features should not require the browser to carry a member identifier.
    and `YAHOO_FINANCE` are intentionally returned as unavailable until their respective
    provider boundaries are implemented and approved.
 3. Add encrypted `BrokerConnection` storage, key abstraction, ownership tests, redacted
-   logs, and disconnect semantics.
+   logs, and disconnect semantics. **Storage and API boundary complete:** AES-256-GCM
+   encryption, non-secret connection responses, delete semantics, and owner-bound API
+   tests are implemented. Credential verification and actual provider calls remain out
+   of scope until the next step.
 4. Implement Toss connection verification and account listing behind the authenticated
    API, using a fake provider contract in tests.
 5. Add portfolio-to-account linking and read-only synchronization preview.
@@ -219,3 +222,11 @@ features should not require the browser to carry a member identifier.
 
 No order creation, conditional order registration, or automated trade action belongs to
 any step above.
+
+## Local Configuration
+
+The connection API is deliberately unavailable until
+`BROKER_CREDENTIAL_ENCRYPTION_KEY` is configured as a Base64-encoded 32-byte value.
+Set it only in a local environment variable or a production secret manager; never place
+it in a tracked YAML file. An unset key produces a `503 Service Unavailable` response
+and persists no connection or credential data.
