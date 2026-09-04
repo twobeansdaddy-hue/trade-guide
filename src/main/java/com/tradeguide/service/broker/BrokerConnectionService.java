@@ -6,6 +6,7 @@ import com.tradeguide.domain.broker.BrokerConnectionSecret;
 import com.tradeguide.domain.broker.BrokerProvider;
 import com.tradeguide.domain.member.Member;
 import com.tradeguide.repository.broker.BrokerConnectionRepository;
+import com.tradeguide.repository.broker.PortfolioBrokerLinkRepository;
 import com.tradeguide.repository.member.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,17 +18,20 @@ public class BrokerConnectionService {
 
     private final MemberRepository memberRepository;
     private final BrokerConnectionRepository brokerConnectionRepository;
+    private final PortfolioBrokerLinkRepository portfolioBrokerLinkRepository;
     private final BrokerCredentialCipher brokerCredentialCipher;
     private final TossSecuritiesConnectionVerifier tossSecuritiesConnectionVerifier;
 
     public BrokerConnectionService(
             MemberRepository memberRepository,
             BrokerConnectionRepository brokerConnectionRepository,
+            PortfolioBrokerLinkRepository portfolioBrokerLinkRepository,
             BrokerCredentialCipher brokerCredentialCipher,
             TossSecuritiesConnectionVerifier tossSecuritiesConnectionVerifier
     ) {
         this.memberRepository = memberRepository;
         this.brokerConnectionRepository = brokerConnectionRepository;
+        this.portfolioBrokerLinkRepository = portfolioBrokerLinkRepository;
         this.brokerCredentialCipher = brokerCredentialCipher;
         this.tossSecuritiesConnectionVerifier = tossSecuritiesConnectionVerifier;
     }
@@ -68,11 +72,14 @@ public class BrokerConnectionService {
         return brokerConnectionRepository.save(connection);
     }
 
+    @Transactional
     public void deleteBrokerConnection(Long memberId, Long connectionId) {
         BrokerConnection connection = brokerConnectionRepository
                 .findByMember_IdAndId(memberId, connectionId)
                 .orElseThrow(() -> new IllegalArgumentException("증권사 연결 정보를 찾을 수 없습니다."));
 
+        // 연결을 끊으면 이 연결을 사용하던 포트폴리오 링크도 함께 사라진다.
+        portfolioBrokerLinkRepository.deleteAllByBrokerConnection_Id(connectionId);
         brokerConnectionRepository.delete(connection);
     }
 
@@ -87,10 +94,15 @@ public class BrokerConnectionService {
                 connection.getSecret().getEncryptedClientSecret(), connection.getSecret().getClientSecretInitializationVector(),
                 connection.getSecret().getEncryptionKeyVersion()));
         List<TossSecuritiesConnectionVerifier.TossAccount> accounts = tossSecuritiesConnectionVerifier.verify(clientId, clientSecret);
+
+        // 재검증은 계좌 행을 새로 만들기 때문에 기존 포트폴리오 링크는 유효하지 않다.
+        // 사용자가 계좌를 다시 선택하도록 링크를 제거한다.
+        portfolioBrokerLinkRepository.deleteAllByBrokerConnection_Id(connectionId);
+
         connection.replaceAccounts(accounts.stream().map(account -> {
             EncryptedBrokerCredential sequence = brokerCredentialCipher.encrypt(String.valueOf(account.accountSequence()));
             return new BrokerAccount(sequence.ciphertext(), sequence.initializationVector(),
-                    account.maskedAccountNumber(), account.accountType());
+                    account.maskedAccountNumber(), account.accountType(), sequence.keyVersion());
         }).toList());
         connection.markConnected(accounts.isEmpty() ? null : accounts.getFirst().maskedAccountNumber());
         return connection;

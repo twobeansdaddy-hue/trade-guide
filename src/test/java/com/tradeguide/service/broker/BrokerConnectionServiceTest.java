@@ -5,6 +5,7 @@ import com.tradeguide.domain.broker.BrokerProvider;
 import com.tradeguide.domain.member.Member;
 import com.tradeguide.exception.BrokerConnectionUnavailableException;
 import com.tradeguide.repository.broker.BrokerConnectionRepository;
+import com.tradeguide.repository.broker.PortfolioBrokerLinkRepository;
 import com.tradeguide.repository.member.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,9 @@ class BrokerConnectionServiceTest {
 
     @Mock
     private BrokerConnectionRepository brokerConnectionRepository;
+
+    @Mock
+    private PortfolioBrokerLinkRepository portfolioBrokerLinkRepository;
 
     @Mock
     private BrokerCredentialCipher brokerCredentialCipher;
@@ -85,6 +89,21 @@ class BrokerConnectionServiceTest {
                 .isInstanceOf(BrokerConnectionUnavailableException.class);
 
         verify(brokerConnectionRepository, never()).save(any(BrokerConnection.class));
+    }
+
+    @Test
+    void removesPortfolioLinksWhenBrokerConnectionIsDeleted() {
+        BrokerConnection connection = new BrokerConnection(
+                new Member("broker@example.com", "broker-user"),
+                BrokerProvider.TOSS_SECURITIES,
+                "개인 토스증권"
+        );
+        when(brokerConnectionRepository.findByMember_IdAndId(1L, 5L)).thenReturn(Optional.of(connection));
+
+        brokerConnectionService.deleteBrokerConnection(1L, 5L);
+
+        verify(portfolioBrokerLinkRepository).deleteAllByBrokerConnection_Id(5L);
+        verify(brokerConnectionRepository).delete(connection);
     }
 
     @Test

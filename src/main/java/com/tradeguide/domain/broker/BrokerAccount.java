@@ -34,14 +34,24 @@ public class BrokerAccount {
     @Column(name = "account_type", nullable = false, length = 50)
     private String accountType;
 
+    @Column(name = "encryption_key_version", nullable = false)
+    private int encryptionKeyVersion;
+
     protected BrokerAccount() {
     }
 
-    public BrokerAccount(String encryptedAccountSequence, String initializationVector, String maskedAccountNumber, String accountType) {
+    public BrokerAccount(
+            String encryptedAccountSequence,
+            String initializationVector,
+            String maskedAccountNumber,
+            String accountType,
+            int encryptionKeyVersion
+    ) {
         this.encryptedAccountSequence = encryptedAccountSequence;
         this.accountSequenceInitializationVector = initializationVector;
         this.maskedAccountNumber = maskedAccountNumber;
         this.accountType = accountType;
+        this.encryptionKeyVersion = encryptionKeyVersion;
     }
 
     void assignBrokerConnection(BrokerConnection brokerConnection) {
@@ -49,6 +59,12 @@ public class BrokerAccount {
     }
 
     public Long getId() { return id; }
+    public BrokerConnection getBrokerConnection() { return brokerConnection; }
     public String getMaskedAccountNumber() { return maskedAccountNumber; }
     public String getAccountType() { return accountType; }
+
+    /** 암호문만 반환한다. 복호화된 계좌 일련번호는 API 응답이나 로그에 노출하지 않는다. */
+    public String getEncryptedAccountSequence() { return encryptedAccountSequence; }
+    public String getAccountSequenceInitializationVector() { return accountSequenceInitializationVector; }
+    public int getEncryptionKeyVersion() { return encryptionKeyVersion; }
 }

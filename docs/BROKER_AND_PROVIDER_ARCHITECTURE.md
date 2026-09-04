@@ -216,9 +216,12 @@ features should not require the browser to carry a member identifier.
    tests, and settings UI are implemented. The browser clears submitted credentials
    immediately and displays only non-secret connection details. Credential verification
    and actual provider calls remain out of scope until the next step.
-4. Implement Toss connection verification and account listing behind the authenticated
-   API, using a fake provider contract in tests.
-5. Add portfolio-to-account linking and read-only synchronization preview.
+4. **Complete:** implement Toss connection verification and account listing behind the
+   authenticated API, using fake provider contracts in tests. Access tokens are used only
+   in the request scope and are never persisted.
+5. **Complete:** add portfolio-to-account linking and a read-only holdings preview. The
+   preview compares broker holdings with Trade Guide holdings but does not import or alter
+   the transaction ledger.
 6. Design explicit import/audit semantics before modifying the transaction ledger.
 
 No order creation, conditional order registration, or automated trade action belongs to
