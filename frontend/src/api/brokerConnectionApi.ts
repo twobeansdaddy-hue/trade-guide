@@ -41,3 +41,15 @@ export async function deleteBrokerConnection(
         await getJsonResponse<void>(response, "증권사 연결 정보를 해제하지 못했습니다.");
     }
 }
+
+export async function verifyBrokerConnection(
+    memberId: number,
+    connectionId: number,
+): Promise<BrokerConnection> {
+    const response = await fetch(
+        `/api/members/${memberId}/broker-connections/${connectionId}/verify`,
+        {method: "POST"},
+    );
+
+    return getJsonResponse<BrokerConnection>(response, "증권사 연결을 확인하지 못했습니다.");
+}

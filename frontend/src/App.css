@@ -605,6 +605,13 @@ dt {
     font-size: 13px;
 }
 
+.broker-connection-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: end;
+    gap: 8px;
+}
+
 .broker-connection-editor {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

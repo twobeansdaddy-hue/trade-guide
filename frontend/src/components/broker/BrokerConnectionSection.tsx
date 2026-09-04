@@ -3,6 +3,7 @@ import {
     createBrokerConnection,
     deleteBrokerConnection,
     getBrokerConnections,
+    verifyBrokerConnection,
 } from "../../api/brokerConnectionApi";
 import RequestError from "../common/RequestError";
 import type {BrokerConnection} from "../../types/brokerConnection";
@@ -22,6 +23,7 @@ export default function BrokerConnectionSection({memberId}: BrokerConnectionSect
     const [success, setSuccess] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [deletingConnectionId, setDeletingConnectionId] = useState<number | null>(null);
+    const [verifyingConnectionId, setVerifyingConnectionId] = useState<number | null>(null);
 
     const loadConnections = useCallback(async () => {
         setIsLoading(true);
@@ -126,6 +128,24 @@ export default function BrokerConnectionSection({memberId}: BrokerConnectionSect
         }
     };
 
+    const verify = async (connectionId: number) => {
+        setFormError(null);
+        setSuccess(null);
+        setVerifyingConnectionId(connectionId);
+
+        try {
+            const verifiedConnection = await verifyBrokerConnection(memberId, connectionId);
+            setConnections((current) => current?.map((connection) =>
+                connection.id === connectionId ? verifiedConnection : connection,
+            ) ?? []);
+            setSuccess("토스증권 연결을 확인했습니다.");
+        } catch (reason) {
+            setFormError(reason instanceof Error ? reason.message : "증권사 연결을 확인하지 못했습니다.");
+        } finally {
+            setVerifyingConnectionId(null);
+        }
+    };
+
     return <section className="broker-connection-section">
         <div className="section-heading">
             <div>
@@ -146,14 +166,14 @@ export default function BrokerConnectionSection({memberId}: BrokerConnectionSect
                     <strong>{connection.displayName}</strong>
                     <p>토스증권 · {connection.status === "CONNECTED" ? "연결 확인됨" : "연결 확인 전"}</p>
                 </div>
-                <button
-                    type="button"
-                    className="quiet-action"
-                    onClick={() => void disconnect(connection.id)}
-                    disabled={deletingConnectionId === connection.id}
-                >
-                    {deletingConnectionId === connection.id ? "해제 중..." : "연결 해제"}
-                </button>
+                <div className="broker-connection-actions">
+                    <button type="button" className="quiet-action" onClick={() => void verify(connection.id)} disabled={verifyingConnectionId === connection.id || deletingConnectionId === connection.id}>
+                        {verifyingConnectionId === connection.id ? "확인 중..." : "연결 확인"}
+                    </button>
+                    <button type="button" className="quiet-action" onClick={() => void disconnect(connection.id)} disabled={deletingConnectionId === connection.id || verifyingConnectionId === connection.id}>
+                        {deletingConnectionId === connection.id ? "해제 중..." : "연결 해제"}
+                    </button>
+                </div>
             </li>)}
         </ul> : null}
 

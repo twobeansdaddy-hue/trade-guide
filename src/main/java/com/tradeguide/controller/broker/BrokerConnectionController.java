@@ -74,4 +74,9 @@ public class BrokerConnectionController {
         brokerConnectionService.deleteBrokerConnection(memberId, connectionId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{connectionId}/verify")
+    public BrokerConnectionResponse verifyBrokerConnection(@PathVariable Long memberId, @PathVariable Long connectionId) {
+        return BrokerConnectionResponse.from(brokerConnectionService.verifyBrokerConnection(memberId, connectionId));
+    }
 }

@@ -87,6 +87,17 @@ public class BrokerConnection {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void markConnected(String maskedAccountLabel) {
+        this.status = BrokerConnectionStatus.CONNECTED;
+        this.maskedAccountLabel = maskedAccountLabel;
+        this.lastVerifiedAt = LocalDateTime.now();
+        this.updatedAt = lastVerifiedAt;
+    }
+
+    public BrokerConnectionSecret getSecret() {
+        return secret;
+    }
+
     public Long getId() {
         return id;
     }
