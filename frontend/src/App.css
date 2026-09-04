@@ -609,6 +609,17 @@ dt {
     font-size: 13px;
 }
 
+.broker-link-empty-state {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.broker-link-empty-state .empty-state {
+    margin: 0;
+}
+
 .section-description,
 .provider-description {
     margin: 0;

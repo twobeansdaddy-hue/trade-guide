@@ -6,6 +6,7 @@ import RequestError from "../common/RequestError";
 type PortfolioBrokerLinkSectionProps = {
     memberId: number;
     portfolioId: number;
+    connectionRevision: number;
 }
 
 const comparisonLabel = {
@@ -15,7 +16,11 @@ const comparisonLabel = {
     ONLY_IN_TRADE_GUIDE: "Trade Guide에만 있음",
 } as const;
 
-export default function PortfolioBrokerLinkSection({memberId, portfolioId}: PortfolioBrokerLinkSectionProps) {
+export default function PortfolioBrokerLinkSection({
+    memberId,
+    portfolioId,
+    connectionRevision,
+}: PortfolioBrokerLinkSectionProps) {
     const [candidates, setCandidates] = useState<BrokerLinkCandidate[]>([]);
     const [links, setLinks] = useState<PortfolioBrokerLink[]>([]);
     const [preview, setPreview] = useState<BrokerHoldingPreview | null>(null);
@@ -67,7 +72,7 @@ export default function PortfolioBrokerLinkSection({memberId, portfolioId}: Port
         return () => {
             isCurrentRequest = false;
         };
-    }, [memberId, portfolioId]);
+    }, [memberId, portfolioId, connectionRevision]);
 
     const connect = async (candidate: BrokerLinkCandidate) => {
         setIsConnecting(true);
@@ -115,7 +120,10 @@ export default function PortfolioBrokerLinkSection({memberId, portfolioId}: Port
             </button>
         </div> : null}
 
-        {!isLoading && !error && links.length === 0 && candidates.length === 0 ? <p className="empty-state">연결 확인을 마친 증권사 계좌가 없습니다.</p> : null}
+        {!isLoading && !error && links.length === 0 && candidates.length === 0 ? <div className="broker-link-empty-state">
+            <p className="empty-state">연결 확인을 마친 증권사 계좌가 없습니다.</p>
+            <button type="button" className="quiet-action" onClick={() => void loadLinkData()}>계좌 목록 새로고침</button>
+        </div> : null}
         {!isLoading && !error && links.length === 0 && candidates.length > 0 ? <ul className="broker-link-list">
             {candidates.map((candidate) => <li key={candidate.brokerAccountId}>
                 <span>{candidate.displayName} · {candidate.maskedAccountNumber}</span>

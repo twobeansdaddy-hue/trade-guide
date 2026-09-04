@@ -27,6 +27,7 @@ export default function BrokerConnectionSection({memberId}: BrokerConnectionSect
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [deletingConnectionId, setDeletingConnectionId] = useState<number | null>(null);
     const [verifyingConnectionId, setVerifyingConnectionId] = useState<number | null>(null);
+    const [connectionRevision, setConnectionRevision] = useState(0);
 
     const loadConnections = useCallback(async () => {
         setIsLoading(true);
@@ -141,6 +142,7 @@ export default function BrokerConnectionSection({memberId}: BrokerConnectionSect
             setConnections((current) => current?.map((connection) =>
                 connection.id === connectionId ? verifiedConnection : connection,
             ) ?? []);
+            setConnectionRevision((current) => current + 1);
             setSuccess("토스증권 연결을 확인했습니다.");
         } catch (reason) {
             setFormError(reason instanceof Error ? reason.message : "증권사 연결을 확인하지 못했습니다.");
@@ -190,5 +192,9 @@ export default function BrokerConnectionSection({memberId}: BrokerConnectionSect
             {success ? <p className="form-success-message" role="status">{success}</p> : null}
             <button type="submit" disabled={isSubmitting}>{isSubmitting ? "암호화하여 저장 중..." : "토스증권 연결 저장"}</button>
         </form>
-    </section>{selectedPortfolioId !== null ? <PortfolioBrokerLinkSection memberId={memberId} portfolioId={selectedPortfolioId}/> : null}</>;
+    </section>{selectedPortfolioId !== null ? <PortfolioBrokerLinkSection
+        memberId={memberId}
+        portfolioId={selectedPortfolioId}
+        connectionRevision={connectionRevision}
+    /> : null}</>;
 }
