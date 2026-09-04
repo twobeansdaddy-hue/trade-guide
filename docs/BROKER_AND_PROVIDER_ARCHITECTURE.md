@@ -212,9 +212,10 @@ features should not require the browser to carry a member identifier.
    provider boundaries are implemented and approved.
 3. Add encrypted `BrokerConnection` storage, key abstraction, ownership tests, redacted
    logs, and disconnect semantics. **Storage and API boundary complete:** AES-256-GCM
-   encryption, non-secret connection responses, delete semantics, and owner-bound API
-   tests are implemented. Credential verification and actual provider calls remain out
-   of scope until the next step.
+   encryption, non-secret connection responses, delete semantics, owner-bound API
+   tests, and settings UI are implemented. The browser clears submitted credentials
+   immediately and displays only non-secret connection details. Credential verification
+   and actual provider calls remain out of scope until the next step.
 4. Implement Toss connection verification and account listing behind the authenticated
    API, using a fake provider contract in tests.
 5. Add portfolio-to-account linking and read-only synchronization preview.

@@ -550,6 +550,7 @@ dt {
 }
 
 .market-data-provider-section,
+.broker-connection-section,
 .exposure-section {
     margin-top: 42px;
 }
@@ -571,6 +572,104 @@ dt {
     border: 1px solid #dce5e4;
     border-radius: 8px;
     background: #fff;
+}
+
+.broker-connection-list {
+    display: grid;
+    gap: 10px;
+    max-width: 720px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.broker-connection-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    border: 1px solid #dce5e4;
+    border-radius: 8px;
+    padding: 16px 18px;
+    background: #fff;
+}
+
+.broker-connection-list strong {
+    color: #17232c;
+    font-size: 15px;
+}
+
+.broker-connection-list p {
+    margin: 5px 0 0;
+    color: #61717e;
+    font-size: 13px;
+}
+
+.broker-connection-editor {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 18px;
+    max-width: 720px;
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #dce5e4;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.broker-connection-editor h3,
+.broker-connection-editor .form-error-message,
+.broker-connection-editor .form-success-message,
+.broker-connection-editor button {
+    grid-column: 1 / -1;
+}
+
+.broker-connection-editor h3 {
+    margin: 0;
+    color: #1b2931;
+    font-size: 16px;
+}
+
+.broker-connection-editor label {
+    display: grid;
+    gap: 8px;
+    color: #43535f;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.broker-connection-editor input {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #c7d2d1;
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: #17232c;
+    background: #fff;
+    font: inherit;
+}
+
+.broker-connection-editor input:focus {
+    outline: 2px solid #158476;
+    outline-offset: 2px;
+}
+
+.broker-connection-editor button {
+    justify-self: start;
+    border: 0;
+    border-radius: 6px;
+    padding: 11px 14px;
+    color: #fff;
+    background: #167568;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 800;
+}
+
+.broker-connection-editor button:disabled,
+.broker-connection-list .quiet-action:disabled {
+    cursor: wait;
+    opacity: 0.6;
 }
 
 .market-data-provider-editor label {
