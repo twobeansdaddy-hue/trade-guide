@@ -165,6 +165,7 @@ export default function BrokerConnectionSection({memberId}: BrokerConnectionSect
                 <div>
                     <strong>{connection.displayName}</strong>
                     <p>토스증권 · {connection.status === "CONNECTED" ? "연결 확인됨" : "연결 확인 전"}</p>
+                    {connection.accounts.length > 0 ? <p>확인된 계좌: {connection.accounts.map((account) => account.maskedAccountNumber).join(", ")}</p> : null}
                 </div>
                 <div className="broker-connection-actions">
                     <button type="button" className="quiet-action" onClick={() => void verify(connection.id)} disabled={verifyingConnectionId === connection.id || deletingConnectionId === connection.id}>

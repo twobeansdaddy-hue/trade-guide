@@ -13,9 +13,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "broker_connections")
@@ -61,6 +64,9 @@ public class BrokerConnection {
     )
     private BrokerConnectionSecret secret;
 
+    @OneToMany(mappedBy = "brokerConnection", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BrokerAccount> accounts = new ArrayList<>();
+
     protected BrokerConnection() {
     }
 
@@ -94,9 +100,19 @@ public class BrokerConnection {
         this.updatedAt = lastVerifiedAt;
     }
 
+    public void replaceAccounts(List<BrokerAccount> accounts) {
+        this.accounts.clear();
+        accounts.forEach(account -> {
+            account.assignBrokerConnection(this);
+            this.accounts.add(account);
+        });
+    }
+
     public BrokerConnectionSecret getSecret() {
         return secret;
     }
+
+    public List<BrokerAccount> getAccounts() { return List.copyOf(accounts); }
 
     public Long getId() {
         return id;

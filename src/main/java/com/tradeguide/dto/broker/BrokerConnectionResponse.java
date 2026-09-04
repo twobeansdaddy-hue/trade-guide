@@ -5,6 +5,7 @@ import com.tradeguide.domain.broker.BrokerConnectionStatus;
 import com.tradeguide.domain.broker.BrokerProvider;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class BrokerConnectionResponse {
 
@@ -15,6 +16,7 @@ public class BrokerConnectionResponse {
     private final String maskedAccountLabel;
     private final LocalDateTime lastVerifiedAt;
     private final LocalDateTime createdAt;
+    private final List<BrokerAccountResponse> accounts;
 
     private BrokerConnectionResponse(
             Long id,
@@ -23,7 +25,8 @@ public class BrokerConnectionResponse {
             BrokerConnectionStatus status,
             String maskedAccountLabel,
             LocalDateTime lastVerifiedAt,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            List<BrokerAccountResponse> accounts
     ) {
         this.id = id;
         this.provider = provider;
@@ -32,6 +35,7 @@ public class BrokerConnectionResponse {
         this.maskedAccountLabel = maskedAccountLabel;
         this.lastVerifiedAt = lastVerifiedAt;
         this.createdAt = createdAt;
+        this.accounts = accounts;
     }
 
     public static BrokerConnectionResponse from(BrokerConnection connection) {
@@ -42,7 +46,8 @@ public class BrokerConnectionResponse {
                 connection.getStatus(),
                 connection.getMaskedAccountLabel(),
                 connection.getLastVerifiedAt(),
-                connection.getCreatedAt()
+                connection.getCreatedAt(),
+                connection.getAccounts().stream().map(BrokerAccountResponse::from).toList()
         );
     }
 
@@ -73,4 +78,6 @@ public class BrokerConnectionResponse {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
+
+    public List<BrokerAccountResponse> getAccounts() { return accounts; }
 }

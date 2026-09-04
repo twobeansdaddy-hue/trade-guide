@@ -1,6 +1,7 @@
 package com.tradeguide.service.broker;
 
 import com.tradeguide.domain.broker.BrokerConnection;
+import com.tradeguide.domain.broker.BrokerAccount;
 import com.tradeguide.domain.broker.BrokerConnectionSecret;
 import com.tradeguide.domain.broker.BrokerProvider;
 import com.tradeguide.domain.member.Member;
@@ -85,8 +86,13 @@ public class BrokerConnectionService {
         String clientSecret = brokerCredentialCipher.decrypt(new EncryptedBrokerCredential(
                 connection.getSecret().getEncryptedClientSecret(), connection.getSecret().getClientSecretInitializationVector(),
                 connection.getSecret().getEncryptionKeyVersion()));
-        List<String> accounts = tossSecuritiesConnectionVerifier.verify(clientId, clientSecret);
-        connection.markConnected(accounts.isEmpty() ? null : String.join(", ", accounts));
+        List<TossSecuritiesConnectionVerifier.TossAccount> accounts = tossSecuritiesConnectionVerifier.verify(clientId, clientSecret);
+        connection.replaceAccounts(accounts.stream().map(account -> {
+            EncryptedBrokerCredential sequence = brokerCredentialCipher.encrypt(String.valueOf(account.accountSequence()));
+            return new BrokerAccount(sequence.ciphertext(), sequence.initializationVector(),
+                    account.maskedAccountNumber(), account.accountType());
+        }).toList());
+        connection.markConnected(accounts.isEmpty() ? null : accounts.getFirst().maskedAccountNumber());
         return connection;
     }
 

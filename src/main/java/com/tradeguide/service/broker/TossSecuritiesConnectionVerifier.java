@@ -19,7 +19,7 @@ public class TossSecuritiesConnectionVerifier {
         this.restClient = builder.baseUrl(baseUrl).build();
     }
 
-    public List<String> verify(String clientId, String clientSecret) {
+    public List<TossAccount> verify(String clientId, String clientSecret) {
         try {
             LinkedMultiValueMap<String, String> form = new LinkedMultiValueMap<>();
             form.add("grant_type", "client_credentials");
@@ -37,8 +37,10 @@ public class TossSecuritiesConnectionVerifier {
             if (accounts == null || accounts.result() == null) {
                 throw new BrokerConnectionUnavailableException("토스증권 계좌 응답이 올바르지 않습니다.");
             }
-            return accounts.result().stream().map(AccountResponse::accountNo)
-                    .filter(value -> value != null && !value.isBlank()).map(this::mask).toList();
+            return accounts.result().stream()
+                    .filter(account -> account.accountSeq() != null && account.accountNo() != null)
+                    .map(account -> new TossAccount(account.accountSeq(), mask(account.accountNo()), account.accountType()))
+                    .toList();
         } catch (RestClientException exception) {
             throw new BrokerConnectionUnavailableException("토스증권 연결 확인에 실패했습니다.", exception);
         }
@@ -51,5 +53,6 @@ public class TossSecuritiesConnectionVerifier {
 
     private record TokenResponse(String access_token) {}
     private record AccountsResponse(List<AccountResponse> result) {}
-    private record AccountResponse(String accountNo) {}
+    private record AccountResponse(Long accountSeq, String accountNo, String accountType) {}
+    public record TossAccount(Long accountSequence, String maskedAccountNumber, String accountType) {}
 }

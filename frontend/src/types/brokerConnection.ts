@@ -10,6 +10,13 @@ export type BrokerConnection = {
     maskedAccountLabel: string | null
     lastVerifiedAt: string | null
     createdAt: string
+    accounts: BrokerAccount[]
+}
+
+export type BrokerAccount = {
+    id: number
+    maskedAccountNumber: string
+    accountType: string
 }
 
 export type BrokerConnectionCreateRequest = {
