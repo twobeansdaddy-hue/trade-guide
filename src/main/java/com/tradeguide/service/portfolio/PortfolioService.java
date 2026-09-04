@@ -1,11 +1,14 @@
 package com.tradeguide.service.portfolio;
 
 import com.tradeguide.domain.member.Member;
+import com.tradeguide.domain.market.MarketDataProvider;
+import com.tradeguide.domain.market.PortfolioMarketDataPreference;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.risk.PortfolioRiskPolicy;
 import com.tradeguide.repository.member.MemberRepository;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.exception.PortfolioRiskPolicyNotFoundException;
+import com.tradeguide.service.market.MarketDataProviderCatalog;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,12 +19,15 @@ public class PortfolioService {
 
     private final MemberRepository memberRepository;
     private final PortfolioRepository portfolioRepository;
+    private final MarketDataProviderCatalog marketDataProviderCatalog;
 
     public PortfolioService(
             MemberRepository memberRepository,
-            PortfolioRepository portfolioRepository) {
+            PortfolioRepository portfolioRepository,
+            MarketDataProviderCatalog marketDataProviderCatalog) {
         this.memberRepository = memberRepository;
         this.portfolioRepository = portfolioRepository;
+        this.marketDataProviderCatalog = marketDataProviderCatalog;
     }
 
     public Portfolio createPortfolio(Long memberId, String name) {
@@ -71,6 +77,28 @@ public class PortfolioService {
         }
 
         return riskPolicy;
+    }
+
+    public PortfolioMarketDataPreference getMarketDataPreference(
+            Long memberId,
+            Long portfolioId
+    ) {
+        return findPortfolio(memberId, portfolioId).getMarketDataPreference();
+    }
+
+    public PortfolioMarketDataPreference updateMarketDataPreference(
+            Long memberId,
+            Long portfolioId,
+            MarketDataProvider provider
+    ) {
+        marketDataProviderCatalog.requireSelectable(provider);
+
+        Portfolio portfolio = findPortfolio(memberId, portfolioId);
+        PortfolioMarketDataPreference preference = PortfolioMarketDataPreference.unified(provider);
+        portfolio.changeMarketDataPreference(preference);
+        portfolioRepository.save(portfolio);
+
+        return preference;
     }
 
     private Portfolio findPortfolio(Long memberId, Long portfolioId) {

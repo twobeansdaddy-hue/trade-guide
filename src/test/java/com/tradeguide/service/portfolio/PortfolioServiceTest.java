@@ -1,8 +1,11 @@
 package com.tradeguide.service.portfolio;
 
 import com.tradeguide.domain.member.Member;
+import com.tradeguide.domain.market.MarketDataProvider;
+import com.tradeguide.domain.market.PortfolioMarketDataPreference;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.risk.PortfolioRiskPolicy;
+import com.tradeguide.service.market.MarketDataProviderCatalog;
 import com.tradeguide.repository.member.MemberRepository;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.exception.PortfolioRiskPolicyNotFoundException;
@@ -22,6 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 class PortfolioServiceTest {
@@ -31,6 +35,9 @@ class PortfolioServiceTest {
 
     @Mock
     private PortfolioRepository portfolioRepository;
+
+    @Mock
+    private MarketDataProviderCatalog marketDataProviderCatalog;
 
     @InjectMocks
     private PortfolioService portfolioService;
@@ -136,5 +143,49 @@ class PortfolioServiceTest {
         assertThatThrownBy(() -> portfolioService.getRiskPolicy(1L, 10L))
                 .isInstanceOf(PortfolioRiskPolicyNotFoundException.class)
                 .hasMessage("포트폴리오 위험 한도 정책이 설정되지 않았습니다.");
+    }
+
+    @Test
+    void updatesMarketDataPreferenceWhenProviderIsSelectable() {
+        Member member = new Member("provider@example.com", "provider-user");
+        Portfolio portfolio = new Portfolio(member, "US Stocks");
+
+        when(portfolioRepository.findByMember_IdAndId(1L, 10L))
+                .thenReturn(Optional.of(portfolio));
+        when(portfolioRepository.save(portfolio)).thenReturn(portfolio);
+
+        PortfolioMarketDataPreference preference = portfolioService.updateMarketDataPreference(
+                1L,
+                10L,
+                MarketDataProvider.TWELVE_DATA
+        );
+
+        assertThat(preference.getPriceProvider()).isEqualTo(MarketDataProvider.TWELVE_DATA);
+        assertThat(preference.getCandleProvider()).isEqualTo(MarketDataProvider.TWELVE_DATA);
+        assertThat(preference.getAssetReferenceProvider()).isEqualTo(MarketDataProvider.TWELVE_DATA);
+        verify(marketDataProviderCatalog).requireSelectable(MarketDataProvider.TWELVE_DATA);
+        verify(portfolioRepository).save(portfolio);
+    }
+
+    @Test
+    void doesNotChangeMarketDataPreferenceWhenProviderIsUnavailable() {
+        Member member = new Member("provider@example.com", "provider-user");
+        Portfolio portfolio = new Portfolio(member, "US Stocks");
+
+        doThrow(new IllegalArgumentException("현재 선택할 수 없는 시장 데이터 제공자입니다."))
+                .when(marketDataProviderCatalog)
+                .requireSelectable(MarketDataProvider.TOSS_SECURITIES);
+
+        assertThatThrownBy(() -> portfolioService.updateMarketDataPreference(
+                1L,
+                10L,
+                MarketDataProvider.TOSS_SECURITIES
+        ))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("현재 선택할 수 없는 시장 데이터 제공자입니다.");
+
+        assertThat(portfolio.getMarketDataPreference().getPriceProvider())
+                .isEqualTo(MarketDataProvider.TWELVE_DATA);
+        verifyNoInteractions(portfolioRepository);
     }
 }

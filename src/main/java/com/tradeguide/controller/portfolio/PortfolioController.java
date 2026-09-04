@@ -15,6 +15,9 @@ import com.tradeguide.dto.risk.HoldingExposureResponse;
 import com.tradeguide.dto.risk.PortfolioRiskPolicyResponse;
 import com.tradeguide.dto.risk.PortfolioRiskPolicyUpdateRequest;
 import com.tradeguide.dto.risk.PortfolioRiskAlertResponse;
+import com.tradeguide.dto.market.MarketDataProviderResponse;
+import com.tradeguide.dto.market.PortfolioMarketDataPreferenceResponse;
+import com.tradeguide.dto.market.PortfolioMarketDataPreferenceUpdateRequest;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
@@ -23,6 +26,7 @@ import com.tradeguide.service.risk.PortfolioExposureService;
 import com.tradeguide.service.strategy.PortfolioCandidateStrategyGuideService;
 import com.tradeguide.service.risk.PortfolioRiskAlertService;
 import com.tradeguide.service.auth.MemberAccessService;
+import com.tradeguide.service.market.MarketDataProviderCatalog;
 
 import jakarta.validation.Valid;
 
@@ -44,6 +48,7 @@ public class PortfolioController {
     private final PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
     private final PortfolioRiskAlertService portfolioRiskAlertService;
     private final MemberAccessService memberAccessService;
+    private final MarketDataProviderCatalog marketDataProviderCatalog;
 
     public PortfolioController(
             PortfolioService portfolioService,
@@ -53,7 +58,8 @@ public class PortfolioController {
             PortfolioExposureService portfolioExposureService,
             PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService,
             PortfolioRiskAlertService portfolioRiskAlertService,
-            MemberAccessService memberAccessService
+            MemberAccessService memberAccessService,
+            MarketDataProviderCatalog marketDataProviderCatalog
     ) {
         this.portfolioService = portfolioService;
         this.holdingService = holdingService;
@@ -63,6 +69,7 @@ public class PortfolioController {
         this.portfolioCandidateStrategyGuideService = portfolioCandidateStrategyGuideService;
         this.portfolioRiskAlertService = portfolioRiskAlertService;
         this.memberAccessService = memberAccessService;
+        this.marketDataProviderCatalog = marketDataProviderCatalog;
     }
 
     @ModelAttribute
@@ -187,6 +194,39 @@ public class PortfolioController {
                 .stream()
                 .map(PortfolioRiskAlertResponse::from)
                 .toList();
+    }
+
+    @GetMapping("/{portfolioId}/market-data-providers")
+    public List<MarketDataProviderResponse> getMarketDataProviders(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId
+    ) {
+        portfolioService.getMarketDataPreference(memberId, portfolioId);
+
+        return marketDataProviderCatalog.getProviders().stream()
+                .map(MarketDataProviderResponse::new)
+                .toList();
+    }
+
+    @GetMapping("/{portfolioId}/market-data-preference")
+    public PortfolioMarketDataPreferenceResponse getMarketDataPreference(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId
+    ) {
+        return PortfolioMarketDataPreferenceResponse.from(
+                portfolioService.getMarketDataPreference(memberId, portfolioId)
+        );
+    }
+
+    @PutMapping("/{portfolioId}/market-data-preference")
+    public PortfolioMarketDataPreferenceResponse updateMarketDataPreference(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId,
+            @Valid @RequestBody PortfolioMarketDataPreferenceUpdateRequest request
+    ) {
+        return PortfolioMarketDataPreferenceResponse.from(
+                portfolioService.updateMarketDataPreference(memberId, portfolioId, request.getProvider())
+        );
     }
 
 }

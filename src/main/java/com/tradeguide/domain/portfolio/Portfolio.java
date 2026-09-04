@@ -1,6 +1,8 @@
 package com.tradeguide.domain.portfolio;
 
 import com.tradeguide.domain.member.Member;
+import com.tradeguide.domain.market.MarketDataProvider;
+import com.tradeguide.domain.market.PortfolioMarketDataPreference;
 import com.tradeguide.domain.risk.PortfolioRiskPolicy;
 import jakarta.persistence.*;
 
@@ -39,6 +41,23 @@ public class Portfolio {
 
     private PortfolioRiskPolicy riskPolicy;
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(
+                    name = "priceProvider",
+                    column = @Column(name = "price_market_data_provider", nullable = false)
+            ),
+            @AttributeOverride(
+                    name = "candleProvider",
+                    column = @Column(name = "candle_market_data_provider", nullable = false)
+            ),
+            @AttributeOverride(
+                    name = "assetReferenceProvider",
+                    column = @Column(name = "asset_reference_market_data_provider", nullable = false)
+            )
+    })
+    private PortfolioMarketDataPreference marketDataPreference;
+
     protected Portfolio() {
     }
 
@@ -46,6 +65,7 @@ public class Portfolio {
         this.member = member;
         this.name = name;
         this.createdAt = LocalDateTime.now();
+        this.marketDataPreference = PortfolioMarketDataPreference.unified(MarketDataProvider.TWELVE_DATA);
     }
 
     public Long getId() {
@@ -74,5 +94,17 @@ public class Portfolio {
         }
 
         this.riskPolicy = riskPolicy;
+    }
+
+    public PortfolioMarketDataPreference getMarketDataPreference() {
+        return marketDataPreference;
+    }
+
+    public void changeMarketDataPreference(PortfolioMarketDataPreference preference) {
+        if (preference == null) {
+            throw new IllegalArgumentException("시장 데이터 제공자 설정은 필수입니다.");
+        }
+
+        this.marketDataPreference = preference;
     }
 }

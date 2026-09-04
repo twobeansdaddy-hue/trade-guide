@@ -109,4 +109,4 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - React는 로컬 개발에서만 `VITE_LOCAL_MEMBER_ID`를 사용한다. 이 값이 없으면 `/api/auth/me`로 로그인 사용자를 조회하고, 인증되지 않았을 때 Google 로그인 화면을 표시한다.
 - `/api/admin/**`은 인증 활성화 상태에서 차단한다. 역할 기반 관리자 기능과 운영자용 자산 카탈로그 관리는 아직 구현하지 않았다.
 - 완료 주봉 캐시는 애플리케이션 메모리를 사용하므로 애플리케이션 재시작 시 초기화된다. 분산 캐시나 다중 인스턴스 운영은 아직 고려하지 않았다.
-- 시장 데이터 제공자 선택과 증권 계좌 연결은 별도 모델로 설계한다. 포트폴리오는 가격·캔들·자산 참조 데이터의 제공자 선호를 가지며, 사용자별 증권사 자격 증명은 암호화된 `BrokerConnection`으로 관리할 계획이다. 토스증권은 읽기 전용 연결부터 검토하며, 다중 사용자 운영에는 사용자별 자격 증명 수명주기와 운영 키 관리가 필요하다. 상세 기준은 `docs/BROKER_AND_PROVIDER_ARCHITECTURE.md`를 따른다.
+- 시장 데이터 제공자 선택과 증권 계좌 연결은 별도 모델로 설계한다. 포트폴리오는 가격·캔들·자산 참조 제공자를 기록하는 `PortfolioMarketDataPreference`를 가지며, 현재 `TWELVE_DATA`만 선택 가능하다. `TOSS_SECURITIES`와 `YAHOO_FINANCE`는 제공자 목록에 상태와 필요 조건을 표시하지만, 자격 증명·계좌 연결·실제 데이터 라우팅이 구현되기 전까지 선택할 수 없다. 사용자별 증권사 자격 증명은 이후 암호화된 `BrokerConnection`으로 관리한다. 토스증권은 읽기 전용 연결부터 검토하며, 다중 사용자 운영에는 사용자별 자격 증명 수명주기와 운영 키 관리가 필요하다. 상세 기준은 `docs/BROKER_AND_PROVIDER_ARCHITECTURE.md`를 따른다.

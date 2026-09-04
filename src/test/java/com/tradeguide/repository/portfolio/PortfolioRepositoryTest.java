@@ -1,6 +1,7 @@
 package com.tradeguide.repository.portfolio;
 
 import com.tradeguide.domain.member.Member;
+import com.tradeguide.domain.market.MarketDataProvider;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.risk.PortfolioRiskPolicy;
 import com.tradeguide.repository.member.MemberRepository;
@@ -67,5 +68,28 @@ public class PortfolioRepositoryTest {
                 .isEqualByComparingTo("0.025");
         assertThat(foundPortfolio.getRiskPolicy().getMaxSingleAssetExposureRatio())
                 .isEqualByComparingTo("0.125");
+    }
+
+    @Test
+    void persistsDefaultMarketDataPreferenceWithPortfolio() {
+        Member member = memberRepository.save(
+                new Member("provider@example.com", "provider-user")
+        );
+
+        Portfolio savedPortfolio = portfolioRepository.saveAndFlush(
+                new Portfolio(member, "US Stocks")
+        );
+
+        entityManager.clear();
+
+        Portfolio foundPortfolio = portfolioRepository.findById(savedPortfolio.getId())
+                .orElseThrow();
+
+        assertThat(foundPortfolio.getMarketDataPreference().getPriceProvider())
+                .isEqualTo(MarketDataProvider.TWELVE_DATA);
+        assertThat(foundPortfolio.getMarketDataPreference().getCandleProvider())
+                .isEqualTo(MarketDataProvider.TWELVE_DATA);
+        assertThat(foundPortfolio.getMarketDataPreference().getAssetReferenceProvider())
+                .isEqualTo(MarketDataProvider.TWELVE_DATA);
     }
 }

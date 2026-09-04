@@ -12,6 +12,7 @@ import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
 import com.tradeguide.service.risk.PortfolioExposureService;
 import com.tradeguide.service.risk.PortfolioRiskAlertService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
+import com.tradeguide.service.market.MarketDataProviderCatalog;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,8 @@ class PortfolioControllerMemberBoundaryTest {
     private PortfolioRiskAlertService portfolioRiskAlertService;
     @MockitoBean
     private AuthIdentityService authIdentityService;
+    @MockitoBean
+    private MarketDataProviderCatalog marketDataProviderCatalog;
 
     @Test
     void allowsRequestWhenAuthenticatedMemberMatchesPathMemberId() throws Exception {

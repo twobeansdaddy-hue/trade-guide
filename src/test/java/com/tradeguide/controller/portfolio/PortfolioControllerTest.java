@@ -1,6 +1,8 @@
 package com.tradeguide.controller.portfolio;
 
 import com.tradeguide.domain.holding.Holding;
+import com.tradeguide.domain.market.MarketDataProvider;
+import com.tradeguide.domain.market.PortfolioMarketDataPreference;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.risk.PortfolioRiskPolicy;
 import com.tradeguide.domain.strategy.*;
@@ -18,6 +20,7 @@ import com.tradeguide.service.valuation.PortfolioValuationService;
 import com.tradeguide.service.risk.PortfolioExposureService;
 import com.tradeguide.service.risk.PortfolioRiskAlertService;
 import com.tradeguide.service.auth.MemberAccessService;
+import com.tradeguide.service.market.MarketDataProviderCatalog;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
 
 import org.junit.jupiter.api.Test;
@@ -70,6 +73,9 @@ class PortfolioControllerTest {
 
     @MockitoBean
     private MemberAccessService memberAccessService;
+
+    @MockitoBean
+    private MarketDataProviderCatalog marketDataProviderCatalog;
 
     @Test
     void createsPortfolio() throws Exception {
@@ -543,5 +549,86 @@ class PortfolioControllerTest {
                 .andExpect(jsonPath("$").isEmpty());
 
         verify(portfolioRiskAlertService).getRiskAlerts(10L, 100L);
+    }
+
+    @Test
+    void getsMarketDataProviders() throws Exception {
+        when(marketDataProviderCatalog.getProviders()).thenReturn(List.of(
+                MarketDataProvider.TWELVE_DATA,
+                MarketDataProvider.TOSS_SECURITIES
+        ));
+
+        when(portfolioService.getMarketDataPreference(10L, 100L))
+                .thenReturn(PortfolioMarketDataPreference.unified(MarketDataProvider.TWELVE_DATA));
+
+        mockMvc.perform(get("/api/members/10/portfolios/100/market-data-providers"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].provider").value("TWELVE_DATA"))
+                .andExpect(jsonPath("$[0].displayName").value("Twelve Data"))
+                .andExpect(jsonPath("$[0].selectable").value(true))
+                .andExpect(jsonPath("$[1].provider").value("TOSS_SECURITIES"))
+                .andExpect(jsonPath("$[1].requiresBrokerConnection").value(true))
+                .andExpect(jsonPath("$[1].selectable").value(false));
+    }
+
+    @Test
+    void getsPortfolioMarketDataPreference() throws Exception {
+        when(portfolioService.getMarketDataPreference(10L, 100L))
+                .thenReturn(PortfolioMarketDataPreference.unified(MarketDataProvider.TWELVE_DATA));
+
+        mockMvc.perform(get("/api/members/10/portfolios/100/market-data-preference"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.priceProvider").value("TWELVE_DATA"))
+                .andExpect(jsonPath("$.candleProvider").value("TWELVE_DATA"))
+                .andExpect(jsonPath("$.assetReferenceProvider").value("TWELVE_DATA"));
+    }
+
+    @Test
+    void updatesPortfolioMarketDataPreference() throws Exception {
+        PortfolioMarketDataPreference preference =
+                PortfolioMarketDataPreference.unified(MarketDataProvider.TWELVE_DATA);
+        when(portfolioService.updateMarketDataPreference(
+                10L,
+                100L,
+                MarketDataProvider.TWELVE_DATA
+        )).thenReturn(preference);
+
+        mockMvc.perform(put("/api/members/10/portfolios/100/market-data-preference")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "provider": "TWELVE_DATA"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.priceProvider").value("TWELVE_DATA"));
+
+        verify(portfolioService).updateMarketDataPreference(
+                10L,
+                100L,
+                MarketDataProvider.TWELVE_DATA
+        );
+    }
+
+    @Test
+    void rejectsUnavailableMarketDataProvider() throws Exception {
+        when(portfolioService.updateMarketDataPreference(
+                10L,
+                100L,
+                MarketDataProvider.TOSS_SECURITIES
+        )).thenThrow(new IllegalArgumentException(
+                "현재 선택할 수 없는 시장 데이터 제공자입니다."
+        ));
+
+        mockMvc.perform(put("/api/members/10/portfolios/100/market-data-preference")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "provider": "TOSS_SECURITIES"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("현재 선택할 수 없는 시장 데이터 제공자입니다."));
     }
 }

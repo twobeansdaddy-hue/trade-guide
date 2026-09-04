@@ -206,7 +206,10 @@ features should not require the browser to carry a member identifier.
 ## Implementation Order
 
 1. Adopt this architecture and add production-auth profile safeguards.
-2. Add provider catalog and portfolio data-preference read/write APIs, without secrets.
+2. **Complete:** provider catalog and portfolio data-preference read/write APIs exist,
+   without secrets. All existing portfolios migrate to `TWELVE_DATA`; `TOSS_SECURITIES`
+   and `YAHOO_FINANCE` are intentionally returned as unavailable until their respective
+   provider boundaries are implemented and approved.
 3. Add encrypted `BrokerConnection` storage, key abstraction, ownership tests, redacted
    logs, and disconnect semantics.
 4. Implement Toss connection verification and account listing behind the authenticated
