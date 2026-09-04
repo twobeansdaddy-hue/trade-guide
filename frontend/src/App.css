@@ -551,8 +551,52 @@ dt {
 
 .market-data-provider-section,
 .broker-connection-section,
+.broker-portfolio-section,
 .exposure-section {
     margin-top: 42px;
+}
+
+.broker-link-list,
+.broker-preview {
+    display: grid;
+    gap: 10px;
+    max-width: 720px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.broker-link-list li,
+.broker-preview li,
+.broker-link-current {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border: 1px solid #dce5e4;
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: #fff;
+}
+
+.broker-link-list button,
+.broker-link-current button {
+    border: 0;
+    border-radius: 6px;
+    padding: 9px 11px;
+    color: #fff;
+    background: #167568;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 800;
+}
+
+.broker-preview span { color: #61717e; font-size: 13px; }
+
+.broker-preview-caption {
+    margin: 20px 0 0;
+    color: #61717e;
+    font-size: 13px;
 }
 
 .section-description,

@@ -7,12 +7,15 @@ import {
 } from "../../api/brokerConnectionApi";
 import RequestError from "../common/RequestError";
 import type {BrokerConnection} from "../../types/brokerConnection";
+import PortfolioBrokerLinkSection from "./PortfolioBrokerLinkSection";
+import {usePortfolioContext} from "../../context/portfolioContext";
 
 type BrokerConnectionSectionProps = {
     memberId: number
 }
 
 export default function BrokerConnectionSection({memberId}: BrokerConnectionSectionProps) {
+    const {selectedPortfolioId} = usePortfolioContext();
     const [connections, setConnections] = useState<BrokerConnection[] | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [loadError, setLoadError] = useState<string | null>(null);
@@ -146,7 +149,7 @@ export default function BrokerConnectionSection({memberId}: BrokerConnectionSect
         }
     };
 
-    return <section className="broker-connection-section">
+    return <><section className="broker-connection-section">
         <div className="section-heading">
             <div>
                 <p className="section-label">BROKER CONNECTION</p>
@@ -187,5 +190,5 @@ export default function BrokerConnectionSection({memberId}: BrokerConnectionSect
             {success ? <p className="form-success-message" role="status">{success}</p> : null}
             <button type="submit" disabled={isSubmitting}>{isSubmitting ? "암호화하여 저장 중..." : "토스증권 연결 저장"}</button>
         </form>
-    </section>;
+    </section>{selectedPortfolioId !== null ? <PortfolioBrokerLinkSection memberId={memberId} portfolioId={selectedPortfolioId}/> : null}</>;
 }
