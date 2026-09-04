@@ -81,8 +81,8 @@ class TossSecuritiesHoldingsProviderTest {
 
         assertThat(snapshot.unsupportedMarketCount()).isZero();
         assertThat(snapshot.holdings()).containsExactly(
-                new BrokerHolding(Market.KR, "005930", new BigDecimal("100"), new BigDecimal("65000")),
-                new BrokerHolding(Market.US, "AAPL", new BigDecimal("7"), new BigDecimal("221.86"))
+                new BrokerHolding(Market.KR, "005930", "삼성전자", new BigDecimal("100"), new BigDecimal("65000")),
+                new BrokerHolding(Market.US, "AAPL", "Apple", new BigDecimal("7"), new BigDecimal("221.86"))
         );
         server.verify();
     }

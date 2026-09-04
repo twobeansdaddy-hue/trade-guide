@@ -11,9 +11,20 @@ import java.math.BigDecimal;
 public record BrokerHoldingPreviewItem(
         Market market,
         String ticker,
+        String displayName,
         BigDecimal brokerQuantity,
         BigDecimal brokerAveragePurchasePrice,
         BigDecimal tradeGuideQuantity,
         BrokerHoldingComparison comparison
 ) {
+    public BrokerHoldingPreviewItem(
+            Market market,
+            String ticker,
+            BigDecimal brokerQuantity,
+            BigDecimal brokerAveragePurchasePrice,
+            BigDecimal tradeGuideQuantity,
+            BrokerHoldingComparison comparison
+    ) {
+        this(market, ticker, ticker, brokerQuantity, brokerAveragePurchasePrice, tradeGuideQuantity, comparison);
+    }
 }

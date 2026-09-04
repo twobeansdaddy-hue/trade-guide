@@ -91,6 +91,7 @@ public class TossSecuritiesHoldingsProvider implements BrokerHoldingsProvider {
             holdings.add(new BrokerHolding(
                     market,
                     item.symbol().trim().toUpperCase(Locale.ROOT),
+                    item.name(),
                     toDecimal(item.quantity()),
                     toDecimal(item.averagePurchasePrice())
             ));
@@ -134,6 +135,7 @@ public class TossSecuritiesHoldingsProvider implements BrokerHoldingsProvider {
     @JsonIgnoreProperties(ignoreUnknown = true)
     private record HoldingsItem(
             String symbol,
+            String name,
             String marketCountry,
             String quantity,
             String averagePurchasePrice

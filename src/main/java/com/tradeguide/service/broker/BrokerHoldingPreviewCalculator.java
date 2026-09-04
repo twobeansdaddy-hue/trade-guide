@@ -45,6 +45,7 @@ public class BrokerHoldingPreviewCalculator {
             items.add(new BrokerHoldingPreviewItem(
                     brokerHolding.market(),
                     brokerHolding.ticker(),
+                    brokerHolding.displayName(),
                     brokerHolding.quantity(),
                     brokerHolding.averagePurchasePrice(),
                     tradeGuideHolding == null ? null : tradeGuideHolding.getQuantity(),
@@ -60,6 +61,7 @@ public class BrokerHoldingPreviewCalculator {
             Holding holding = entry.getValue();
             items.add(new BrokerHoldingPreviewItem(
                     holding.getMarket(),
+                    holding.getTicker(),
                     holding.getTicker(),
                     null,
                     null,

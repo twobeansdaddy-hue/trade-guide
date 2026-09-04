@@ -29,6 +29,7 @@ export type BrokerHoldingComparison =
 export type BrokerHoldingPreviewItem = {
     market: string;
     ticker: string;
+    displayName: string;
     brokerQuantity: number;
     brokerAveragePurchasePrice: number;
     tradeGuideQuantity: number;

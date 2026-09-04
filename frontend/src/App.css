@@ -593,6 +593,16 @@ dt {
 
 .broker-preview span { color: #61717e; font-size: 13px; }
 
+.broker-preview li > div {
+    display: grid;
+    gap: 4px;
+}
+
+.broker-ticker {
+    color: #61717e;
+    font-size: 12px;
+}
+
 .broker-preview-caption {
     margin: 20px 0 0;
     color: #61717e;

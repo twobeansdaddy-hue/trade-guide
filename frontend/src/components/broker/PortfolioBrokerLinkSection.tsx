@@ -130,7 +130,10 @@ export default function PortfolioBrokerLinkSection({memberId, portfolioId}: Port
             {preview.items.length === 0 ? <p className="empty-state">비교할 보유 종목이 없습니다.</p> : null}
             <ul className="broker-preview">
                 {preview.items.map((item) => <li key={`${item.market}-${item.ticker}`}>
-                    <strong>{item.ticker}</strong>
+                    <div>
+                        <strong>{item.displayName}</strong>
+                        <span className="broker-ticker">{item.market} · {item.ticker}</span>
+                    </div>
                     <span>{comparisonLabel[item.comparison]} · 증권사 {item.brokerQuantity}주 / Trade Guide {item.tradeGuideQuantity}주</span>
                 </li>)}
             </ul>

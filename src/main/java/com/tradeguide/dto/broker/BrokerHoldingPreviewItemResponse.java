@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 public record BrokerHoldingPreviewItemResponse(
         Market market,
         String ticker,
+        String displayName,
         BigDecimal brokerQuantity,
         BigDecimal brokerAveragePurchasePrice,
         BigDecimal tradeGuideQuantity,
@@ -18,6 +19,7 @@ public record BrokerHoldingPreviewItemResponse(
         return new BrokerHoldingPreviewItemResponse(
                 item.market(),
                 item.ticker(),
+                item.displayName(),
                 item.brokerQuantity(),
                 item.brokerAveragePurchasePrice(),
                 item.tradeGuideQuantity(),
