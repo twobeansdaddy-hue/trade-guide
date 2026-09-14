@@ -81,7 +81,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - Google OIDC 인증 기반은 `tradeguide.auth.enabled=false`가 기본이며, 이 상태에서는 기존 API와 React MVP가 인증 없이 동작한다. `enabled=true`와 `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`이 모두 제공되면 `/oauth2/authorization/google` 로그인과 `GET /api/auth/me`가 활성화된다.
 - `enabled=true`일 때 `/api/members/{memberId}/...`는 로그인 사용자를 요구하며, 인증 식별자로 찾은 `Member.id`와 URL의 `memberId`가 다르면 `403 Forbidden`을 반환한다. 현재는 포트폴리오와 거래 기록 API에 적용했다.
 - `enabled=true`일 때 역할 모델이 없는 관리자 API와 기존 `POST /api/members`는 외부 접근을 막는다. 관리자 권한 모델이 도입되기 전 임의 사용자 생성·관리 기능을 노출하지 않기 위해서다.
-- 역할 기반 관리자 API와 경로에서 `memberId`를 제거하는 API 전환은 다음 단계다. Toss 연동은 읽기 전용 동기화의 설계와 API 계약을 확정한 뒤 진행한다.
+- 역할 기반 관리자 API와 경로에서 `memberId`를 제거하는 API 전환은 다음 단계다. Toss 연동은 계좌·보유 종목·주문 이력의 읽기 전용 조회와 명시적 승인 반영까지 구현되어 있으며, 운영 전제조건과 국내 시장 원장 반영은 후속 범위다.
 
 - `GET /api/markets/{market}/stocks/{ticker}/strategy-guide`는 `StrategySignalResponse`를 반환한다.
 - `GET /api/members/{memberId}/portfolios/{portfolioId}/strategy-guides`와 `GET /api/members/{memberId}/portfolios/{portfolioId}/candidate-strategy-guides`는 모두 `StrategyGuideBatchResponse`를 반환한다.
@@ -109,4 +109,6 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - React는 로컬 개발에서만 `VITE_LOCAL_MEMBER_ID`를 사용한다. 이 값이 없으면 `/api/auth/me`로 로그인 사용자를 조회하고, 인증되지 않았을 때 Google 로그인 화면을 표시한다.
 - `/api/admin/**`은 인증 활성화 상태에서 차단한다. 역할 기반 관리자 기능과 운영자용 자산 카탈로그 관리는 아직 구현하지 않았다.
 - 완료 주봉 캐시는 애플리케이션 메모리를 사용하므로 애플리케이션 재시작 시 초기화된다. 분산 캐시나 다중 인스턴스 운영은 아직 고려하지 않았다.
-- 시장 데이터 제공자 선택과 증권 계좌 연결은 별도 모델로 설계한다. 포트폴리오는 가격·캔들·자산 참조 제공자를 기록하는 `PortfolioMarketDataPreference`를 가지며, 현재 `TWELVE_DATA`만 선택 가능하다. `TOSS_SECURITIES`와 `YAHOO_FINANCE`는 제공자 목록에 상태와 필요 조건을 표시하지만, 자격 증명·계좌 연결·실제 데이터 라우팅이 구현되기 전까지 선택할 수 없다. 사용자별 증권사 자격 증명은 이후 암호화된 `BrokerConnection`으로 관리한다. 토스증권은 읽기 전용 연결부터 검토하며, 다중 사용자 운영에는 사용자별 자격 증명 수명주기와 운영 키 관리가 필요하다. 상세 기준은 `docs/BROKER_AND_PROVIDER_ARCHITECTURE.md`를 따른다.
+- 시장 데이터 제공자 선택과 증권 계좌 연결은 별도 모델이다. 포트폴리오는 가격·캔들·자산 참조 제공자를 기록하는 `PortfolioMarketDataPreference`를 가지며, 현재 시장 데이터에는 `TWELVE_DATA`만 선택할 수 있다. 사용자별 토스증권 자격 증명과 계좌 참조값은 암호화된 `BrokerConnection`·`BrokerAccount`로 관리하고, 연결 확인과 계좌 목록·보유 종목 읽기 전용 조회를 지원한다.
+- 사용자가 명시적으로 갱신한 토스증권 보유 종목은 `PortfolioBrokerHoldingSnapshot`으로 별도 저장한다. 저장된 최신 스냅샷 조회와 Trade Guide 보유 종목 비교는 외부 증권사 API를 호출하거나 자격 증명을 복호화하지 않는다. 스냅샷은 수동 `TradeTransaction`과 파생 `Holding`을 자동 생성·수정하지 않는다. 다만 `ONLY_IN_BROKER` 항목은 사용자가 하나씩 승인할 때만 `BROKER_OPENING_BALANCE` 출처의 개시 잔고 매수 원장으로 반영하며, 수량 불일치·Trade Guide에만 있는 항목은 자동으로 수정하지 않는다.
+- 토스증권 주문 이력은 읽기 전용 미리보기·정합성 대조·사용자 승인 후 `BROKER_ORDER_HISTORY` 원장 반영까지 구현되어 있다. 다만 현재 주문 어댑터의 원장 반영 시장은 미국으로 제한되고, 비매매 이벤트·개별 체결 단위·정정/취소 체인 연결은 토스 API가 제공하지 않는다. 주문 전송과 자동 매매는 구현하지 않았으며, 다중 사용자 운영에는 사용자별 자격 증명 수명주기와 운영 암호화 키 관리가 추가로 필요하다. 상세 기준은 `docs/BROKER_AND_PROVIDER_ARCHITECTURE.md`를 따른다.

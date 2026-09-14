@@ -3,7 +3,7 @@
 ## Identity
 
 - Task ID: `TASK-ID`
-- Owner: `Codex | Claude | Gemini`
+- Owner: `Codex | Claude | Antigravity CLI`
 - Work mode: `research | design | scoped-implementation | review`
 - Branch / worktree:
 
@@ -30,6 +30,7 @@ list. Add matching tests explicitly when implementation changes behavior.
 - [ ] Required behavior and error states
 - [ ] Required focused tests
 - [ ] Required lint/build/manual checks
+- [ ] For UI layout work: desktop and 360px visual checks; no horizontal overflow, clipping, overlap, inconsistent form controls, or message-driven layout shift
 - [ ] Required factual documentation updates
 
 ## Handoff
@@ -38,4 +39,3 @@ list. Add matching tests explicitly when implementation changes behavior.
 - Verification run:
 - API / data-model / policy impact:
 - Open decision or risk:
-

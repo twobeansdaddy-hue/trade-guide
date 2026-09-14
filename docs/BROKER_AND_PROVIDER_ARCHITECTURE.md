@@ -58,7 +58,8 @@ Proposed persisted model:
 ```text
 Member
   -> BrokerConnection (0..n)
-       -> BrokerConnectionSecret (1..1, encrypted and never returned)
+       -> BrokerConnectionSecretValue (1..n, one row per credential field,
+                                       encrypted and never returned)
        -> BrokerSyncRun (0..n, audit and status only)
   -> Portfolio (0..n)
        -> PortfolioMarketDataPreference (0..1)
@@ -98,12 +99,40 @@ explicit future policy with timestamp and source disclosure.
 - last verification and last successful sync time
 - created, updated, disconnected timestamps
 
-`BrokerConnectionSecret` is a one-to-one table that contains only encrypted values:
+`BrokerConnectionSecretValue` (`broker_connection_secret_values`) holds one row per
+credential field and contains only encrypted values:
 
-- client id
-- client secret
-- account sequence/reference when the broker requires it as a request header
-- encryption algorithm, key version, nonce/initialization vector, and ciphertext
+- `field_key` — the same key the provider declares in `BrokerCredentialField.key`
+- `ciphertext`, `initialization_vector`, `encryption_key_version`
+- unique on `(broker_connection_id, field_key)`
+
+Credentials are rows, not columns, because the number of credential fields differs per
+provider. A second broker that needs a third field changes no DTO, no schema, and no
+adapter signature. `field_key` carries no foreign key — the provider schema is an enum,
+not a table — so the service validates every incoming key against
+`BrokerProvider.getCredentialFields()` before writing. Without that whitelist a client
+could invent keys and use the table as a free dictionary.
+
+The key version is stored **per value**, not per connection, so a rotation can move one
+field at a time instead of requiring every field to change at once.
+
+The account sequence/reference stays on `BrokerAccount`, not here: it identifies an
+account rather than authenticating the caller, and adapters receive it as a separate
+argument from `BrokerCredentials`.
+
+Decryption happens in exactly one place, `BrokerCredentialLoader`. Plaintext exists only
+between that loader and the adapter call. `BrokerCredentials.toString()` prints key names
+only, because logging is the most common way credential values escape.
+
+`broker_connection_secrets` (the earlier fixed two-column table) is superseded by V17,
+which copies the existing ciphertext across without re-encrypting it — a migration that
+needed the encryption key would block startup in any environment that lacks it. The old
+table was meant to be left in place for one release as rollback headroom and dropped in a
+later migration, but as of V18 (`broker_reconciliation_runs`, unrelated to this table) it
+has not been dropped yet — no migration drops it. The application reads and writes only
+the new table from V17 onward; writing both would leave no answer to which one is true.
+Dropping the legacy table is tracked as a separate, still-undecided migration
+(`docs/agent-tasks/broker-credential-encryption-key-rotation.md` §1 decision 4).
 
 Raw client ids, client secrets, bearer tokens, account numbers, and decrypted account
 references are never returned by an API, logged, put in exception messages, or written
@@ -120,6 +149,25 @@ per encrypted value. The encryption key is not stored in PostgreSQL or the repos
 - Production: use a managed key/secret service or a separate key-management boundary,
   support key versioning, and rotate by decrypting and re-encrypting each secret.
 - A database backup alone must not be sufficient to decrypt broker credentials.
+
+**Key rotation is implemented and is deliberately offline-only.** `AesGcmBrokerCredentialCipher`
+holds a version-keyed map of secret keys (`tradeguide.broker.encryption-keys`) plus a
+"current" version (`tradeguide.broker.encryption-current-version`); it decrypts using the
+version stored on the row (`BrokerConnectionSecretValue.encryption_key_version`,
+`BrokerAccount.encryption_key_version`) and always encrypts new values with the current
+version. `BrokerKeyRotationService`/`BrokerKeyRotationBatchProcessor` page through both
+tables in ascending id order, decrypt each row with its stored version, re-encrypt with the
+current version, and apply the result with a conditional `UPDATE ... WHERE id = ? AND
+encryption_key_version = ?` so a concurrent user write (credential replacement, account
+re-verification) is skipped rather than overwritten. Batches commit independently
+(`REQUIRES_NEW`), and `broker_key_rotation_runs` is the sole audit record (counts and a
+fixed reason code only, never ciphertext or plaintext) with a partial unique index that
+allows at most one `IN_PROGRESS` run at a time. The only trigger is
+`tradeguide.broker.rotation.run-on-startup` (default `false`) read by
+`BrokerKeyRotationRunner`, an `ApplicationRunner` an operator enables for one offline
+application start; there is no HTTP endpoint, scheduler, or frontend path to it. See
+`docs/agent-tasks/broker-credential-encryption-key-rotation.md` for the full design and
+`docs/BROKER_KEY_ROTATION_OPERATIONS.md` for operator preconditions and steps (Korean).
 
 Application-level encryption is necessary even when database disk encryption exists:
 database access, a copied backup, and application key access must not be the same
@@ -177,9 +225,12 @@ The first broker slice is:
 5. Require an explicit import decision before creating any Trade Guide transaction or
    opening-balance record.
 
-The later import design must add a source/audit model before it writes to the transaction
-ledger. Sync runs record provider, start/end time, result, item counts, and sanitized
-failure code; they never contain secrets or full broker responses.
+The order-history import path now adds a source/audit model before it writes to the
+transaction ledger. It stages provider orders, shows reconciliation and exclusion
+reasons, and requires an explicit approval. Sync runs record provider, start/end time,
+result, item counts, and sanitized failure code; they never contain secrets or full
+broker responses. The path is read-only toward the broker: it never submits, modifies,
+or cancels an order.
 
 ## API And UI Contract Direction
 
@@ -222,7 +273,13 @@ features should not require the browser to carry a member identifier.
 5. **Complete:** add portfolio-to-account linking and a read-only holdings preview. The
    preview compares broker holdings with Trade Guide holdings but does not import or alter
    the transaction ledger.
-6. Design explicit import/audit semantics before modifying the transaction ledger.
+6. **Complete for the current US ledger scope:** add explicit order-history staging,
+   reconciliation, source/audit links, and user approval before modifying the
+   transaction ledger. Suspected duplicate/manual-overlap items require a separate
+   audited reclassification decision.
+7. Extend domestic-market ledger support and production operational gates only after
+   the provider contract, currency model, WTS terms, and long-range history behavior
+   are confirmed.
 
 No order creation, conditional order registration, or automated trade action belongs to
 any step above.
