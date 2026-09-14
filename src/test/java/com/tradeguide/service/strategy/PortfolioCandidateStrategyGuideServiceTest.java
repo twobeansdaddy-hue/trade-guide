@@ -9,6 +9,7 @@ import com.tradeguide.exception.MarketDataRateLimitExceededException;
 import com.tradeguide.exception.MarketDataUnavailableException;
 import com.tradeguide.repository.strategy.AssetProfileRepository;
 import com.tradeguide.repository.strategy.PortfolioCandidateAssetRepository;
+import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.service.holding.HoldingService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +38,9 @@ class PortfolioCandidateStrategyGuideServiceTest {
 
     @Mock
     private PortfolioCandidateAssetRepository portfolioCandidateAssetRepository;
+
+    @Mock
+    private PortfolioRepository portfolioRepository;
 
     @Mock
     private StrategyGuideService strategyGuideService;

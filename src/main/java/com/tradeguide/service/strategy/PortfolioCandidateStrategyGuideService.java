@@ -14,11 +14,14 @@ import com.tradeguide.exception.MarketDataRateLimitExceededException;
 import com.tradeguide.exception.MarketDataUnavailableException;
 import com.tradeguide.repository.strategy.AssetProfileRepository;
 import com.tradeguide.repository.strategy.PortfolioCandidateAssetRepository;
+import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.service.holding.HoldingService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PortfolioCandidateStrategyGuideService {
@@ -28,19 +31,22 @@ public class PortfolioCandidateStrategyGuideService {
     private final PortfolioCandidateAssetRepository portfolioCandidateAssetRepository;
     private final StrategyGuideService strategyGuideService;
     private final StrategyDecisionMaker strategyDecisionMaker;
+    private final PortfolioRepository portfolioRepository;
 
     public PortfolioCandidateStrategyGuideService(
             HoldingService holdingService,
             AssetProfileRepository assetProfileRepository,
             PortfolioCandidateAssetRepository portfolioCandidateAssetRepository,
             StrategyGuideService strategyGuideService,
-            StrategyDecisionMaker strategyDecisionMaker
+            StrategyDecisionMaker strategyDecisionMaker,
+            PortfolioRepository portfolioRepository
     ) {
         this.holdingService = holdingService;
         this.assetProfileRepository = assetProfileRepository;
         this.portfolioCandidateAssetRepository = portfolioCandidateAssetRepository;
         this.strategyGuideService = strategyGuideService;
         this.strategyDecisionMaker = strategyDecisionMaker;
+        this.portfolioRepository = portfolioRepository;
     }
 
     public StrategyGuideBatch getCandidateStrategyGuides(
@@ -50,6 +56,7 @@ public class PortfolioCandidateStrategyGuideService {
         List<Holding> holdings = holdingService.getHoldings(memberId, portfolioId);
         List<AssetStrategyGuide> guides = new ArrayList<>();
         List<UnavailableAsset> unavailableAssets = new ArrayList<>();
+        BigDecimal stopLossRatio = resolveStopLossRatio(memberId, portfolioId);
 
         List<CandidateAssetRef> candidateRefs = resolveCandidateRefs(portfolioId)
                 .stream()
@@ -80,7 +87,9 @@ public class PortfolioCandidateStrategyGuideService {
                 guides.add(new AssetStrategyGuide(
                         candidateRef.market(),
                         candidateRef.ticker(),
-                        strategyDecisionMaker.decideForCandidate(signal)
+                        stopLossRatio == null
+                                ? strategyDecisionMaker.decideForCandidate(signal)
+                                : strategyDecisionMaker.decideForCandidate(signal, stopLossRatio)
                 ));
             } catch (MarketDataRateLimitExceededException exception) {
                 unavailableAssets.add(new UnavailableAsset(
@@ -151,6 +160,19 @@ public class PortfolioCandidateStrategyGuideService {
                     StrategyGuideUnavailableReason.MARKET_DATA_RATE_LIMIT_EXCEEDED
             ));
         }
+    }
+
+    private BigDecimal resolveStopLossRatio(Long memberId, Long portfolioId) {
+        Optional<com.tradeguide.domain.portfolio.Portfolio> portfolioResult =
+                portfolioRepository.findByMember_IdAndId(memberId, portfolioId);
+        if (portfolioResult == null) {
+            return null;
+        }
+
+        return portfolioResult
+                .map(portfolio -> portfolio.getRiskPolicy())
+                .map(riskPolicy -> riskPolicy.getStopLossRatio())
+                .orElse(null);
     }
 
     /**

@@ -24,6 +24,32 @@ const signalEventLabels = {
     CROSS_DOWN: "하향 교차",
     NONE: "교차 없음",
 };
+const entryTimingStatusLabels: Record<string, string> = {
+    ELIGIBLE_NOW: "현재 검토 구간",
+    WAIT: "관찰 대기",
+    HOLDING: "보유 상태 검토",
+    UNKNOWN: "정보 없음",
+};
+const stopLossStatusLabels: Record<string, string> = {
+    NOT_CONFIGURED: "미설정",
+    USER_DEFINED: "사용자 설정",
+    STRATEGY_DEFINED: "전략 기준",
+};
+
+function getConfidenceLabel(confidence?: string | null): string {
+    switch (confidence) {
+        case "low-medium":
+            return "낮음-중간";
+        case "medium":
+            return "중간";
+        case "high":
+            return "높음";
+        case "low":
+            return "낮음";
+        default:
+            return confidence ?? "정보 없음";
+    }
+}
 
 type Props = {
     memberId?: number;
@@ -235,8 +261,20 @@ export default function StrategyGuideList({
                 renderEmptyState()
             ) : (
                 <ul className="guide-list">
-                    {guides.map(({market, ticker, decision}) => (
-                        <li key={`${market}-${ticker}`} className="guide-card">
+                    {guides.map(({market, ticker, decision}) => {
+                        const caveats = decision.metadata.caveats ?? [];
+                        const hasEvidence = Boolean(decision.metadata.confidence) || caveats.length > 0;
+                        const guidance = decision.guidance ?? {
+                            entryTimingStatus: "UNKNOWN",
+                            entryTimingMessage: "매수 시점 정보를 확인할 수 없습니다.",
+                            stopLossStatus: "NOT_CONFIGURED",
+                            stopLossRatio: null,
+                            stopLossPrice: null,
+                            stopLossMessage: "검증된 손절 규칙이 설정되지 않아 손절가를 자동 산출하지 않습니다.",
+                        };
+
+                        return (
+                            <li key={`${market}-${ticker}`} className="guide-card">
                             <div className="guide-card-heading">
                                 <div className="guide-asset">
                                     <span className="market-badge">{market}</span>
@@ -265,6 +303,42 @@ export default function StrategyGuideList({
                                 </div>
                                 {decision.weeksSinceCross !== null ? <div><dt>최근 교차 후</dt><dd>{decision.weeksSinceCross}주</dd></div> : null}
                             </dl>
+                            <dl className="guide-decision-guidance">
+                                <div>
+                                    <dt>매수 시점</dt>
+                                    <dd>
+                                        <strong>{entryTimingStatusLabels[guidance.entryTimingStatus] ?? guidance.entryTimingStatus}</strong>
+                                        <span>{guidance.entryTimingMessage}</span>
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt>손절 가이드</dt>
+                                    <dd>
+                                        <strong>{guidance.stopLossPrice !== null
+                                            ? `${formatUsd(guidance.stopLossPrice)}${guidance.stopLossRatio !== null ? ` (${(guidance.stopLossRatio * 100).toFixed(2)}%)` : ""}`
+                                            : stopLossStatusLabels[guidance.stopLossStatus] ?? "미설정"}</strong>
+                                        <span>{guidance.stopLossMessage}</span>
+                                    </dd>
+                                </div>
+                            </dl>
+                            {hasEvidence ? (
+                                <section className="guide-evidence" aria-label="전략 근거 및 주의사항">
+                                    {decision.metadata.confidence ? (
+                                        <div className="guide-confidence">
+                                            <span>가이드 신뢰도</span>
+                                            <strong>{getConfidenceLabel(decision.metadata.confidence)}</strong>
+                                        </div>
+                                    ) : null}
+                                    {caveats.length > 0 ? (
+                                        <div className="guide-caveats">
+                                            <span className="guide-caveats-title">확인할 사항</span>
+                                            <ul>
+                                                {caveats.map((caveat) => <li key={caveat}>{caveat}</li>)}
+                                            </ul>
+                                        </div>
+                                    ) : null}
+                                </section>
+                            ) : null}
                             {isCandidate ? (
                                 <div className="candidate-card-footer">
                                     <span className="candidate-card-disclaimer">
@@ -280,9 +354,10 @@ export default function StrategyGuideList({
                                     ticker={ticker}
                                     strategyId={decision.metadata.strategyId}
                                 />
-                            ) : null}
-                        </li>
-                    ))}
+                                ) : null}
+                            </li>
+                        );
+                    })}
                 </ul>
             )}
             {unavailableAssets.length > 0 ? (

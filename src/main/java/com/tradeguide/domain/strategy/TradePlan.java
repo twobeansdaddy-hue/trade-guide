@@ -70,8 +70,8 @@ public class TradePlan {
             throw new IllegalArgumentException("지정가는 0보다 커야 합니다.");
         }
 
-        if (stopLossPrice == null
-                || stopLossPrice.compareTo(BigDecimal.ZERO) <= 0) {
+        if (stopLossPrice != null
+                && stopLossPrice.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("손절가는 0보다 커야 합니다.");
         }
 
@@ -113,6 +113,10 @@ public class TradePlan {
 
     public BigDecimal getStopLossPrice() {
         return stopLossPrice;
+    }
+
+    public boolean isBrokerSubmissionReady() {
+        return stopLossPrice != null;
     }
 
     public LocalDate getValidUntil() {

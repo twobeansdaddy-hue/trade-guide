@@ -36,6 +36,12 @@ public class Portfolio {
                     column = @Column(name = "max_single_asset_exposure_ratio",
                                      precision = 8,
                                      scale = 6)
+            ),
+            @AttributeOverride(
+                    name = "stopLossRatio",
+                    column = @Column(name = "stop_loss_ratio",
+                                     precision = 8,
+                                     scale = 6)
             )
     })
 

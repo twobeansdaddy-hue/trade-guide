@@ -10,6 +10,7 @@ import com.tradeguide.exception.MarketDataRateLimitExceededException;
 import com.tradeguide.exception.MarketDataUnavailableException;
 import com.tradeguide.exception.UnsupportedInvestmentTrackException;
 import com.tradeguide.repository.broker.PortfolioBrokerHoldingSnapshotRepository;
+import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.strategy.PortfolioAssetStrategyProfileRepository;
 import com.tradeguide.service.holding.HoldingService;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,9 @@ class PortfolioStrategyGuideServiceTest {
 
     @Mock
     private PortfolioBrokerHoldingSnapshotRepository portfolioBrokerHoldingSnapshotRepository;
+
+    @Mock
+    private PortfolioRepository portfolioRepository;
 
     @InjectMocks
     private PortfolioStrategyGuideService portfolioStrategyGuideService;

@@ -30,6 +30,7 @@ function SettingsContent({memberId, portfolioId}: {memberId: number; portfolioId
     const [policy, setPolicy] = useState<PortfolioRiskPolicy | null>(null);
     const [maxLoss, setMaxLoss] = useState("");
     const [maxExposure, setMaxExposure] = useState("");
+    const [stopLoss, setStopLoss] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
@@ -41,6 +42,7 @@ function SettingsContent({memberId, portfolioId}: {memberId: number; portfolioId
         setPolicy(data);
         setMaxLoss(String(data.maxLossPerTradeRatio * 100));
         setMaxExposure(String(data.maxSingleAssetExposureRatio * 100));
+        setStopLoss(data.stopLossRatio == null ? "" : String(data.stopLossRatio * 100));
     }, []);
     const policyResource = usePortfolioResource(memberId, portfolioId, getPortfolioRiskPolicy, applyPolicy);
     const exposureResource = usePortfolioResource(memberId, portfolioId, getPortfolioExposures);
@@ -72,8 +74,13 @@ function SettingsContent({memberId, portfolioId}: {memberId: number; portfolioId
 
         const loss = Number(maxLoss);
         const exposure = Number(maxExposure);
+        const stopLossValue = stopLoss.trim() === "" ? null : Number(stopLoss);
         if (![loss, exposure].every((value) => Number.isFinite(value) && value > 0 && value <= 100)) {
             setError("위험 한도는 0보다 크고 100 이하여야 합니다.");
+            return;
+        }
+        if (stopLossValue !== null && !(Number.isFinite(stopLossValue) && stopLossValue > 0 && stopLossValue < 100)) {
+            setError("손절 기준은 비워 두거나 0보다 크고 100%보다 작게 입력해 주세요.");
             return;
         }
         if (loss > exposure) {
@@ -86,6 +93,7 @@ function SettingsContent({memberId, portfolioId}: {memberId: number; portfolioId
             const data = await updatePortfolioRiskPolicy(memberId, portfolioId, {
                 maxLossPerTradeRatio: loss / 100,
                 maxSingleAssetExposureRatio: exposure / 100,
+                stopLossRatio: stopLossValue === null ? null : stopLossValue / 100,
             });
             policyResource.replaceData(data);
             setSuccess("위험 한도를 저장했습니다.");
@@ -135,11 +143,11 @@ function SettingsContent({memberId, portfolioId}: {memberId: number; portfolioId
             <header className="page-header">
                 <p className="eyebrow">PORTFOLIO {portfolioId}</p>
                 <h1>설정</h1>
-                <p>위험 한도는 현재 경고 기준으로만 사용되며, 주문 수량이나 손절가를 자동으로 만들지 않습니다.</p>
+                <p>위험 한도와 손절 기준은 가이드 검토에 사용하며, 증권사 주문을 자동으로 전송하지 않습니다.</p>
             </header>
             {policy ? (
                 <p className="setting-summary">
-                    현재 주문당 최대 손실 {formatRatio(policy.maxLossPerTradeRatio)} · 종목당 최대 노출 {formatRatio(policy.maxSingleAssetExposureRatio)} (포트폴리오 평가액 기준)
+                    현재 주문당 최대 손실 {formatRatio(policy.maxLossPerTradeRatio)} · 종목당 최대 노출 {formatRatio(policy.maxSingleAssetExposureRatio)} · 손절 기준 {policy.stopLossRatio == null ? "미설정" : formatRatio(policy.stopLossRatio)}
                 </p>
             ) : null}
             {policyResource.isLoading ? (
@@ -181,6 +189,22 @@ function SettingsContent({memberId, portfolioId}: {memberId: number; portfolioId
                         max="100"
                         step="0.01"
                         placeholder="예: 20.0"
+                    />
+                </label>
+                <label>
+                    <span>손절 기준 (매입·기준 가격 대비 %)</span>
+                    <span className="form-field-hint">입력한 비율을 기준 가격에서 차감해 검토용 손절가를 계산합니다. 비워 두면 손절가를 계산하지 않습니다.</span>
+                    <input
+                        type="number"
+                        value={stopLoss}
+                        onChange={(event) => {
+                            setStopLoss(event.target.value);
+                            setSuccess(null);
+                        }}
+                        min="0"
+                        max="99.99"
+                        step="0.01"
+                        placeholder="예: 25.0 (선택)"
                     />
                 </label>
                 <div className="form-feedback-area" aria-live="polite">

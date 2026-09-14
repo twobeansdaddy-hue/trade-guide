@@ -57,7 +57,13 @@ public class WeeklyMaCrossoverStrategy implements TradingStrategy {
                 new StrategyMetadata(
                         STRATEGY_ID,
                         STRATEGY_VERSION,
-                        lastestCandle.getTradingDate()
+                        lastestCandle.getTradingDate(),
+                        "low-medium",
+                        List.of(
+                                "완료 주봉의 10주·40주 이동평균 신호를 기반으로 한 기술적 분석입니다.",
+                                "과거 데이터 기반 결과이며 미래 수익을 보장하지 않습니다.",
+                                "손절가·주문 수량·자동 주문은 계산하지 않습니다."
+                        )
                 ),
                 trend,
                 signalEvent,

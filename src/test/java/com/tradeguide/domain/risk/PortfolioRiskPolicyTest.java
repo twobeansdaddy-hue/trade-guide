@@ -20,6 +20,30 @@ class PortfolioRiskPolicyTest {
                 .isEqualByComparingTo("0.02");
         assertThat(riskPolicy.getMaxSingleAssetExposureRatio())
                 .isEqualByComparingTo("0.20");
+        assertThat(riskPolicy.getStopLossRatio()).isNull();
+    }
+
+    @Test
+    void keepsOptionalUserDefinedStopLossRatio() {
+        PortfolioRiskPolicy riskPolicy = new PortfolioRiskPolicy(
+                new BigDecimal("0.02"),
+                new BigDecimal("0.20"),
+                new BigDecimal("0.25")
+        );
+
+        assertThat(riskPolicy.getStopLossRatio())
+                .isEqualByComparingTo("0.25");
+    }
+
+    @Test
+    void rejectsStopLossRatioAtOrAboveOne() {
+        assertThatThrownBy(() -> new PortfolioRiskPolicy(
+                new BigDecimal("0.02"),
+                new BigDecimal("0.20"),
+                BigDecimal.ONE
+                ))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("손절 기준 비율은 0보다 크고 1보다 작아야 합니다.");
     }
 
     @Test

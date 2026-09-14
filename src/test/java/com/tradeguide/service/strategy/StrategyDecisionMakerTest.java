@@ -63,7 +63,58 @@ class StrategyDecisionMakerTest {
         assertThat(decision.getReason()).isEqualTo(
                 "상승 추세가 유지되고 있고 최근 교차 후 4주 이내여서 신규 진입을 검토합니다."
         );
+        assertThat(decision.getGuidance().getEntryTimingStatus())
+                .isEqualTo("ELIGIBLE_NOW");
+        assertThat(decision.getGuidance().getEntryTimingMessage())
+                .contains("최근 교차 후 0~4주");
+        assertThat(decision.getGuidance().getStopLossStatus())
+                .isEqualTo("NOT_CONFIGURED");
+        assertThat(decision.getGuidance().getStopLossRatio()).isNull();
+        assertThat(decision.getGuidance().getStopLossPrice()).isNull();
         assertThat(decision.getSignal()).isSameAs(signal);
+    }
+
+    @Test
+    void calculatesUserDefinedStopLossForCandidateFromReferencePrice() {
+        StrategySignal signal = signal(
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE,
+                2
+        );
+
+        StrategyDecision decision = strategyDecisionMaker.decideForCandidate(
+                signal,
+                new BigDecimal("0.25")
+        );
+
+        assertThat(decision.getGuidance().getStopLossStatus())
+                .isEqualTo("USER_DEFINED");
+        assertThat(decision.getGuidance().getStopLossRatio())
+                .isEqualByComparingTo("0.25");
+        assertThat(decision.getGuidance().getStopLossPrice())
+                .isEqualByComparingTo("90.1875");
+        assertThat(decision.getGuidance().getStopLossMessage())
+                .contains("25.00%");
+    }
+
+    @Test
+    void calculatesUserDefinedStopLossForHoldingFromAveragePurchasePrice() {
+        StrategySignal signal = signal(
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE,
+                4
+        );
+
+        StrategyDecision decision = strategyDecisionMaker.decideForHolding(
+                signal,
+                new BigDecimal("100"),
+                new BigDecimal("0.10")
+        );
+
+        assertThat(decision.getGuidance().getStopLossPrice())
+                .isEqualByComparingTo("90");
+        assertThat(decision.getGuidance().getStopLossMessage())
+                .contains("평균 매입가");
     }
 
     @Test

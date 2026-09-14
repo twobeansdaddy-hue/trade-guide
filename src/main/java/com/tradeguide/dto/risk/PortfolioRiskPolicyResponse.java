@@ -8,19 +8,23 @@ public class PortfolioRiskPolicyResponse {
 
     private final BigDecimal maxLossPerTradeRatio;
     private final BigDecimal maxSingleAssetExposureRatio;
+    private final BigDecimal stopLossRatio;
 
     private PortfolioRiskPolicyResponse(
             BigDecimal maxLossPerTradeRatio,
-            BigDecimal maxSingleAssetExposureRatio
+            BigDecimal maxSingleAssetExposureRatio,
+            BigDecimal stopLossRatio
     ) {
         this.maxLossPerTradeRatio = maxLossPerTradeRatio;
         this.maxSingleAssetExposureRatio = maxSingleAssetExposureRatio;
+        this.stopLossRatio = stopLossRatio;
     }
 
     public static PortfolioRiskPolicyResponse from(PortfolioRiskPolicy riskPolicy) {
         return new PortfolioRiskPolicyResponse(
                 riskPolicy.getMaxLossPerTradeRatio(),
-                riskPolicy.getMaxSingleAssetExposureRatio()
+                riskPolicy.getMaxSingleAssetExposureRatio(),
+                riskPolicy.getStopLossRatio()
         );
     }
 
@@ -30,5 +34,9 @@ public class PortfolioRiskPolicyResponse {
 
     public BigDecimal getMaxSingleAssetExposureRatio() {
         return maxSingleAssetExposureRatio;
+    }
+
+    public BigDecimal getStopLossRatio() {
+        return stopLossRatio;
     }
 }

@@ -13,6 +13,7 @@ public class StrategyDecisionResponse {
     private final StrategyTrend trend;
     private final StrategySignalEvent signalEvent;
     private final Integer weeksSinceCross;
+    private final StrategyDecisionGuidanceResponse guidance;
 
     public StrategyDecisionResponse(
             StrategyAction action,
@@ -32,6 +33,19 @@ public class StrategyDecisionResponse {
             StrategySignalEvent signalEvent,
             Integer weeksSinceCross
     ) {
+        this(action, referencePrice, reason, metadata, trend, signalEvent, weeksSinceCross, null);
+    }
+
+    public StrategyDecisionResponse(
+            StrategyAction action,
+            BigDecimal referencePrice,
+            String reason,
+            StrategyMetadataResponse metadata,
+            StrategyTrend trend,
+            StrategySignalEvent signalEvent,
+            Integer weeksSinceCross,
+            StrategyDecisionGuidanceResponse guidance
+    ) {
         this.action = action;
         this.referencePrice = referencePrice;
         this.reason = reason;
@@ -39,6 +53,9 @@ public class StrategyDecisionResponse {
         this.trend = trend;
         this.signalEvent = signalEvent;
         this.weeksSinceCross = weeksSinceCross;
+        this.guidance = guidance == null
+                ? StrategyDecisionGuidanceResponse.from(null)
+                : guidance;
     }
 
     public static StrategyDecisionResponse from(StrategyDecision strategyDecision) {
@@ -51,7 +68,8 @@ public class StrategyDecisionResponse {
                 StrategyMetadataResponse.from(signal.getMetadata()),
                 signal.getTrend(),
                 signal.getSignalEvent(),
-                signal.getWeeksSinceCross()
+                signal.getWeeksSinceCross(),
+                StrategyDecisionGuidanceResponse.from(strategyDecision.getGuidance())
         );
     }
 
@@ -81,5 +99,9 @@ public class StrategyDecisionResponse {
 
     public Integer getWeeksSinceCross() {
         return weeksSinceCross;
+    }
+
+    public StrategyDecisionGuidanceResponse getGuidance() {
+        return guidance;
     }
 }

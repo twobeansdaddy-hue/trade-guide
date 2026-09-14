@@ -8,10 +8,20 @@ export type StrategyDecision = {
         strategyId: string;
         strategyVersion: string;
         dataAsOf: string;
+        confidence?: string | null;
+        caveats?: string[];
     };
     trend: "ABOVE_LONG_AVERAGE" | "BELOW_LONG_AVERAGE" | null;
     signalEvent: "CROSS_UP" | "CROSS_DOWN" | "NONE" | null;
     weeksSinceCross: number | null;
+    guidance?: {
+        entryTimingStatus: string;
+        entryTimingMessage: string;
+        stopLossStatus: string;
+        stopLossRatio: number | null;
+        stopLossPrice: number | null;
+        stopLossMessage: string;
+    };
 };
 
 export type AssetStrategyGuide = {

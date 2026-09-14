@@ -349,6 +349,9 @@ class PortfolioControllerTest {
                 .andExpect(jsonPath("$.guides[0].decision.metadata.dataAsOf").value("2026-08-07"))
                 .andExpect(jsonPath("$.guides[0].decision.trend").value("ABOVE_LONG_AVERAGE"))
                 .andExpect(jsonPath("$.guides[0].decision.weeksSinceCross").value(0))
+                .andExpect(jsonPath("$.guides[0].decision.guidance.entryTimingStatus").value("UNKNOWN"))
+                .andExpect(jsonPath("$.guides[0].decision.guidance.stopLossStatus").value("NOT_CONFIGURED"))
+                .andExpect(jsonPath("$.guides[0].decision.guidance.stopLossPrice").doesNotExist())
                 .andExpect(jsonPath("$.unavailableAssets").isEmpty());
 
         verify(portfolioStrategyGuideService)

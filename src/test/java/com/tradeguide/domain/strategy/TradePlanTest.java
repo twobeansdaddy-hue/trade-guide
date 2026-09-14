@@ -42,12 +42,32 @@ class TradePlanTest {
                 .isEqualByComparingTo("25.00");
         assertThat(tradePlan.getStopLossPrice())
                 .isEqualByComparingTo("22.00");
+        assertThat(tradePlan.isBrokerSubmissionReady()).isTrue();
         assertThat(tradePlan.getValidUntil())
                 .isEqualTo(LocalDate.of(2026, 8, 17));
         assertThat(tradePlan.getReason())
                 .isEqualTo("Track A 주문 초안 테스트");
         assertThat(tradePlan.getStrategyMetadata().getStrategyId())
                 .isEqualTo("track-a-weekly-ma-crossover");
+    }
+
+    @Test
+    void allowsReviewDraftWithoutStopLossButMarksItUnavailableForBrokerSubmission() {
+        TradePlan tradePlan = new TradePlan(
+                Market.US,
+                "SOXL",
+                TradeType.BUY,
+                QuantityRatioBasis.PORTFOLIO_VALUE,
+                new BigDecimal("0.20"),
+                new BigDecimal("25.00"),
+                null,
+                LocalDate.of(2026, 8, 17),
+                "손절 규칙 미설정 검토용 초안",
+                validMetadata()
+        );
+
+        assertThat(tradePlan.getStopLossPrice()).isNull();
+        assertThat(tradePlan.isBrokerSubmissionReady()).isFalse();
     }
 
     @Test

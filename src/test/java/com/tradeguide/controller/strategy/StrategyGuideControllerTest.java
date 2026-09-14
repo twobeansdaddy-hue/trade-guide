@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,7 +43,9 @@ class StrategyGuideControllerTest {
                 new StrategyMetadata(
                         "test-strategy",
                         "test-v1",
-                        LocalDate.of(2026, 8, 7)
+                        LocalDate.of(2026, 8, 7),
+                        "low-medium",
+                        List.of("테스트 주의사항")
                 ),
                 StrategyTrend.ABOVE_LONG_AVERAGE,
                 StrategySignalEvent.CROSS_UP,
@@ -68,6 +71,10 @@ class StrategyGuideControllerTest {
                         .value("test-v1"))
                 .andExpect(jsonPath("$.metadata.dataAsOf")
                         .value("2026-08-07"))
+                .andExpect(jsonPath("$.metadata.confidence")
+                        .value("low-medium"))
+                .andExpect(jsonPath("$.metadata.caveats[0]")
+                        .value("테스트 주의사항"))
                 .andExpect(jsonPath("$.trend").value("ABOVE_LONG_AVERAGE"))
                 .andExpect(jsonPath("$.signalEvent").value("CROSS_UP"))
                 .andExpect(jsonPath("$.weeksSinceCross").value(0));

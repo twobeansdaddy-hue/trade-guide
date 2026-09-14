@@ -9,6 +9,7 @@ import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.MarketDataUnavailableException;
 import com.tradeguide.repository.strategy.AssetProfileRepository;
 import com.tradeguide.repository.strategy.PortfolioCandidateAssetRepository;
+import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.market.CompletedWeeklyCandleCache;
 import com.tradeguide.service.market.CompletedWeeklyCandleFilter;
@@ -50,6 +51,8 @@ class PortfolioCandidateStrategyGuideServiceIntegrationTest {
     @Mock
     private PortfolioCandidateAssetRepository portfolioCandidateAssetRepository;
     @Mock
+    private PortfolioRepository portfolioRepository;
+    @Mock
     private MarketHistoryService marketHistoryService;
     @Mock
     private StrategySelector strategySelector;
@@ -82,7 +85,8 @@ class PortfolioCandidateStrategyGuideServiceIntegrationTest {
                 assetProfileRepository,
                 portfolioCandidateAssetRepository,
                 strategyGuideService,
-                strategyDecisionMaker
+                strategyDecisionMaker,
+                portfolioRepository
         );
     }
 

@@ -32,11 +32,27 @@ public class PortfolioRiskPolicyUpdateRequest {
     )
     private BigDecimal maxSingleAssetExposureRatio;
 
+    @DecimalMin(
+            value = "0.0",
+            inclusive = false,
+            message = "손절 기준 비율은 0보다 커야 합니다."
+    )
+    @DecimalMax(
+            value = "1.0",
+            inclusive = false,
+            message = "손절 기준 비율은 1보다 작아야 합니다."
+    )
+    private BigDecimal stopLossRatio;
+
     public BigDecimal getMaxLossPerTradeRatio() {
         return maxLossPerTradeRatio;
     }
 
     public BigDecimal getMaxSingleAssetExposureRatio() {
         return maxSingleAssetExposureRatio;
+    }
+
+    public BigDecimal getStopLossRatio() {
+        return stopLossRatio;
     }
 }

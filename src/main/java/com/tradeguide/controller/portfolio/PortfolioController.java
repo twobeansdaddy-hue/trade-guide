@@ -111,12 +111,20 @@ public class PortfolioController {
             @PathVariable Long portfolioId,
             @Valid @RequestBody PortfolioRiskPolicyUpdateRequest request
     ) {
-        PortfolioRiskPolicy riskPolicy = portfolioService.updateRiskPolicy(
-                memberId,
-                portfolioId,
-                request.getMaxLossPerTradeRatio(),
-                request.getMaxSingleAssetExposureRatio()
-        );
+        PortfolioRiskPolicy riskPolicy = request.getStopLossRatio() == null
+                ? portfolioService.updateRiskPolicy(
+                        memberId,
+                        portfolioId,
+                        request.getMaxLossPerTradeRatio(),
+                        request.getMaxSingleAssetExposureRatio()
+                )
+                : portfolioService.updateRiskPolicy(
+                        memberId,
+                        portfolioId,
+                        request.getMaxLossPerTradeRatio(),
+                        request.getMaxSingleAssetExposureRatio(),
+                        request.getStopLossRatio()
+                );
 
         return PortfolioRiskPolicyResponse.from(riskPolicy);
     }

@@ -56,11 +56,11 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 있다. `StrategyDecisionMaker`는 보유 종목의 `HOLD`/`SELL`과 미보유 후보의 `BUY`/`WATCH`를 결정한다. 후보 `BUY`는 상승 추세의 교차 후 0~4주에만 허용한다. `REDUCE`는 주문 초안 생성 규칙과 부분 매도 정책이 확정될 때까지 사용하지 않는다.
 - `TradePlan`은 주문 비율, 비율 기준, 주문 유형, 지정가, 손절가, 유효 기간, 근거와 전략 메타데이터를 담는 주문 초안 도메인 모델이다. DB에 저장하거나 증권사에 전송하지 않는다.
 - `QuantityRatioBasis.PORTFOLIO_VALUE`는 포트폴리오 평가액 기준의 신규 매수 비율이고, `HOLDING_QUANTITY`는 보유 종목 수량 기준의 매도 또는 부분 매도 비율이다.
-- `PortfolioRiskPolicy`는 주문당 최대 손실 비율과 종목당 최대 노출 비율을 검증하는 JPA 값 객체다. `Portfolio`에 포함되어 `portfolios` 테이블의 소수점 여섯 자리 컬럼으로 저장되며, 설정·조회 API와 종목별 노출 초과 경고에 사용된다. 아직 전략 엔진, 활성 손절 규칙, 주문 초안 생성에는 연결하지 않는다.
+- `PortfolioRiskPolicy`는 주문당 최대 손실 비율, 종목당 최대 노출 비율, 선택적인 사용자 설정 손절 기준 비율을 검증하는 JPA 값 객체다. `Portfolio`에 포함되어 `portfolios` 테이블의 소수점 여섯 자리 컬럼으로 저장되며, 설정·조회 API와 종목별 노출 초과 경고에 사용된다. 손절 기준 비율은 사용자가 직접 입력한 검토용 기준일 때만 전략 가이드에 연결하고, 리서치가 검증한 자동 손절 규칙이나 주문 수량 산식으로 해석하지 않는다.
 - 주문 초안을 만드는 전략별 가격·수량·손절·유효 기간 규칙은 아직 확정하지 않았으므로 `TradePlanGenerator`는 구현하지 않았다.
 - `REDUCE`는 보유 종목의 부분 매도를 뜻한다. 교차 후 5~8주인 미보유 후보의 축소 진입에는 사용하지 않으며, 해당 구간은 현재 `WATCH`를 유지한다.
 - `TradePlan.quantityRatio`의 분모와 자동 산출식은 아직 채택하지 않았다. 계좌 총자산, 가용 현금, 트랙별 배정 예산, 위험 허용 비율 중 어떤 입력을 사용할지와 `RiskPolicy` 도입 여부를 먼저 결정해야 한다.
-- Track A 손절 후보 중 고정 비율 `-25%`는 추가 검증 필요이며, ATR 기반 손절은 채택하지 않는다. 따라서 현재 전략 엔진과 `TradePlanGenerator`에 손절 규칙을 구현하지 않는다.
+- Track A 손절 후보 중 고정 비율 `-25%`는 추가 검증 필요이며, ATR 기반 손절은 채택하지 않는다. 사용자가 포트폴리오 설정에 직접 입력한 손절 기준 비율은 검토용 가이드에만 적용하고, 전략 기본값이나 `TradePlanGenerator`의 자동 규칙으로 사용하지 않는다.
 - `TradeGuideCalculator`와 `/api/trade-guide/calculate`은 초기 학습용 단순 계산 API다. 사용자가 입력한 목표 수익률·최대 손실률을 계산하며, 현재 전략 엔진의 정책이나 결과에 연결하지 않는다.
 
 ## 현재 전략 엔진 상태
@@ -91,6 +91,8 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
   - 포트폴리오 자체가 없거나 보유 종목 계산에 실패하면 기존 오류 응답을 유지한다.
 - 현재 후보 유니버스는 관리자가 등록한 `TRACK_A` 프로필이며, S&P 500 전체 스크리닝이나 `TRACK_B` 후보 탐색은 아직 구현하지 않았다.
 - `referencePrice`는 최신 완료 주봉 종가이며, 주문 지정가·목표가·손절가는 아니다.
+- `decision.metadata`에는 전략 ID·버전·데이터 기준일과 함께 전략별 `confidence`, `caveats`가 포함될 수 있다. 현재 Track A는 `low-medium` 신뢰도와 과거 데이터·기술적 신호·비주문 계산 범위에 대한 주의사항을 제공한다.
+- `decision.guidance`에는 매수 시점 상태·설명과 손절 상태·비율·가격·설명이 항상 포함된다. 포트폴리오에 사용자 설정 손절 비율이 있으면 보유 종목은 평균 매입가, 후보 종목은 전략 기준 가격으로 손절가를 계산한다. 비율이 없으면 손절가는 `null`이며, 어떤 경우에도 전략 가이드가 증권사 주문을 자동 전송하지 않는다.
 - `POST`/`GET`/`DELETE /api/members/{memberId}/portfolios/{portfolioId}/transactions`는 수동 매매 기록을 생성·조회·삭제한다. 삭제 전에는 남은 거래 이력으로 보유 수량을 다시 계산하며, 이후 매도가 초과 매도가 되는 경우 삭제를 차단한다.
 
 ## 리서치와 정책 문서
@@ -101,7 +103,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 
 ## 현재 구현 위치
 
-포트폴리오 노출 비중 API와 위험 경고 API, Track A 골든 테스트, 주봉 데이터 신선도 가드, 시장 신호와 행동의 분리, `StrategyDecisionMaker` 기반 행동 규칙, 완료 주봉 캐시와 다종목 전략 가이드의 종목별 부분 실패 응답, `TradePlan` 도메인 모델과 기본 유효성 검증, `PortfolioRiskPolicy`의 포트폴리오 저장 및 설정·조회 API까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.
+포트폴리오 노출 비중 API와 위험 경고 API, Track A 골든 테스트, 주봉 데이터 신선도 가드, 시장 신호와 행동의 분리, `StrategyDecisionMaker` 기반 행동 규칙, 매수 시점·손절 상태 가이드 응답, 완료 주봉 캐시와 다종목 전략 가이드의 종목별 부분 실패 응답, 전략 메타데이터의 신뢰도·주의사항 응답, 검토용 손절 선택 주문 초안 도메인 모델, `PortfolioRiskPolicy`의 포트폴리오 저장 및 설정·조회 API까지 구현했다. 세부 상태와 다음 작업은 `docs/LEARNING_LOG.md`를 기준으로 한다.
 
 ## 현재 제한
 

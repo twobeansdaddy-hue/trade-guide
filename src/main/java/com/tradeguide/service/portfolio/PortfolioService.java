@@ -63,10 +63,26 @@ public class PortfolioService {
             BigDecimal maxLossPerTradeRatio,
             BigDecimal maxSingleAssetExposureRatio
     ) {
+        return updateRiskPolicy(
+                memberId,
+                portfolioId,
+                maxLossPerTradeRatio,
+                maxSingleAssetExposureRatio,
+                null
+        );
+    }
+
+    public PortfolioRiskPolicy updateRiskPolicy(
+            Long memberId,
+            Long portfolioId,
+            BigDecimal maxLossPerTradeRatio,
+            BigDecimal maxSingleAssetExposureRatio,
+            BigDecimal stopLossRatio
+    ) {
         Portfolio portfolio = findPortfolio(memberId, portfolioId);
 
         PortfolioRiskPolicy riskPolicy = new PortfolioRiskPolicy(
-                maxLossPerTradeRatio, maxSingleAssetExposureRatio
+                maxLossPerTradeRatio, maxSingleAssetExposureRatio, stopLossRatio
         );
 
         portfolio.changeRiskPolicy(riskPolicy);

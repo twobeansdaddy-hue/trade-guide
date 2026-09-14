@@ -14,10 +14,12 @@ import com.tradeguide.exception.AssetProfileNotFoundException;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
 import com.tradeguide.exception.MarketDataUnavailableException;
 import com.tradeguide.repository.broker.PortfolioBrokerHoldingSnapshotRepository;
+import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.strategy.PortfolioAssetStrategyProfileRepository;
 import com.tradeguide.service.holding.HoldingService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,19 +32,22 @@ public class PortfolioStrategyGuideService {
     private final StrategyDecisionMaker strategyDecisionMaker;
     private final PortfolioAssetStrategyProfileRepository portfolioAssetStrategyProfileRepository;
     private final PortfolioBrokerHoldingSnapshotRepository portfolioBrokerHoldingSnapshotRepository;
+    private final PortfolioRepository portfolioRepository;
 
     public PortfolioStrategyGuideService(
             HoldingService holdingService,
             StrategyGuideService strategyGuideService,
             StrategyDecisionMaker strategyDecisionMaker,
             PortfolioAssetStrategyProfileRepository portfolioAssetStrategyProfileRepository,
-            PortfolioBrokerHoldingSnapshotRepository portfolioBrokerHoldingSnapshotRepository
+            PortfolioBrokerHoldingSnapshotRepository portfolioBrokerHoldingSnapshotRepository,
+            PortfolioRepository portfolioRepository
     ) {
         this.holdingService = holdingService;
         this.strategyGuideService = strategyGuideService;
         this.strategyDecisionMaker = strategyDecisionMaker;
         this.portfolioAssetStrategyProfileRepository = portfolioAssetStrategyProfileRepository;
         this.portfolioBrokerHoldingSnapshotRepository = portfolioBrokerHoldingSnapshotRepository;
+        this.portfolioRepository = portfolioRepository;
     }
 
     public StrategyGuideBatch getPortfolioStrategyGuides(
@@ -64,6 +69,7 @@ public class PortfolioStrategyGuideService {
 
         List<AssetStrategyGuide> guides = new ArrayList<>();
         List<UnavailableAsset> unavailableAssets = new ArrayList<>();
+        BigDecimal stopLossRatio = resolveStopLossRatio(memberId, portfolioId);
 
         for (int index = 0; index < holdings.size(); index++) {
             Holding holding = holdings.get(index);
@@ -74,7 +80,13 @@ public class PortfolioStrategyGuideService {
                 guides.add(new AssetStrategyGuide(
                         holding.getMarket(),
                         holding.getTicker(),
-                        strategyDecisionMaker.decideForHolding(signal)
+                        stopLossRatio == null
+                                ? strategyDecisionMaker.decideForHolding(signal)
+                                : strategyDecisionMaker.decideForHolding(
+                                        signal,
+                                        holding.getAveragePurchasePrice(),
+                                        stopLossRatio
+                                )
                 ));
             } catch (AssetProfileNotFoundException exception) {
                 unavailableAssets.add(new UnavailableAsset(
@@ -181,5 +193,18 @@ public class PortfolioStrategyGuideService {
                     StrategyGuideUnavailableReason.MARKET_DATA_RATE_LIMIT_EXCEEDED
             ));
         }
+    }
+
+    private BigDecimal resolveStopLossRatio(Long memberId, Long portfolioId) {
+        Optional<com.tradeguide.domain.portfolio.Portfolio> portfolioResult =
+                portfolioRepository.findByMember_IdAndId(memberId, portfolioId);
+        if (portfolioResult == null) {
+            return null;
+        }
+
+        return portfolioResult
+                .map(portfolio -> portfolio.getRiskPolicy())
+                .map(riskPolicy -> riskPolicy.getStopLossRatio())
+                .orElse(null);
     }
 }
