@@ -13,6 +13,7 @@ import com.tradeguide.service.market.WeeklyCandleFreshnessValidator;
 import com.tradeguide.service.market.CompletedWeeklyCandleCache;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -225,5 +226,69 @@ class StrategyGuideServiceTest {
                 CandleInterval.WEEKLY,
                 101
         );
+    }
+
+    @Test
+    void getsStrategySignalFromExplicitTrackWithoutGlobalProfileLookup() {
+        List<MarketCandle> fetchedCandles = List.of();
+        List<MarketCandle> completedCandles = List.of();
+
+        StrategySignal expected = new StrategySignal(
+                new BigDecimal("120"),
+                "명시적 트랙 신호",
+                new StrategyMetadata(
+                        "test-strategy",
+                        "test-v1",
+                        LocalDate.of(2026, 8, 7)
+                ),
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.CROSS_UP,
+                0
+        );
+
+        when(marketHistoryService.getCandles(
+                Market.US,
+                "SOXL",
+                CandleInterval.WEEKLY,
+                101
+        )).thenReturn(fetchedCandles);
+
+        when(completedWeeklyCandleCache.getOrLoad(
+                eq(Market.US),
+                eq("SOXL"),
+                eq(101),
+                any()
+        )).thenAnswer(invocation -> invocation
+                .<Supplier<List<MarketCandle>>>getArgument(3)
+                .get()
+        );
+
+        when(completedWeeklyCandleFilter.filter(fetchedCandles))
+                .thenReturn(completedCandles);
+
+        when(strategySelector.select(InvestmentTrack.TRACK_B))
+                .thenReturn(tradingStrategy);
+
+        when(tradingStrategy.decide(any(AssetProfile.class), eq(completedCandles)))
+                .thenReturn(expected);
+
+        StrategySignal result = strategyGuideService.getStrategySignal(
+                Market.US,
+                "SOXL",
+                InvestmentTrack.TRACK_B
+        );
+
+        assertThat(result).isSameAs(expected);
+
+        verifyNoInteractions(assetProfileRepository);
+        verify(strategySelector).select(InvestmentTrack.TRACK_B);
+        verify(weeklyCandleFreshnessValidator).validate(completedCandles);
+
+        ArgumentCaptor<AssetProfile> profileCaptor = ArgumentCaptor.forClass(AssetProfile.class);
+        verify(tradingStrategy).decide(profileCaptor.capture(), eq(completedCandles));
+        assertThat(profileCaptor.getValue().getMarket()).isEqualTo(Market.US);
+        assertThat(profileCaptor.getValue().getTicker()).isEqualTo("SOXL");
+        assertThat(profileCaptor.getValue().getInvestmentTrack())
+                .isEqualTo(InvestmentTrack.TRACK_B);
     }
 }

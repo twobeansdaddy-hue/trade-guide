@@ -58,8 +58,7 @@ public class BrokerConnectionController {
                 memberId,
                 request.getProvider(),
                 request.getDisplayName(),
-                request.getClientId(),
-                request.getClientSecret()
+                request.resolveCredentialValues()
         );
 
         return ResponseEntity.status(HttpStatus.CREATED)

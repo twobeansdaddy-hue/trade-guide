@@ -5,6 +5,7 @@ import com.tradeguide.domain.member.Member;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.service.auth.AuthIdentityService;
 import com.tradeguide.service.auth.MemberAccessService;
+import com.tradeguide.service.backtest.PortfolioAssetBacktestService;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.strategy.PortfolioCandidateStrategyGuideService;
@@ -67,6 +68,8 @@ class PortfolioControllerMemberBoundaryTest {
     private AuthIdentityService authIdentityService;
     @MockitoBean
     private MarketDataProviderCatalog marketDataProviderCatalog;
+    @MockitoBean
+    private PortfolioAssetBacktestService portfolioAssetBacktestService;
 
     @Test
     void allowsRequestWhenAuthenticatedMemberMatchesPathMemberId() throws Exception {

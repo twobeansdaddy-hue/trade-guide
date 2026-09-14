@@ -39,7 +39,8 @@ public class HoldingValuationCalculator {
                 purchaseAmount,
                 marketValue,
                 unrealizedProfitLoss,
-                returnRate
+                returnRate,
+                marketPrice.getCapturedAt()
         );
     }
 }

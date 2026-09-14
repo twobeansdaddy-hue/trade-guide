@@ -6,6 +6,7 @@ import com.tradeguide.domain.broker.BrokerProvider;
 import com.tradeguide.domain.member.Member;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.portfolio.PortfolioBrokerLink;
+import com.tradeguide.exception.PortfolioNotFoundException;
 import com.tradeguide.repository.broker.BrokerConnectionRepository;
 import com.tradeguide.repository.broker.PortfolioBrokerLinkRepository;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
@@ -81,6 +82,39 @@ class PortfolioBrokerLinkServiceTest {
         assertThat(candidates).hasSize(1);
         assertThat(candidates.getFirst().connection().getId()).isEqualTo(1L);
         assertThat(candidates.getFirst().account().getMaskedAccountNumber()).isEqualTo("*****1234");
+    }
+
+    @Test
+    void excludesDetachedAccountsFromCandidates() {
+        BrokerConnection connection = connectionWithAccounts(1L, "개인 토스증권", 100L, 101L);
+        // 재검증에서 증권사가 첫 계좌만 반환하면 나머지는 분리된 이력 행으로 남는다.
+        connection.reconcileVerifiedAccounts(List.of(connection.getAccounts().getFirst()));
+
+        when(portfolioRepository.findByMember_IdAndId(10L, 20L)).thenReturn(Optional.of(portfolio));
+        when(brokerConnectionRepository.findAllByMember_IdOrderByCreatedAtDesc(10L))
+                .thenReturn(List.of(connection));
+
+        List<PortfolioBrokerLinkService.BrokerLinkCandidate> candidates =
+                portfolioBrokerLinkService.getLinkCandidates(10L, 20L);
+
+        assertThat(candidates)
+                .extracting(candidate -> candidate.account().getId())
+                .containsExactly(100L);
+    }
+
+    @Test
+    void rejectsLinkingDetachedAccount() {
+        BrokerConnection connection = connectionWithAccounts(1L, "개인 토스증권", 100L, 101L);
+        connection.reconcileVerifiedAccounts(List.of(connection.getAccounts().getFirst()));
+
+        when(portfolioRepository.findByMember_IdAndId(10L, 20L)).thenReturn(Optional.of(portfolio));
+        when(brokerConnectionRepository.findByMember_IdAndId(10L, 1L)).thenReturn(Optional.of(connection));
+
+        assertThatThrownBy(() -> portfolioBrokerLinkService.linkBrokerAccount(10L, 20L, 1L, 101L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("증권사에서 더 이상 조회되지 않는 계좌입니다. 연결을 다시 검증한 뒤 계좌를 선택해 주세요.");
+
+        verify(portfolioBrokerLinkRepository, never()).save(any(PortfolioBrokerLink.class));
     }
 
     @Test
@@ -169,7 +203,7 @@ class PortfolioBrokerLinkServiceTest {
         when(portfolioRepository.findByMember_IdAndId(99L, 20L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> portfolioBrokerLinkService.linkBrokerAccount(99L, 20L, 1L, 100L))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(PortfolioNotFoundException.class)
                 .hasMessage("포트폴리오를 찾을 수 없습니다.");
 
         verify(brokerConnectionRepository, never()).findByMember_IdAndId(any(), any());
@@ -205,7 +239,7 @@ class PortfolioBrokerLinkServiceTest {
                 })
                 .toList();
 
-        connection.replaceAccounts(accounts);
+        connection.reconcileVerifiedAccounts(accounts);
         connection.markConnected("*****1234");
         return connection;
     }

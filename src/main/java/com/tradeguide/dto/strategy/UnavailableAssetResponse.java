@@ -8,22 +8,28 @@ public class UnavailableAssetResponse {
     private final Market market;
     private final String ticker;
     private final String message;
+    private final String reason;
 
     public UnavailableAssetResponse(
             Market market,
             String ticker,
-            String message
+            String message,
+            String reason
     ) {
         this.market = market;
         this.ticker = ticker;
         this.message = message;
+        this.reason = reason;
     }
 
     public static UnavailableAssetResponse from(UnavailableAsset unavailableAsset) {
         return new UnavailableAssetResponse(
                 unavailableAsset.getMarket(),
                 unavailableAsset.getTicker(),
-                unavailableAsset.getMessage()
+                unavailableAsset.getMessage(),
+                unavailableAsset.getReason() != null
+                        ? unavailableAsset.getReason().name()
+                        : null
         );
     }
 
@@ -37,5 +43,9 @@ public class UnavailableAssetResponse {
 
     public String getMessage() {
         return message;
+    }
+
+    public String getReason() {
+        return reason;
     }
 }

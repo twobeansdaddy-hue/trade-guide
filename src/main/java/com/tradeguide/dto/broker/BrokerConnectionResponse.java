@@ -38,6 +38,10 @@ public class BrokerConnectionResponse {
         this.accounts = accounts;
     }
 
+    /**
+     * 계좌 목록에는 가장 최근 검증에서 증권사가 반환한 계좌만 담는다. 분리된 계좌 행은
+     * 과거 스냅샷의 참조 대상으로만 남아 있어 새로 선택할 수 없다.
+     */
     public static BrokerConnectionResponse from(BrokerConnection connection) {
         return new BrokerConnectionResponse(
                 connection.getId(),
@@ -47,7 +51,7 @@ public class BrokerConnectionResponse {
                 connection.getMaskedAccountLabel(),
                 connection.getLastVerifiedAt(),
                 connection.getCreatedAt(),
-                connection.getAccounts().stream().map(BrokerAccountResponse::from).toList()
+                connection.getActiveAccounts().stream().map(BrokerAccountResponse::from).toList()
         );
     }
 

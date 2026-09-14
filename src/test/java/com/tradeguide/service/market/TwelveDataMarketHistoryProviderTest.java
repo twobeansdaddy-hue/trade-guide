@@ -1,10 +1,14 @@
 package com.tradeguide.service.market;
 
+import com.tradeguide.config.BrokerCredentialKeyringProperties;
 import com.tradeguide.domain.market.CandleInterval;
 import com.tradeguide.domain.market.MarketCandle;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
+import com.tradeguide.exception.MarketDataProviderNotConfiguredException;
 import com.tradeguide.exception.MarketDataUnavailableException;
+import com.tradeguide.service.broker.AesGcmBrokerCredentialCipher;
+import com.tradeguide.service.broker.BrokerCredentialCipher;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,8 +37,15 @@ class TwelveDataMarketHistoryProviderTest {
     private final TwelveDataMarketHistoryProvider provider =
             new TwelveDataMarketHistoryProvider(
                     restClientBuilder,
-                    "test-api-key"
+                    "test-api-key",
+                    new MarketDataProviderConfigurationStatus("test-api-key", unconfiguredBrokerCipher())
             );
+
+    private static BrokerCredentialCipher unconfiguredBrokerCipher() {
+        return new AesGcmBrokerCredentialCipher(
+                new BrokerCredentialKeyringProperties(null, null, null)
+        );
+    }
 
     @Test
     void returnsDailyCandlesInAscendingOrder() {
@@ -211,12 +222,13 @@ class TwelveDataMarketHistoryProviderTest {
     }
 
     @Test
-    void throwsExceptionWhenApiKeyIsBlank() {
+    void throwsProviderNotConfiguredExceptionWhenApiKeyIsBlank() {
         // Given
         TwelveDataMarketHistoryProvider providerWithoutApiKey =
                 new TwelveDataMarketHistoryProvider(
                         RestClient.builder(),
-                        ""
+                        "",
+                        new MarketDataProviderConfigurationStatus("", unconfiguredBrokerCipher())
                 );
 
         // When & Then
@@ -228,7 +240,9 @@ class TwelveDataMarketHistoryProviderTest {
                         2
                 )
         )
+                .isInstanceOf(MarketDataProviderNotConfiguredException.class)
                 .isInstanceOf(MarketDataUnavailableException.class)
-                .hasMessage("시장 데이터 조회 API 키가 설정되지 않았습니다.");
+                .hasMessageContaining("Twelve Data")
+                .hasMessageContaining("TWELVE_DATA_API_KEY");
     }
 }

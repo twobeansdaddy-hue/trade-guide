@@ -9,8 +9,23 @@ import java.util.List;
 @Component
 public class MarketDataProviderCatalog {
 
+    private final MarketDataProviderConfigurationStatus configurationStatus;
+
+    public MarketDataProviderCatalog(
+            MarketDataProviderConfigurationStatus configurationStatus
+    ) {
+        this.configurationStatus = configurationStatus;
+    }
+
     public List<MarketDataProvider> getProviders() {
         return Arrays.asList(MarketDataProvider.values());
+    }
+
+    /**
+     * 제공자를 사용하기 위한 서버 설정이 준비됐는지 반환한다. 비밀값은 노출하지 않는다.
+     */
+    public boolean isConfigured(MarketDataProvider provider) {
+        return configurationStatus.isConfigured(provider);
     }
 
     public void requireSelectable(MarketDataProvider provider) {

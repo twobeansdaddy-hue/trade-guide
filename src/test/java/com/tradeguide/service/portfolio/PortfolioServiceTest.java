@@ -1,10 +1,17 @@
 package com.tradeguide.service.portfolio;
 
+import com.tradeguide.domain.broker.BrokerAccount;
+import com.tradeguide.domain.broker.BrokerConnection;
+import com.tradeguide.domain.broker.BrokerConnectionStatus;
+import com.tradeguide.domain.broker.BrokerProvider;
 import com.tradeguide.domain.member.Member;
 import com.tradeguide.domain.market.MarketDataProvider;
 import com.tradeguide.domain.market.PortfolioMarketDataPreference;
 import com.tradeguide.domain.portfolio.Portfolio;
+import com.tradeguide.domain.portfolio.PortfolioBrokerLink;
 import com.tradeguide.domain.risk.PortfolioRiskPolicy;
+import com.tradeguide.exception.BrokerConnectionUnavailableException;
+import com.tradeguide.repository.broker.PortfolioBrokerLinkRepository;
 import com.tradeguide.service.market.MarketDataProviderCatalog;
 import com.tradeguide.repository.member.MemberRepository;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
@@ -15,12 +22,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -38,6 +47,9 @@ class PortfolioServiceTest {
 
     @Mock
     private MarketDataProviderCatalog marketDataProviderCatalog;
+
+    @Mock
+    private PortfolioBrokerLinkRepository portfolioBrokerLinkRepository;
 
     @InjectMocks
     private PortfolioService portfolioService;
@@ -187,5 +199,56 @@ class PortfolioServiceTest {
         assertThat(portfolio.getMarketDataPreference().getPriceProvider())
                 .isEqualTo(MarketDataProvider.TWELVE_DATA);
         verifyNoInteractions(portfolioRepository);
+    }
+
+    @Test
+    void selectsTossSecuritiesWhenPortfolioHasVerifiedTossConnection() {
+        Member member = new Member("toss@example.com", "toss-user");
+        Portfolio portfolio = new Portfolio(member, "US Stocks");
+
+        BrokerConnection connection = mock(BrokerConnection.class);
+        when(connection.getProvider()).thenReturn(BrokerProvider.TOSS_SECURITIES);
+        when(connection.getStatus()).thenReturn(BrokerConnectionStatus.CONNECTED);
+
+        PortfolioBrokerLink link = new PortfolioBrokerLink(
+                portfolio, connection, mock(BrokerAccount.class), LocalDateTime.now()
+        );
+
+        when(portfolioRepository.findByMember_IdAndId(1L, 10L))
+                .thenReturn(Optional.of(portfolio));
+        when(portfolioBrokerLinkRepository.findByPortfolio_Id(portfolio.getId()))
+                .thenReturn(Optional.of(link));
+        when(portfolioRepository.save(portfolio)).thenReturn(portfolio);
+
+        PortfolioMarketDataPreference preference = portfolioService.updateMarketDataPreference(
+                1L,
+                10L,
+                MarketDataProvider.TOSS_SECURITIES
+        );
+
+        assertThat(preference.getPriceProvider()).isEqualTo(MarketDataProvider.TOSS_SECURITIES);
+        verify(portfolioRepository).save(portfolio);
+    }
+
+    @Test
+    void rejectsTossSecuritiesWhenPortfolioHasNoVerifiedTossConnection() {
+        Member member = new Member("toss@example.com", "toss-user");
+        Portfolio portfolio = new Portfolio(member, "US Stocks");
+
+        when(portfolioRepository.findByMember_IdAndId(1L, 10L))
+                .thenReturn(Optional.of(portfolio));
+        when(portfolioBrokerLinkRepository.findByPortfolio_Id(portfolio.getId()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> portfolioService.updateMarketDataPreference(
+                1L,
+                10L,
+                MarketDataProvider.TOSS_SECURITIES
+        ))
+                .isInstanceOf(BrokerConnectionUnavailableException.class);
+
+        assertThat(portfolio.getMarketDataPreference().getPriceProvider())
+                .isEqualTo(MarketDataProvider.TWELVE_DATA);
+        verify(portfolioRepository, never()).save(any(Portfolio.class));
     }
 }

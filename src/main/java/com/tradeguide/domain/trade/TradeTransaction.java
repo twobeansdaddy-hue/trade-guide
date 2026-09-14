@@ -41,6 +41,10 @@ public class TradeTransaction {
     @Column(nullable = false)
     private Instant tradedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TradeTransactionSource source;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -57,6 +61,30 @@ public class TradeTransaction {
             BigDecimal fee,
             Instant tradedAt
     ) {
+        this(
+                portfolio,
+                market,
+                ticker,
+                tradeType,
+                quantity,
+                executedPrice,
+                fee,
+                tradedAt,
+                TradeTransactionSource.MANUAL
+        );
+    }
+
+    public TradeTransaction(
+            Portfolio portfolio,
+            Market market,
+            String ticker,
+            TradeType tradeType,
+            BigDecimal quantity,
+            BigDecimal executedPrice,
+            BigDecimal fee,
+            Instant tradedAt,
+            TradeTransactionSource source
+    ) {
         this.portfolio = portfolio;
         this.market = market;
         this.ticker = ticker;
@@ -65,6 +93,7 @@ public class TradeTransaction {
         this.executedPrice = executedPrice;
         this.fee = fee;
         this.tradedAt = tradedAt;
+        this.source = source;
         this.createdAt = Instant.now();
     }
 
@@ -102,6 +131,10 @@ public class TradeTransaction {
 
     public Instant getTradedAt() {
         return tradedAt;
+    }
+
+    public TradeTransactionSource getSource() {
+        return source;
     }
 
     public Instant getCreatedAt() {

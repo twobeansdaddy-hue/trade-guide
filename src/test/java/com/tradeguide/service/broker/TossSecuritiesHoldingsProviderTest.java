@@ -1,5 +1,6 @@
 package com.tradeguide.service.broker;
 
+import static com.tradeguide.domain.broker.BrokerCredentialsFixture.tossCredentials;
 import com.tradeguide.domain.broker.BrokerHolding;
 import com.tradeguide.domain.broker.BrokerHoldingSnapshot;
 import com.tradeguide.domain.trade.Market;
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
@@ -44,7 +46,7 @@ class TossSecuritiesHoldingsProviderTest {
 
     @Test
     void readsHoldingsFromOverviewResultUsingAccountHeader() {
-        when(accessTokenIssuer.issueAccessToken("id", "secret")).thenReturn("test-access-token");
+        when(accessTokenIssuer.issueAccessToken(tossCredentials("id", "secret"))).thenReturn("test-access-token");
         server.expect(requestTo(HOLDINGS_URL))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer test-access-token"))
                 .andExpect(header("X-Tossinvest-Account", "1"))
@@ -77,7 +79,7 @@ class TossSecuritiesHoldingsProviderTest {
                         }
                         """), MediaType.APPLICATION_JSON));
 
-        BrokerHoldingSnapshot snapshot = provider.fetchHoldings("id", "secret", "1");
+        BrokerHoldingSnapshot snapshot = provider.fetchHoldings(tossCredentials("id", "secret"), "1");
 
         assertThat(snapshot.unsupportedMarketCount()).isZero();
         assertThat(snapshot.holdings()).containsExactly(
@@ -89,7 +91,7 @@ class TossSecuritiesHoldingsProviderTest {
 
     @Test
     void countsUnknownMarketCountryAsUnsupportedInsteadOfFailing() {
-        when(accessTokenIssuer.issueAccessToken("id", "secret")).thenReturn("test-access-token");
+        when(accessTokenIssuer.issueAccessToken(tossCredentials("id", "secret"))).thenReturn("test-access-token");
         server.expect(requestTo(HOLDINGS_URL))
                 .andRespond(withSuccess(overviewWithItems("""
                         {
@@ -108,7 +110,7 @@ class TossSecuritiesHoldingsProviderTest {
                         }
                         """), MediaType.APPLICATION_JSON));
 
-        BrokerHoldingSnapshot snapshot = provider.fetchHoldings("id", "secret", "1");
+        BrokerHoldingSnapshot snapshot = provider.fetchHoldings(tossCredentials("id", "secret"), "1");
 
         assertThat(snapshot.unsupportedMarketCount()).isEqualTo(1);
         assertThat(snapshot.holdings()).containsExactly(
@@ -119,7 +121,7 @@ class TossSecuritiesHoldingsProviderTest {
 
     @Test
     void readsEmptyHoldingsWhenAccountHasNoItems() {
-        when(accessTokenIssuer.issueAccessToken("id", "secret")).thenReturn("test-access-token");
+        when(accessTokenIssuer.issueAccessToken(tossCredentials("id", "secret"))).thenReturn("test-access-token");
         server.expect(requestTo(HOLDINGS_URL))
                 .andRespond(withSuccess("""
                         {
@@ -133,7 +135,7 @@ class TossSecuritiesHoldingsProviderTest {
                         }
                         """, MediaType.APPLICATION_JSON));
 
-        BrokerHoldingSnapshot snapshot = provider.fetchHoldings("id", "secret", "1");
+        BrokerHoldingSnapshot snapshot = provider.fetchHoldings(tossCredentials("id", "secret"), "1");
 
         assertThat(snapshot.holdings()).isEmpty();
         assertThat(snapshot.unsupportedMarketCount()).isZero();
@@ -142,13 +144,13 @@ class TossSecuritiesHoldingsProviderTest {
 
     @Test
     void failsWhenResultIsNotAHoldingsOverview() {
-        when(accessTokenIssuer.issueAccessToken("id", "secret")).thenReturn("test-access-token");
+        when(accessTokenIssuer.issueAccessToken(tossCredentials("id", "secret"))).thenReturn("test-access-token");
         server.expect(requestTo(HOLDINGS_URL))
                 .andRespond(withSuccess("""
                         {"result": {"totalPurchaseAmount": {"krw": "0", "usd": "0"}}}
                         """, MediaType.APPLICATION_JSON));
 
-        assertThatThrownBy(() -> provider.fetchHoldings("id", "secret", "1"))
+        assertThatThrownBy(() -> provider.fetchHoldings(tossCredentials("id", "secret"), "1"))
                 .isInstanceOf(BrokerConnectionUnavailableException.class)
                 .hasMessage("토스증권 보유 종목 응답이 올바르지 않습니다.");
 
@@ -157,7 +159,7 @@ class TossSecuritiesHoldingsProviderTest {
 
     @Test
     void failsWhenDecimalStringFieldIsNotUsable() {
-        when(accessTokenIssuer.issueAccessToken("id", "secret")).thenReturn("test-access-token");
+        when(accessTokenIssuer.issueAccessToken(tossCredentials("id", "secret"))).thenReturn("test-access-token");
         server.expect(requestTo(HOLDINGS_URL))
                 .andRespond(withSuccess(overviewWithItems("""
                         {
@@ -169,7 +171,7 @@ class TossSecuritiesHoldingsProviderTest {
                         }
                         """), MediaType.APPLICATION_JSON));
 
-        assertThatThrownBy(() -> provider.fetchHoldings("id", "secret", "1"))
+        assertThatThrownBy(() -> provider.fetchHoldings(tossCredentials("id", "secret"), "1"))
                 .isInstanceOf(BrokerConnectionUnavailableException.class)
                 .hasMessage("토스증권 보유 종목 응답이 올바르지 않습니다.");
 
@@ -178,11 +180,11 @@ class TossSecuritiesHoldingsProviderTest {
 
     @Test
     void failsWhenBrokerResponseIsNotUsable() {
-        when(accessTokenIssuer.issueAccessToken("id", "secret")).thenReturn("test-access-token");
+        when(accessTokenIssuer.issueAccessToken(tossCredentials("id", "secret"))).thenReturn("test-access-token");
         server.expect(requestTo(HOLDINGS_URL))
                 .andRespond(withStatus(HttpStatus.BAD_GATEWAY));
 
-        assertThatThrownBy(() -> provider.fetchHoldings("id", "secret", "1"))
+        assertThatThrownBy(() -> provider.fetchHoldings(tossCredentials("id", "secret"), "1"))
                 .isInstanceOf(BrokerConnectionUnavailableException.class)
                 .hasMessage("토스증권 보유 종목 조회에 실패했습니다.");
 
@@ -190,8 +192,22 @@ class TossSecuritiesHoldingsProviderTest {
     }
 
     @Test
+    void dropsCachedTokenWhenBrokerRejectsIt() {
+        when(accessTokenIssuer.issueAccessToken(tossCredentials("id", "secret"))).thenReturn("test-access-token");
+        server.expect(requestTo(HOLDINGS_URL))
+                .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
+
+        assertThatThrownBy(() -> provider.fetchHoldings(tossCredentials("id", "secret"), "1"))
+                .isInstanceOf(BrokerConnectionUnavailableException.class)
+                .hasMessage("토스증권 보유 종목 조회에 실패했습니다.");
+
+        verify(accessTokenIssuer).invalidate(tossCredentials("id", "secret"));
+        server.verify();
+    }
+
+    @Test
     void rejectsMissingAccountSequenceBeforeCallingBroker() {
-        assertThatThrownBy(() -> provider.fetchHoldings("id", "secret", " "))
+        assertThatThrownBy(() -> provider.fetchHoldings(tossCredentials("id", "secret"), " "))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("증권사 계좌 일련번호가 필요합니다.");
 

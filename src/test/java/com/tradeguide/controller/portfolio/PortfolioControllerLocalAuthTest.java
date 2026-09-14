@@ -3,6 +3,7 @@ package com.tradeguide.controller.portfolio;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.service.auth.AuthIdentityService;
 import com.tradeguide.service.auth.MemberAccessService;
+import com.tradeguide.service.backtest.PortfolioAssetBacktestService;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.strategy.PortfolioCandidateStrategyGuideService;
@@ -58,6 +59,8 @@ class PortfolioControllerLocalAuthTest {
     private AuthIdentityService authIdentityService;
     @MockitoBean
     private MarketDataProviderCatalog marketDataProviderCatalog;
+    @MockitoBean
+    private PortfolioAssetBacktestService portfolioAssetBacktestService;
 
     @Test
     void allowsUnauthenticatedLocalRequestWhenAuthenticationIsDisabled() throws Exception {

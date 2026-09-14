@@ -5,6 +5,7 @@ import com.tradeguide.domain.broker.BrokerConnection;
 import com.tradeguide.domain.broker.BrokerConnectionStatus;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.portfolio.PortfolioBrokerLink;
+import com.tradeguide.exception.PortfolioNotFoundException;
 import com.tradeguide.repository.broker.BrokerConnectionRepository;
 import com.tradeguide.repository.broker.PortfolioBrokerLinkRepository;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
@@ -40,7 +41,9 @@ public class PortfolioBrokerLinkService {
     }
 
     /**
-     * 연결 가능한 계좌 후보는 검증이 끝난({@code CONNECTED}) 연결의 계좌뿐이다.
+     * 연결 가능한 계좌 후보는 검증이 끝난({@code CONNECTED}) 연결의 계좌 중,
+     * 가장 최근 검증에서 증권사가 실제로 반환한 계좌뿐이다. 분리된 계좌 행은 과거
+     * 스냅샷 참조를 위해 남아 있을 뿐이므로 후보에서 제외한다.
      */
     @Transactional(readOnly = true)
     public List<BrokerLinkCandidate> getLinkCandidates(Long memberId, Long portfolioId) {
@@ -48,7 +51,7 @@ public class PortfolioBrokerLinkService {
 
         return brokerConnectionRepository.findAllByMember_IdOrderByCreatedAtDesc(memberId).stream()
                 .filter(connection -> connection.getStatus() == BrokerConnectionStatus.CONNECTED)
-                .flatMap(connection -> connection.getAccounts().stream()
+                .flatMap(connection -> connection.getActiveAccounts().stream()
                         .map(account -> new BrokerLinkCandidate(connection, account)))
                 .toList();
     }
@@ -81,6 +84,13 @@ public class PortfolioBrokerLinkService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("증권사 계좌를 찾을 수 없습니다."));
 
+        // 분리된 계좌는 과거 스냅샷이 참조하는 이력 행일 뿐이라 새로 조회할 수 없다.
+        if (!account.isActive()) {
+            throw new IllegalArgumentException(
+                    "증권사에서 더 이상 조회되지 않는 계좌입니다. 연결을 다시 검증한 뒤 계좌를 선택해 주세요."
+            );
+        }
+
         LocalDateTime now = LocalDateTime.now(clock);
 
         // v1은 포트폴리오당 하나의 링크만 유지한다. 이 제약은 서비스 검증 사항이다.
@@ -107,7 +117,7 @@ public class PortfolioBrokerLinkService {
 
     private Portfolio requirePortfolio(Long memberId, Long portfolioId) {
         return portfolioRepository.findByMember_IdAndId(memberId, portfolioId)
-                .orElseThrow(() -> new IllegalArgumentException("포트폴리오를 찾을 수 없습니다."));
+                .orElseThrow(() -> new PortfolioNotFoundException("포트폴리오를 찾을 수 없습니다."));
     }
 
     /** 연결 후보 한 건이다. 마스킹된 계좌 번호만 담고 계좌 일련번호는 담지 않는다. */

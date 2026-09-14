@@ -2,7 +2,9 @@ package com.tradeguide.controller.trade;
 
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.trade.TradeTransaction;
+import com.tradeguide.domain.trade.TradeTransactionSource;
 import com.tradeguide.domain.trade.TradeType;
+import com.tradeguide.exception.TradeTransactionProtectedException;
 import com.tradeguide.service.trade.TradeTransactionService;
 import com.tradeguide.service.auth.MemberAccessService;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -55,6 +58,7 @@ class TradeTransactionControllerTest {
         when(transaction.getFee())
                 .thenReturn(new BigDecimal("0.10"));
         when(transaction.getTradedAt()).thenReturn(tradedAt);
+        when(transaction.getSource()).thenReturn(TradeTransactionSource.MANUAL);
 
         when(tradeTransactionService.createTradeTransaction(
                 10L,
@@ -90,7 +94,8 @@ class TradeTransactionControllerTest {
                 .andExpect(jsonPath("$.tradeType").value("BUY"))
                 .andExpect(jsonPath("$.quantity").value(10))
                 .andExpect(jsonPath("$.executedPrice").value(100.00))
-                .andExpect(jsonPath("$.fee").value(0.10));
+                .andExpect(jsonPath("$.fee").value(0.10))
+                .andExpect(jsonPath("$.source").value("MANUAL"));
 
         verify(tradeTransactionService).createTradeTransaction(
                 10L,
@@ -116,6 +121,7 @@ class TradeTransactionControllerTest {
         when(transaction.getExecutedPrice()).thenReturn(new BigDecimal("100.00"));
         when(transaction.getFee()).thenReturn(BigDecimal.ZERO);
         when(transaction.getTradedAt()).thenReturn(Instant.parse("2026-08-03T13:30:00Z"));
+        when(transaction.getSource()).thenReturn(TradeTransactionSource.BROKER_OPENING_BALANCE);
         when(tradeTransactionService.getTradeTransactions(10L, 100L))
                 .thenReturn(java.util.List.of(transaction));
 
@@ -123,7 +129,8 @@ class TradeTransactionControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].ticker").value("AAPL"))
-                .andExpect(jsonPath("$[0].tradeType").value("BUY"));
+                .andExpect(jsonPath("$[0].tradeType").value("BUY"))
+                .andExpect(jsonPath("$[0].source").value("BROKER_OPENING_BALANCE"));
 
         verify(tradeTransactionService).getTradeTransactions(10L, 100L);
     }
@@ -137,6 +144,18 @@ class TradeTransactionControllerTest {
 
         verify(tradeTransactionService)
                 .deleteTradeTransaction(10L, 100L, 500L);
+    }
+
+    @Test
+    void returnsConflictWhenDeletingActiveBrokerOpeningBalanceTransaction() throws Exception {
+        doThrow(new TradeTransactionProtectedException(
+                "증권사 개시 잔고는 전용 취소 API로만 취소할 수 있습니다."
+        )).when(tradeTransactionService).deleteTradeTransaction(10L, 100L, 500L);
+
+        mockMvc.perform(delete("/api/members/10/portfolios/100/transactions/500"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message")
+                        .value("증권사 개시 잔고는 전용 취소 API로만 취소할 수 있습니다."));
     }
 
     @Test

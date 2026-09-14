@@ -3,6 +3,7 @@ package com.tradeguide.service.strategy;
 import com.tradeguide.domain.market.CandleInterval;
 import com.tradeguide.domain.market.MarketCandle;
 import com.tradeguide.domain.strategy.AssetProfile;
+import com.tradeguide.domain.strategy.InvestmentTrack;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.strategy.StrategySignal;
 import com.tradeguide.exception.AssetProfileNotFoundException;
@@ -53,6 +54,25 @@ public class StrategyGuideService {
                 .findByMarketAndTicker(market, ticker)
                 .orElseThrow(() -> new AssetProfileNotFoundException(market, ticker));
 
+        return resolveSignal(assetProfile);
+    }
+
+    /**
+     * 전역 {@link AssetProfile} 조회 없이 명시적 {@link InvestmentTrack}으로 전략 신호를
+     * 계산한다. 포트폴리오 범위 재정의처럼 전역 카탈로그에 없거나 전역 값과 다른 트랙을
+     * 적용해야 하는 호출자를 위한 진입점이다.
+     */
+    public StrategySignal getStrategySignal(
+            Market market,
+            String ticker,
+            InvestmentTrack investmentTrack
+    ) {
+        AssetProfile assetProfile = new AssetProfile(market, ticker, investmentTrack);
+
+        return resolveSignal(assetProfile);
+    }
+
+    private StrategySignal resolveSignal(AssetProfile assetProfile) {
         List<MarketCandle> candles = completedWeeklyCandleCache.getOrLoad(
                 assetProfile.getMarket(),
                 assetProfile.getTicker(),

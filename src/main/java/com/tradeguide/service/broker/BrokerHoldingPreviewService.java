@@ -1,26 +1,14 @@
 package com.tradeguide.service.broker;
 
-import com.tradeguide.domain.broker.BrokerAccount;
-import com.tradeguide.domain.broker.BrokerConnection;
-import com.tradeguide.domain.broker.BrokerConnectionSecret;
-import com.tradeguide.domain.broker.BrokerConnectionStatus;
 import com.tradeguide.domain.broker.BrokerHoldingPreview;
 import com.tradeguide.domain.broker.BrokerHoldingSnapshot;
-import com.tradeguide.domain.broker.BrokerProvider;
 import com.tradeguide.domain.holding.Holding;
-import com.tradeguide.domain.portfolio.PortfolioBrokerLink;
-import com.tradeguide.exception.BrokerConnectionUnavailableException;
-import com.tradeguide.repository.broker.PortfolioBrokerLinkRepository;
-import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.service.holding.HoldingService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 포트폴리오에 연결된 증권사 계좌의 보유 종목을 읽기 전용으로 조회하고
@@ -32,81 +20,67 @@ import java.util.Map;
 @Service
 public class BrokerHoldingPreviewService {
 
-    private final PortfolioRepository portfolioRepository;
-    private final PortfolioBrokerLinkRepository portfolioBrokerLinkRepository;
-    private final BrokerCredentialCipher brokerCredentialCipher;
+    private final BrokerHoldingContextLoader brokerHoldingContextLoader;
     private final HoldingService holdingService;
     private final BrokerHoldingPreviewCalculator brokerHoldingPreviewCalculator;
-    private final Map<BrokerProvider, BrokerHoldingsProvider> holdingsProviders;
+    private final BrokerDuplicateCallGuard brokerDuplicateCallGuard;
+    private final BrokerHoldingPreviewCallTracker brokerHoldingPreviewCallTracker;
     private final Clock clock;
 
     public BrokerHoldingPreviewService(
-            PortfolioRepository portfolioRepository,
-            PortfolioBrokerLinkRepository portfolioBrokerLinkRepository,
-            BrokerCredentialCipher brokerCredentialCipher,
+            BrokerHoldingContextLoader brokerHoldingContextLoader,
             HoldingService holdingService,
             BrokerHoldingPreviewCalculator brokerHoldingPreviewCalculator,
-            List<BrokerHoldingsProvider> holdingsProviders,
+            BrokerDuplicateCallGuard brokerDuplicateCallGuard,
+            BrokerHoldingPreviewCallTracker brokerHoldingPreviewCallTracker,
             Clock clock
     ) {
-        this.portfolioRepository = portfolioRepository;
-        this.portfolioBrokerLinkRepository = portfolioBrokerLinkRepository;
-        this.brokerCredentialCipher = brokerCredentialCipher;
+        this.brokerHoldingContextLoader = brokerHoldingContextLoader;
         this.holdingService = holdingService;
         this.brokerHoldingPreviewCalculator = brokerHoldingPreviewCalculator;
-        this.holdingsProviders = new EnumMap<>(BrokerProvider.class);
-        holdingsProviders.forEach(provider -> this.holdingsProviders.put(provider.getProvider(), provider));
+        this.brokerDuplicateCallGuard = brokerDuplicateCallGuard;
+        this.brokerHoldingPreviewCallTracker = brokerHoldingPreviewCallTracker;
         this.clock = clock;
     }
 
-    @Transactional(readOnly = true)
+    /**
+     * 증권사 보유 종목을 조회해 원장과 비교한 결과만 돌려준다. 아무것도 저장하지 않는다.
+     *
+     * <p><b>이 메서드에는 트랜잭션이 없다.</b> 증권사 호출은 트랜잭션 밖에서 한다. 읽기
+     * 트랜잭션이라도 외부 HTTP 응답을 기다리는 동안 커넥션을 붙잡으면, 증권사가 느려질 때
+     * 커넥션 풀이 먼저 고갈된다. 연결 정보 조회는 {@link BrokerHoldingContextLoader}가,
+     * 원장 보유 수량 계산은 {@link HoldingService}가 각자의 짧은 트랜잭션에서 처리한다.
+     *
+     * <p>두 읽기가 서로 다른 트랜잭션에서 일어나므로 그 사이의 원장 변경이 비교에 반영될 수
+     * 있다. 미리보기는 저장하지 않는 화면용 비교이고, 원장에 반영하는 경로는 저장된 스냅샷을
+     * 기준으로 다시 판정하므로 이 차이가 원장 정합성을 해치지 않는다.
+     */
     public BrokerHoldingPreview getHoldingPreview(Long memberId, Long portfolioId) {
-        portfolioRepository.findByMember_IdAndId(memberId, portfolioId)
-                .orElseThrow(() -> new IllegalArgumentException("포트폴리오를 찾을 수 없습니다."));
+        brokerDuplicateCallGuard.acquire(portfolioId, BrokerCallType.HOLDING_PREVIEW);
+        try {
+            brokerDuplicateCallGuard.checkCooldown(
+                    BrokerCallType.HOLDING_PREVIEW, brokerHoldingPreviewCallTracker.get(portfolioId), clock);
 
-        PortfolioBrokerLink link = portfolioBrokerLinkRepository.findByPortfolio_Id(portfolioId)
-                .orElseThrow(() -> new IllegalArgumentException("포트폴리오에 연결된 증권사 계좌가 없습니다."));
+            BrokerHoldingContextLoader.HoldingContext context =
+                    brokerHoldingContextLoader.load(memberId, portfolioId);
 
-        BrokerConnection connection = link.getBrokerConnection();
-        if (connection.getStatus() != BrokerConnectionStatus.CONNECTED) {
-            throw new IllegalArgumentException("증권사 연결을 다시 검증해야 합니다.");
+            BrokerHoldingSnapshot snapshot = context.fetchHoldings();
+            List<Holding> tradeGuideHoldings = holdingService.getHoldings(memberId, portfolioId);
+
+            // 쿨다운 기준 시각은 저장할 곳이 없으므로 호출이 성공한 뒤에만 메모리에 기록한다.
+            // 실패한 시도까지 기록하면 설정을 고친 사용자가 남은 쿨다운 때문에 바로 재시도하지 못한다.
+            brokerHoldingPreviewCallTracker.record(portfolioId, LocalDateTime.now(clock));
+
+            return new BrokerHoldingPreview(
+                    context.provider(),
+                    context.brokerConnectionId(),
+                    context.maskedAccountNumber(),
+                    LocalDateTime.now(clock),
+                    brokerHoldingPreviewCalculator.compare(snapshot.holdings(), tradeGuideHoldings),
+                    snapshot.unsupportedMarketCount()
+            );
+        } finally {
+            brokerDuplicateCallGuard.release(portfolioId, BrokerCallType.HOLDING_PREVIEW);
         }
-
-        BrokerHoldingsProvider holdingsProvider = holdingsProviders.get(connection.getProvider());
-        if (holdingsProvider == null) {
-            throw new BrokerConnectionUnavailableException("해당 증권사의 보유 종목 조회를 아직 지원하지 않습니다.");
-        }
-
-        BrokerAccount account = link.getBrokerAccount();
-        BrokerConnectionSecret secret = connection.getSecret();
-
-        // 복호화된 값은 이 호출 구간에서만 사용하고 저장하거나 응답에 담지 않는다.
-        String clientId = brokerCredentialCipher.decrypt(new EncryptedBrokerCredential(
-                secret.getEncryptedClientId(),
-                secret.getClientIdInitializationVector(),
-                secret.getEncryptionKeyVersion()
-        ));
-        String clientSecret = brokerCredentialCipher.decrypt(new EncryptedBrokerCredential(
-                secret.getEncryptedClientSecret(),
-                secret.getClientSecretInitializationVector(),
-                secret.getEncryptionKeyVersion()
-        ));
-        String accountSequence = brokerCredentialCipher.decrypt(new EncryptedBrokerCredential(
-                account.getEncryptedAccountSequence(),
-                account.getAccountSequenceInitializationVector(),
-                account.getEncryptionKeyVersion()
-        ));
-
-        BrokerHoldingSnapshot snapshot = holdingsProvider.fetchHoldings(clientId, clientSecret, accountSequence);
-        List<Holding> tradeGuideHoldings = holdingService.getHoldings(memberId, portfolioId);
-
-        return new BrokerHoldingPreview(
-                connection.getProvider(),
-                connection.getId(),
-                account.getMaskedAccountNumber(),
-                LocalDateTime.now(clock),
-                brokerHoldingPreviewCalculator.compare(snapshot.holdings(), tradeGuideHoldings),
-                snapshot.unsupportedMarketCount()
-        );
     }
 }

@@ -1,6 +1,7 @@
 package com.tradeguide.service.asset;
 
 import com.tradeguide.domain.asset.AssetListing;
+import com.tradeguide.domain.asset.AssetListingSource;
 import com.tradeguide.domain.asset.AssetSearchResult;
 import com.tradeguide.domain.asset.ListingStatus;
 import com.tradeguide.domain.trade.Market;
@@ -126,6 +127,82 @@ class AssetListingServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("거래 가능한 상장 정보를 찾을 수 없습니다");
 
+        verify(assetListingRepository, never()).save(any(AssetListing.class));
+    }
+
+    @Test
+    void createsListingFromBrokerSnapshotWithoutCallingExternalSearch() {
+        when(assetListingRepository.findByMarketAndTicker(Market.US, "PFE"))
+                .thenReturn(Optional.empty());
+        when(assetListingRepository.save(any(AssetListing.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        AssetListing result = assetListingService.ensureActiveListingFromBrokerSnapshot(
+                Market.US, "pfe", "Pfizer Inc."
+        );
+
+        assertThat(result.getMarket()).isEqualTo(Market.US);
+        assertThat(result.getTicker()).isEqualTo("PFE");
+        assertThat(result.getDisplayName()).isEqualTo("Pfizer Inc.");
+        assertThat(result.getListingStatus()).isEqualTo(ListingStatus.ACTIVE);
+        assertThat(result.getSource()).isEqualTo(AssetListingSource.BROKER_SNAPSHOT);
+        verifyNoInteractions(assetSearchProvider, assetSearchCache);
+    }
+
+    @Test
+    void createsListingFromBrokerSnapshotEvenWhenExternalSearchWouldHaveFailed() {
+        when(assetListingRepository.findByMarketAndTicker(Market.US, "PFE"))
+                .thenReturn(Optional.empty());
+        when(assetListingRepository.save(any(AssetListing.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        AssetListing result = assetListingService.ensureActiveListingFromBrokerSnapshot(
+                Market.US, "PFE", "Pfizer Inc."
+        );
+
+        assertThat(result.getTicker()).isEqualTo("PFE");
+        verifyNoInteractions(assetSearchProvider, assetSearchCache);
+    }
+
+    @Test
+    void fallsBackToTickerAsDisplayNameWhenBrokerDisplayNameIsBlank() {
+        when(assetListingRepository.findByMarketAndTicker(Market.US, "PFE"))
+                .thenReturn(Optional.empty());
+        when(assetListingRepository.save(any(AssetListing.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        AssetListing result = assetListingService.ensureActiveListingFromBrokerSnapshot(Market.US, "PFE", " ");
+
+        assertThat(result.getDisplayName()).isEqualTo("PFE");
+    }
+
+    @Test
+    void reusesExistingActiveListingFromBrokerSnapshotWithoutOverwritingCuratedDisplayName() {
+        AssetListing existing = new AssetListing(Market.US, "AAPL", "Apple Inc. (manually curated)", ListingStatus.ACTIVE);
+        when(assetListingRepository.findByMarketAndTicker(Market.US, "AAPL"))
+                .thenReturn(Optional.of(existing));
+
+        AssetListing result = assetListingService.ensureActiveListingFromBrokerSnapshot(Market.US, "AAPL", "Apple Inc.");
+
+        assertThat(result).isSameAs(existing);
+        assertThat(result.getDisplayName()).isEqualTo("Apple Inc. (manually curated)");
+        verify(assetListingRepository, never()).save(any(AssetListing.class));
+        verifyNoInteractions(assetSearchProvider, assetSearchCache);
+    }
+
+    @Test
+    void rejectsBrokerSnapshotForLocallyInactiveListingWithoutReactivating() {
+        AssetListing inactive = new AssetListing(Market.US, "AAPL", "Apple Inc.", ListingStatus.INACTIVE);
+        when(assetListingRepository.findByMarketAndTicker(Market.US, "AAPL"))
+                .thenReturn(Optional.of(inactive));
+
+        assertThatThrownBy(() ->
+                assetListingService.ensureActiveListingFromBrokerSnapshot(Market.US, "AAPL", "Apple Inc.")
+        )
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("비활성 상장 종목");
+
+        assertThat(inactive.getListingStatus()).isEqualTo(ListingStatus.INACTIVE);
         verify(assetListingRepository, never()).save(any(AssetListing.class));
     }
 

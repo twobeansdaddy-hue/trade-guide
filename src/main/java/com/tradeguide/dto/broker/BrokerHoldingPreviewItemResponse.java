@@ -13,7 +13,8 @@ public record BrokerHoldingPreviewItemResponse(
         BigDecimal brokerQuantity,
         BigDecimal brokerAveragePurchasePrice,
         BigDecimal tradeGuideQuantity,
-        BrokerHoldingComparison comparison
+        BrokerHoldingComparison comparison,
+        Long snapshotItemId
 ) {
     static BrokerHoldingPreviewItemResponse from(BrokerHoldingPreviewItem item) {
         return new BrokerHoldingPreviewItemResponse(
@@ -23,7 +24,8 @@ public record BrokerHoldingPreviewItemResponse(
                 item.brokerQuantity(),
                 item.brokerAveragePurchasePrice(),
                 item.tradeGuideQuantity(),
-                item.comparison()
+                item.comparison(),
+                item.snapshotItemId()
         );
     }
 }

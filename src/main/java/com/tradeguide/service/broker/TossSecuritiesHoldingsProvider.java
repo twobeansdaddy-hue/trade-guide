@@ -1,14 +1,17 @@
 package com.tradeguide.service.broker;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.tradeguide.domain.broker.BrokerCredentials;
 import com.tradeguide.domain.broker.BrokerHolding;
 import com.tradeguide.domain.broker.BrokerHoldingSnapshot;
 import com.tradeguide.domain.broker.BrokerProvider;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.BrokerConnectionUnavailableException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
@@ -38,7 +41,7 @@ public class TossSecuritiesHoldingsProvider implements BrokerHoldingsProvider {
     private final TossSecuritiesAccessTokenIssuer accessTokenIssuer;
 
     public TossSecuritiesHoldingsProvider(
-            RestClient.Builder builder,
+            @Qualifier("brokerRestClientBuilder") RestClient.Builder builder,
             @Value("${toss-securities.base-url:https://openapi.tossinvest.com}") String baseUrl,
             TossSecuritiesAccessTokenIssuer accessTokenIssuer
     ) {
@@ -52,12 +55,12 @@ public class TossSecuritiesHoldingsProvider implements BrokerHoldingsProvider {
     }
 
     @Override
-    public BrokerHoldingSnapshot fetchHoldings(String clientId, String clientSecret, String accountSequence) {
+    public BrokerHoldingSnapshot fetchHoldings(BrokerCredentials credentials, String accountSequence) {
         if (accountSequence == null || accountSequence.isBlank()) {
             throw new IllegalArgumentException("증권사 계좌 일련번호가 필요합니다.");
         }
 
-        String accessToken = accessTokenIssuer.issueAccessToken(clientId, clientSecret);
+        String accessToken = accessTokenIssuer.issueAccessToken(credentials);
 
         HoldingsResponse response;
         try {
@@ -66,6 +69,10 @@ public class TossSecuritiesHoldingsProvider implements BrokerHoldingsProvider {
                     .header(ACCOUNT_HEADER, accountSequence)
                     .retrieve()
                     .body(HoldingsResponse.class);
+        } catch (HttpClientErrorException.Unauthorized exception) {
+            // 토큰이 이미 무효화된 상태이므로 캐시를 버려 다음 호출이 새로 발급하게 한다.
+            accessTokenIssuer.invalidate(credentials);
+            throw new BrokerConnectionUnavailableException("토스증권 보유 종목 조회에 실패했습니다.", exception);
         } catch (RestClientException exception) {
             throw new BrokerConnectionUnavailableException("토스증권 보유 종목 조회에 실패했습니다.", exception);
         }

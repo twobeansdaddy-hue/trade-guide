@@ -2,6 +2,7 @@ package com.tradeguide.service.market;
 
 import com.tradeguide.domain.market.CandleInterval;
 import com.tradeguide.domain.market.MarketCandle;
+import com.tradeguide.domain.market.MarketDataProvider;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
 import com.tradeguide.exception.MarketDataUnavailableException;
@@ -23,15 +24,18 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
 
     private final RestClient restClient;
     private final String apiKey;
+    private final MarketDataProviderConfigurationStatus configurationStatus;
 
     public TwelveDataMarketHistoryProvider(
             RestClient.Builder restClientBuilder,
-            @Value("${twelve-data.api-key}") String apiKey
+            @Value("${twelve-data.api-key}") String apiKey,
+            MarketDataProviderConfigurationStatus configurationStatus
     ) {
         this.restClient = restClientBuilder
                 .baseUrl("https://api.twelvedata.com")
                 .build();
         this.apiKey = apiKey;
+        this.configurationStatus = configurationStatus;
     }
 
     @Override
@@ -47,11 +51,7 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
             );
         }
 
-        if (apiKey.isBlank()) {
-            throw new MarketDataUnavailableException(
-                    "시장 데이터 조회 API 키가 설정되지 않았습니다."
-            );
-        }
+        configurationStatus.requireConfigured(MarketDataProvider.TWELVE_DATA);
 
         String normalizedTicker = ticker.toUpperCase(Locale.ROOT);
         TwelveDataTimeSeriesResponse response;

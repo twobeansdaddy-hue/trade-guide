@@ -1,7 +1,7 @@
 package com.tradeguide.service.broker;
 
+import com.tradeguide.config.BrokerCredentialKeyringProperties;
 import com.tradeguide.exception.BrokerConnectionUnavailableException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
@@ -12,6 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Component
 public class AesGcmBrokerCredentialCipher implements BrokerCredentialCipher {
@@ -20,36 +22,73 @@ public class AesGcmBrokerCredentialCipher implements BrokerCredentialCipher {
     private static final int KEY_LENGTH_BYTES = 32;
     private static final int INITIALIZATION_VECTOR_LENGTH_BYTES = 12;
     private static final int AUTHENTICATION_TAG_LENGTH_BITS = 128;
-    private static final int KEY_VERSION = 1;
+    private static final int LEGACY_KEY_VERSION = 1;
 
-    private final SecretKey secretKey;
+    private final Map<Integer, SecretKey> secretKeysByVersion;
+    private final Integer currentVersion;
     private final SecureRandom secureRandom = new SecureRandom();
 
-    public AesGcmBrokerCredentialCipher(
-            @Value("${tradeguide.broker.encryption-key:}") String encodedEncryptionKey
-    ) {
-        if (encodedEncryptionKey.isBlank()) {
-            this.secretKey = null;
+    public AesGcmBrokerCredentialCipher(BrokerCredentialKeyringProperties keyringProperties) {
+        Map<Integer, SecretKey> keysByVersion = new LinkedHashMap<>();
+        for (BrokerCredentialKeyringProperties.KeyEntry entry : keyringProperties.encryptionKeys()) {
+            if (entry.value().isBlank()) {
+                continue;
+            }
+            if (keysByVersion.containsKey(entry.version())) {
+                throw new IllegalStateException(
+                        "tradeguide.broker.encryption-keys must not contain duplicate version "
+                                + entry.version() + "."
+                );
+            }
+            keysByVersion.put(entry.version(), decodeKey(
+                    entry.value(),
+                    "BROKER_CREDENTIAL_ENCRYPTION_KEY_V" + entry.version()
+            ));
+        }
+
+        if (keysByVersion.isEmpty() && !keyringProperties.encryptionKey().isBlank()) {
+            keysByVersion.put(LEGACY_KEY_VERSION, decodeKey(
+                    keyringProperties.encryptionKey(),
+                    "BROKER_CREDENTIAL_ENCRYPTION_KEY"
+            ));
+        }
+
+        this.secretKeysByVersion = Map.copyOf(keysByVersion);
+
+        if (secretKeysByVersion.isEmpty()) {
+            this.currentVersion = null;
             return;
         }
 
+        Integer configuredCurrentVersion = keyringProperties.encryptionCurrentVersion();
+        if (!secretKeysByVersion.containsKey(configuredCurrentVersion)) {
+            throw new IllegalStateException(
+                    "tradeguide.broker.encryption-current-version must reference a key present in "
+                            + "tradeguide.broker.encryption-keys (or version 1 when only "
+                            + "BROKER_CREDENTIAL_ENCRYPTION_KEY is set)."
+            );
+        }
+        this.currentVersion = configuredCurrentVersion;
+    }
+
+    private static SecretKey decodeKey(String encodedKey, String sourceName) {
         byte[] decodedKey;
         try {
-            decodedKey = Base64.getDecoder().decode(encodedEncryptionKey);
+            decodedKey = Base64.getDecoder().decode(encodedKey);
         } catch (IllegalArgumentException exception) {
-            throw new IllegalStateException("BROKER_CREDENTIAL_ENCRYPTION_KEY must be Base64 encoded.", exception);
+            throw new IllegalStateException(sourceName + " must be Base64 encoded.", exception);
         }
 
         if (decodedKey.length != KEY_LENGTH_BYTES) {
-            throw new IllegalStateException("BROKER_CREDENTIAL_ENCRYPTION_KEY must contain exactly 32 bytes.");
+            throw new IllegalStateException(sourceName + " must contain exactly 32 bytes.");
         }
 
-        this.secretKey = new SecretKeySpec(decodedKey, "AES");
+        return new SecretKeySpec(decodedKey, "AES");
     }
 
     @Override
     public boolean isConfigured() {
-        return secretKey != null;
+        return currentVersion != null;
     }
 
     @Override
@@ -64,7 +103,7 @@ public class AesGcmBrokerCredentialCipher implements BrokerCredentialCipher {
 
         try {
             Cipher cipher = Cipher.getInstance(ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, new GCMParameterSpec(
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeysByVersion.get(currentVersion), new GCMParameterSpec(
                     AUTHENTICATION_TAG_LENGTH_BITS,
                     initializationVector
             ));
@@ -72,7 +111,7 @@ public class AesGcmBrokerCredentialCipher implements BrokerCredentialCipher {
             return new EncryptedBrokerCredential(
                     Base64.getEncoder().encodeToString(ciphertext),
                     Base64.getEncoder().encodeToString(initializationVector),
-                    KEY_VERSION
+                    currentVersion
             );
         } catch (GeneralSecurityException exception) {
             throw new IllegalStateException("증권사 자격 증명을 암호화하지 못했습니다.", exception);
@@ -82,6 +121,10 @@ public class AesGcmBrokerCredentialCipher implements BrokerCredentialCipher {
     @Override
     public String decrypt(EncryptedBrokerCredential encryptedCredential) {
         requireConfigured();
+        SecretKey secretKey = secretKeysByVersion.get(encryptedCredential.keyVersion());
+        if (secretKey == null) {
+            throw new IllegalStateException("증권사 자격 증명을 복호화하지 못했습니다.");
+        }
         try {
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(

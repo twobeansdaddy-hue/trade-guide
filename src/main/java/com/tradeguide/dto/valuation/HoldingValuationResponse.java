@@ -5,6 +5,7 @@ import com.tradeguide.domain.valuation.HoldingValuation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 
 public class HoldingValuationResponse {
     private final Market market;
@@ -16,6 +17,7 @@ public class HoldingValuationResponse {
     private final BigDecimal marketValue;
     private final BigDecimal unrealizedProfitLoss;
     private final BigDecimal returnRate;
+    private final Instant priceAsOf;
 
     public HoldingValuationResponse(
             Market market,
@@ -26,7 +28,8 @@ public class HoldingValuationResponse {
             BigDecimal purchaseAmount,
             BigDecimal marketValue,
             BigDecimal unrealizedProfitLoss,
-            BigDecimal returnRate
+            BigDecimal returnRate,
+            Instant priceAsOf
     ) {
         this.market = market;
         this.ticker = ticker;
@@ -37,8 +40,9 @@ public class HoldingValuationResponse {
         this.marketValue = marketValue;
         this.unrealizedProfitLoss = unrealizedProfitLoss;
         this.returnRate = returnRate;
+        this.priceAsOf = priceAsOf;
     }
-    
+
     public static HoldingValuationResponse from(HoldingValuation valuation) {
         return new HoldingValuationResponse(
                 valuation.getMarket(),
@@ -49,7 +53,8 @@ public class HoldingValuationResponse {
                 valuation.getPurchaseAmount().setScale(2, RoundingMode.HALF_UP),
                 valuation.getMarketValue().setScale(2, RoundingMode.HALF_UP),
                 valuation.getUnrealizedProfitLoss().setScale(2, RoundingMode.HALF_UP),
-                valuation.getReturnRate().setScale(2, RoundingMode.HALF_UP)
+                valuation.getReturnRate().setScale(2, RoundingMode.HALF_UP),
+                valuation.getPriceAsOf()
         );
     }
 
@@ -87,5 +92,9 @@ public class HoldingValuationResponse {
 
     public BigDecimal getReturnRate() {
         return returnRate;
+    }
+
+    public Instant getPriceAsOf() {
+        return priceAsOf;
     }
 }

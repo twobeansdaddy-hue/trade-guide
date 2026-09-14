@@ -45,6 +45,8 @@ class HoldingValuationCalculatorTest {
                 .isEqualByComparingTo("100");
         assertThat(result.getReturnRate())
                 .isEqualByComparingTo("10");
+        assertThat(result.getPriceAsOf())
+                .isEqualTo(Instant.parse("2026-08-03T00:00:00Z"));
     }
 
     @Test

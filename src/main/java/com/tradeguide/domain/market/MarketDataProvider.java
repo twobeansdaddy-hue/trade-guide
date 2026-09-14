@@ -11,10 +11,17 @@ public enum MarketDataProvider {
             true,
             Set.of(Market.US)
     ),
+    /**
+     * {@code selectable=true}이지만, 실제 선택은 포트폴리오에 연결된 <b>검증된</b> 토스증권
+     * 연결이 있을 때만 허용된다. 이 런타임 조건은 이 enum이 아니라
+     * {@code PortfolioService.updateMarketDataPreference}와
+     * {@code MarketPriceProviderRegistry}가 판정한다({@code requiresBrokerConnection=true}가
+     * 그 전제 조건이 있다는 사실만 카탈로그 응답으로 알린다).
+     */
     TOSS_SECURITIES(
             "토스증권",
             true,
-            false,
+            true,
             Set.of(Market.US, Market.KR)
     ),
     YAHOO_FINANCE(

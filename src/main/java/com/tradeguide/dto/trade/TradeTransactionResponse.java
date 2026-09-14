@@ -2,6 +2,7 @@ package com.tradeguide.dto.trade;
 
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.trade.TradeTransaction;
+import com.tradeguide.domain.trade.TradeTransactionSource;
 import com.tradeguide.domain.trade.TradeType;
 
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ public class TradeTransactionResponse {
     private final BigDecimal executedPrice;
     private final BigDecimal fee;
     private final Instant tradedAt;
+    private final TradeTransactionSource source;
 
     private TradeTransactionResponse(
             Long id,
@@ -26,7 +28,8 @@ public class TradeTransactionResponse {
             BigDecimal quantity,
             BigDecimal executedPrice,
             BigDecimal fee,
-            Instant tradedAt
+            Instant tradedAt,
+            TradeTransactionSource source
     ) {
         this.id = id;
         this.market = market;
@@ -36,6 +39,7 @@ public class TradeTransactionResponse {
         this.executedPrice = executedPrice;
         this.fee = fee;
         this.tradedAt = tradedAt;
+        this.source = source;
     }
 
     public static TradeTransactionResponse from(
@@ -49,7 +53,8 @@ public class TradeTransactionResponse {
                 transaction.getQuantity(),
                 transaction.getExecutedPrice(),
                 transaction.getFee(),
-                transaction.getTradedAt()
+                transaction.getTradedAt(),
+                transaction.getSource()
         );
     }
 
@@ -83,5 +88,9 @@ public class TradeTransactionResponse {
 
     public Instant getTradedAt() {
         return tradedAt;
+    }
+
+    public TradeTransactionSource getSource() {
+        return source;
     }
 }

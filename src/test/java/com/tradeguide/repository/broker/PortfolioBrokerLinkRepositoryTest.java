@@ -2,7 +2,7 @@ package com.tradeguide.repository.broker;
 
 import com.tradeguide.domain.broker.BrokerAccount;
 import com.tradeguide.domain.broker.BrokerConnection;
-import com.tradeguide.domain.broker.BrokerConnectionSecret;
+import com.tradeguide.domain.broker.BrokerConnectionSecretValue;
 import com.tradeguide.domain.broker.BrokerProvider;
 import com.tradeguide.domain.member.Member;
 import com.tradeguide.domain.portfolio.Portfolio;
@@ -48,10 +48,11 @@ class PortfolioBrokerLinkRepositoryTest {
         portfolio = portfolioRepository.save(new Portfolio(member, "성장 포트폴리오"));
 
         BrokerConnection newConnection = new BrokerConnection(member, BrokerProvider.TOSS_SECURITIES, "개인 토스증권");
-        newConnection.attachSecret(new BrokerConnectionSecret(
-                "encrypted-client-id", "client-id-iv", "encrypted-client-secret", "client-secret-iv", 1
+        newConnection.replaceSecretValues(List.of(
+                new BrokerConnectionSecretValue("clientId", "encrypted-client-id", "client-id-iv", 1),
+                new BrokerConnectionSecretValue("clientSecret", "encrypted-client-secret", "client-secret-iv", 1)
         ));
-        newConnection.replaceAccounts(List.of(
+        newConnection.reconcileVerifiedAccounts(List.of(
                 new BrokerAccount("encrypted-sequence", "sequence-iv", "*****1234", "위탁", 1)
         ));
         newConnection.markConnected("*****1234");

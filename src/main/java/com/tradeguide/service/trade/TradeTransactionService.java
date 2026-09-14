@@ -3,7 +3,9 @@ package com.tradeguide.service.trade;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.trade.TradeTransaction;
+import com.tradeguide.domain.trade.TradeTransactionSource;
 import com.tradeguide.domain.trade.TradeType;
+import com.tradeguide.exception.TradeTransactionProtectedException;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.trade.TradeTransactionRepository;
 import com.tradeguide.service.asset.AssetListingService;
@@ -119,6 +121,22 @@ public class TradeTransactionService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "매매 기록을 찾을 수 없습니다."
                 ));
+
+        if (transaction.getSource() == TradeTransactionSource.BROKER_OPENING_BALANCE) {
+            throw new TradeTransactionProtectedException(
+                    "증권사 개시 잔고는 전용 취소 API로만 취소할 수 있습니다."
+            );
+        }
+        if (transaction.getSource() == TradeTransactionSource.BROKER_ORDER_HISTORY) {
+            throw new TradeTransactionProtectedException(
+                    "증권사 주문 이력 반영 기록은 전용 취소 API로만 취소할 수 있습니다."
+            );
+        }
+        if (transaction.getSource() == TradeTransactionSource.BROKER_HOLDING_ADJUSTMENT) {
+            throw new TradeTransactionProtectedException(
+                    "증권사 잔고 조정 반영 기록은 전용 취소 API로만 취소할 수 있습니다."
+            );
+        }
 
         List<TradeTransaction> remainingTransactions = new ArrayList<>(
                 tradeTransactionRepository

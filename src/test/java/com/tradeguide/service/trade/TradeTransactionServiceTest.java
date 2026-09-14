@@ -4,7 +4,9 @@ import com.tradeguide.domain.member.Member;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.trade.TradeTransaction;
+import com.tradeguide.domain.trade.TradeTransactionSource;
 import com.tradeguide.domain.trade.TradeType;
+import com.tradeguide.exception.TradeTransactionProtectedException;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.trade.TradeTransactionRepository;
 import com.tradeguide.service.asset.AssetListingService;
@@ -234,6 +236,84 @@ class TradeTransactionServiceTest {
 
         verify(holdingCalculator).calculate(argThat(List::isEmpty));
         verify(tradeTransactionRepository).delete(transaction);
+    }
+
+    @Test
+    void rejectsDeletingActiveBrokerOpeningBalanceTransaction() {
+        Portfolio portfolio = new Portfolio(
+                new Member("beans@example.com", "beans"),
+                "US Stocks"
+        );
+        TradeTransaction transaction = org.mockito.Mockito.mock(
+                TradeTransaction.class
+        );
+        when(transaction.getSource()).thenReturn(TradeTransactionSource.BROKER_OPENING_BALANCE);
+
+        when(portfolioRepository.findByMember_IdAndId(10L, 100L))
+                .thenReturn(Optional.of(portfolio));
+        when(tradeTransactionRepository.findByPortfolio_IdAndId(100L, 500L))
+                .thenReturn(Optional.of(transaction));
+
+        assertThatThrownBy(() ->
+                tradeTransactionService.deleteTradeTransaction(10L, 100L, 500L)
+        )
+                .isInstanceOf(TradeTransactionProtectedException.class)
+                .hasMessage("증권사 개시 잔고는 전용 취소 API로만 취소할 수 있습니다.");
+
+        verify(tradeTransactionRepository, never()).delete(transaction);
+        verifyNoInteractions(holdingCalculator);
+    }
+
+    @Test
+    void rejectsDeletingActiveBrokerOrderHistoryTransaction() {
+        Portfolio portfolio = new Portfolio(
+                new Member("beans@example.com", "beans"),
+                "US Stocks"
+        );
+        TradeTransaction transaction = org.mockito.Mockito.mock(
+                TradeTransaction.class
+        );
+        when(transaction.getSource()).thenReturn(TradeTransactionSource.BROKER_ORDER_HISTORY);
+
+        when(portfolioRepository.findByMember_IdAndId(10L, 100L))
+                .thenReturn(Optional.of(portfolio));
+        when(tradeTransactionRepository.findByPortfolio_IdAndId(100L, 500L))
+                .thenReturn(Optional.of(transaction));
+
+        assertThatThrownBy(() ->
+                tradeTransactionService.deleteTradeTransaction(10L, 100L, 500L)
+        )
+                .isInstanceOf(TradeTransactionProtectedException.class)
+                .hasMessage("증권사 주문 이력 반영 기록은 전용 취소 API로만 취소할 수 있습니다.");
+
+        verify(tradeTransactionRepository, never()).delete(transaction);
+        verifyNoInteractions(holdingCalculator);
+    }
+
+    @Test
+    void rejectsDeletingActiveBrokerHoldingAdjustmentTransaction() {
+        Portfolio portfolio = new Portfolio(
+                new Member("beans@example.com", "beans"),
+                "US Stocks"
+        );
+        TradeTransaction transaction = org.mockito.Mockito.mock(
+                TradeTransaction.class
+        );
+        when(transaction.getSource()).thenReturn(TradeTransactionSource.BROKER_HOLDING_ADJUSTMENT);
+
+        when(portfolioRepository.findByMember_IdAndId(10L, 100L))
+                .thenReturn(Optional.of(portfolio));
+        when(tradeTransactionRepository.findByPortfolio_IdAndId(100L, 500L))
+                .thenReturn(Optional.of(transaction));
+
+        assertThatThrownBy(() ->
+                tradeTransactionService.deleteTradeTransaction(10L, 100L, 500L)
+        )
+                .isInstanceOf(TradeTransactionProtectedException.class)
+                .hasMessage("증권사 잔고 조정 반영 기록은 전용 취소 API로만 취소할 수 있습니다.");
+
+        verify(tradeTransactionRepository, never()).delete(transaction);
+        verifyNoInteractions(holdingCalculator);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.tradeguide.service.strategy;
 
 import com.tradeguide.domain.strategy.InvestmentTrack;
+import com.tradeguide.exception.UnsupportedInvestmentTrackException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class StrategySelector {
         return strategies.stream()
                 .filter(tradingStrategy -> tradingStrategy.supports(investmentTrack))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(
+                .orElseThrow(() -> new UnsupportedInvestmentTrackException(
                         "지원하지 않는 투자 트랙입니다: " + investmentTrack
                 ));
     }

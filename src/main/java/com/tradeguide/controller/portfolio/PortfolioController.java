@@ -1,11 +1,14 @@
 package com.tradeguide.controller.portfolio;
 
+import com.tradeguide.domain.backtest.PortfolioAssetBacktest;
 import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.portfolio.Portfolio;
+import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.domain.strategy.StrategyGuideBatch;
 import com.tradeguide.domain.risk.PortfolioRiskPolicy;
 import com.tradeguide.domain.risk.PortfolioRiskAlert;
+import com.tradeguide.dto.backtest.PortfolioAssetBacktestResponse;
 import com.tradeguide.dto.holding.HoldingResponse;
 import com.tradeguide.dto.portfolio.PortfolioCreateRequest;
 import com.tradeguide.dto.portfolio.PortfolioResponse;
@@ -18,6 +21,7 @@ import com.tradeguide.dto.risk.PortfolioRiskAlertResponse;
 import com.tradeguide.dto.market.MarketDataProviderResponse;
 import com.tradeguide.dto.market.PortfolioMarketDataPreferenceResponse;
 import com.tradeguide.dto.market.PortfolioMarketDataPreferenceUpdateRequest;
+import com.tradeguide.service.backtest.PortfolioAssetBacktestService;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
@@ -35,6 +39,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -49,6 +54,7 @@ public class PortfolioController {
     private final PortfolioRiskAlertService portfolioRiskAlertService;
     private final MemberAccessService memberAccessService;
     private final MarketDataProviderCatalog marketDataProviderCatalog;
+    private final PortfolioAssetBacktestService portfolioAssetBacktestService;
 
     public PortfolioController(
             PortfolioService portfolioService,
@@ -59,7 +65,8 @@ public class PortfolioController {
             PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService,
             PortfolioRiskAlertService portfolioRiskAlertService,
             MemberAccessService memberAccessService,
-            MarketDataProviderCatalog marketDataProviderCatalog
+            MarketDataProviderCatalog marketDataProviderCatalog,
+            PortfolioAssetBacktestService portfolioAssetBacktestService
     ) {
         this.portfolioService = portfolioService;
         this.holdingService = holdingService;
@@ -70,6 +77,7 @@ public class PortfolioController {
         this.portfolioRiskAlertService = portfolioRiskAlertService;
         this.memberAccessService = memberAccessService;
         this.marketDataProviderCatalog = marketDataProviderCatalog;
+        this.portfolioAssetBacktestService = portfolioAssetBacktestService;
     }
 
     @ModelAttribute
@@ -163,6 +171,25 @@ public class PortfolioController {
                 .toList();
     }
 
+    @GetMapping("/{portfolioId}/assets/{market}/{ticker}/backtest")
+    public PortfolioAssetBacktestResponse getPortfolioAssetBacktest(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId,
+            @PathVariable Market market,
+            @PathVariable String ticker,
+            @RequestParam BigDecimal initialCash
+    ) {
+        PortfolioAssetBacktest backtest = portfolioAssetBacktestService.getBacktest(
+                memberId,
+                portfolioId,
+                market,
+                ticker,
+                initialCash
+        );
+
+        return PortfolioAssetBacktestResponse.from(backtest);
+    }
+
     @GetMapping("/{portfolioId}/candidate-strategy-guides")
     public StrategyGuideBatchResponse getCandidateStrategyGuides(
             @PathVariable Long memberId,
@@ -204,7 +231,10 @@ public class PortfolioController {
         portfolioService.getMarketDataPreference(memberId, portfolioId);
 
         return marketDataProviderCatalog.getProviders().stream()
-                .map(MarketDataProviderResponse::new)
+                .map(provider -> new MarketDataProviderResponse(
+                        provider,
+                        marketDataProviderCatalog.isConfigured(provider)
+                ))
                 .toList();
     }
 

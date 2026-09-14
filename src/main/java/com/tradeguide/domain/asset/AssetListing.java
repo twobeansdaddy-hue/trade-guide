@@ -39,6 +39,14 @@ public class AssetListing {
     @Column(nullable = false)
     private ListingStatus listingStatus;
 
+    /**
+     * 이 상장 종목 기준정보가 최초로 어떤 근거에서 생성됐는지 기록한다. 이후
+     * 조회·거래 로직은 이 값으로 분기하지 않으며, 감사·운영 추적 목적에 한정된다.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AssetListingSource source;
+
     protected AssetListing() {
     }
 
@@ -48,10 +56,21 @@ public class AssetListing {
             String displayName,
             ListingStatus listingStatus
     ) {
+        this(market, ticker, displayName, listingStatus, AssetListingSource.EXTERNAL_SEARCH);
+    }
+
+    public AssetListing(
+            Market market,
+            String ticker,
+            String displayName,
+            ListingStatus listingStatus,
+            AssetListingSource source
+    ) {
         this.market = market;
         this.ticker = ticker;
         this.displayName = displayName;
         this.listingStatus = listingStatus;
+        this.source = source;
     }
 
     public Long getId() {
@@ -72,5 +91,9 @@ public class AssetListing {
 
     public ListingStatus getListingStatus() {
         return listingStatus;
+    }
+
+    public AssetListingSource getSource() {
+        return source;
     }
 }
