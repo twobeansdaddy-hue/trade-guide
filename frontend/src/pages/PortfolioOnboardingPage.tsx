@@ -31,7 +31,7 @@ export default function PortfolioOnboardingPage() {
     }
 
     return (
-        <main className="onboarding-page">
+        <div className="onboarding-page">
             <section className="onboarding-panel" aria-labelledby="onboarding-title">
                 <p className="eyebrow">GET STARTED</p>
                 <h1 id="onboarding-title">첫 포트폴리오를 만들어 시작하세요.</h1>
@@ -41,11 +41,15 @@ export default function PortfolioOnboardingPage() {
                         포트폴리오 이름
                         <input value={name} onChange={(event) => setName(event.target.value)} placeholder="예: 미국 장기 투자" maxLength={255} autoFocus/>
                     </label>
-                    {errorMessage ? <p className="form-error-message" role="alert">{errorMessage}</p> : null}
-                    <button type="submit" disabled={isSubmitting}>{isSubmitting ? "만드는 중..." : "포트폴리오 만들기"}</button>
+                    <div className="form-feedback-area" aria-live="polite">
+                        {errorMessage ? <p className="form-error-message" role="alert">{errorMessage}</p> : null}
+                    </div>
+                    <div className="form-actions">
+                        <button type="submit" className="primary-button" disabled={isSubmitting}>{isSubmitting ? "만드는 중..." : "포트폴리오 만들기"}</button>
+                    </div>
                 </form>
                 <p className="onboarding-note">생성 후 거래 기록을 등록하면 현재 평가와 위험 경고를 확인할 수 있습니다.</p>
             </section>
-        </main>
+        </div>
     );
 }

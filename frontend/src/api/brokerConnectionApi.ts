@@ -1,5 +1,18 @@
 import {getJsonResponse} from "./apiError";
-import type {BrokerConnection, BrokerConnectionCreateRequest} from "../types/brokerConnection";
+import type {
+    BrokerConnection,
+    BrokerConnectionCreateRequest,
+    BrokerProviderCatalogItem,
+} from "../types/brokerConnection";
+
+export async function getBrokerProviders(): Promise<BrokerProviderCatalogItem[]> {
+    const response = await fetch("/api/broker-providers");
+
+    return getJsonResponse<BrokerProviderCatalogItem[]>(
+        response,
+        "증권사 제공자 목록을 불러오지 못했습니다.",
+    );
+}
 
 export async function getBrokerConnections(memberId: number): Promise<BrokerConnection[]> {
     const response = await fetch(`/api/members/${memberId}/broker-connections`);

@@ -8,6 +8,7 @@ const navigation = [
     {to: "/holdings", label: "보유 종목"},
     {to: "/transactions/new", label: "매매 기록"},
     {to: "/strategy-guides", label: "전략 가이드"},
+    {to: "/broker-accounts", label: "연동 계좌"},
     {to: "/settings", label: "설정"},
 ];
 

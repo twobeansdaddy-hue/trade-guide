@@ -7,6 +7,11 @@ type Props = {
     market: Market;
     ticker: string;
     onTickerChange: (ticker: string) => void;
+    onSelectAsset?: (asset: AssetListing) => void;
+    placeholder?: string;
+    id?: string;
+    label?: string;
+    disabled?: boolean;
 };
 
 const SEARCH_DELAY_MS = 250;
@@ -22,7 +27,16 @@ type HighlightedResult = {
     index: number;
 };
 
-export default function AssetSearchInput({market, ticker, onTickerChange}: Props) {
+export default function AssetSearchInput({
+    market,
+    ticker,
+    onTickerChange,
+    onSelectAsset,
+    placeholder = "티커 또는 종목명을 입력",
+    id,
+    label = "종목 검색",
+    disabled = false,
+}: Props) {
     const [searchResult, setSearchResult] = useState<SearchResult>({
         key: "",
         results: [],
@@ -34,7 +48,9 @@ export default function AssetSearchInput({market, ticker, onTickerChange}: Props
         index: -1,
     });
     const resultListRef = useRef<HTMLUListElement>(null);
-    const inputId = useId();
+    const containerRef = useRef<HTMLDivElement>(null);
+    const defaultInputId = useId();
+    const inputId = id ?? defaultInputId;
     const resultsId = useId();
     const feedbackId = useId();
     const query = ticker.trim();
@@ -73,9 +89,21 @@ export default function AssetSearchInput({market, ticker, onTickerChange}: Props
 
     const selectAsset = (asset: AssetListing) => {
         onTickerChange(asset.ticker);
+        onSelectAsset?.(asset);
         setIsSearchOpen(false);
         setHighlightedResult({searchKey, index: -1});
     };
+
+    useEffect(() => {
+        const handlePointerDown = (event: PointerEvent) => {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+                setIsSearchOpen(false);
+            }
+        };
+
+        document.addEventListener("pointerdown", handlePointerDown);
+        return () => document.removeEventListener("pointerdown", handlePointerDown);
+    }, []);
 
     const showResults = query.length > 0 && isSearchOpen;
     const isCurrentResult = searchResult.key === searchKey;
@@ -160,19 +188,78 @@ export default function AssetSearchInput({market, ticker, onTickerChange}: Props
         }
     };
 
-    return <div className="asset-search">
-        <label htmlFor={inputId}>종목 검색</label>
-        <div className="asset-search-input-wrap">
-            <input id={inputId} value={ticker} onChange={(event) => {
-                onTickerChange(event.target.value.toUpperCase());
-                setIsSearchOpen(true);
-            }} onFocus={() => setIsSearchOpen(true)} onKeyDown={handleKeyDown} placeholder="티커 또는 종목명을 입력" maxLength={32} autoComplete="off" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-controls={isResultListVisible ? resultsId : undefined} aria-describedby={showResults ? feedbackId : undefined} aria-activedescendant={highlightedOptionId} aria-expanded={isResultListVisible}/>
-            {isResultListVisible ? <ul ref={resultListRef} id={resultsId} className="asset-search-results" role="listbox" aria-label="종목 검색 결과">{results.map((asset, index) => <li key={`${asset.market}-${asset.ticker}`} id={`${resultsId}-option-${index}`} role="option" aria-selected={highlightedIndex === index} onMouseDown={(event) => event.preventDefault()} onClick={() => selectAsset(asset)}><strong>{asset.ticker}</strong><span>{asset.displayName}</span></li>)}</ul> : null}
+    return (
+        <div className="asset-search" ref={containerRef}>
+            <label htmlFor={inputId}>{label}</label>
+            <div className="asset-search-input-wrap">
+                <input
+                    id={inputId}
+                    value={ticker}
+                    disabled={disabled}
+                    onChange={(event) => {
+                        onTickerChange(event.target.value.toUpperCase());
+                        setIsSearchOpen(true);
+                    }}
+                    onFocus={() => setIsSearchOpen(true)}
+                    onKeyDown={handleKeyDown}
+                    placeholder={placeholder}
+                    maxLength={32}
+                    autoComplete="off"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-haspopup="listbox"
+                    aria-controls={isResultListVisible ? resultsId : undefined}
+                    aria-describedby={showResults ? feedbackId : undefined}
+                    aria-activedescendant={highlightedOptionId}
+                    aria-expanded={isResultListVisible}
+                />
+                {isResultListVisible ? (
+                    <ul
+                        ref={resultListRef}
+                        id={resultsId}
+                        className="asset-search-results"
+                        role="listbox"
+                        aria-label="종목 검색 결과"
+                    >
+                        {results.map((asset, index) => (
+                            <li
+                                key={`${asset.market}-${asset.ticker}`}
+                                id={`${resultsId}-option-${index}`}
+                                role="option"
+                                aria-selected={highlightedIndex === index}
+                                onMouseDown={(event) => event.preventDefault()}
+                                onClick={() => selectAsset(asset)}
+                            >
+                                <strong>{asset.ticker}</strong>
+                                <span>{asset.displayName}</span>
+                            </li>
+                        ))}
+                    </ul>
+                ) : null}
+                {showResults &&
+                !isResultListVisible &&
+                (isSearching ||
+                    errorMessage ||
+                    (query.length > 0 && results.length === 0)) ? (
+                    <div
+                        id={feedbackId}
+                        className="asset-search-feedback"
+                        aria-live="polite"
+                    >
+                        {isSearching ? (
+                            <p className="search-message">종목을 검색하는 중입니다.</p>
+                        ) : null}
+                        {errorMessage ? (
+                            <p className="search-message error">{errorMessage}</p>
+                        ) : null}
+                        {!isSearching && results.length === 0 && !errorMessage ? (
+                            <p className="search-message">
+                                검색 결과가 없습니다. 티커 또는 종목명을 확인해 주세요.
+                            </p>
+                        ) : null}
+                    </div>
+                ) : null}
+            </div>
         </div>
-        {showResults ? <div id={feedbackId} className="asset-search-feedback" aria-live="polite">
-            {showResults && isSearching ? <p className="search-message">종목을 검색하는 중입니다.</p> : null}
-            {showResults && errorMessage ? <p className="search-message error">{errorMessage}</p> : null}
-            {showResults && !isSearching && results.length === 0 && !errorMessage ? <p className="search-message">검색 결과가 없습니다. 티커 또는 종목명을 확인해 주세요.</p> : null}
-        </div> : null}
-    </div>;
+    );
 }

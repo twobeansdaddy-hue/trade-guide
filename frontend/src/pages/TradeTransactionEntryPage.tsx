@@ -68,26 +68,89 @@ export default function TradeTransactionEntryPage() {
                 <section>
                     <h2>거래 정보</h2>
                     <div className="form-grid">
-                        <div className="market-scope">
-                            <span>시장</span>
+                        <div className="form-field-group market-scope">
+                            <span className="form-field-label">시장</span>
                             <strong>미국 주식 (US)</strong>
-                            <small>한국 시장은 준비 중입니다.</small>
+                            <span className="form-field-helper">한국 시장은 준비 중입니다.</span>
                         </div>
-                        <label>거래 유형<select value={tradeType} onChange={(event) => setTradeType(event.target.value as TradeType)}><option value="BUY">매수</option><option value="SELL">매도</option></select></label>
-                        <AssetSearchInput market={market} ticker={ticker} onTickerChange={setTicker}/>
-                        <label>체결 시각<input type="datetime-local" value={tradedAt} onChange={(event) => setTradedAt(event.target.value)}/></label>
+                        <div className="form-field-group">
+                            <label htmlFor="trade-type" className="form-field-label">거래 유형</label>
+                            <select
+                                id="trade-type"
+                                value={tradeType}
+                                onChange={(event) => setTradeType(event.target.value as TradeType)}
+                            >
+                                <option value="BUY">매수</option>
+                                <option value="SELL">매도</option>
+                            </select>
+                            <span className="form-field-helper" aria-hidden="true" />
+                        </div>
+                        <div className="form-field-group">
+                            <AssetSearchInput market={market} ticker={ticker} onTickerChange={setTicker}/>
+                            <span className="form-field-helper" aria-hidden="true" />
+                        </div>
+                        <div className="form-field-group">
+                            <label htmlFor="trade-traded-at" className="form-field-label">체결 시각</label>
+                            <input
+                                id="trade-traded-at"
+                                type="datetime-local"
+                                value={tradedAt}
+                                onChange={(event) => setTradedAt(event.target.value)}
+                            />
+                            <span className="form-field-helper" aria-hidden="true" />
+                        </div>
                     </div>
                 </section>
                 <section>
                     <h2>체결 수치</h2>
-                    <div className="form-grid">
-                        <label>수량<input type="number" value={quantity} onChange={(event) => setQuantity(event.target.value)} min="0" step="any" inputMode="decimal" placeholder="0"/></label>
-                        <label>체결 단가<input type="number" value={executedPrice} onChange={(event) => setExecutedPrice(event.target.value)} min="0" step="any" inputMode="decimal" placeholder="0.00"/></label>
-                        <label>수수료<input type="number" value={fee} onChange={(event) => setFee(event.target.value)} min="0" step="any" inputMode="decimal"/></label>
+                    <div className="form-grid form-grid-3">
+                        <div className="form-field-group">
+                            <label htmlFor="trade-quantity" className="form-field-label">수량</label>
+                            <input
+                                id="trade-quantity"
+                                type="number"
+                                value={quantity}
+                                onChange={(event) => setQuantity(event.target.value)}
+                                min="0"
+                                step="any"
+                                inputMode="decimal"
+                                placeholder="0"
+                            />
+                            <span className="form-field-helper" aria-hidden="true" />
+                        </div>
+                        <div className="form-field-group">
+                            <label htmlFor="trade-executed-price" className="form-field-label">체결 단가</label>
+                            <input
+                                id="trade-executed-price"
+                                type="number"
+                                value={executedPrice}
+                                onChange={(event) => setExecutedPrice(event.target.value)}
+                                min="0"
+                                step="any"
+                                inputMode="decimal"
+                                placeholder="0.00"
+                            />
+                            <span className="form-field-helper" aria-hidden="true" />
+                        </div>
+                        <div className="form-field-group">
+                            <label htmlFor="trade-fee" className="form-field-label">수수료</label>
+                            <input
+                                id="trade-fee"
+                                type="number"
+                                value={fee}
+                                onChange={(event) => setFee(event.target.value)}
+                                min="0"
+                                step="any"
+                                inputMode="decimal"
+                            />
+                            <span className="form-field-helper" aria-hidden="true" />
+                        </div>
                     </div>
                 </section>
-                {errorMessage ? <p className="form-error-message" role="alert">{errorMessage}</p> : null}
-                <div className="form-actions"><button type="button" className="secondary-button" onClick={() => navigate("/holdings")}>취소</button><button type="submit" disabled={isSubmitting}>{isSubmitting ? "등록 중..." : "매매 기록 등록"}</button></div>
+                <div className="form-feedback-area" aria-live="polite">
+                    {errorMessage ? <p className="form-error-message" role="alert">{errorMessage}</p> : null}
+                </div>
+                <div className="form-actions"><button type="button" className="secondary-button" onClick={() => navigate("/holdings")}>취소</button><button type="submit" className="primary-button" disabled={isSubmitting}>{isSubmitting ? "등록 중..." : "매매 기록 등록"}</button></div>
             </form>
         </>
     );
