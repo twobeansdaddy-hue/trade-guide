@@ -1,0 +1,291 @@
+{
+  "provider": "Yahoo Finance (query2.finance.yahoo.com v8 chart API)",
+  "interval": "1wk",
+  "requestedStart": "2015-01-01",
+  "downloadedAt": "2026-09-11T07:32:22Z",
+  "pointInTimeUniverse": false,
+  "universeSelectionCriteria": "다우존스 산업평균지수(DJIA) 현재 30개 구성종목 전체. S&P Dow Jones Indices가 관리하는 공개 지수의 위원회 선정 결과를 그대로 사용(연구자 임의 선택 없음). 오늘 시점 구성이며 2015년 당시 구성과 다를 수 있음(생존 편향 가능).",
+  "universeSource": {
+    "title": "List of Dow Jones Industrial Average companies (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/List_of_Dow_Jones_Industrial_Average_companies",
+    "accessed": "2026-09-11"
+  },
+  "tickers": {
+    "MMM": {
+      "name": "3M",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/MMM?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/MMM.json"
+    },
+    "GOOGL": {
+      "name": "Alphabet",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/GOOGL?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/GOOGL.json"
+    },
+    "AXP": {
+      "name": "American Express",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/AXP?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/AXP.json"
+    },
+    "AMGN": {
+      "name": "Amgen",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/AMGN?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/AMGN.json"
+    },
+    "AMZN": {
+      "name": "Amazon",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/AMZN?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/AMZN.json"
+    },
+    "AAPL": {
+      "name": "Apple",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/AAPL?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/AAPL.json"
+    },
+    "BA": {
+      "name": "Boeing",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/BA?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/BA.json"
+    },
+    "CAT": {
+      "name": "Caterpillar",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/CAT?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/CAT.json"
+    },
+    "CVX": {
+      "name": "Chevron",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/CVX?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/CVX.json"
+    },
+    "CSCO": {
+      "name": "Cisco",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/CSCO?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/CSCO.json"
+    },
+    "KO": {
+      "name": "Coca-Cola",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/KO?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/KO.json"
+    },
+    "DIS": {
+      "name": "Disney",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/DIS?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/DIS.json"
+    },
+    "GS": {
+      "name": "Goldman Sachs",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/GS?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/GS.json"
+    },
+    "HD": {
+      "name": "Home Depot",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/HD?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/HD.json"
+    },
+    "HON": {
+      "name": "Honeywell",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/HON?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/HON.json"
+    },
+    "IBM": {
+      "name": "IBM",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/IBM?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/IBM.json"
+    },
+    "JNJ": {
+      "name": "Johnson & Johnson",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/JNJ?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/JNJ.json"
+    },
+    "JPM": {
+      "name": "JPMorgan Chase",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/JPM?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/JPM.json"
+    },
+    "MCD": {
+      "name": "McDonald's",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/MCD?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/MCD.json"
+    },
+    "MRK": {
+      "name": "Merck",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/MRK?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/MRK.json"
+    },
+    "MSFT": {
+      "name": "Microsoft",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/MSFT?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/MSFT.json"
+    },
+    "NKE": {
+      "name": "Nike",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/NKE?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/NKE.json"
+    },
+    "NVDA": {
+      "name": "Nvidia",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/NVDA?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/NVDA.json"
+    },
+    "PG": {
+      "name": "Procter & Gamble",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/PG?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/PG.json"
+    },
+    "CRM": {
+      "name": "Salesforce",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/CRM?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/CRM.json"
+    },
+    "SHW": {
+      "name": "Sherwin-Williams",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/SHW?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/SHW.json"
+    },
+    "TRV": {
+      "name": "Travelers",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/TRV?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/TRV.json"
+    },
+    "UNH": {
+      "name": "UnitedHealth",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/UNH?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/UNH.json"
+    },
+    "V": {
+      "name": "Visa",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/V?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/V.json"
+    },
+    "WMT": {
+      "name": "Walmart",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/WMT?period1=1420070400&period2=1789111942&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 611,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-10",
+      "rawFile": "raw/WMT.json"
+    }
+  },
+  "summary": {
+    "universeSize": 30,
+    "succeeded": 30,
+    "failed": [],
+    "failedCount": 0
+  }
+}

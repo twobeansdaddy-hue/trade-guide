@@ -1,0 +1,1809 @@
+{
+  "generatedBy": "research/scripts/track-b-walk-forward/run_walk_forward.py",
+  "universe": {
+    "size": 30,
+    "excludedByQuality": {},
+    "calendarGaps": {},
+    "calendarStart": "2015-01-01",
+    "calendarEnd": "2026-09-10",
+    "calendarWeeks": 611,
+    "pointInTimeUniverse": false
+  },
+  "parameters": {
+    "formationWeeks": 52,
+    "excludeRecentWeeks": 4,
+    "rebalancePeriodWeeks": 13,
+    "topTierFraction": 0.2,
+    "holdTierFraction": 0.4,
+    "costScenariosRoundTripBps": [
+      0.0,
+      20.0,
+      40.0,
+      57.0
+    ],
+    "initialCapital": 100000.0,
+    "costModel": "round-trip bps split half on buy leg, half on sell leg; no forced final liquidation cost"
+  },
+  "partitions": {
+    "2way": [
+      {
+        "id": "2way-A",
+        "label": "2015-01-01 ~ 2019-12-31",
+        "requestedStart": "2015-01-01",
+        "requestedEnd": "2019-12-31",
+        "actualStart": "2015-01-01",
+        "actualEnd": "2019-12-26",
+        "byCostBps": {
+          "0.0": {
+            "rebalanceCount": 17,
+            "benchmarkStart": "2015-12-31",
+            "strategyEndingValue": 235889.55,
+            "strategyReturnPct": 135.89,
+            "strategyMaxDrawdownPct": -18.508,
+            "strategyMonthlyTurnoverPct": 20.166,
+            "benchmarkEndingValue": 222557.12,
+            "benchmarkReturnPct": 122.557,
+            "benchmarkMaxDrawdownPct": -19.774,
+            "excessReturnPctPoints": 13.332,
+            "mddGapPctPoints": 1.266
+          },
+          "20.0": {
+            "rebalanceCount": 17,
+            "benchmarkStart": "2015-12-31",
+            "strategyEndingValue": 235867.0,
+            "strategyReturnPct": 135.867,
+            "strategyMaxDrawdownPct": -18.491,
+            "strategyMonthlyTurnoverPct": 20.16,
+            "benchmarkEndingValue": 222334.57,
+            "benchmarkReturnPct": 122.335,
+            "benchmarkMaxDrawdownPct": -19.774,
+            "excessReturnPctPoints": 13.532,
+            "mddGapPctPoints": 1.283
+          },
+          "40.0": {
+            "rebalanceCount": 17,
+            "benchmarkStart": "2015-12-31",
+            "strategyEndingValue": 235844.41,
+            "strategyReturnPct": 135.844,
+            "strategyMaxDrawdownPct": -18.475,
+            "strategyMonthlyTurnoverPct": 20.155,
+            "benchmarkEndingValue": 222112.01,
+            "benchmarkReturnPct": 122.112,
+            "benchmarkMaxDrawdownPct": -19.774,
+            "excessReturnPctPoints": 13.732,
+            "mddGapPctPoints": 1.3
+          },
+          "57.0": {
+            "rebalanceCount": 17,
+            "benchmarkStart": "2015-12-31",
+            "strategyEndingValue": 235825.16,
+            "strategyReturnPct": 135.825,
+            "strategyMaxDrawdownPct": -18.46,
+            "strategyMonthlyTurnoverPct": 20.151,
+            "benchmarkEndingValue": 221922.84,
+            "benchmarkReturnPct": 121.923,
+            "benchmarkMaxDrawdownPct": -19.774,
+            "excessReturnPctPoints": 13.902,
+            "mddGapPctPoints": 1.314
+          }
+        },
+        "zeroCostRebalanceEvents": [
+          {
+            "date": "2015-12-31",
+            "holdingsAfter": [
+              "AMZN",
+              "CRM",
+              "GOOGL",
+              "HD",
+              "NKE",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 100000.0,
+            "oneWayTurnover": 1.0
+          },
+          {
+            "date": "2016-03-31",
+            "holdingsAfter": [
+              "AMZN",
+              "GOOGL",
+              "HD",
+              "MCD",
+              "MSFT",
+              "NKE",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 102197.11,
+            "oneWayTurnover": 0.5714
+          },
+          {
+            "date": "2016-06-30",
+            "holdingsAfter": [
+              "AMZN",
+              "GOOGL",
+              "HD",
+              "JNJ",
+              "MCD",
+              "MSFT",
+              "NVDA",
+              "V"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 106264.39,
+            "oneWayTurnover": 0.5
+          },
+          {
+            "date": "2016-09-29",
+            "holdingsAfter": [
+              "AMZN",
+              "GOOGL",
+              "JNJ",
+              "MMM",
+              "MRK",
+              "MSFT",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 117767.32,
+            "oneWayTurnover": 0.7258
+          },
+          {
+            "date": "2016-12-29",
+            "holdingsAfter": [
+              "AMZN",
+              "CAT",
+              "CVX",
+              "GS",
+              "JPM",
+              "MMM",
+              "MRK",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 126318.44,
+            "oneWayTurnover": 1.1111
+          },
+          {
+            "date": "2017-03-30",
+            "holdingsAfter": [
+              "AMZN",
+              "AXP",
+              "BA",
+              "CAT",
+              "GS",
+              "JPM",
+              "MRK",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 129217.87,
+            "oneWayTurnover": 0.4837
+          },
+          {
+            "date": "2017-06-29",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "AXP",
+              "BA",
+              "CAT",
+              "GS",
+              "JPM",
+              "MSFT",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 145764.48,
+            "oneWayTurnover": 0.402
+          },
+          {
+            "date": "2017-09-28",
+            "holdingsAfter": [
+              "AAPL",
+              "AXP",
+              "BA",
+              "CAT",
+              "CRM",
+              "GS",
+              "JPM",
+              "MCD",
+              "MSFT",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 162017.18,
+            "oneWayTurnover": 0.3636
+          },
+          {
+            "date": "2017-12-28",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "BA",
+              "CAT",
+              "CRM",
+              "MCD",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 183970.69,
+            "oneWayTurnover": 0.7118
+          },
+          {
+            "date": "2018-03-29",
+            "holdingsAfter": [
+              "AMZN",
+              "BA",
+              "CAT",
+              "CRM",
+              "MSFT",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 192596.38,
+            "oneWayTurnover": 0.4642
+          },
+          {
+            "date": "2018-06-28",
+            "holdingsAfter": [
+              "AMZN",
+              "BA",
+              "CAT",
+              "CRM",
+              "MSFT",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 206659.44,
+            "oneWayTurnover": 0.0594
+          },
+          {
+            "date": "2018-09-27",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "BA",
+              "CRM",
+              "MSFT",
+              "NKE",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 240898.18,
+            "oneWayTurnover": 0.5
+          },
+          {
+            "date": "2018-12-27",
+            "holdingsAfter": [
+              "AMZN",
+              "BA",
+              "CRM",
+              "CSCO",
+              "MRK",
+              "MSFT",
+              "NKE",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 190058.25,
+            "oneWayTurnover": 0.5002
+          },
+          {
+            "date": "2019-03-28",
+            "holdingsAfter": [
+              "AMZN",
+              "BA",
+              "CRM",
+              "CSCO",
+              "MRK",
+              "MSFT",
+              "NKE",
+              "PG"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 221854.87,
+            "oneWayTurnover": 0.2678
+          },
+          {
+            "date": "2019-06-27",
+            "holdingsAfter": [
+              "CSCO",
+              "DIS",
+              "MCD",
+              "MRK",
+              "MSFT",
+              "PG"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 230260.06,
+            "oneWayTurnover": 0.9567
+          },
+          {
+            "date": "2019-09-26",
+            "holdingsAfter": [
+              "DIS",
+              "KO",
+              "MCD",
+              "MRK",
+              "MSFT",
+              "PG",
+              "V",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 219103.63,
+            "oneWayTurnover": 0.75
+          },
+          {
+            "date": "2019-12-26",
+            "holdingsAfter": [
+              "AAPL",
+              "DIS",
+              "JPM",
+              "MSFT",
+              "NVDA",
+              "PG",
+              "SHW",
+              "V",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 235889.55,
+            "oneWayTurnover": 0.8889
+          }
+        ]
+      },
+      {
+        "id": "2way-B",
+        "label": "2020-01-01 ~ 2026-09-10",
+        "requestedStart": "2020-01-01",
+        "requestedEnd": "2026-09-10",
+        "actualStart": "2020-01-02",
+        "actualEnd": "2026-09-10",
+        "byCostBps": {
+          "0.0": {
+            "rebalanceCount": 26,
+            "benchmarkStart": "2020-03-26",
+            "strategyEndingValue": 396171.86,
+            "strategyReturnPct": 296.172,
+            "strategyMaxDrawdownPct": -15.186,
+            "strategyMonthlyTurnoverPct": 20.305,
+            "benchmarkEndingValue": 428021.81,
+            "benchmarkReturnPct": 328.022,
+            "benchmarkMaxDrawdownPct": -23.846,
+            "excessReturnPctPoints": -31.85,
+            "mddGapPctPoints": 8.66
+          },
+          "20.0": {
+            "rebalanceCount": 26,
+            "benchmarkStart": "2020-03-26",
+            "strategyEndingValue": 396025.36,
+            "strategyReturnPct": 296.025,
+            "strategyMaxDrawdownPct": -15.179,
+            "strategyMonthlyTurnoverPct": 20.3,
+            "benchmarkEndingValue": 427593.79,
+            "benchmarkReturnPct": 327.594,
+            "benchmarkMaxDrawdownPct": -23.846,
+            "excessReturnPctPoints": -31.568,
+            "mddGapPctPoints": 8.667
+          },
+          "40.0": {
+            "rebalanceCount": 26,
+            "benchmarkStart": "2020-03-26",
+            "strategyEndingValue": 395878.75,
+            "strategyReturnPct": 295.879,
+            "strategyMaxDrawdownPct": -15.172,
+            "strategyMonthlyTurnoverPct": 20.295,
+            "benchmarkEndingValue": 427165.77,
+            "benchmarkReturnPct": 327.166,
+            "benchmarkMaxDrawdownPct": -23.846,
+            "excessReturnPctPoints": -31.287,
+            "mddGapPctPoints": 8.674
+          },
+          "57.0": {
+            "rebalanceCount": 26,
+            "benchmarkStart": "2020-03-26",
+            "strategyEndingValue": 395754.06,
+            "strategyReturnPct": 295.754,
+            "strategyMaxDrawdownPct": -15.167,
+            "strategyMonthlyTurnoverPct": 20.291,
+            "benchmarkEndingValue": 426801.95,
+            "benchmarkReturnPct": 326.802,
+            "benchmarkMaxDrawdownPct": -23.846,
+            "excessReturnPctPoints": -31.048,
+            "mddGapPctPoints": 8.679
+          }
+        },
+        "zeroCostRebalanceEvents": [
+          {
+            "date": "2020-03-26",
+            "holdingsAfter": [
+              "AAPL",
+              "HD",
+              "KO",
+              "MSFT",
+              "NVDA",
+              "SHW"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 100000.0,
+            "oneWayTurnover": 1.0
+          },
+          {
+            "date": "2020-06-25",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "GOOGL",
+              "HD",
+              "MSFT",
+              "NVDA",
+              "SHW"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 137791.15,
+            "oneWayTurnover": 0.5714
+          },
+          {
+            "date": "2020-09-24",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "CRM",
+              "GOOGL",
+              "HD",
+              "MSFT",
+              "NVDA",
+              "SHW",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 160796.7,
+            "oneWayTurnover": 0.4444
+          },
+          {
+            "date": "2020-12-24",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "CRM",
+              "GOOGL",
+              "HD",
+              "MSFT",
+              "NVDA",
+              "SHW"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 168207.89,
+            "oneWayTurnover": 0.2376
+          },
+          {
+            "date": "2021-03-25",
+            "holdingsAfter": [
+              "AAPL",
+              "CAT",
+              "DIS",
+              "GOOGL",
+              "GS",
+              "JPM",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 173553.49,
+            "oneWayTurnover": 1.2465
+          },
+          {
+            "date": "2021-06-24",
+            "holdingsAfter": [
+              "AXP",
+              "CAT",
+              "DIS",
+              "GOOGL",
+              "GS",
+              "JPM",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 195709.39,
+            "oneWayTurnover": 0.4022
+          },
+          {
+            "date": "2021-09-23",
+            "holdingsAfter": [
+              "AXP",
+              "CAT",
+              "CSCO",
+              "DIS",
+              "GOOGL",
+              "GS",
+              "JPM",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 200067.59,
+            "oneWayTurnover": 0.25
+          },
+          {
+            "date": "2021-12-23",
+            "holdingsAfter": [
+              "AXP",
+              "CSCO",
+              "CVX",
+              "GOOGL",
+              "GS",
+              "HD",
+              "JPM",
+              "MSFT",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 214883.49,
+            "oneWayTurnover": 0.6667
+          },
+          {
+            "date": "2022-03-24",
+            "holdingsAfter": [
+              "AAPL",
+              "AXP",
+              "CSCO",
+              "CVX",
+              "GOOGL",
+              "MSFT",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 209921.2,
+            "oneWayTurnover": 0.6601
+          },
+          {
+            "date": "2022-06-23",
+            "holdingsAfter": [
+              "AAPL",
+              "CVX",
+              "JNJ",
+              "KO",
+              "MRK",
+              "TRV",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 166899.23,
+            "oneWayTurnover": 1.1861
+          },
+          {
+            "date": "2022-09-22",
+            "holdingsAfter": [
+              "AAPL",
+              "AMGN",
+              "CVX",
+              "JNJ",
+              "KO",
+              "MRK",
+              "TRV",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 162432.42,
+            "oneWayTurnover": 0.25
+          },
+          {
+            "date": "2022-12-22",
+            "holdingsAfter": [
+              "AMGN",
+              "CAT",
+              "CVX",
+              "IBM",
+              "JNJ",
+              "KO",
+              "MRK",
+              "TRV",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 181805.67,
+            "oneWayTurnover": 0.4444
+          },
+          {
+            "date": "2023-03-23",
+            "holdingsAfter": [
+              "AMGN",
+              "BA",
+              "CAT",
+              "CVX",
+              "GS",
+              "IBM",
+              "JPM",
+              "MCD",
+              "MRK",
+              "TRV"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 168075.51,
+            "oneWayTurnover": 0.8
+          },
+          {
+            "date": "2023-06-22",
+            "holdingsAfter": [
+              "AAPL",
+              "BA",
+              "CAT",
+              "CRM",
+              "JPM",
+              "MCD",
+              "MRK",
+              "MSFT",
+              "NVDA",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 171985.4,
+            "oneWayTurnover": 1.002
+          },
+          {
+            "date": "2023-09-21",
+            "holdingsAfter": [
+              "AAPL",
+              "BA",
+              "CAT",
+              "CRM",
+              "CSCO",
+              "JPM",
+              "MRK",
+              "MSFT",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 169016.78,
+            "oneWayTurnover": 0.4059
+          },
+          {
+            "date": "2023-12-21",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "BA",
+              "CRM",
+              "GOOGL",
+              "JPM",
+              "MSFT",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 195763.49,
+            "oneWayTurnover": 0.6045
+          },
+          {
+            "date": "2024-03-21",
+            "holdingsAfter": [
+              "AMZN",
+              "CAT",
+              "CRM",
+              "GOOGL",
+              "IBM",
+              "JPM",
+              "MSFT",
+              "NVDA",
+              "SHW"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 223902.03,
+            "oneWayTurnover": 0.6667
+          },
+          {
+            "date": "2024-06-20",
+            "holdingsAfter": [
+              "AMZN",
+              "CAT",
+              "CRM",
+              "GOOGL",
+              "GS",
+              "IBM",
+              "JPM",
+              "MSFT",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 229901.39,
+            "oneWayTurnover": 0.3296
+          },
+          {
+            "date": "2024-09-19",
+            "holdingsAfter": [
+              "AMZN",
+              "AXP",
+              "GS",
+              "IBM",
+              "JPM",
+              "MMM",
+              "MSFT",
+              "NVDA",
+              "SHW"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 244061.85,
+            "oneWayTurnover": 0.7202
+          },
+          {
+            "date": "2024-12-19",
+            "holdingsAfter": [
+              "AMZN",
+              "AXP",
+              "GS",
+              "IBM",
+              "JPM",
+              "MMM",
+              "NVDA",
+              "SHW",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 263905.49,
+            "oneWayTurnover": 0.2944
+          },
+          {
+            "date": "2025-03-20",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "AXP",
+              "GS",
+              "IBM",
+              "JPM",
+              "MMM",
+              "NVDA",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 259511.11,
+            "oneWayTurnover": 0.315
+          },
+          {
+            "date": "2025-06-19",
+            "holdingsAfter": [
+              "AXP",
+              "CSCO",
+              "GS",
+              "IBM",
+              "JPM",
+              "MMM",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 289555.27,
+            "oneWayTurnover": 0.6615
+          },
+          {
+            "date": "2025-09-18",
+            "holdingsAfter": [
+              "AXP",
+              "BA",
+              "CSCO",
+              "GS",
+              "JPM",
+              "NVDA",
+              "V",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 307447.7,
+            "oneWayTurnover": 0.75
+          },
+          {
+            "date": "2025-12-18",
+            "holdingsAfter": [
+              "AMGN",
+              "AXP",
+              "CAT",
+              "CSCO",
+              "GOOGL",
+              "GS",
+              "IBM",
+              "JNJ",
+              "JPM",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 335263.84,
+            "oneWayTurnover": 1.0
+          },
+          {
+            "date": "2026-03-19",
+            "holdingsAfter": [
+              "AMGN",
+              "CAT",
+              "CSCO",
+              "GOOGL",
+              "GS",
+              "JNJ",
+              "JPM",
+              "NVDA",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 328713.52,
+            "oneWayTurnover": 0.367
+          },
+          {
+            "date": "2026-06-18",
+            "holdingsAfter": [
+              "AAPL",
+              "AMGN",
+              "CAT",
+              "CSCO",
+              "GOOGL",
+              "GS",
+              "JNJ",
+              "MRK",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 385625.68,
+            "oneWayTurnover": 0.519
+          }
+        ]
+      }
+    ],
+    "4way": [
+      {
+        "id": "4way-A",
+        "label": "2015-01-01 ~ 2017-12-31",
+        "requestedStart": "2015-01-01",
+        "requestedEnd": "2017-12-31",
+        "actualStart": "2015-01-01",
+        "actualEnd": "2017-12-28",
+        "byCostBps": {
+          "0.0": {
+            "rebalanceCount": 9,
+            "benchmarkStart": "2015-12-31",
+            "strategyEndingValue": 183970.69,
+            "strategyReturnPct": 83.971,
+            "strategyMaxDrawdownPct": -11.502,
+            "strategyMonthlyTurnoverPct": 21.797,
+            "benchmarkEndingValue": 174145.7,
+            "benchmarkReturnPct": 74.146,
+            "benchmarkMaxDrawdownPct": -7.127,
+            "excessReturnPctPoints": 9.825,
+            "mddGapPctPoints": -4.374
+          },
+          "20.0": {
+            "rebalanceCount": 9,
+            "benchmarkStart": "2015-12-31",
+            "strategyEndingValue": 183958.48,
+            "strategyReturnPct": 83.958,
+            "strategyMaxDrawdownPct": -11.492,
+            "strategyMonthlyTurnoverPct": 21.791,
+            "benchmarkEndingValue": 173971.56,
+            "benchmarkReturnPct": 73.972,
+            "benchmarkMaxDrawdownPct": -7.127,
+            "excessReturnPctPoints": 9.987,
+            "mddGapPctPoints": -4.365
+          },
+          "40.0": {
+            "rebalanceCount": 9,
+            "benchmarkStart": "2015-12-31",
+            "strategyEndingValue": 183946.26,
+            "strategyReturnPct": 83.946,
+            "strategyMaxDrawdownPct": -11.483,
+            "strategyMonthlyTurnoverPct": 21.785,
+            "benchmarkEndingValue": 173797.41,
+            "benchmarkReturnPct": 73.797,
+            "benchmarkMaxDrawdownPct": -7.127,
+            "excessReturnPctPoints": 10.149,
+            "mddGapPctPoints": -4.356
+          },
+          "57.0": {
+            "rebalanceCount": 9,
+            "benchmarkStart": "2015-12-31",
+            "strategyEndingValue": 183935.86,
+            "strategyReturnPct": 83.936,
+            "strategyMaxDrawdownPct": -11.475,
+            "strategyMonthlyTurnoverPct": 21.78,
+            "benchmarkEndingValue": 173649.39,
+            "benchmarkReturnPct": 73.649,
+            "benchmarkMaxDrawdownPct": -7.127,
+            "excessReturnPctPoints": 10.286,
+            "mddGapPctPoints": -4.348
+          }
+        },
+        "zeroCostRebalanceEvents": [
+          {
+            "date": "2015-12-31",
+            "holdingsAfter": [
+              "AMZN",
+              "CRM",
+              "GOOGL",
+              "HD",
+              "NKE",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 100000.0,
+            "oneWayTurnover": 1.0
+          },
+          {
+            "date": "2016-03-31",
+            "holdingsAfter": [
+              "AMZN",
+              "GOOGL",
+              "HD",
+              "MCD",
+              "MSFT",
+              "NKE",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 102197.11,
+            "oneWayTurnover": 0.5714
+          },
+          {
+            "date": "2016-06-30",
+            "holdingsAfter": [
+              "AMZN",
+              "GOOGL",
+              "HD",
+              "JNJ",
+              "MCD",
+              "MSFT",
+              "NVDA",
+              "V"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 106264.39,
+            "oneWayTurnover": 0.5
+          },
+          {
+            "date": "2016-09-29",
+            "holdingsAfter": [
+              "AMZN",
+              "GOOGL",
+              "JNJ",
+              "MMM",
+              "MRK",
+              "MSFT",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 117767.32,
+            "oneWayTurnover": 0.7258
+          },
+          {
+            "date": "2016-12-29",
+            "holdingsAfter": [
+              "AMZN",
+              "CAT",
+              "CVX",
+              "GS",
+              "JPM",
+              "MMM",
+              "MRK",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 126318.44,
+            "oneWayTurnover": 1.1111
+          },
+          {
+            "date": "2017-03-30",
+            "holdingsAfter": [
+              "AMZN",
+              "AXP",
+              "BA",
+              "CAT",
+              "GS",
+              "JPM",
+              "MRK",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 129217.87,
+            "oneWayTurnover": 0.4837
+          },
+          {
+            "date": "2017-06-29",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "AXP",
+              "BA",
+              "CAT",
+              "GS",
+              "JPM",
+              "MSFT",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 145764.48,
+            "oneWayTurnover": 0.402
+          },
+          {
+            "date": "2017-09-28",
+            "holdingsAfter": [
+              "AAPL",
+              "AXP",
+              "BA",
+              "CAT",
+              "CRM",
+              "GS",
+              "JPM",
+              "MCD",
+              "MSFT",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 162017.18,
+            "oneWayTurnover": 0.3636
+          },
+          {
+            "date": "2017-12-28",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "BA",
+              "CAT",
+              "CRM",
+              "MCD",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 183970.69,
+            "oneWayTurnover": 0.7118
+          }
+        ]
+      },
+      {
+        "id": "4way-B",
+        "label": "2018-01-01 ~ 2020-12-31",
+        "requestedStart": "2018-01-01",
+        "requestedEnd": "2020-12-31",
+        "actualStart": "2018-01-04",
+        "actualEnd": "2020-12-31",
+        "byCostBps": {
+          "0.0": {
+            "rebalanceCount": 12,
+            "benchmarkStart": "2018-03-29",
+            "strategyEndingValue": 150729.36,
+            "strategyReturnPct": 50.729,
+            "strategyMaxDrawdownPct": -28.682,
+            "strategyMonthlyTurnoverPct": 19.655,
+            "benchmarkEndingValue": 158640.46,
+            "benchmarkReturnPct": 58.64,
+            "benchmarkMaxDrawdownPct": -27.932,
+            "excessReturnPctPoints": -7.911,
+            "mddGapPctPoints": -0.75
+          },
+          "20.0": {
+            "rebalanceCount": 12,
+            "benchmarkStart": "2018-03-29",
+            "strategyEndingValue": 150729.92,
+            "strategyReturnPct": 50.73,
+            "strategyMaxDrawdownPct": -28.677,
+            "strategyMonthlyTurnoverPct": 19.651,
+            "benchmarkEndingValue": 158481.82,
+            "benchmarkReturnPct": 58.482,
+            "benchmarkMaxDrawdownPct": -27.932,
+            "excessReturnPctPoints": -7.752,
+            "mddGapPctPoints": -0.745
+          },
+          "40.0": {
+            "rebalanceCount": 12,
+            "benchmarkStart": "2018-03-29",
+            "strategyEndingValue": 150730.43,
+            "strategyReturnPct": 50.73,
+            "strategyMaxDrawdownPct": -28.673,
+            "strategyMonthlyTurnoverPct": 19.647,
+            "benchmarkEndingValue": 158323.18,
+            "benchmarkReturnPct": 58.323,
+            "benchmarkMaxDrawdownPct": -27.932,
+            "excessReturnPctPoints": -7.593,
+            "mddGapPctPoints": -0.741
+          },
+          "57.0": {
+            "rebalanceCount": 12,
+            "benchmarkStart": "2018-03-29",
+            "strategyEndingValue": 150730.82,
+            "strategyReturnPct": 50.731,
+            "strategyMaxDrawdownPct": -28.669,
+            "strategyMonthlyTurnoverPct": 19.643,
+            "benchmarkEndingValue": 158188.33,
+            "benchmarkReturnPct": 58.188,
+            "benchmarkMaxDrawdownPct": -27.932,
+            "excessReturnPctPoints": -7.458,
+            "mddGapPctPoints": -0.737
+          }
+        },
+        "zeroCostRebalanceEvents": [
+          {
+            "date": "2018-03-29",
+            "holdingsAfter": [
+              "AMZN",
+              "BA",
+              "CAT",
+              "CRM",
+              "MSFT",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 100000.0,
+            "oneWayTurnover": 1.0
+          },
+          {
+            "date": "2018-06-28",
+            "holdingsAfter": [
+              "AMZN",
+              "BA",
+              "CAT",
+              "CRM",
+              "MSFT",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 107130.07,
+            "oneWayTurnover": 0.0679
+          },
+          {
+            "date": "2018-09-27",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "BA",
+              "CRM",
+              "MSFT",
+              "NKE",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 126041.9,
+            "oneWayTurnover": 0.5714
+          },
+          {
+            "date": "2018-12-27",
+            "holdingsAfter": [
+              "AMZN",
+              "BA",
+              "CRM",
+              "CSCO",
+              "MRK",
+              "MSFT",
+              "NKE",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 97411.73,
+            "oneWayTurnover": 0.75
+          },
+          {
+            "date": "2019-03-28",
+            "holdingsAfter": [
+              "AMZN",
+              "BA",
+              "CRM",
+              "CSCO",
+              "MRK",
+              "MSFT",
+              "NKE",
+              "PG"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 113708.64,
+            "oneWayTurnover": 0.2678
+          },
+          {
+            "date": "2019-06-27",
+            "holdingsAfter": [
+              "CSCO",
+              "DIS",
+              "MCD",
+              "MRK",
+              "MSFT",
+              "PG"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 118016.61,
+            "oneWayTurnover": 0.9567
+          },
+          {
+            "date": "2019-09-26",
+            "holdingsAfter": [
+              "DIS",
+              "KO",
+              "MCD",
+              "MRK",
+              "MSFT",
+              "PG",
+              "V",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 112298.53,
+            "oneWayTurnover": 0.75
+          },
+          {
+            "date": "2019-12-26",
+            "holdingsAfter": [
+              "AAPL",
+              "DIS",
+              "JPM",
+              "MSFT",
+              "NVDA",
+              "PG",
+              "SHW",
+              "V",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 120901.93,
+            "oneWayTurnover": 0.8889
+          },
+          {
+            "date": "2020-03-26",
+            "holdingsAfter": [
+              "AAPL",
+              "HD",
+              "JPM",
+              "KO",
+              "MSFT",
+              "NVDA",
+              "PG",
+              "SHW",
+              "V",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 100482.0,
+            "oneWayTurnover": 0.4419
+          },
+          {
+            "date": "2020-06-25",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "GOOGL",
+              "HD",
+              "MSFT",
+              "NVDA",
+              "SHW",
+              "V"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 128719.14,
+            "oneWayTurnover": 0.6789
+          },
+          {
+            "date": "2020-09-24",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "CRM",
+              "GOOGL",
+              "HD",
+              "MSFT",
+              "NVDA",
+              "SHW",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 148062.75,
+            "oneWayTurnover": 0.4458
+          },
+          {
+            "date": "2020-12-24",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "CRM",
+              "GOOGL",
+              "HD",
+              "MSFT",
+              "NVDA",
+              "SHW"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 154887.02,
+            "oneWayTurnover": 0.2376
+          }
+        ]
+      },
+      {
+        "id": "4way-C",
+        "label": "2021-01-01 ~ 2023-12-31",
+        "requestedStart": "2021-01-01",
+        "requestedEnd": "2023-12-31",
+        "actualStart": "2021-01-07",
+        "actualEnd": "2023-12-28",
+        "byCostBps": {
+          "0.0": {
+            "rebalanceCount": 12,
+            "benchmarkStart": "2021-03-25",
+            "strategyEndingValue": 108383.29,
+            "strategyReturnPct": 8.383,
+            "strategyMaxDrawdownPct": -37.978,
+            "strategyMonthlyTurnoverPct": 21.857,
+            "benchmarkEndingValue": 129945.65,
+            "benchmarkReturnPct": 29.946,
+            "benchmarkMaxDrawdownPct": -21.769,
+            "excessReturnPctPoints": -21.562,
+            "mddGapPctPoints": -16.208
+          },
+          "20.0": {
+            "rebalanceCount": 12,
+            "benchmarkStart": "2021-03-25",
+            "strategyEndingValue": 108376.69,
+            "strategyReturnPct": 8.377,
+            "strategyMaxDrawdownPct": -37.966,
+            "strategyMonthlyTurnoverPct": 21.852,
+            "benchmarkEndingValue": 129815.7,
+            "benchmarkReturnPct": 29.816,
+            "benchmarkMaxDrawdownPct": -21.769,
+            "excessReturnPctPoints": -21.439,
+            "mddGapPctPoints": -16.197
+          },
+          "40.0": {
+            "rebalanceCount": 12,
+            "benchmarkStart": "2021-03-25",
+            "strategyEndingValue": 108370.08,
+            "strategyReturnPct": 8.37,
+            "strategyMaxDrawdownPct": -37.955,
+            "strategyMonthlyTurnoverPct": 21.846,
+            "benchmarkEndingValue": 129685.76,
+            "benchmarkReturnPct": 29.686,
+            "benchmarkMaxDrawdownPct": -21.769,
+            "excessReturnPctPoints": -21.316,
+            "mddGapPctPoints": -16.185
+          },
+          "57.0": {
+            "rebalanceCount": 12,
+            "benchmarkStart": "2021-03-25",
+            "strategyEndingValue": 108364.46,
+            "strategyReturnPct": 8.364,
+            "strategyMaxDrawdownPct": -37.945,
+            "strategyMonthlyTurnoverPct": 21.841,
+            "benchmarkEndingValue": 129575.3,
+            "benchmarkReturnPct": 29.575,
+            "benchmarkMaxDrawdownPct": -21.769,
+            "excessReturnPctPoints": -21.211,
+            "mddGapPctPoints": -16.176
+          }
+        },
+        "zeroCostRebalanceEvents": [
+          {
+            "date": "2021-03-25",
+            "holdingsAfter": [
+              "AAPL",
+              "CAT",
+              "DIS",
+              "GS",
+              "JPM",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 100000.0,
+            "oneWayTurnover": 1.0
+          },
+          {
+            "date": "2021-06-24",
+            "holdingsAfter": [
+              "AXP",
+              "CAT",
+              "DIS",
+              "GOOGL",
+              "GS",
+              "JPM",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 111828.93,
+            "oneWayTurnover": 0.5779
+          },
+          {
+            "date": "2021-09-23",
+            "holdingsAfter": [
+              "AXP",
+              "CAT",
+              "CSCO",
+              "DIS",
+              "GOOGL",
+              "GS",
+              "JPM",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 114319.22,
+            "oneWayTurnover": 0.25
+          },
+          {
+            "date": "2021-12-23",
+            "holdingsAfter": [
+              "AXP",
+              "CSCO",
+              "CVX",
+              "GOOGL",
+              "GS",
+              "HD",
+              "JPM",
+              "MSFT",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 122785.07,
+            "oneWayTurnover": 0.6667
+          },
+          {
+            "date": "2022-03-24",
+            "holdingsAfter": [
+              "AAPL",
+              "AXP",
+              "CSCO",
+              "CVX",
+              "GOOGL",
+              "MSFT",
+              "NVDA",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 119949.6,
+            "oneWayTurnover": 0.6601
+          },
+          {
+            "date": "2022-06-23",
+            "holdingsAfter": [
+              "AAPL",
+              "CVX",
+              "JNJ",
+              "KO",
+              "MRK",
+              "TRV",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 95366.72,
+            "oneWayTurnover": 1.1861
+          },
+          {
+            "date": "2022-09-22",
+            "holdingsAfter": [
+              "AAPL",
+              "AMGN",
+              "CVX",
+              "JNJ",
+              "KO",
+              "MRK",
+              "TRV",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 92814.37,
+            "oneWayTurnover": 0.25
+          },
+          {
+            "date": "2022-12-22",
+            "holdingsAfter": [
+              "AMGN",
+              "CAT",
+              "CVX",
+              "IBM",
+              "JNJ",
+              "KO",
+              "MRK",
+              "TRV",
+              "UNH"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 103884.3,
+            "oneWayTurnover": 0.4444
+          },
+          {
+            "date": "2023-03-23",
+            "holdingsAfter": [
+              "AMGN",
+              "BA",
+              "CAT",
+              "CVX",
+              "GS",
+              "IBM",
+              "JPM",
+              "MCD",
+              "MRK",
+              "TRV"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 96038.85,
+            "oneWayTurnover": 0.8
+          },
+          {
+            "date": "2023-06-22",
+            "holdingsAfter": [
+              "AAPL",
+              "BA",
+              "CAT",
+              "CRM",
+              "JPM",
+              "MCD",
+              "MRK",
+              "MSFT",
+              "NVDA",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 98272.97,
+            "oneWayTurnover": 1.002
+          },
+          {
+            "date": "2023-09-21",
+            "holdingsAfter": [
+              "AAPL",
+              "BA",
+              "CAT",
+              "CRM",
+              "CSCO",
+              "JPM",
+              "MRK",
+              "MSFT",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 96576.69,
+            "oneWayTurnover": 0.4059
+          },
+          {
+            "date": "2023-12-21",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "BA",
+              "CRM",
+              "GOOGL",
+              "JPM",
+              "MSFT",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 111859.85,
+            "oneWayTurnover": 0.6045
+          }
+        ]
+      },
+      {
+        "id": "4way-D",
+        "label": "2024-01-01 ~ 2026-09-10",
+        "requestedStart": "2024-01-01",
+        "requestedEnd": "2026-09-10",
+        "actualStart": "2024-01-04",
+        "actualEnd": "2026-09-10",
+        "byCostBps": {
+          "0.0": {
+            "rebalanceCount": 10,
+            "benchmarkStart": "2024-03-21",
+            "strategyEndingValue": 174258.03,
+            "strategyReturnPct": 74.258,
+            "strategyMaxDrawdownPct": -15.186,
+            "strategyMonthlyTurnoverPct": 21.365,
+            "benchmarkEndingValue": 146428.71,
+            "benchmarkReturnPct": 46.429,
+            "benchmarkMaxDrawdownPct": -12.25,
+            "excessReturnPctPoints": 27.829,
+            "mddGapPctPoints": -2.936
+          },
+          "20.0": {
+            "rebalanceCount": 10,
+            "benchmarkStart": "2024-03-21",
+            "strategyEndingValue": 174243.44,
+            "strategyReturnPct": 74.243,
+            "strategyMaxDrawdownPct": -15.179,
+            "strategyMonthlyTurnoverPct": 21.358,
+            "benchmarkEndingValue": 146282.28,
+            "benchmarkReturnPct": 46.282,
+            "benchmarkMaxDrawdownPct": -12.25,
+            "excessReturnPctPoints": 27.961,
+            "mddGapPctPoints": -2.929
+          },
+          "40.0": {
+            "rebalanceCount": 10,
+            "benchmarkStart": "2024-03-21",
+            "strategyEndingValue": 174228.83,
+            "strategyReturnPct": 74.229,
+            "strategyMaxDrawdownPct": -15.172,
+            "strategyMonthlyTurnoverPct": 21.351,
+            "benchmarkEndingValue": 146135.85,
+            "benchmarkReturnPct": 46.136,
+            "benchmarkMaxDrawdownPct": -12.25,
+            "excessReturnPctPoints": 28.093,
+            "mddGapPctPoints": -2.922
+          },
+          "57.0": {
+            "rebalanceCount": 10,
+            "benchmarkStart": "2024-03-21",
+            "strategyEndingValue": 174216.39,
+            "strategyReturnPct": 74.216,
+            "strategyMaxDrawdownPct": -15.167,
+            "strategyMonthlyTurnoverPct": 21.346,
+            "benchmarkEndingValue": 146011.39,
+            "benchmarkReturnPct": 46.011,
+            "benchmarkMaxDrawdownPct": -12.25,
+            "excessReturnPctPoints": 28.205,
+            "mddGapPctPoints": -2.916
+          }
+        },
+        "zeroCostRebalanceEvents": [
+          {
+            "date": "2024-03-21",
+            "holdingsAfter": [
+              "AMZN",
+              "CAT",
+              "CRM",
+              "IBM",
+              "NVDA",
+              "SHW"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 100000.0,
+            "oneWayTurnover": 1.0
+          },
+          {
+            "date": "2024-06-20",
+            "holdingsAfter": [
+              "AMZN",
+              "CAT",
+              "CRM",
+              "GOOGL",
+              "GS",
+              "IBM",
+              "JPM",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 99180.06,
+            "oneWayTurnover": 0.75
+          },
+          {
+            "date": "2024-09-19",
+            "holdingsAfter": [
+              "AMZN",
+              "AXP",
+              "GS",
+              "IBM",
+              "JPM",
+              "MMM",
+              "NVDA",
+              "SHW"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 106580.92,
+            "oneWayTurnover": 0.7923
+          },
+          {
+            "date": "2024-12-19",
+            "holdingsAfter": [
+              "AMZN",
+              "AXP",
+              "GS",
+              "IBM",
+              "JPM",
+              "MMM",
+              "NVDA",
+              "SHW",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 116080.05,
+            "oneWayTurnover": 0.2374
+          },
+          {
+            "date": "2025-03-20",
+            "holdingsAfter": [
+              "AAPL",
+              "AMZN",
+              "AXP",
+              "GS",
+              "IBM",
+              "JPM",
+              "MMM",
+              "NVDA",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 114147.16,
+            "oneWayTurnover": 0.315
+          },
+          {
+            "date": "2025-06-19",
+            "holdingsAfter": [
+              "AXP",
+              "CSCO",
+              "GS",
+              "IBM",
+              "JPM",
+              "MMM",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 127362.23,
+            "oneWayTurnover": 0.6615
+          },
+          {
+            "date": "2025-09-18",
+            "holdingsAfter": [
+              "AXP",
+              "BA",
+              "CSCO",
+              "GS",
+              "JPM",
+              "NVDA",
+              "V",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 135232.3,
+            "oneWayTurnover": 0.75
+          },
+          {
+            "date": "2025-12-18",
+            "holdingsAfter": [
+              "AMGN",
+              "AXP",
+              "CAT",
+              "CSCO",
+              "GOOGL",
+              "GS",
+              "IBM",
+              "JNJ",
+              "JPM",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 147467.36,
+            "oneWayTurnover": 1.0
+          },
+          {
+            "date": "2026-03-19",
+            "holdingsAfter": [
+              "AMGN",
+              "CAT",
+              "CSCO",
+              "GOOGL",
+              "GS",
+              "JNJ",
+              "JPM",
+              "NVDA",
+              "WMT"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 144586.16,
+            "oneWayTurnover": 0.367
+          },
+          {
+            "date": "2026-06-18",
+            "holdingsAfter": [
+              "AAPL",
+              "AMGN",
+              "CAT",
+              "CSCO",
+              "GOOGL",
+              "GS",
+              "JNJ",
+              "MRK",
+              "NVDA"
+            ],
+            "excludedThisDate": {},
+            "portfolioValueBeforeTrade": 169619.25,
+            "oneWayTurnover": 0.519
+          }
+        ]
+      }
+    ]
+  }
+}
