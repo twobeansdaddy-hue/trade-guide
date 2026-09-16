@@ -4,7 +4,9 @@ import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.risk.PortfolioRiskPolicy;
 import com.tradeguide.domain.strategy.*;
+import com.tradeguide.domain.trade.Currency;
 import com.tradeguide.domain.trade.Market;
+import com.tradeguide.domain.valuation.CurrencyValuationTotals;
 import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
@@ -20,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -716,10 +719,9 @@ class TradePlanPreviewServiceTest {
     private PortfolioValuation portfolioValuationWithMarketValue(BigDecimal totalMarketValue) {
         return new PortfolioValuation(
                 List.of(),
-                BigDecimal.ZERO,
-                totalMarketValue,
-                BigDecimal.ZERO,
-                BigDecimal.ZERO
+                Map.of(Currency.USD, new CurrencyValuationTotals(
+                        Currency.USD, BigDecimal.ZERO, totalMarketValue, BigDecimal.ZERO, BigDecimal.ZERO
+                ))
         );
     }
 
@@ -741,10 +743,9 @@ class TradePlanPreviewServiceTest {
         );
         return new PortfolioValuation(
                 List.of(holdingValuation),
-                BigDecimal.ZERO,
-                BigDecimal.ZERO,
-                BigDecimal.ZERO,
-                BigDecimal.ZERO
+                Map.of(Currency.USD, new CurrencyValuationTotals(
+                        Currency.USD, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO
+                ))
         );
     }
 }

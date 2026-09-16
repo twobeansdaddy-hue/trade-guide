@@ -18,6 +18,7 @@ import com.tradeguide.domain.strategy.TradePlanPreviewConstraint;
 import com.tradeguide.domain.strategy.TradePlanPreviewNotReadyReason;
 import com.tradeguide.domain.strategy.TradePlanPreviewStatus;
 import com.tradeguide.domain.strategy.UnavailableAsset;
+import com.tradeguide.domain.trade.Currency;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
@@ -124,7 +125,9 @@ public class TradePlanPreviewService {
         if (riskPolicy != null && riskPolicy.getStopLossRatio() != null) {
             PortfolioValuation valuation = portfolioValuationService
                     .getPortfolioValuation(memberId, portfolioId);
-            portfolioMarketValue = valuation.getTotalMarketValue();
+            // 매매 계획 초안은 아직 USD(미국 시장) 종목만 대상이다 - KRW 보유 종목은 환율
+            // 변환 정책이 없어 이 총액에 합산하지 않는다(위험 한도도 US 전용으로 설계됨).
+            portfolioMarketValue = valuation.getTotalsFor(Currency.USD).getTotalMarketValue();
             for (HoldingValuation holdingValuation : valuation.getHoldingValuations()) {
                 currentPricesByKey.put(
                         key(holdingValuation.getMarket(), holdingValuation.getTicker()),

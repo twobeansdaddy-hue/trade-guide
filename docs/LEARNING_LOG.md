@@ -158,7 +158,24 @@ git pull --ff-only
 1. **현재 누적된 미커밋 변경을 기능 단위로 검토한 뒤 커밋한다** - 실시간 손절 판정 수정, `displayName` 추가, 브로커 보유 조정 매도 방향, 아코디언 UI, Track A/B 리서치 산출물(`research/**`)이 전부 미커밋 상태다. Claude Code는 Git 경계 정책상 커밋·푸시를 직접 실행할 수 없으므로 사용자가 직접 수행한다. 커밋 전 백엔드 전체 테스트, 프론트엔드 lint/build, 주요 화면(전략 가이드·매매 계획 초안·보유 스냅샷) 수동 검증을 실행한다.
 2. Track B는 규칙 기반 자동 매매 확장을 중단하기로 했으므로, `StrategySelector.select(TRACK_B)`에 `TradingStrategy` 구현체를 추가하는 작업은 하지 않는다. 현재의 PEG<1 && 50일선 위 스크리닝(`research/data/candidates.json`)을 자동화할지(Finnhub 무료 API로 가능해짐, `research/reports/track-b-fundamental-data-provider-evaluation.md`)는 별도 결정 필요.
 3. 손절 없는 검토용 주문 초안은 허용하되, `stopLossPrice`가 없으면 증권사 전송 준비 상태가 되지 않도록 분리했다. Track A의 자동 손절 규칙은 채택하지 않는다(고정비율/ATR/추적손절/Chandelier Exit 4개 후보 전부 기각 확정, `research/TASKS.md` 6절). 기본값은 `NOT_CONFIGURED`로 유지하고, 사용자가 직접 입력한 손절 기준 비율이 있을 때만 검토용 손절가를 계산한다.
-4. 토스 주문 이력의 국내 시장 원장 반영은 통화·시장 판정, 원화 평가 모델, 자산 카탈로그 계약을 확정한 뒤 별도 슬라이스로 진행한다. 현재는 미국 주문만 반영하고 KRW 주문은 제외 건수로 보고한다.
+4. ~~토스 주문 이력의 국내 시장 원장 반영~~ - 2026-09-16 완료. 설계 계약
+   (`docs/agent-tasks/toss-krw-order-history-ledger-design-20260916.md`)에서 "환율
+   변환 없이 통화별 별도 표시"로 정책을 정하고 구현했다: `Currency` enum(USD/KRW)과
+   `Market.getCurrency()` 파생 메서드, `MarketPrice`의 통화 검증(시장-통화 불일치 시
+   예외), `TossSecuritiesOrderHistoryProvider`의 KRX 6자리 숫자 종목코드 인식(전량
+   제외 → 실제 반영 대상), `PortfolioValuation`/`CurrencyValuationTotals`의 통화별
+   집계(`totalsByCurrency`, API 계약 변경 - 프런트엔드 반영은
+   `docs/agent-tasks/antigravity-portfolio-valuation-currency-breakdown-20260916.md`
+   로 넘김)까지 마쳤다. `PortfolioValuationService.fetchPrices`가 이미 시장별로
+   묶어 배치 조회하는 구조라 KR 시세 조회는 추가 배관 없이 그대로 동작함을 통합
+   테스트(`fetchesPricesSeparatelyPerMarketWhenHoldingsSpanUsAndKr`)로 확인했다.
+   **의도적으로 범위 밖에 둔 것**: `PortfolioRiskPolicy`·`trade-plan-preview`의 위험
+   한도·매매 계획 계산은 USD만 대상으로 유지하고 KRW 보유 종목은 제외한다(사용자
+   승인, 통화 혼합 위험 회피) - Track A/B 전략 가이드도 여전히 US 전용이다. 국내
+   주식 전용 전략(Track C 격)이 필요한지는 별도 검토 대상으로 남겨뒀다 - 기존 Track
+   A/B 리서치는 전부 미국 주식 기준이라 그대로 재사용할 수 없다. KR 종목 검색(신규
+   상장 종목 자동 표시명 채우기)도 이번에는 하지 않았고, 미등록 종목은 티커를 그대로
+   표시명으로 쓴다.
 5. 토스의 장기 조회 범위(U-4)와 WTS 개인 이용약관(U-15)은 공식 기술 문서만으로 확정되지 않았다. 실제 서비스 공개 전 운영자 확인이 필요하며, 이를 코드가 확인된 것처럼 처리하지 않는다.
 6. 시장 데이터 제공자는 개발 환경의 요청 제한을 완화할 방법과 운영용 Twelve Data/Yahoo 사용 정책을 별도 결정한다. 공급자를 바꾸더라도 전략 기준 데이터와 조정 종가 규칙을 섞지 않는다.
 7. `trade-plan-preview`는 위험 한도와 사용자 손절가를 이용해 검토용 최대 매수 금액·수량과 예상 최대 손실을 계산한다. 이는 저장·자동 주문·증권사 전송 기능이 아니며, 가용 현금은 미연동 제약으로 표시한다. 일반 매도에는 임의 수량을 만들지 않고, 손절 기준 도달 때만 전량 손절 검토를 표시한다.

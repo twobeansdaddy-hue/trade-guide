@@ -8,6 +8,7 @@ import com.tradeguide.domain.market.PortfolioMarketDataPreference;
 import com.tradeguide.domain.market.MarketPrice;
 import com.tradeguide.domain.trade.Currency;
 import com.tradeguide.domain.trade.Market;
+import com.tradeguide.domain.valuation.CurrencyValuationTotals;
 import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.repository.asset.AssetListingRepository;
@@ -103,10 +104,13 @@ class PortfolioValuationServiceTest {
         );
         PortfolioValuation expected = new PortfolioValuation(
                 List.of(holdingValuation),
-                new BigDecimal("1000"),
-                new BigDecimal("1100"),
-                new BigDecimal("100"),
-                new BigDecimal("10")
+                Map.of(Currency.USD, new CurrencyValuationTotals(
+                        Currency.USD,
+                        new BigDecimal("1000"),
+                        new BigDecimal("1100"),
+                        new BigDecimal("100"),
+                        new BigDecimal("10")
+                ))
         );
 
         when(holdingService.getHoldings(10L, 100L))
@@ -137,6 +141,70 @@ class PortfolioValuationServiceTest {
         verify(holdingValuationCalculator).calculate(holding, marketPrice);
         verify(portfolioValuationCalculator)
                 .calculate(List.of(holdingValuation));
+    }
+
+    /**
+     * 토스증권 가격 제공자를 쓰는 포트폴리오는 US·KR 보유 종목이 섞여 있어도 시장별로
+     * 나눠 각각 한 번씩 배치 조회한다 - KR 원장 반영(2026-09-16)이 실제 시세 조회
+     * 경로까지 문제없이 이어지는지 확인한다.
+     */
+    @Test
+    void fetchesPricesSeparatelyPerMarketWhenHoldingsSpanUsAndKr() {
+        // given
+        Holding usHolding = new Holding(Market.US, "AAPL", new BigDecimal("10"), new BigDecimal("100"));
+        Holding krHolding = new Holding(Market.KR, "005930", new BigDecimal("5"), new BigDecimal("70000"));
+
+        AssetListing usListing = new AssetListing(Market.US, "AAPL", "Apple Inc.", ListingStatus.ACTIVE);
+        AssetListing krListing = new AssetListing(Market.KR, "005930", "삼성전자", ListingStatus.ACTIVE);
+
+        MarketPrice usPrice = new MarketPrice(
+                Market.US, "AAPL", new BigDecimal("110"), Currency.USD, Instant.parse("2026-08-04T00:00:00Z"));
+        MarketPrice krPrice = new MarketPrice(
+                Market.KR, "005930", new BigDecimal("75000"), Currency.KRW, Instant.parse("2026-08-04T00:00:00Z"));
+
+        HoldingValuation usValuation = new HoldingValuation(
+                Market.US, "AAPL", new BigDecimal("10"), new BigDecimal("100"), new BigDecimal("110"),
+                new BigDecimal("1000"), new BigDecimal("1100"), new BigDecimal("100"), new BigDecimal("10"));
+        HoldingValuation krValuation = new HoldingValuation(
+                Market.KR, "005930", new BigDecimal("5"), new BigDecimal("70000"), new BigDecimal("75000"),
+                new BigDecimal("350000"), new BigDecimal("375000"), new BigDecimal("25000"), new BigDecimal("7.14"));
+
+        when(holdingService.getHoldings(10L, 100L)).thenReturn(List.of(usHolding, krHolding));
+        when(portfolioService.getMarketDataPreference(10L, 100L))
+                .thenReturn(PortfolioMarketDataPreference.unified(MarketDataProvider.TOSS_SECURITIES));
+        when(marketPriceProviderRegistry.resolve(MarketDataProvider.TOSS_SECURITIES, 100L))
+                .thenReturn(marketPriceProvider);
+        when(assetListingRepository.findByMarketAndTicker(Market.US, "AAPL"))
+                .thenReturn(Optional.of(usListing));
+        when(assetListingRepository.findByMarketAndTicker(Market.KR, "005930"))
+                .thenReturn(Optional.of(krListing));
+        when(marketPriceProvider.getCurrentPrices(Market.US, List.of("AAPL")))
+                .thenReturn(Map.of("AAPL", usPrice));
+        when(marketPriceProvider.getCurrentPrices(Market.KR, List.of("005930")))
+                .thenReturn(Map.of("005930", krPrice));
+        when(holdingValuationCalculator.calculate(usHolding, usPrice)).thenReturn(usValuation);
+        when(holdingValuationCalculator.calculate(krHolding, krPrice)).thenReturn(krValuation);
+        when(portfolioValuationCalculator.calculate(List.of(usValuation, krValuation)))
+                .thenReturn(new PortfolioValuation(
+                        List.of(usValuation, krValuation),
+                        Map.of(
+                                Currency.USD, new CurrencyValuationTotals(
+                                        Currency.USD, new BigDecimal("1000"), new BigDecimal("1100"),
+                                        new BigDecimal("100"), new BigDecimal("10")),
+                                Currency.KRW, new CurrencyValuationTotals(
+                                        Currency.KRW, new BigDecimal("350000"), new BigDecimal("375000"),
+                                        new BigDecimal("25000"), new BigDecimal("7.14"))
+                        )
+                ));
+
+        // when
+        PortfolioValuation result = portfolioValuationService.getPortfolioValuation(10L, 100L);
+
+        // then
+        verify(marketPriceProvider).getCurrentPrices(Market.US, List.of("AAPL"));
+        verify(marketPriceProvider).getCurrentPrices(Market.KR, List.of("005930"));
+        assertThat(result.getTotalsFor(Currency.USD).getTotalMarketValue()).isEqualByComparingTo("1100");
+        assertThat(result.getTotalsFor(Currency.KRW).getTotalMarketValue()).isEqualByComparingTo("375000");
     }
 
     @Test
@@ -239,13 +307,7 @@ class PortfolioValuationServiceTest {
     @Test
     void skipsPriceProviderPrerequisiteCheckWhenPortfolioHasNoHoldings() {
         // given
-        PortfolioValuation expected = new PortfolioValuation(
-                List.of(),
-                BigDecimal.ZERO,
-                BigDecimal.ZERO,
-                BigDecimal.ZERO,
-                BigDecimal.ZERO
-        );
+        PortfolioValuation expected = new PortfolioValuation(List.of(), Map.of());
 
         when(holdingService.getHoldings(10L, 100L)).thenReturn(List.of());
         when(portfolioValuationCalculator.calculate(List.of()))

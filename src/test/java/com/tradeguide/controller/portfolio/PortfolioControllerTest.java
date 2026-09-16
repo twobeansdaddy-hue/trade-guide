@@ -15,7 +15,9 @@ import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.risk.PortfolioRiskPolicy;
 import com.tradeguide.domain.risk.PortfolioAssetRiskOverride;
 import com.tradeguide.domain.strategy.*;
+import com.tradeguide.domain.trade.Currency;
 import com.tradeguide.domain.trade.Market;
+import com.tradeguide.domain.valuation.CurrencyValuationTotals;
 import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.domain.risk.HoldingExposure;
@@ -53,6 +55,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -246,10 +249,13 @@ class PortfolioControllerTest {
         );
         PortfolioValuation valuation = new PortfolioValuation(
                 List.of(holdingValuation),
-                new BigDecimal("1000"),
-                new BigDecimal("2105"),
-                new BigDecimal("1105"),
-                new BigDecimal("110.5")
+                Map.of(Currency.USD, new CurrencyValuationTotals(
+                        Currency.USD,
+                        new BigDecimal("1000"),
+                        new BigDecimal("2105"),
+                        new BigDecimal("1105"),
+                        new BigDecimal("110.5")
+                ))
         );
 
         when(portfolioValuationService.getPortfolioValuation(10L, 100L))
@@ -265,10 +271,10 @@ class PortfolioControllerTest {
                         .value("AAPL"))
                 .andExpect(jsonPath("$.holdingValuations[0].currentPrice")
                         .value(210.5))
-                .andExpect(jsonPath("$.totalPurchaseAmount").value(1000))
-                .andExpect(jsonPath("$.totalMarketValue").value(2105))
-                .andExpect(jsonPath("$.totalUnrealizedProfitLoss").value(1105))
-                .andExpect(jsonPath("$.totalReturnRate").value(110.5));
+                .andExpect(jsonPath("$.totalsByCurrency.USD.totalPurchaseAmount").value(1000))
+                .andExpect(jsonPath("$.totalsByCurrency.USD.totalMarketValue").value(2105))
+                .andExpect(jsonPath("$.totalsByCurrency.USD.totalUnrealizedProfitLoss").value(1105))
+                .andExpect(jsonPath("$.totalsByCurrency.USD.totalReturnRate").value(110.5));
 
         verify(portfolioValuationService)
                 .getPortfolioValuation(10L, 100L);
