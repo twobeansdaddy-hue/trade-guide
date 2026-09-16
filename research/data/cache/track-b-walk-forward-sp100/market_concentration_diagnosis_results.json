@@ -1,0 +1,356 @@
+{
+  "concentration": {
+    "2way-A": {
+      "eligibleCount": 97,
+      "totalGainDollars": 137824.14,
+      "top1SharePct": 12.55,
+      "top3SharePct": 25.77,
+      "top5SharePct": 32.37,
+      "top10SharePct": 43.29,
+      "top5Contributors": [
+        {
+          "ticker": "AMD",
+          "contributionDollars": 17294.02
+        },
+        {
+          "ticker": "NVDA",
+          "contributionDollars": 12115.24
+        },
+        {
+          "ticker": "NFLX",
+          "contributionDollars": 6105.51
+        },
+        {
+          "ticker": "AMZN",
+          "contributionDollars": 5352.66
+        },
+        {
+          "ticker": "ADBE",
+          "contributionDollars": 3750.54
+        }
+      ],
+      "top5Tickers": [
+        "AMD",
+        "NVDA",
+        "NFLX",
+        "AMZN",
+        "ADBE"
+      ]
+    },
+    "2way-B": {
+      "eligibleCount": 97,
+      "totalGainDollars": 224252.24,
+      "top1SharePct": 15.88,
+      "top3SharePct": 28.46,
+      "top5SharePct": 37.38,
+      "top10SharePct": 52.33,
+      "top5Contributors": [
+        {
+          "ticker": "NVDA",
+          "contributionDollars": 35614.9
+        },
+        {
+          "ticker": "MU",
+          "contributionDollars": 16018.29
+        },
+        {
+          "ticker": "AVGO",
+          "contributionDollars": 12185.75
+        },
+        {
+          "ticker": "TSLA",
+          "contributionDollars": 10173.45
+        },
+        {
+          "ticker": "AMD",
+          "contributionDollars": 9836.6
+        }
+      ],
+      "top5Tickers": [
+        "NVDA",
+        "MU",
+        "AVGO",
+        "TSLA",
+        "AMD"
+      ]
+    },
+    "4way-A": {
+      "eligibleCount": 97,
+      "totalGainDollars": 75003.11,
+      "top1SharePct": 14.35,
+      "top3SharePct": 23.78,
+      "top5SharePct": 30.51,
+      "top10SharePct": 40.78,
+      "top5Contributors": [
+        {
+          "ticker": "NVDA",
+          "contributionDollars": 10760.65
+        },
+        {
+          "ticker": "AMD",
+          "contributionDollars": 3584.27
+        },
+        {
+          "ticker": "NFLX",
+          "contributionDollars": 3491.51
+        },
+        {
+          "ticker": "AMZN",
+          "contributionDollars": 3129.13
+        },
+        {
+          "ticker": "AVGO",
+          "contributionDollars": 1918.53
+        }
+      ],
+      "top5Tickers": [
+        "NVDA",
+        "AMD",
+        "NFLX",
+        "AMZN",
+        "AVGO"
+      ]
+    },
+    "4way-B": {
+      "eligibleCount": 97,
+      "totalGainDollars": 67586.53,
+      "top1SharePct": 15.7,
+      "top3SharePct": 29.85,
+      "top5SharePct": 35.59,
+      "top10SharePct": 47.06,
+      "top5Contributors": [
+        {
+          "ticker": "TSLA",
+          "contributionDollars": 10608.27
+        },
+        {
+          "ticker": "AMD",
+          "contributionDollars": 6755.34
+        },
+        {
+          "ticker": "NOW",
+          "contributionDollars": 2807.71
+        },
+        {
+          "ticker": "AAPL",
+          "contributionDollars": 2081.74
+        },
+        {
+          "ticker": "LRCX",
+          "contributionDollars": 1802.7
+        }
+      ],
+      "top5Tickers": [
+        "TSLA",
+        "AMD",
+        "NOW",
+        "AAPL",
+        "LRCX"
+      ]
+    },
+    "4way-C": {
+      "eligibleCount": 97,
+      "totalGainDollars": 34579.34,
+      "top1SharePct": 7.52,
+      "top3SharePct": 20.44,
+      "top5SharePct": 29.33,
+      "top10SharePct": 41.59,
+      "top5Contributors": [
+        {
+          "ticker": "NVDA",
+          "contributionDollars": 2601.32
+        },
+        {
+          "ticker": "LLY",
+          "contributionDollars": 2536.48
+        },
+        {
+          "ticker": "COP",
+          "contributionDollars": 1928.48
+        },
+        {
+          "ticker": "AVGO",
+          "contributionDollars": 1598.15
+        },
+        {
+          "ticker": "XOM",
+          "contributionDollars": 1477.26
+        }
+      ],
+      "top5Tickers": [
+        "NVDA",
+        "LLY",
+        "COP",
+        "AVGO",
+        "XOM"
+      ]
+    },
+    "4way-D": {
+      "eligibleCount": 97,
+      "totalGainDollars": 72843.99,
+      "top1SharePct": 14.65,
+      "top3SharePct": 22.58,
+      "top5SharePct": 29.12,
+      "top10SharePct": 42.65,
+      "top5Contributors": [
+        {
+          "ticker": "MU",
+          "contributionDollars": 10671.84
+        },
+        {
+          "ticker": "NVDA",
+          "contributionDollars": 3005.24
+        },
+        {
+          "ticker": "LRCX",
+          "contributionDollars": 2773.49
+        },
+        {
+          "ticker": "AMD",
+          "contributionDollars": 2468.42
+        },
+        {
+          "ticker": "AVGO",
+          "contributionDollars": 2291.34
+        }
+      ],
+      "top5Tickers": [
+        "MU",
+        "NVDA",
+        "LRCX",
+        "AMD",
+        "AVGO"
+      ]
+    }
+  },
+  "correlationCheck": [
+    {
+      "windowId": "2way-A",
+      "top5ContributionSharePct": 32.37,
+      "qualityLowvolExcessPct": -47.81,
+      "dividendGrowthExcessPct": -45.34
+    },
+    {
+      "windowId": "2way-B",
+      "top5ContributionSharePct": 37.38,
+      "qualityLowvolExcessPct": -111.64,
+      "dividendGrowthExcessPct": -57.59
+    },
+    {
+      "windowId": "4way-A",
+      "top5ContributionSharePct": 30.51,
+      "qualityLowvolExcessPct": -25.03,
+      "dividendGrowthExcessPct": -23.47
+    },
+    {
+      "windowId": "4way-B",
+      "top5ContributionSharePct": 35.59,
+      "qualityLowvolExcessPct": -21.35,
+      "dividendGrowthExcessPct": -18.06
+    },
+    {
+      "windowId": "4way-C",
+      "top5ContributionSharePct": 29.33,
+      "qualityLowvolExcessPct": -10.97,
+      "dividendGrowthExcessPct": -0.09
+    },
+    {
+      "windowId": "4way-D",
+      "top5ContributionSharePct": 29.12,
+      "qualityLowvolExcessPct": -23.23,
+      "dividendGrowthExcessPct": -10.7
+    }
+  ],
+  "counterfactual": {
+    "2way-A": {
+      "windowId": "2way-A",
+      "top5ExcludedTickers": [
+        "AMD",
+        "NVDA",
+        "NFLX",
+        "AMZN",
+        "ADBE"
+      ],
+      "strategyReturnPct": 90.58,
+      "originalBenchmarkReturnPct": 137.82,
+      "originalExcessPct": -47.24,
+      "counterfactualBenchmarkReturnPct": 98.27,
+      "counterfactualExcessPct": -7.69
+    },
+    "2way-B": {
+      "windowId": "2way-B",
+      "top5ExcludedTickers": [
+        "NVDA",
+        "MU",
+        "AVGO",
+        "TSLA",
+        "AMD"
+      ],
+      "strategyReturnPct": 112.62,
+      "originalBenchmarkReturnPct": 224.25,
+      "originalExcessPct": -111.63,
+      "counterfactualBenchmarkReturnPct": 148.05,
+      "counterfactualExcessPct": -35.44
+    },
+    "4way-A": {
+      "windowId": "4way-A",
+      "top5ExcludedTickers": [
+        "NVDA",
+        "AMD",
+        "NFLX",
+        "AMZN",
+        "AVGO"
+      ],
+      "strategyReturnPct": 50.12,
+      "originalBenchmarkReturnPct": 75.0,
+      "originalExcessPct": -24.89,
+      "counterfactualBenchmarkReturnPct": 54.95,
+      "counterfactualExcessPct": -4.84
+    },
+    "4way-B": {
+      "windowId": "4way-B",
+      "top5ExcludedTickers": [
+        "TSLA",
+        "AMD",
+        "NOW",
+        "AAPL",
+        "LRCX"
+      ],
+      "strategyReturnPct": 46.33,
+      "originalBenchmarkReturnPct": 67.59,
+      "originalExcessPct": -21.26,
+      "counterfactualBenchmarkReturnPct": 45.9,
+      "counterfactualExcessPct": 0.43
+    },
+    "4way-C": {
+      "windowId": "4way-C",
+      "top5ExcludedTickers": [
+        "NVDA",
+        "LLY",
+        "COP",
+        "AVGO",
+        "XOM"
+      ],
+      "strategyReturnPct": 23.58,
+      "originalBenchmarkReturnPct": 34.58,
+      "originalExcessPct": -11.0,
+      "counterfactualBenchmarkReturnPct": 25.77,
+      "counterfactualExcessPct": -2.18
+    },
+    "4way-D": {
+      "windowId": "4way-D",
+      "top5ExcludedTickers": [
+        "MU",
+        "NVDA",
+        "LRCX",
+        "AMD",
+        "AVGO"
+      ],
+      "strategyReturnPct": 49.49,
+      "originalBenchmarkReturnPct": 72.84,
+      "originalExcessPct": -23.35,
+      "counterfactualBenchmarkReturnPct": 54.44,
+      "counterfactualExcessPct": -4.95
+    }
+  }
+}

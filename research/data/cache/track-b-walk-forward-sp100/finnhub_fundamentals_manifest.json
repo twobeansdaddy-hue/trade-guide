@@ -1,0 +1,920 @@
+{
+  "provider": "Finnhub (finnhub.io/api/v1/stock/metric, metric=all)",
+  "tickers": {
+    "AAPL": {
+      "symbolUsed": "AAPL",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 26,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 101,
+      "quarterlyEpsCount": 149
+    },
+    "ABBV": {
+      "symbolUsed": "ABBV",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 14,
+      "annualEpsCount": 17,
+      "quarterlyPeCount": 52,
+      "quarterlyEpsCount": 62
+    },
+    "ABT": {
+      "symbolUsed": "ABT",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 146
+    },
+    "ACN": {
+      "symbolUsed": "ACN",
+      "status": "OK",
+      "metricFieldCount": 131,
+      "annualPeCount": 25,
+      "annualEpsCount": 30,
+      "quarterlyPeCount": 96,
+      "quarterlyEpsCount": 105
+    },
+    "ADBE": {
+      "symbolUsed": "ADBE",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 26,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 149
+    },
+    "AMAT": {
+      "symbolUsed": "AMAT",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 26,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 96,
+      "quarterlyEpsCount": 147
+    },
+    "AMD": {
+      "symbolUsed": "AMD",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 27,
+      "annualEpsCount": 42,
+      "quarterlyPeCount": 60,
+      "quarterlyEpsCount": 149
+    },
+    "AMGN": {
+      "symbolUsed": "AMGN",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 42,
+      "quarterlyPeCount": 100,
+      "quarterlyEpsCount": 149
+    },
+    "AMT": {
+      "symbolUsed": "AMT",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 27,
+      "annualEpsCount": 30,
+      "quarterlyPeCount": 79,
+      "quarterlyEpsCount": 118
+    },
+    "AMZN": {
+      "symbolUsed": "AMZN",
+      "status": "OK",
+      "metricFieldCount": 128,
+      "annualPeCount": 27,
+      "annualEpsCount": 31,
+      "quarterlyPeCount": 83,
+      "quarterlyEpsCount": 122
+    },
+    "AVGO": {
+      "symbolUsed": "AVGO",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 17,
+      "annualEpsCount": 23,
+      "quarterlyPeCount": 61,
+      "quarterlyEpsCount": 81
+    },
+    "AXP": {
+      "symbolUsed": "AXP",
+      "status": "OK",
+      "metricFieldCount": 131,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 142
+    },
+    "BA": {
+      "symbolUsed": "BA",
+      "status": "OK",
+      "metricFieldCount": 125,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 79,
+      "quarterlyEpsCount": 146
+    },
+    "BAC": {
+      "symbolUsed": "BAC",
+      "status": "OK",
+      "metricFieldCount": 113,
+      "annualPeCount": 27,
+      "annualEpsCount": 0,
+      "quarterlyPeCount": 99,
+      "quarterlyEpsCount": 0
+    },
+    "BKNG": {
+      "symbolUsed": "BKNG",
+      "status": "OK",
+      "metricFieldCount": 129,
+      "annualPeCount": 27,
+      "annualEpsCount": 28,
+      "quarterlyPeCount": 94,
+      "quarterlyEpsCount": 114
+    },
+    "BLK": {
+      "symbolUsed": "BLK",
+      "status": "OK",
+      "metricFieldCount": 131,
+      "annualPeCount": 27,
+      "annualEpsCount": 32,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 111
+    },
+    "BMY": {
+      "symbolUsed": "BMY",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 94,
+      "quarterlyEpsCount": 149
+    },
+    "BNY": {
+      "symbolUsed": "BNY",
+      "status": "OK",
+      "metricFieldCount": 85,
+      "annualPeCount": 23,
+      "annualEpsCount": 0,
+      "quarterlyPeCount": 86,
+      "quarterlyEpsCount": 0
+    },
+    "BRK-B": {
+      "symbolUsed": "BRK-B",
+      "status": "OK",
+      "metricFieldCount": 126,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 102,
+      "quarterlyEpsCount": 146
+    },
+    "C": {
+      "symbolUsed": "C",
+      "status": "OK",
+      "metricFieldCount": 112,
+      "annualPeCount": 27,
+      "annualEpsCount": 0,
+      "quarterlyPeCount": 43,
+      "quarterlyEpsCount": 0
+    },
+    "CAT": {
+      "symbolUsed": "CAT",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 102,
+      "quarterlyEpsCount": 149
+    },
+    "CL": {
+      "symbolUsed": "CL",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 149
+    },
+    "CMCSA": {
+      "symbolUsed": "CMCSA",
+      "status": "OK",
+      "metricFieldCount": 131,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 98,
+      "quarterlyEpsCount": 149
+    },
+    "COF": {
+      "symbolUsed": "COF",
+      "status": "OK",
+      "metricFieldCount": 114,
+      "annualPeCount": 27,
+      "annualEpsCount": 0,
+      "quarterlyPeCount": 99,
+      "quarterlyEpsCount": 0
+    },
+    "COP": {
+      "symbolUsed": "COP",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 86,
+      "quarterlyEpsCount": 146
+    },
+    "COST": {
+      "symbolUsed": "COST",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 26,
+      "annualEpsCount": 40,
+      "quarterlyPeCount": 103,
+      "quarterlyEpsCount": 147
+    },
+    "CRM": {
+      "symbolUsed": "CRM",
+      "status": "OK",
+      "metricFieldCount": 129,
+      "annualPeCount": 22,
+      "annualEpsCount": 26,
+      "quarterlyPeCount": 67,
+      "quarterlyEpsCount": 95
+    },
+    "CSCO": {
+      "symbolUsed": "CSCO",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 40,
+      "quarterlyPeCount": 98,
+      "quarterlyEpsCount": 149
+    },
+    "CVS": {
+      "symbolUsed": "CVS",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 102,
+      "quarterlyEpsCount": 148
+    },
+    "CVX": {
+      "symbolUsed": "CVX",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 95,
+      "quarterlyEpsCount": 150
+    },
+    "DE": {
+      "symbolUsed": "DE",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 26,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 100,
+      "quarterlyEpsCount": 149
+    },
+    "DHR": {
+      "symbolUsed": "DHR",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 103,
+      "quarterlyEpsCount": 148
+    },
+    "DIS": {
+      "symbolUsed": "DIS",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 26,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 97,
+      "quarterlyEpsCount": 149
+    },
+    "DUK": {
+      "symbolUsed": "DUK",
+      "status": "OK",
+      "metricFieldCount": 129,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 100,
+      "quarterlyEpsCount": 149
+    },
+    "EMR": {
+      "symbolUsed": "EMR",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 26,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 101,
+      "quarterlyEpsCount": 147
+    },
+    "FDX": {
+      "symbolUsed": "FDX",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 42,
+      "quarterlyPeCount": 99,
+      "quarterlyEpsCount": 149
+    },
+    "GD": {
+      "symbolUsed": "GD",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 100,
+      "quarterlyEpsCount": 148
+    },
+    "GE": {
+      "symbolUsed": "GE",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 82,
+      "quarterlyEpsCount": 149
+    },
+    "GEV": {
+      "symbolUsed": "GEV",
+      "status": "OK",
+      "metricFieldCount": 116,
+      "annualPeCount": 2,
+      "annualEpsCount": 5,
+      "quarterlyPeCount": 7,
+      "quarterlyEpsCount": 14
+    },
+    "GILD": {
+      "symbolUsed": "GILD",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 36,
+      "quarterlyPeCount": 89,
+      "quarterlyEpsCount": 141
+    },
+    "GM": {
+      "symbolUsed": "GM",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 16,
+      "annualEpsCount": 19,
+      "quarterlyPeCount": 57,
+      "quarterlyEpsCount": 70
+    },
+    "GOOG": {
+      "symbolUsed": "GOOG",
+      "status": "OK",
+      "metricFieldCount": 131,
+      "annualPeCount": 22,
+      "annualEpsCount": 27,
+      "quarterlyPeCount": 85,
+      "quarterlyEpsCount": 98
+    },
+    "GOOGL": {
+      "symbolUsed": "GOOGL",
+      "status": "OK",
+      "metricFieldCount": 131,
+      "annualPeCount": 22,
+      "annualEpsCount": 27,
+      "quarterlyPeCount": 85,
+      "quarterlyEpsCount": 98
+    },
+    "GS": {
+      "symbolUsed": "GS",
+      "status": "OK",
+      "metricFieldCount": 129,
+      "annualPeCount": 26,
+      "annualEpsCount": 32,
+      "quarterlyPeCount": 103,
+      "quarterlyEpsCount": 114
+    },
+    "HD": {
+      "symbolUsed": "HD",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 27,
+      "annualEpsCount": 42,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 150
+    },
+    "HONA": {
+      "symbolUsed": "HONA",
+      "status": "OK",
+      "metricFieldCount": 69,
+      "annualPeCount": 0,
+      "annualEpsCount": 3,
+      "quarterlyPeCount": 0,
+      "quarterlyEpsCount": 5
+    },
+    "IBM": {
+      "symbolUsed": "IBM",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 147
+    },
+    "INTC": {
+      "symbolUsed": "INTC",
+      "status": "OK",
+      "metricFieldCount": 130,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 94,
+      "quarterlyEpsCount": 146
+    },
+    "INTU": {
+      "symbolUsed": "INTU",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 39,
+      "quarterlyPeCount": 100,
+      "quarterlyEpsCount": 139
+    },
+    "ISRG": {
+      "symbolUsed": "ISRG",
+      "status": "OK",
+      "metricFieldCount": 128,
+      "annualPeCount": 26,
+      "annualEpsCount": 29,
+      "quarterlyPeCount": 88,
+      "quarterlyEpsCount": 110
+    },
+    "JNJ": {
+      "symbolUsed": "JNJ",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 146
+    },
+    "JPM": {
+      "symbolUsed": "JPM",
+      "status": "OK",
+      "metricFieldCount": 112,
+      "annualPeCount": 27,
+      "annualEpsCount": 0,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 0
+    },
+    "KO": {
+      "symbolUsed": "KO",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 148
+    },
+    "LIN": {
+      "symbolUsed": "LIN",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 37,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 142
+    },
+    "LLY": {
+      "symbolUsed": "LLY",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 98,
+      "quarterlyEpsCount": 149
+    },
+    "LMT": {
+      "symbolUsed": "LMT",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 96,
+      "quarterlyEpsCount": 146
+    },
+    "LOW": {
+      "symbolUsed": "LOW",
+      "status": "OK",
+      "metricFieldCount": 130,
+      "annualPeCount": 27,
+      "annualEpsCount": 42,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 149
+    },
+    "LRCX": {
+      "symbolUsed": "LRCX",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 42,
+      "quarterlyPeCount": 94,
+      "quarterlyEpsCount": 148
+    },
+    "MA": {
+      "symbolUsed": "MA",
+      "status": "OK",
+      "metricFieldCount": 128,
+      "annualPeCount": 20,
+      "annualEpsCount": 26,
+      "quarterlyPeCount": 75,
+      "quarterlyEpsCount": 94
+    },
+    "MCD": {
+      "symbolUsed": "MCD",
+      "status": "OK",
+      "metricFieldCount": 130,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 146
+    },
+    "MDLZ": {
+      "symbolUsed": "MDLZ",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 25,
+      "annualEpsCount": 30,
+      "quarterlyPeCount": 98,
+      "quarterlyEpsCount": 106
+    },
+    "MDT": {
+      "symbolUsed": "MDT",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 42,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 149
+    },
+    "META": {
+      "symbolUsed": "META",
+      "status": "OK",
+      "metricFieldCount": 129,
+      "annualPeCount": 14,
+      "annualEpsCount": 19,
+      "quarterlyPeCount": 54,
+      "quarterlyEpsCount": 62
+    },
+    "MMM": {
+      "symbolUsed": "MMM",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 100,
+      "quarterlyEpsCount": 149
+    },
+    "MO": {
+      "symbolUsed": "MO",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 101,
+      "quarterlyEpsCount": 149
+    },
+    "MRK": {
+      "symbolUsed": "MRK",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 103,
+      "quarterlyEpsCount": 145
+    },
+    "MS": {
+      "symbolUsed": "MS",
+      "status": "OK",
+      "metricFieldCount": 131,
+      "annualPeCount": 26,
+      "annualEpsCount": 32,
+      "quarterlyPeCount": 98,
+      "quarterlyEpsCount": 121
+    },
+    "MSFT": {
+      "symbolUsed": "MSFT",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 42,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 152
+    },
+    "MU": {
+      "symbolUsed": "MU",
+      "status": "OK",
+      "metricFieldCount": 131,
+      "annualPeCount": 26,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 66,
+      "quarterlyEpsCount": 147
+    },
+    "NEE": {
+      "symbolUsed": "NEE",
+      "status": "OK",
+      "metricFieldCount": 130,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 149
+    },
+    "NFLX": {
+      "symbolUsed": "NFLX",
+      "status": "OK",
+      "metricFieldCount": 128,
+      "annualPeCount": 24,
+      "annualEpsCount": 28,
+      "quarterlyPeCount": 92,
+      "quarterlyEpsCount": 106
+    },
+    "NKE": {
+      "symbolUsed": "NKE",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 42,
+      "quarterlyPeCount": 103,
+      "quarterlyEpsCount": 149
+    },
+    "NOW": {
+      "symbolUsed": "NOW",
+      "status": "OK",
+      "metricFieldCount": 126,
+      "annualPeCount": 14,
+      "annualEpsCount": 19,
+      "quarterlyPeCount": 29,
+      "quarterlyEpsCount": 64
+    },
+    "NVDA": {
+      "symbolUsed": "NVDA",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 33,
+      "quarterlyPeCount": 99,
+      "quarterlyEpsCount": 118
+    },
+    "ORCL": {
+      "symbolUsed": "ORCL",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 42,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 148
+    },
+    "PEP": {
+      "symbolUsed": "PEP",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 148
+    },
+    "PFE": {
+      "symbolUsed": "PFE",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 102,
+      "quarterlyEpsCount": 146
+    },
+    "PG": {
+      "symbolUsed": "PG",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 42,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 149
+    },
+    "PLTR": {
+      "symbolUsed": "PLTR",
+      "status": "OK",
+      "metricFieldCount": 125,
+      "annualPeCount": 6,
+      "annualEpsCount": 8,
+      "quarterlyPeCount": 12,
+      "quarterlyEpsCount": 24
+    },
+    "PM": {
+      "symbolUsed": "PM",
+      "status": "OK",
+      "metricFieldCount": 131,
+      "annualPeCount": 18,
+      "annualEpsCount": 23,
+      "quarterlyPeCount": 71,
+      "quarterlyEpsCount": 78
+    },
+    "QCOM": {
+      "symbolUsed": "QCOM",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 26,
+      "annualEpsCount": 36,
+      "quarterlyPeCount": 95,
+      "quarterlyEpsCount": 143
+    },
+    "RTX": {
+      "symbolUsed": "RTX",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 100,
+      "quarterlyEpsCount": 146
+    },
+    "SBUX": {
+      "symbolUsed": "SBUX",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 26,
+      "annualEpsCount": 37,
+      "quarterlyPeCount": 103,
+      "quarterlyEpsCount": 141
+    },
+    "SCHW": {
+      "symbolUsed": "SCHW",
+      "status": "OK",
+      "metricFieldCount": 130,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 148
+    },
+    "SO": {
+      "symbolUsed": "SO",
+      "status": "OK",
+      "metricFieldCount": 128,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 149
+    },
+    "SPG": {
+      "symbolUsed": "SPG",
+      "status": "OK",
+      "metricFieldCount": 129,
+      "annualPeCount": 27,
+      "annualEpsCount": 36,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 135
+    },
+    "T": {
+      "symbolUsed": "T",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 95,
+      "quarterlyEpsCount": 149
+    },
+    "TMO": {
+      "symbolUsed": "TMO",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 99,
+      "quarterlyEpsCount": 146
+    },
+    "TMUS": {
+      "symbolUsed": "TMUS",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 19,
+      "annualEpsCount": 27,
+      "quarterlyPeCount": 69,
+      "quarterlyEpsCount": 88
+    },
+    "TSLA": {
+      "symbolUsed": "TSLA",
+      "status": "OK",
+      "metricFieldCount": 130,
+      "annualPeCount": 16,
+      "annualEpsCount": 20,
+      "quarterlyPeCount": 25,
+      "quarterlyEpsCount": 71
+    },
+    "TXN": {
+      "symbolUsed": "TXN",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 98,
+      "quarterlyEpsCount": 149
+    },
+    "UBER": {
+      "symbolUsed": "UBER",
+      "status": "OK",
+      "metricFieldCount": 123,
+      "annualPeCount": 7,
+      "annualEpsCount": 12,
+      "quarterlyPeCount": 12,
+      "quarterlyEpsCount": 38
+    },
+    "UNH": {
+      "symbolUsed": "UNH",
+      "status": "OK",
+      "metricFieldCount": 126,
+      "annualPeCount": 27,
+      "annualEpsCount": 39,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 146
+    },
+    "UNP": {
+      "symbolUsed": "UNP",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 149
+    },
+    "UPS": {
+      "symbolUsed": "UPS",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 32,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 111
+    },
+    "USB": {
+      "symbolUsed": "USB",
+      "status": "OK",
+      "metricFieldCount": 114,
+      "annualPeCount": 27,
+      "annualEpsCount": 0,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 0
+    },
+    "V": {
+      "symbolUsed": "V",
+      "status": "OK",
+      "metricFieldCount": 131,
+      "annualPeCount": 18,
+      "annualEpsCount": 22,
+      "quarterlyPeCount": 71,
+      "quarterlyEpsCount": 79
+    },
+    "VZ": {
+      "symbolUsed": "VZ",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 101,
+      "quarterlyEpsCount": 150
+    },
+    "WFC": {
+      "symbolUsed": "WFC",
+      "status": "OK",
+      "metricFieldCount": 113,
+      "annualPeCount": 27,
+      "annualEpsCount": 0,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 0
+    },
+    "WMT": {
+      "symbolUsed": "WMT",
+      "status": "OK",
+      "metricFieldCount": 133,
+      "annualPeCount": 27,
+      "annualEpsCount": 42,
+      "quarterlyPeCount": 104,
+      "quarterlyEpsCount": 149
+    },
+    "XOM": {
+      "symbolUsed": "XOM",
+      "status": "OK",
+      "metricFieldCount": 132,
+      "annualPeCount": 27,
+      "annualEpsCount": 41,
+      "quarterlyPeCount": 100,
+      "quarterlyEpsCount": 142
+    }
+  },
+  "summary": {
+    "universeSize": 101,
+    "succeeded": 101,
+    "failed": [],
+    "failedCount": 0
+  }
+}

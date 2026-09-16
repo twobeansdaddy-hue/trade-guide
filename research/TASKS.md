@@ -50,6 +50,21 @@
 - [x] SOXL 대형 낙폭(드로다운) 이후 회복 패턴 실증 분석
 - [x] 레버리지 ETF 손절·포지션 사이징 규칙 (변동성 조정 기반)
 - [x] 정기 예측→결과확인→보완 루프 설계 및 자동화 (스케줄 작업)
+- [x] 시장 국면 필터(SPY 40주선) 검증 — SOXL/TQQQ 20사이클(`track-a-market-regime-filter-review.md`,
+      추가 검증 필요) 및 TNA/FAS 확장 49사이클(`track-a-market-regime-filter-tna-fas-extension.md`,
+      confidence medium으로 상향, 필터가 구조적으로 발동하지 않음을 재확인)
+- [x] Chandelier Exit(추적 + 매일 재계산 ATR, k=2/3) 검증 — `track-a-chandelier-exit-review.md`.
+      두 실패 원인(ATR 배수 협소, 고정비율 추적손절)을 동시에 해결하려 했으나 표준 ATR 배수가
+      3배 레버리지 ETF에 너무 좁아(평균 손절폭 8.3%) 검증한 후보 중 가장 파괴적(평균수익률
+      58.4%→0.3~4.3%). "채택 비추천"(confidence medium). Track A 손절 레이어는 고정비율·ATR·
+      추적손절·Chandelier Exit 네 접근 모두 채택 후보 없음.
+- [ ] (다음 우선순위) 시장 국면 필터의 민감도 자체를 바꾼 새 가설(더 짧은 이동평균, 변동성 지표
+      등) — 표본 확장이 아니라 필터 정의 자체를 재설계해야 하며 별도 사전 고정 가설 필요
+- [ ] 추적 손절(trailing stop)을 종가가 아닌 장중 고가 기준으로 재검증 (`track-a-trailing-stop-review.md`
+      가 명시적으로 미검증이라고 남긴 항목)
+- [ ] Chandelier Exit을 더 큰 k(예: 5~8)로 재검증 — k=3에서도 발동률 93.9%로 여전히 극단적이라,
+      손절폭을 레버리지 ETF의 정상 조정폭(20~30%)에 맞추려면 훨씬 큰 배수가 필요할 수 있음(사전
+      고정 가설 필요, 이번 리포트 범위 밖)
 
 ## 7. 투트랙 전략 — Track A(레버리지) vs Track B(일반 종목)
 > 추가 사유: 보유 종목(SOXL) 분석뿐 아니라, 포트폴리오에 없는 종목도 시장상황·지표 기준으로
@@ -57,8 +72,55 @@
 > Track B(일반 대형주)는 밸류에이션 중심 + 보조적 타이밍으로 역할을 분리.
 - [x] Track B 대표 종목(AAPL/JPM/PG) 이동평균 타이밍 규칙 실데이터 백테스트
 - [x] Track B MACD(12,26,9) + 50일 추세 필터 연구 검증 — 수익률 우위 게이트 불충족으로 운영 엔진 미채택 (`research/reports/track-b-macd-validation.md`)
+- [x] Track B 횡단면 모멘텀(48주 형성기간/분기 리밸런싱/상위20%-40%) 실데이터 워크포워드 1단계(DJIA 30종목) — 부호 반전(+13%p→-32%p)으로 게이트 1·2 불충족, "추가 검증 필요"(`research/reports/track-b-walk-forward-data-feasibility.md`)
+- [x] Track B 횡단면 모멘텀 — 유니버스 확장(S&P100 101종목) 재검증 — DJIA와 독립적으로 동일한 부호 불안정·모멘텀 붕괴 재현되어 **기각 확정**. 실행 중 신규상장종목 주봉 캘린더 정합성 버그 발견·수정 (`research/reports/track-b-sp100-momentum-universe-expansion.md`)
 - [x] 투트랙 전략 프레임워크 문서화 (Track A/B 구분 기준, 밸류에이션 접근법 차이 — PEG/PER은 기존 연구 인용)
 - [x] 신규 후보 종목 스크리닝 스키마(candidates.schema.json) 설계 및 첫 스냅샷 기록 (S&P500, PEG<1 + 50일선 위)
 - [x] 주간 스케줄 작업에 Track B 스크리닝 갱신 + 이전 후보군 결과 추적 추가
+- [x] Track B 횡단면 모멘텀 — 변동성관리(vol-managed) 오버레이 재설계(Barroso&Santa-Clara/
+      Daniel&Moskowitz식, 목표연변동성15%/26주 lookback, 무레버리지) — 2021-2023 MDD 격차는
+      -19.8%p→-6.4%p로 개선됐으나 강세장 구간(2way-B/4way-B) 기회비용이 더 커 부호 불안정성
+      미해소, **기각 확정**. 원안(DJIA)·유니버스확장(S&P100)·이 재설계까지 3개 독립 실행 모두
+      기각 (`research/reports/track-b-momentum-vol-managed-overlay.md`)
+- [x] Track B 신규 후보 — 단기 반전(short-term reversal, 직전 1주/4주 최악성과 하위20%
+      매수, 매주 재구성, Jegadeesh 1990) — 0bp에서는 신호 실재(최대 +192%p)했으나 왕복 20bp
+      만으로 대부분 구간 붕괴, 57bp에서는 전 구간 음(-)(월환산 회전율 683~710%). 5개 게이트 중
+      4개 위반으로 **명확히 기각**. 검증 중 momentum_engine.py의 매도 비용 미반영 회계 버그
+      발견(기존 3개 모멘텀 리포트 caveats에 반영, 결론 영향 없음) (`research/reports/track-b-short-term-reversal-validation.md`)
+- [x] 펀더멘털 데이터 제공자 도입 검토 — Twelve Data Pro($99/월)와 Finnhub 무료 티어(월$0)
+      비교, 이후 Finnhub 무료 키로 AAPL 실제 API 테스트 호출까지 완료. **최초 문서 기반
+      판단(둘 다 현재 스냅샷뿐)이 실제 테스트로 뒤집힘**: Finnhub 무료 티어가 PE/PB/ROE/
+      마진/부채비율의 연간·분기 시계열(AAPL 기준 PE 2000~2025년 26개 시점, EPS·유동비율
+      1985~2025년 41개 시점)을 실제로 제공 — PEG/PER·퀄리티+저변동성 팩터 워크포워드
+      백테스트를 무료로 시도할 근거 확보. 잔여 한계: 공시일 지연 미반영(설계 필요), 재무
+      재작성 미반영 가능성, 유니버스는 여전히 point-in-time 아님
+      (`research/reports/track-b-fundamental-data-provider-evaluation.md`)
+- [x] Track B PEG/PER 밸류에이션 밴드(②) — 후행 PEG(TTM PE/YoY TTM EPS 성장률, 공시+60일
+      지연) + 10주 이동평균 필터, S&P100 워크포워드 첫 실데이터 검증. 6개 구간 중 4개는 0bp
+      에서도 이미 음(-), 1개는 비용반영시 부호반전, 2024-2026만 안정적 양(+) — 사전등록한
+      "가치주 국면의존성" 반론이 그대로 재현되어 **기각**. 은행 7종은 Finnhub eps 데이터
+      부재로 제외 (`research/reports/track-b-peg-valuation-validation.md`)
+- [x] Track B 저변동성+퀄리티 팩터(④, QMJ 수익성+안전성 두 축) — 0.5*퀄리티(ROE/ROA/
+      부채비율 백분위)+0.5*저변동성(52주 실현변동성 백분위), 상위20%/40%, 분기 리밸런싱,
+      연간데이터 75일 지연. S&P100 워크포워드 **6개 구간×4개 비용수준=24개 조합 전부**
+      벤치마크 대비 음(-)(-11%p~-115%p) — 이번 세션 검증 후보 중 가장 일관된 **기각**.
+      회전율 낮아(월 7.5~10%) 비용 무관, MDD는 전부 개선 — 2015-2026 메가캡 소수종목
+      견인 강세장에서 상승분을 놓친 것으로 해석 (`research/reports/track-b-quality-lowvol-factor-validation.md`)
+- [x] PEAD(실적 발표 후 주가 표류) 실행 가능성 확인 — Finnhub 무료 API로 실제 조회한 결과
+      종목당 최근 4분기 서프라이즈만 제공, 2015-2026 워크포워드 불가로 **기각(데이터 한계)**
+- [x] Track B 신규 가설 — 배당성장 전략(연속 배당성장>=3년 & 지급성향<=75%, payoutRatio*EPS
+      역산, 분기 리밸런싱) — 6개 구간 전부 벤치마크 대비 음(-)이나 저변동성+퀄리티보다 완만,
+      2021-2023은 사실상 무승부(-0.09%p). 무배당 고성장 메가캡(AMZN/NFLX/TSLA 등) 구조적
+      배제가 원인으로 해석. **기각** (`research/reports/track-b-dividend-growth-validation.md`)
+- [x] "메가캡 집중 상승장" 진단 가설 직접 검증 — 벤치마크 상위5 기여종목 집중도(6개 구간
+      전부 29~37%, NVDA/AMD/AVGO 반복 등장) 측정 후, 저변동성+퀄리티 팩터를 "상위5 기여종목
+      제외 반사실 벤치마크"와 재비교. **6개 구간 전부 격차 68~100% 축소, 1개 구간(4way-B)은**
+      **부호 반전(+0.43%p)** — 8개 후보의 반복 기각이 전략 결함보다 시장 국면(소수 반도체/AI
+      주 독주) 산물이라는 해석이 강하게 확인됨. 다만 반사실 벤치마크는 투자 불가능하고 이
+      국면 반복 여부는 예측 불가 — 재채택 근거는 아님 (`research/reports/track-b-market-concentration-diagnosis.md`)
+- [ ] (다음 우선순위, 사용자 결정 필요) 위 진단 결과, Track B 규칙기반 자동화 조사를 이
+      시점에서 마무리하는 것을 권고함(추가 팩터 탐색도 "소수 종목을 못 맞히면 진다"는 근본
+      문제를 우회 못할 가능성 높음). Track B를 매수신호 아닌 스크리닝 형태로만 유지할지,
+      아니면 다른 방향으로 계속할지 사용자 최종 판단 필요
 
 > 새 조사 주제가 필요하면 이 목록에 항목을 추가하고, 왜 필요한지 한 줄로 메모해두세요.

@@ -1064,7 +1064,2601 @@
       }
     ],
     "confidence": "low",
-    "caveats": "(1) 유니버스가 S&P500이 아니라 DJIA 30종목(오늘 시점 구성)이다 - 원 제안(track-b-strategy-catalogue.md)이 가정한 S&P500 규모 대비 표본이 훨씬 작고(상위20%=6종목 보유로 매우 집중됨), 가격가중지수 위원회가 고른 우량주 집합이라는 점에서 일반적인 대형주 유니버스보다도 편향이 있을 수 있다. (2) pointInTimeUniverse=false - 오늘의 DJIA 구성을 2015년까지 소급 적용했으므로 생존편향(과거 지수 편입/퇴출 이력 미반영) 위험이 있고, 방향을 낙관적으로 왜곡했을 수 있다. (3) 벤치마크와 전략은 동일 시작일(전략의 첫 리밸런싱일)·동일 종료일로 맞췄지만 유니버스가 작아 개별 종목(특히 NVDA) 하나의 실적이 결과 전체를 좌우할 수 있다. (4) 4way-C(2021-2023) 구간에서 전략 MDD(-38.0%)가 벤치마크(-21.8%)보다 크게 나빠 문헌이 경고한 모멘텀 붕괴 위험이 실제로 관측됐다. (5) 상위20%/하위40% 이원기준, 분기 리밸런싱은 채택된 상수가 아니라 문헌 예시를 그대로 쓴 값이다. (6) 이 결과는 Track B 채택 근거가 아니며, 오히려 채택 게이트 1·2 미충족으로 인해 현재 데이터·유니버스 범위에서는 추가 검증 없이는 채택할 수 없다는 결론을 뒷받침한다.",
+    "caveats": "(1) 유니버스가 S&P500이 아니라 DJIA 30종목(오늘 시점 구성)이다 - 원 제안(track-b-strategy-catalogue.md)이 가정한 S&P500 규모 대비 표본이 훨씬 작고(상위20%=6종목 보유로 매우 집중됨), 가격가중지수 위원회가 고른 우량주 집합이라는 점에서 일반적인 대형주 유니버스보다도 편향이 있을 수 있다. (2) pointInTimeUniverse=false - 오늘의 DJIA 구성을 2015년까지 소급 적용했으므로 생존편향(과거 지수 편입/퇴출 이력 미반영) 위험이 있고, 방향을 낙관적으로 왜곡했을 수 있다. (3) 벤치마크와 전략은 동일 시작일(전략의 첫 리밸런싱일)·동일 종료일로 맞췄지만 유니버스가 작아 개별 종목(특히 NVDA) 하나의 실적이 결과 전체를 좌우할 수 있다. (4) 4way-C(2021-2023) 구간에서 전략 MDD(-38.0%)가 벤치마크(-21.8%)보다 크게 나빠 문헌이 경고한 모멘텀 붕괴 위험이 실제로 관측됐다. (5) 상위20%/하위40% 이원기준, 분기 리밸런싱은 채택된 상수가 아니라 문헌 예시를 그대로 쓴 값이다. (6) 이 결과는 Track B 채택 근거가 아니며, 오히려 채택 게이트 1·2 미충족으로 인해 현재 데이터·유니버스 범위에서는 추가 검증 없이는 채택할 수 없다는 결론을 뒷받침한다. [2026-09-16 추가] track-b-short-term-reversal-sp100-2015-2026 검증 중 momentum_engine.py의 매도 레그 거래비용이 실제 현금 잔고에 반영되지 않는 회계 버그를 발견했다(매수 비용은 정상 반영). 이 항목은 그 버그가 있는 상태로 계산됐다 - 실제 비용은 기록된 값보다 더 컸을 것이다. 이 항목의 회전율(월 17.8~21.9%)은 낮아 영향이 제한적이며, 이미 기각 판정이었으므로 실제 비용 반영 시 결론은 그대로거나 더 강해진다(재실행하지 않음).",
     "last_updated": "2026-09-11"
+  },
+  {
+    "id": "track-b-walk-forward-sp100-momentum-2015-2026",
+    "type": "backtest",
+    "ticker": "SP100_101_TICKERS_SEE_MANIFEST",
+    "strategy_id": "track-b-cross-sectional-momentum-candidate",
+    "data_range": {
+      "start": "2015-01-01",
+      "end": "2026-09-10",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-16",
+    "summary": "track-b-walk-forward-data-feasibility.md의 권고(유니버스 확장)에 따라 DJIA 30종목 대신 S&P100(OEX) 오늘 시점 구성 101종목(시가총액가중, pointInTimeUniverse=false)으로 표본을 3배 이상 넓혀 동일한 형성기간 48주/분기 리밸런싱/상위20%-40%/동일가중 규칙을 재실행했다. 2분할에서 초과수익이 -1.3%p -> +46.5%p로(방향은 DJIA 실행과 반대지만) 여전히 부호가 뒤집혔고, 4분할에서도 4구간 중 2구간(A,D 양수 / B,C 음수)이 음(-)이었다. 4way-C(2021-2023) 에서는 전략 MDD가 -42.3%로 벤치마크(-22.5%)보다 크게 나빠 모멘텀 붕괴가 이번에도 재현됐다. 표본을 30->101종목, 가격가중->시가총액가중으로 넓혔음에도 DJIA 실행과 동일한 실패 패턴(부호 불안정 + 모멘텀 붕괴 구간)이 재현되어, '표본이 작아서'라는 가설은 기각되고 이 후보는 이제 명확한 기각(반복 재현된 방향성 불안정)으로 판정한다.",
+    "metrics": {
+      "formationWeeks": 52,
+      "excludeRecentWeeks": 4,
+      "rebalancePeriodWeeks": 13,
+      "topTierFraction": 0.2,
+      "holdTierFraction": 0.4,
+      "costScenariosRoundTripBps": [
+        0,
+        20,
+        40,
+        57
+      ],
+      "twoWayPartition": {
+        "2way-A": {
+          "label": "2015-01-01 ~ 2019-12-31",
+          "actualRange": [
+            "2015-01-01",
+            "2019-12-26"
+          ],
+          "byCostBps": {
+            "0.0": {
+              "strategyReturnPct": 119.33,
+              "benchmarkReturnPct": 120.662,
+              "excessReturnPctPoints": -1.331,
+              "strategyMaxDrawdownPct": -15.561,
+              "benchmarkMaxDrawdownPct": -17.313,
+              "strategyMonthlyTurnoverPct": 18.32,
+              "avgHoldingsCount": 24.4,
+              "rebalanceCount": 17
+            },
+            "20.0": {
+              "strategyReturnPct": 119.291,
+              "benchmarkReturnPct": 120.441,
+              "excessReturnPctPoints": -1.15,
+              "strategyMaxDrawdownPct": -15.549,
+              "benchmarkMaxDrawdownPct": -17.313,
+              "strategyMonthlyTurnoverPct": 18.315,
+              "avgHoldingsCount": 24.4,
+              "rebalanceCount": 17
+            },
+            "40.0": {
+              "strategyReturnPct": 119.252,
+              "benchmarkReturnPct": 120.22,
+              "excessReturnPctPoints": -0.969,
+              "strategyMaxDrawdownPct": -15.537,
+              "benchmarkMaxDrawdownPct": -17.313,
+              "strategyMonthlyTurnoverPct": 18.311,
+              "avgHoldingsCount": 24.4,
+              "rebalanceCount": 17
+            },
+            "57.0": {
+              "strategyReturnPct": 119.218,
+              "benchmarkReturnPct": 120.033,
+              "excessReturnPctPoints": -0.815,
+              "strategyMaxDrawdownPct": -15.526,
+              "benchmarkMaxDrawdownPct": -17.313,
+              "strategyMonthlyTurnoverPct": 18.307,
+              "avgHoldingsCount": 24.4,
+              "rebalanceCount": 17
+            }
+          }
+        },
+        "2way-B": {
+          "label": "2020-01-01 ~ 2026-09-10",
+          "actualRange": [
+            "2020-01-02",
+            "2026-09-10"
+          ],
+          "byCostBps": {
+            "0.0": {
+              "strategyReturnPct": 369.435,
+              "benchmarkReturnPct": 322.916,
+              "excessReturnPctPoints": 46.519,
+              "strategyMaxDrawdownPct": -28.541,
+              "benchmarkMaxDrawdownPct": -25.202,
+              "strategyMonthlyTurnoverPct": 18.472,
+              "avgHoldingsCount": 26.0,
+              "rebalanceCount": 26
+            },
+            "20.0": {
+              "strategyReturnPct": 369.256,
+              "benchmarkReturnPct": 322.493,
+              "excessReturnPctPoints": 46.763,
+              "strategyMaxDrawdownPct": -28.527,
+              "benchmarkMaxDrawdownPct": -25.202,
+              "strategyMonthlyTurnoverPct": 18.47,
+              "avgHoldingsCount": 26.0,
+              "rebalanceCount": 26
+            },
+            "40.0": {
+              "strategyReturnPct": 369.076,
+              "benchmarkReturnPct": 322.07,
+              "excessReturnPctPoints": 47.007,
+              "strategyMaxDrawdownPct": -28.513,
+              "benchmarkMaxDrawdownPct": -25.202,
+              "strategyMonthlyTurnoverPct": 18.469,
+              "avgHoldingsCount": 26.0,
+              "rebalanceCount": 26
+            },
+            "57.0": {
+              "strategyReturnPct": 368.924,
+              "benchmarkReturnPct": 321.71,
+              "excessReturnPctPoints": 47.214,
+              "strategyMaxDrawdownPct": -28.502,
+              "benchmarkMaxDrawdownPct": -25.202,
+              "strategyMonthlyTurnoverPct": 18.467,
+              "avgHoldingsCount": 26.0,
+              "rebalanceCount": 26
+            }
+          }
+        }
+      },
+      "fourWayPartition": {
+        "4way-A": {
+          "label": "2015-01-01 ~ 2017-12-31",
+          "actualRange": [
+            "2015-01-01",
+            "2017-12-28"
+          ],
+          "byCostBps": {
+            "0.0": {
+              "strategyReturnPct": 68.797,
+              "benchmarkReturnPct": 63.48,
+              "excessReturnPctPoints": 5.318,
+              "strategyMaxDrawdownPct": -13.473,
+              "benchmarkMaxDrawdownPct": -8.354,
+              "strategyMonthlyTurnoverPct": 20.605,
+              "avgHoldingsCount": 23.4,
+              "rebalanceCount": 9
+            },
+            "20.0": {
+              "strategyReturnPct": 68.771,
+              "benchmarkReturnPct": 63.316,
+              "excessReturnPctPoints": 5.455,
+              "strategyMaxDrawdownPct": -13.466,
+              "benchmarkMaxDrawdownPct": -8.354,
+              "strategyMonthlyTurnoverPct": 20.6,
+              "avgHoldingsCount": 23.4,
+              "rebalanceCount": 9
+            },
+            "40.0": {
+              "strategyReturnPct": 68.744,
+              "benchmarkReturnPct": 63.153,
+              "excessReturnPctPoints": 5.591,
+              "strategyMaxDrawdownPct": -13.459,
+              "benchmarkMaxDrawdownPct": -8.354,
+              "strategyMonthlyTurnoverPct": 20.595,
+              "avgHoldingsCount": 23.4,
+              "rebalanceCount": 9
+            },
+            "57.0": {
+              "strategyReturnPct": 68.722,
+              "benchmarkReturnPct": 63.014,
+              "excessReturnPctPoints": 5.708,
+              "strategyMaxDrawdownPct": -13.453,
+              "benchmarkMaxDrawdownPct": -8.354,
+              "strategyMonthlyTurnoverPct": 20.59,
+              "avgHoldingsCount": 23.4,
+              "rebalanceCount": 9
+            }
+          }
+        },
+        "4way-B": {
+          "label": "2018-01-01 ~ 2020-12-31",
+          "actualRange": [
+            "2018-01-04",
+            "2020-12-31"
+          ],
+          "byCostBps": {
+            "0.0": {
+              "strategyReturnPct": 68.29,
+              "benchmarkReturnPct": 73.823,
+              "excessReturnPctPoints": -5.533,
+              "strategyMaxDrawdownPct": -27.138,
+              "benchmarkMaxDrawdownPct": -28.944,
+              "strategyMonthlyTurnoverPct": 17.797,
+              "avgHoldingsCount": 25.2,
+              "rebalanceCount": 12
+            },
+            "20.0": {
+              "strategyReturnPct": 68.277,
+              "benchmarkReturnPct": 73.649,
+              "excessReturnPctPoints": -5.372,
+              "strategyMaxDrawdownPct": -27.132,
+              "benchmarkMaxDrawdownPct": -28.944,
+              "strategyMonthlyTurnoverPct": 17.792,
+              "avgHoldingsCount": 25.2,
+              "rebalanceCount": 12
+            },
+            "40.0": {
+              "strategyReturnPct": 68.264,
+              "benchmarkReturnPct": 73.475,
+              "excessReturnPctPoints": -5.211,
+              "strategyMaxDrawdownPct": -27.126,
+              "benchmarkMaxDrawdownPct": -28.944,
+              "strategyMonthlyTurnoverPct": 17.788,
+              "avgHoldingsCount": 25.2,
+              "rebalanceCount": 12
+            },
+            "57.0": {
+              "strategyReturnPct": 68.253,
+              "benchmarkReturnPct": 73.327,
+              "excessReturnPctPoints": -5.074,
+              "strategyMaxDrawdownPct": -27.121,
+              "benchmarkMaxDrawdownPct": -28.944,
+              "strategyMonthlyTurnoverPct": 17.784,
+              "avgHoldingsCount": 25.2,
+              "rebalanceCount": 12
+            }
+          }
+        },
+        "4way-C": {
+          "label": "2021-01-01 ~ 2023-12-31",
+          "actualRange": [
+            "2021-01-07",
+            "2023-12-28"
+          ],
+          "byCostBps": {
+            "0.0": {
+              "strategyReturnPct": 10.068,
+              "benchmarkReturnPct": 26.914,
+              "excessReturnPctPoints": -16.846,
+              "strategyMaxDrawdownPct": -42.28,
+              "benchmarkMaxDrawdownPct": -22.476,
+              "strategyMonthlyTurnoverPct": 20.644,
+              "avgHoldingsCount": 24.8,
+              "rebalanceCount": 12
+            },
+            "20.0": {
+              "strategyReturnPct": 10.064,
+              "benchmarkReturnPct": 26.787,
+              "excessReturnPctPoints": -16.723,
+              "strategyMaxDrawdownPct": -42.272,
+              "benchmarkMaxDrawdownPct": -22.476,
+              "strategyMonthlyTurnoverPct": 20.639,
+              "avgHoldingsCount": 24.8,
+              "rebalanceCount": 12
+            },
+            "40.0": {
+              "strategyReturnPct": 10.06,
+              "benchmarkReturnPct": 26.66,
+              "excessReturnPctPoints": -16.601,
+              "strategyMaxDrawdownPct": -42.265,
+              "benchmarkMaxDrawdownPct": -22.476,
+              "strategyMonthlyTurnoverPct": 20.635,
+              "avgHoldingsCount": 24.8,
+              "rebalanceCount": 12
+            },
+            "57.0": {
+              "strategyReturnPct": 10.056,
+              "benchmarkReturnPct": 26.552,
+              "excessReturnPctPoints": -16.496,
+              "strategyMaxDrawdownPct": -42.259,
+              "benchmarkMaxDrawdownPct": -22.476,
+              "strategyMonthlyTurnoverPct": 20.631,
+              "avgHoldingsCount": 24.8,
+              "rebalanceCount": 12
+            }
+          }
+        },
+        "4way-D": {
+          "label": "2024-01-01 ~ 2026-09-10",
+          "actualRange": [
+            "2024-01-04",
+            "2026-09-10"
+          ],
+          "byCostBps": {
+            "0.0": {
+              "strategyReturnPct": 90.554,
+              "benchmarkReturnPct": 54.306,
+              "excessReturnPctPoints": 36.248,
+              "strategyMaxDrawdownPct": -17.64,
+              "benchmarkMaxDrawdownPct": -11.874,
+              "strategyMonthlyTurnoverPct": 18.048,
+              "avgHoldingsCount": 26.7,
+              "rebalanceCount": 10
+            },
+            "20.0": {
+              "strategyReturnPct": 90.526,
+              "benchmarkReturnPct": 54.152,
+              "excessReturnPctPoints": 36.375,
+              "strategyMaxDrawdownPct": -17.633,
+              "benchmarkMaxDrawdownPct": -11.874,
+              "strategyMonthlyTurnoverPct": 18.043,
+              "avgHoldingsCount": 26.7,
+              "rebalanceCount": 10
+            },
+            "40.0": {
+              "strategyReturnPct": 90.499,
+              "benchmarkReturnPct": 53.997,
+              "excessReturnPctPoints": 36.501,
+              "strategyMaxDrawdownPct": -17.625,
+              "benchmarkMaxDrawdownPct": -11.874,
+              "strategyMonthlyTurnoverPct": 18.038,
+              "avgHoldingsCount": 26.7,
+              "rebalanceCount": 10
+            },
+            "57.0": {
+              "strategyReturnPct": 90.475,
+              "benchmarkReturnPct": 53.866,
+              "excessReturnPctPoints": 36.609,
+              "strategyMaxDrawdownPct": -17.619,
+              "benchmarkMaxDrawdownPct": -11.874,
+              "strategyMonthlyTurnoverPct": 18.033,
+              "avgHoldingsCount": 26.7,
+              "rebalanceCount": 10
+            }
+          }
+        }
+      },
+      "monthlyTurnoverRangePct": [
+        17.8,
+        20.6
+      ],
+      "avgHoldingsCountRange": [
+        23.4,
+        26.7
+      ],
+      "dataQuality": {
+        "excludedTickers": {
+          "GEV": "UNSORTED_HISTORY",
+          "HONA": "UNSORTED_HISTORY",
+          "PLTR": "UNSORTED_HISTORY",
+          "UBER": "UNSORTED_HISTORY"
+        },
+        "calendarGaps": {},
+        "calendarStart": "2015-01-01",
+        "calendarEnd": "2026-09-17",
+        "calendarWeeks": 613,
+        "knownDataEngineeringIssueFoundAndFixed": "최초 실행 시 PLTR/UBER/GEV/HONA(2019년 이후 상장/분할 4종목)의 Yahoo 주봉 캔들이 월요일 앵커인 반면 나머지 97종목은 목요일 앵커라 공통 캘린더가 어긋났다. 그 결과 일부 리밸런싱에서 97종목 전부가 MISSING_HISTORY로 제외되고 단 1종목에 전액이 쏠려 수익률이 10^13~10^16%까지 폭주하는 명백한 버그가 발생했다. normalize_sp100_calendar.py로 월요일-그리드 4종목의 날짜를 +3일(같은 주의 목요일)로 재정렬해 수정한 뒤 재실행한 결과가 이 항목의 수치다. 원본(정렬 전) 결과는 어디에도 기록하지 않았다."
+      }
+    },
+    "report_path": "research/reports/track-b-sp100-momentum-universe-expansion.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance v8 chart API - weekly adjusted OHLC, 101 S&P100 tickers",
+        "url": "https://query2.finance.yahoo.com/v8/finance/chart/",
+        "accessed": "2026-09-16"
+      },
+      {
+        "title": "S&P 100 (Wikipedia) - 고정 연구 유니버스 선정 근거",
+        "url": "https://en.wikipedia.org/wiki/S%26P_100",
+        "accessed": "2026-09-16"
+      },
+      {
+        "title": "research/reports/track-b-walk-forward-data-feasibility.md - 유니버스 확장 권고, 최초 DJIA30 실행",
+        "url": "research/reports/track-b-walk-forward-data-feasibility.md",
+        "accessed": "2026-09-16"
+      },
+      {
+        "title": "research/reports/track-b-strategy-catalogue.md - 모멘텀 규칙·비용 가정·채택 게이트 원 제안",
+        "url": "research/reports/track-b-strategy-catalogue.md",
+        "accessed": "2026-09-16"
+      }
+    ],
+    "confidence": "medium",
+    "caveats": "(1) 여전히 pointInTimeUniverse=false - 오늘 시점 S&P100 구성을 2015년까지 소급 적용했다. 이번에도 생존편향(과거 지수 편입/퇴출 이력 미반영)이 결과를 낙관적 방향으로 왜곡했을 가능성이 있는데, 그럼에도 결과는 여전히 부호가 불안정했다 - 이는 오히려 기각 판정의 신뢰도를 높인다(생존편향이 유리한 방향인데도 실패했다는 뜻). (2) S&P100은 S&P500보다는 넓지만 여전히 원 제안(S&P500)보다 좁다 - 진짜 S&P500 규모 재현은 시점별 지수 편입 이력(유료 CRSP/Compustat) 없이는 이 프로젝트에서 사실상 불가능하다. (3) PLTR/UBER/GEV/HONA는 이력이 짧아(각각 2020/2019/2024/2026 시작) 초반 분할에서는 형성기간 부족으로 자동 제외됐고, 최근 분할에서만 후보에 포함됐다 - 완전한 point-in-time 재현은 아니다. (4) 이번 실행 중 캘린더 정합성 버그(주봉 앵커 요일 불일치)를 발견해 수정했다 - metrics.dataQuality.knownDataEngineeringIssueFoundAndFixed 참고. 향후 유니버스를 추가로 확장할 때(신규 상장/스핀오프 종목 포함 시) 이 문제가 재발할 수 있으므로 매번 종목별 주봉 요일 분포를 점검해야 한다. (5) 상위20%/하위40% 이원기준, 분기 리밸런싱은 채택된 상수가 아니라 문헌 예시를 그대로 쓴 값이다. (6) 이 결과는 Track B 채택 근거가 아니다 - 오히려 DJIA 30종목 실행과 독립적으로 재현된 부호 불안정성 때문에, 횡단면 모멘텀(48주/분기/20-40 이원기준) 후보는 이제 명확한 기각으로 판정하고 추가 조사 우선순위에서 제외할 것을 권고한다. [2026-09-16 추가] track-b-short-term-reversal-sp100-2015-2026 검증 중 momentum_engine.py의 매도 레그 거래비용이 실제 현금 잔고에 반영되지 않는 회계 버그를 발견했다(매수 비용은 정상 반영). 이 항목은 그 버그가 있는 상태로 계산됐다 - 실제 비용은 기록된 값보다 더 컸을 것이다. 이 항목의 회전율(월 17.8~21.9%)은 낮아 영향이 제한적이며, 이미 기각 판정이었으므로 실제 비용 반영 시 결론은 그대로거나 더 강해진다(재실행하지 않음).",
+    "last_updated": "2026-09-16"
+  },
+  {
+    "id": "track-b-momentum-vol-managed-overlay-sp100-2015-2026",
+    "type": "backtest",
+    "ticker": "SP100_101_TICKERS_SEE_MANIFEST",
+    "strategy_id": "track-b-cross-sectional-momentum-candidate",
+    "data_range": {
+      "start": "2015-01-01",
+      "end": "2026-09-10",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-16",
+    "summary": "track-b-sp100-momentum-universe-expansion.md의 기각 사유(부호 불안정 + 2021-2023 모멘텀 붕괴)를 완화하기 위해 종목 선정 규칙은 그대로 두고 Barroso&Santa-Clara(2015)/Daniel&Moskowitz(2016)식 변동성관리 오버레이(26주 실현변동성 기준 목표연변동성15% 대비 노출 min(1,목표/실현), 무레버리지, 초과분 현금대기)를 추가했다. 4way-C MDD 격차는 -19.8%p->-6.4%p로 개선됐으나(가설의 좁은 목표는 달성), 강세장 구간(2way-B, 4way-B)에서 노출 축소의 기회비용이 -17~-20%p 초과수익 손실로 나타나 부호 불안정성(게이트1·2)은 해소되지 않았다. 기각.",
+    "metrics": {
+      "targetAnnualVol": 0.15,
+      "volLookbackWeeks": 26,
+      "formationWeeks": 52,
+      "excludeRecentWeeks": 4,
+      "rebalancePeriodWeeks": 13,
+      "topTierFraction": 0.2,
+      "holdTierFraction": 0.4,
+      "costScenariosRoundTripBps": [
+        0,
+        20,
+        40,
+        57
+      ],
+      "twoWayPartition": {
+        "2way-A": {
+          "label": "2015-01-01 ~ 2019-12-31",
+          "actualRange": [
+            "2015-01-01",
+            "2019-12-26"
+          ],
+          "byCostBps": {
+            "0.0": {
+              "unscaledStrategyReturnPct": 119.33,
+              "unscaledStrategyMaxDrawdownPct": -15.561,
+              "volManagedStrategyReturnPct": 128.061,
+              "volManagedStrategyMaxDrawdownPct": -13.619,
+              "benchmarkReturnPct": 120.662,
+              "benchmarkMaxDrawdownPct": -17.313,
+              "excessReturnPctPoints_volManagedVsBenchmark": 7.399,
+              "mddGapPctPoints_volManagedVsBenchmark": 3.694,
+              "mddGapPctPoints_unscaledVsBenchmark": 1.752,
+              "avgExposureScale": 0.965,
+              "minExposureScale": 0.692,
+              "rebalanceCount": 17
+            },
+            "20.0": {
+              "unscaledStrategyReturnPct": 119.291,
+              "unscaledStrategyMaxDrawdownPct": -15.549,
+              "volManagedStrategyReturnPct": 127.977,
+              "volManagedStrategyMaxDrawdownPct": -13.612,
+              "benchmarkReturnPct": 120.441,
+              "benchmarkMaxDrawdownPct": -17.313,
+              "excessReturnPctPoints_volManagedVsBenchmark": 7.536,
+              "mddGapPctPoints_volManagedVsBenchmark": 3.701,
+              "mddGapPctPoints_unscaledVsBenchmark": 1.764,
+              "avgExposureScale": 0.966,
+              "minExposureScale": 0.692,
+              "rebalanceCount": 17
+            },
+            "40.0": {
+              "unscaledStrategyReturnPct": 119.252,
+              "unscaledStrategyMaxDrawdownPct": -15.537,
+              "volManagedStrategyReturnPct": 127.893,
+              "volManagedStrategyMaxDrawdownPct": -13.605,
+              "benchmarkReturnPct": 120.22,
+              "benchmarkMaxDrawdownPct": -17.313,
+              "excessReturnPctPoints_volManagedVsBenchmark": 7.672,
+              "mddGapPctPoints_volManagedVsBenchmark": 3.707,
+              "mddGapPctPoints_unscaledVsBenchmark": 1.776,
+              "avgExposureScale": 0.966,
+              "minExposureScale": 0.692,
+              "rebalanceCount": 17
+            },
+            "57.0": {
+              "unscaledStrategyReturnPct": 119.218,
+              "unscaledStrategyMaxDrawdownPct": -15.526,
+              "volManagedStrategyReturnPct": 127.821,
+              "volManagedStrategyMaxDrawdownPct": -13.6,
+              "benchmarkReturnPct": 120.033,
+              "benchmarkMaxDrawdownPct": -17.313,
+              "excessReturnPctPoints_volManagedVsBenchmark": 7.789,
+              "mddGapPctPoints_volManagedVsBenchmark": 3.713,
+              "mddGapPctPoints_unscaledVsBenchmark": 1.786,
+              "avgExposureScale": 0.966,
+              "minExposureScale": 0.693,
+              "rebalanceCount": 17
+            }
+          }
+        },
+        "2way-B": {
+          "label": "2020-01-01 ~ 2026-09-10",
+          "actualRange": [
+            "2020-01-02",
+            "2026-09-10"
+          ],
+          "byCostBps": {
+            "0.0": {
+              "unscaledStrategyReturnPct": 369.435,
+              "unscaledStrategyMaxDrawdownPct": -28.541,
+              "volManagedStrategyReturnPct": 305.446,
+              "volManagedStrategyMaxDrawdownPct": -22.412,
+              "benchmarkReturnPct": 322.916,
+              "benchmarkMaxDrawdownPct": -25.202,
+              "excessReturnPctPoints_volManagedVsBenchmark": -17.469,
+              "mddGapPctPoints_volManagedVsBenchmark": 2.791,
+              "mddGapPctPoints_unscaledVsBenchmark": -3.339,
+              "avgExposureScale": 0.853,
+              "minExposureScale": 0.563,
+              "rebalanceCount": 26
+            },
+            "20.0": {
+              "unscaledStrategyReturnPct": 369.256,
+              "unscaledStrategyMaxDrawdownPct": -28.527,
+              "volManagedStrategyReturnPct": 305.293,
+              "volManagedStrategyMaxDrawdownPct": -22.411,
+              "benchmarkReturnPct": 322.493,
+              "benchmarkMaxDrawdownPct": -25.202,
+              "excessReturnPctPoints_volManagedVsBenchmark": -17.199,
+              "mddGapPctPoints_volManagedVsBenchmark": 2.791,
+              "mddGapPctPoints_unscaledVsBenchmark": -3.325,
+              "avgExposureScale": 0.853,
+              "minExposureScale": 0.563,
+              "rebalanceCount": 26
+            },
+            "40.0": {
+              "unscaledStrategyReturnPct": 369.076,
+              "unscaledStrategyMaxDrawdownPct": -28.513,
+              "volManagedStrategyReturnPct": 305.14,
+              "volManagedStrategyMaxDrawdownPct": -22.41,
+              "benchmarkReturnPct": 322.07,
+              "benchmarkMaxDrawdownPct": -25.202,
+              "excessReturnPctPoints_volManagedVsBenchmark": -16.929,
+              "mddGapPctPoints_volManagedVsBenchmark": 2.792,
+              "mddGapPctPoints_unscaledVsBenchmark": -3.311,
+              "avgExposureScale": 0.854,
+              "minExposureScale": 0.563,
+              "rebalanceCount": 26
+            },
+            "57.0": {
+              "unscaledStrategyReturnPct": 368.924,
+              "unscaledStrategyMaxDrawdownPct": -28.502,
+              "volManagedStrategyReturnPct": 305.01,
+              "volManagedStrategyMaxDrawdownPct": -22.409,
+              "benchmarkReturnPct": 321.71,
+              "benchmarkMaxDrawdownPct": -25.202,
+              "excessReturnPctPoints_volManagedVsBenchmark": -16.7,
+              "mddGapPctPoints_volManagedVsBenchmark": 2.793,
+              "mddGapPctPoints_unscaledVsBenchmark": -3.3,
+              "avgExposureScale": 0.854,
+              "minExposureScale": 0.564,
+              "rebalanceCount": 26
+            }
+          }
+        }
+      },
+      "fourWayPartition": {
+        "4way-A": {
+          "label": "2015-01-01 ~ 2017-12-31",
+          "actualRange": [
+            "2015-01-01",
+            "2017-12-28"
+          ],
+          "byCostBps": {
+            "0.0": {
+              "unscaledStrategyReturnPct": 68.797,
+              "unscaledStrategyMaxDrawdownPct": -13.473,
+              "volManagedStrategyReturnPct": 95.502,
+              "volManagedStrategyMaxDrawdownPct": -13.473,
+              "benchmarkReturnPct": 63.48,
+              "benchmarkMaxDrawdownPct": -8.354,
+              "excessReturnPctPoints_volManagedVsBenchmark": 32.023,
+              "mddGapPctPoints_volManagedVsBenchmark": -5.119,
+              "mddGapPctPoints_unscaledVsBenchmark": -5.119,
+              "avgExposureScale": 0.992,
+              "minExposureScale": 0.765,
+              "rebalanceCount": 9
+            },
+            "20.0": {
+              "unscaledStrategyReturnPct": 68.771,
+              "unscaledStrategyMaxDrawdownPct": -13.466,
+              "volManagedStrategyReturnPct": 95.458,
+              "volManagedStrategyMaxDrawdownPct": -13.466,
+              "benchmarkReturnPct": 63.316,
+              "benchmarkMaxDrawdownPct": -8.354,
+              "excessReturnPctPoints_volManagedVsBenchmark": 32.141,
+              "mddGapPctPoints_volManagedVsBenchmark": -5.112,
+              "mddGapPctPoints_unscaledVsBenchmark": -5.112,
+              "avgExposureScale": 0.992,
+              "minExposureScale": 0.766,
+              "rebalanceCount": 9
+            },
+            "40.0": {
+              "unscaledStrategyReturnPct": 68.744,
+              "unscaledStrategyMaxDrawdownPct": -13.459,
+              "volManagedStrategyReturnPct": 95.413,
+              "volManagedStrategyMaxDrawdownPct": -13.459,
+              "benchmarkReturnPct": 63.153,
+              "benchmarkMaxDrawdownPct": -8.354,
+              "excessReturnPctPoints_volManagedVsBenchmark": 32.26,
+              "mddGapPctPoints_volManagedVsBenchmark": -5.105,
+              "mddGapPctPoints_unscaledVsBenchmark": -5.105,
+              "avgExposureScale": 0.992,
+              "minExposureScale": 0.766,
+              "rebalanceCount": 9
+            },
+            "57.0": {
+              "unscaledStrategyReturnPct": 68.722,
+              "unscaledStrategyMaxDrawdownPct": -13.453,
+              "volManagedStrategyReturnPct": 95.375,
+              "volManagedStrategyMaxDrawdownPct": -13.453,
+              "benchmarkReturnPct": 63.014,
+              "benchmarkMaxDrawdownPct": -8.354,
+              "excessReturnPctPoints_volManagedVsBenchmark": 32.361,
+              "mddGapPctPoints_volManagedVsBenchmark": -5.099,
+              "mddGapPctPoints_unscaledVsBenchmark": -5.099,
+              "avgExposureScale": 0.992,
+              "minExposureScale": 0.767,
+              "rebalanceCount": 9
+            }
+          }
+        },
+        "4way-B": {
+          "label": "2018-01-01 ~ 2020-12-31",
+          "actualRange": [
+            "2018-01-04",
+            "2020-12-31"
+          ],
+          "byCostBps": {
+            "0.0": {
+              "unscaledStrategyReturnPct": 68.29,
+              "unscaledStrategyMaxDrawdownPct": -27.138,
+              "volManagedStrategyReturnPct": 53.592,
+              "volManagedStrategyMaxDrawdownPct": -22.206,
+              "benchmarkReturnPct": 73.823,
+              "benchmarkMaxDrawdownPct": -28.944,
+              "excessReturnPctPoints_volManagedVsBenchmark": -20.231,
+              "mddGapPctPoints_volManagedVsBenchmark": 6.738,
+              "mddGapPctPoints_unscaledVsBenchmark": 1.807,
+              "avgExposureScale": 0.772,
+              "minExposureScale": 0.449,
+              "rebalanceCount": 12
+            },
+            "20.0": {
+              "unscaledStrategyReturnPct": 68.277,
+              "unscaledStrategyMaxDrawdownPct": -27.132,
+              "volManagedStrategyReturnPct": 53.589,
+              "volManagedStrategyMaxDrawdownPct": -22.204,
+              "benchmarkReturnPct": 73.649,
+              "benchmarkMaxDrawdownPct": -28.944,
+              "excessReturnPctPoints_volManagedVsBenchmark": -20.059,
+              "mddGapPctPoints_volManagedVsBenchmark": 6.74,
+              "mddGapPctPoints_unscaledVsBenchmark": 1.813,
+              "avgExposureScale": 0.772,
+              "minExposureScale": 0.449,
+              "rebalanceCount": 12
+            },
+            "40.0": {
+              "unscaledStrategyReturnPct": 68.264,
+              "unscaledStrategyMaxDrawdownPct": -27.126,
+              "volManagedStrategyReturnPct": 53.587,
+              "volManagedStrategyMaxDrawdownPct": -22.203,
+              "benchmarkReturnPct": 73.475,
+              "benchmarkMaxDrawdownPct": -28.944,
+              "excessReturnPctPoints_volManagedVsBenchmark": -19.888,
+              "mddGapPctPoints_volManagedVsBenchmark": 6.742,
+              "mddGapPctPoints_unscaledVsBenchmark": 1.819,
+              "avgExposureScale": 0.772,
+              "minExposureScale": 0.449,
+              "rebalanceCount": 12
+            },
+            "57.0": {
+              "unscaledStrategyReturnPct": 68.253,
+              "unscaledStrategyMaxDrawdownPct": -27.121,
+              "volManagedStrategyReturnPct": 53.585,
+              "volManagedStrategyMaxDrawdownPct": -22.201,
+              "benchmarkReturnPct": 73.327,
+              "benchmarkMaxDrawdownPct": -28.944,
+              "excessReturnPctPoints_volManagedVsBenchmark": -19.742,
+              "mddGapPctPoints_volManagedVsBenchmark": 6.744,
+              "mddGapPctPoints_unscaledVsBenchmark": 1.824,
+              "avgExposureScale": 0.772,
+              "minExposureScale": 0.449,
+              "rebalanceCount": 12
+            }
+          }
+        },
+        "4way-C": {
+          "label": "2021-01-01 ~ 2023-12-31",
+          "actualRange": [
+            "2021-01-07",
+            "2023-12-28"
+          ],
+          "byCostBps": {
+            "0.0": {
+              "unscaledStrategyReturnPct": 10.068,
+              "unscaledStrategyMaxDrawdownPct": -42.28,
+              "volManagedStrategyReturnPct": 25.439,
+              "volManagedStrategyMaxDrawdownPct": -28.879,
+              "benchmarkReturnPct": 26.914,
+              "benchmarkMaxDrawdownPct": -22.476,
+              "excessReturnPctPoints_volManagedVsBenchmark": -1.475,
+              "mddGapPctPoints_volManagedVsBenchmark": -6.403,
+              "mddGapPctPoints_unscaledVsBenchmark": -19.803,
+              "avgExposureScale": 0.738,
+              "minExposureScale": 0.413,
+              "rebalanceCount": 12
+            },
+            "20.0": {
+              "unscaledStrategyReturnPct": 10.064,
+              "unscaledStrategyMaxDrawdownPct": -42.272,
+              "volManagedStrategyReturnPct": 25.441,
+              "volManagedStrategyMaxDrawdownPct": -28.878,
+              "benchmarkReturnPct": 26.787,
+              "benchmarkMaxDrawdownPct": -22.476,
+              "excessReturnPctPoints_volManagedVsBenchmark": -1.346,
+              "mddGapPctPoints_volManagedVsBenchmark": -6.402,
+              "mddGapPctPoints_unscaledVsBenchmark": -19.796,
+              "avgExposureScale": 0.738,
+              "minExposureScale": 0.413,
+              "rebalanceCount": 12
+            },
+            "40.0": {
+              "unscaledStrategyReturnPct": 10.06,
+              "unscaledStrategyMaxDrawdownPct": -42.265,
+              "volManagedStrategyReturnPct": 25.443,
+              "volManagedStrategyMaxDrawdownPct": -28.877,
+              "benchmarkReturnPct": 26.66,
+              "benchmarkMaxDrawdownPct": -22.476,
+              "excessReturnPctPoints_volManagedVsBenchmark": -1.217,
+              "mddGapPctPoints_volManagedVsBenchmark": -6.401,
+              "mddGapPctPoints_unscaledVsBenchmark": -19.789,
+              "avgExposureScale": 0.738,
+              "minExposureScale": 0.413,
+              "rebalanceCount": 12
+            },
+            "57.0": {
+              "unscaledStrategyReturnPct": 10.056,
+              "unscaledStrategyMaxDrawdownPct": -42.259,
+              "volManagedStrategyReturnPct": 25.445,
+              "volManagedStrategyMaxDrawdownPct": -28.877,
+              "benchmarkReturnPct": 26.552,
+              "benchmarkMaxDrawdownPct": -22.476,
+              "excessReturnPctPoints_volManagedVsBenchmark": -1.107,
+              "mddGapPctPoints_volManagedVsBenchmark": -6.4,
+              "mddGapPctPoints_unscaledVsBenchmark": -19.783,
+              "avgExposureScale": 0.738,
+              "minExposureScale": 0.413,
+              "rebalanceCount": 12
+            }
+          }
+        },
+        "4way-D": {
+          "label": "2024-01-01 ~ 2026-09-10",
+          "actualRange": [
+            "2024-01-04",
+            "2026-09-10"
+          ],
+          "byCostBps": {
+            "0.0": {
+              "unscaledStrategyReturnPct": 90.554,
+              "unscaledStrategyMaxDrawdownPct": -17.64,
+              "volManagedStrategyReturnPct": 82.766,
+              "volManagedStrategyMaxDrawdownPct": -17.406,
+              "benchmarkReturnPct": 54.306,
+              "benchmarkMaxDrawdownPct": -11.874,
+              "excessReturnPctPoints_volManagedVsBenchmark": 28.46,
+              "mddGapPctPoints_volManagedVsBenchmark": -5.531,
+              "mddGapPctPoints_unscaledVsBenchmark": -5.766,
+              "avgExposureScale": 0.876,
+              "minExposureScale": 0.639,
+              "rebalanceCount": 10
+            },
+            "20.0": {
+              "unscaledStrategyReturnPct": 90.526,
+              "unscaledStrategyMaxDrawdownPct": -17.633,
+              "volManagedStrategyReturnPct": 82.772,
+              "volManagedStrategyMaxDrawdownPct": -17.4,
+              "benchmarkReturnPct": 54.152,
+              "benchmarkMaxDrawdownPct": -11.874,
+              "excessReturnPctPoints_volManagedVsBenchmark": 28.62,
+              "mddGapPctPoints_volManagedVsBenchmark": -5.526,
+              "mddGapPctPoints_unscaledVsBenchmark": -5.758,
+              "avgExposureScale": 0.876,
+              "minExposureScale": 0.639,
+              "rebalanceCount": 10
+            },
+            "40.0": {
+              "unscaledStrategyReturnPct": 90.499,
+              "unscaledStrategyMaxDrawdownPct": -17.625,
+              "volManagedStrategyReturnPct": 82.778,
+              "volManagedStrategyMaxDrawdownPct": -17.394,
+              "benchmarkReturnPct": 53.997,
+              "benchmarkMaxDrawdownPct": -11.874,
+              "excessReturnPctPoints_volManagedVsBenchmark": 28.781,
+              "mddGapPctPoints_volManagedVsBenchmark": -5.52,
+              "mddGapPctPoints_unscaledVsBenchmark": -5.751,
+              "avgExposureScale": 0.876,
+              "minExposureScale": 0.639,
+              "rebalanceCount": 10
+            },
+            "57.0": {
+              "unscaledStrategyReturnPct": 90.475,
+              "unscaledStrategyMaxDrawdownPct": -17.619,
+              "volManagedStrategyReturnPct": 82.783,
+              "volManagedStrategyMaxDrawdownPct": -17.389,
+              "benchmarkReturnPct": 53.866,
+              "benchmarkMaxDrawdownPct": -11.874,
+              "excessReturnPctPoints_volManagedVsBenchmark": 28.917,
+              "mddGapPctPoints_volManagedVsBenchmark": -5.515,
+              "mddGapPctPoints_unscaledVsBenchmark": -5.745,
+              "avgExposureScale": 0.876,
+              "minExposureScale": 0.639,
+              "rebalanceCount": 10
+            }
+          }
+        }
+      },
+      "gate6MomentumCrashMitigation": {
+        "description": "4way-C(2021-2023) MDD 격차(전략-벤치마크) 개선 여부",
+        "unscaledMddGapPctPoints": -19.783,
+        "volManagedMddGapPctPoints": -6.4,
+        "verdict": "부분 충족 - MDD는 개선됐으나 다른 구간의 강세장 기회비용이 더 커서 전체 기각"
+      }
+    },
+    "report_path": "research/reports/track-b-momentum-vol-managed-overlay.md",
+    "sources": [
+      {
+        "title": "Barroso & Santa-Clara (2015) Momentum Has Its Moments",
+        "url": "",
+        "accessed": "2026-09-16"
+      },
+      {
+        "title": "Daniel & Moskowitz (2016) Momentum Crashes",
+        "url": "",
+        "accessed": "2026-09-16"
+      },
+      {
+        "title": "research/reports/track-b-sp100-momentum-universe-expansion.md - 기각 사유 원본",
+        "url": "research/reports/track-b-sp100-momentum-universe-expansion.md",
+        "accessed": "2026-09-16"
+      }
+    ],
+    "confidence": "medium",
+    "caveats": "(1) 목표변동성 15%, lookback 26주는 문헌 관행값으로 사전 고정했고 별도 민감도 분석은 하지 않았다(탐색 자체가 사후 튜닝 위험을 수반하므로 이번 범위에서 배제). (2) 오버레이는 현금 대기분에 무위험이자 0%를 가정한 보수적 설계다. (3) 종목 선정 로직은 momentum_engine.py를 그대로 재사용했고 수정하지 않았다. (4) 이 결과는 Track B 채택 근거가 아니다 - 오히려 원안/유니버스 확장/변동성관리 오버레이 3개 독립 실행 모두 기각되어, 규칙 자체의 추가 변형보다 다른 Track B 후보로 자원을 옮길 것을 권고한다. [2026-09-16 추가] track-b-short-term-reversal-sp100-2015-2026 검증 중 momentum_engine.py의 매도 레그 거래비용이 실제 현금 잔고에 반영되지 않는 회계 버그를 발견했다(매수 비용은 정상 반영). 이 항목은 그 버그가 있는 상태로 계산됐다 - 실제 비용은 기록된 값보다 더 컸을 것이다. 이 항목의 회전율(월 17.8~21.9%)은 낮아 영향이 제한적이며, 이미 기각 판정이었으므로 실제 비용 반영 시 결론은 그대로거나 더 강해진다(재실행하지 않음).",
+    "last_updated": "2026-09-16"
+  },
+  {
+    "id": "track-b-short-term-reversal-sp100-2015-2026",
+    "type": "backtest",
+    "ticker": "SP100_101_TICKERS_SEE_MANIFEST",
+    "strategy_id": "track-b-short-term-reversal-candidate",
+    "data_range": {
+      "start": "2015-01-01",
+      "end": "2026-09-10",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-16",
+    "summary": "모멘텀 계열 3연속 기각 후 신규 후보로 단기 반전(직전 1주/4주 최악성과 하위20% 매수, 매주 재구성, Jegadeesh 1990)을 S&P100 101종목으로 검증. 0bp에서는 대부분 구간 큰 폭의 양(+) 초과수익(최대 +192%p)이 실재했으나, 왕복 20bp만 반영해도 6개 구간 중 5개가 이미 음(-)으로 전환, 57bp에서는 전 구간 음(-)(-46~-220%p). 월환산 회전율 683~710%(모멘텀의 약 30~40배)가 원인. 사전 등록한 비용민감성 리스크가 그대로 재현되어 기각.",
+    "metrics": {
+      "bottomTierFraction": 0.2,
+      "primaryLookbackWeeks": 1,
+      "robustnessLookbackWeeks": 4,
+      "rebalance": "weekly",
+      "costScenariosRoundTripBps": [
+        0,
+        20,
+        40,
+        57
+      ],
+      "partitions": {
+        "lookback1w": {
+          "2way": {
+            "2way-A": {
+              "label": "2015-01-01 ~ 2019-12-31",
+              "byCostBps": {
+                "0.0": {
+                  "rebalanceCount": 261,
+                  "avgHoldingsCount": 18.9,
+                  "strategyReturnPct": 136.48,
+                  "strategyMaxDrawdownPct": -19.97,
+                  "strategyMonthlyTurnoverPct": 683.428,
+                  "benchmarkReturnPct": 137.824,
+                  "benchmarkMaxDrawdownPct": -18.487,
+                  "excessReturnPctPoints": -1.344,
+                  "mddGapPctPoints": -1.483
+                },
+                "20.0": {
+                  "rebalanceCount": 261,
+                  "avgHoldingsCount": 18.9,
+                  "strategyReturnPct": 56.892,
+                  "strategyMaxDrawdownPct": -19.989,
+                  "strategyMonthlyTurnoverPct": 683.624,
+                  "benchmarkReturnPct": 137.586,
+                  "benchmarkMaxDrawdownPct": -18.487,
+                  "excessReturnPctPoints": -80.694,
+                  "mddGapPctPoints": -1.503
+                },
+                "40.0": {
+                  "rebalanceCount": 261,
+                  "avgHoldingsCount": 18.9,
+                  "strategyReturnPct": 3.996,
+                  "strategyMaxDrawdownPct": -20.009,
+                  "strategyMonthlyTurnoverPct": 683.821,
+                  "benchmarkReturnPct": 137.348,
+                  "benchmarkMaxDrawdownPct": -18.487,
+                  "excessReturnPctPoints": -133.352,
+                  "mddGapPctPoints": -1.522
+                },
+                "57.0": {
+                  "rebalanceCount": 261,
+                  "avgHoldingsCount": 18.9,
+                  "strategyReturnPct": -26.732,
+                  "strategyMaxDrawdownPct": -20.025,
+                  "strategyMonthlyTurnoverPct": 683.989,
+                  "benchmarkReturnPct": 137.146,
+                  "benchmarkMaxDrawdownPct": -18.487,
+                  "excessReturnPctPoints": -163.878,
+                  "mddGapPctPoints": -1.539
+                }
+              }
+            },
+            "2way-B": {
+              "label": "2020-01-01 ~ 2026-09-10",
+              "byCostBps": {
+                "0.0": {
+                  "rebalanceCount": 350,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 416.217,
+                  "strategyMaxDrawdownPct": -30.032,
+                  "strategyMonthlyTurnoverPct": 700.656,
+                  "benchmarkReturnPct": 224.252,
+                  "benchmarkMaxDrawdownPct": -29.36,
+                  "excessReturnPctPoints": 191.965,
+                  "mddGapPctPoints": -0.671
+                },
+                "20.0": {
+                  "rebalanceCount": 350,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 193.755,
+                  "strategyMaxDrawdownPct": -30.109,
+                  "strategyMonthlyTurnoverPct": 700.872,
+                  "benchmarkReturnPct": 223.928,
+                  "benchmarkMaxDrawdownPct": -29.36,
+                  "excessReturnPctPoints": -30.173,
+                  "mddGapPctPoints": -0.749
+                },
+                "40.0": {
+                  "rebalanceCount": 350,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 66.949,
+                  "strategyMaxDrawdownPct": -30.188,
+                  "strategyMonthlyTurnoverPct": 701.09,
+                  "benchmarkReturnPct": 223.604,
+                  "benchmarkMaxDrawdownPct": -29.36,
+                  "excessReturnPctPoints": -156.654,
+                  "mddGapPctPoints": -0.827
+                },
+                "57.0": {
+                  "rebalanceCount": 350,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 3.17,
+                  "strategyMaxDrawdownPct": -30.255,
+                  "strategyMonthlyTurnoverPct": 701.275,
+                  "benchmarkReturnPct": 223.328,
+                  "benchmarkMaxDrawdownPct": -29.36,
+                  "excessReturnPctPoints": -220.158,
+                  "mddGapPctPoints": -0.895
+                }
+              }
+            }
+          },
+          "4way": {
+            "4way-A": {
+              "label": "2015-01-01 ~ 2017-12-31",
+              "byCostBps": {
+                "0.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 18.9,
+                  "strategyReturnPct": 78.54,
+                  "strategyMaxDrawdownPct": -7.868,
+                  "strategyMonthlyTurnoverPct": 685.372,
+                  "benchmarkReturnPct": 75.003,
+                  "benchmarkMaxDrawdownPct": -12.596,
+                  "excessReturnPctPoints": 3.536,
+                  "mddGapPctPoints": 4.728
+                },
+                "20.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 18.9,
+                  "strategyReturnPct": 39.392,
+                  "strategyMaxDrawdownPct": -7.877,
+                  "strategyMonthlyTurnoverPct": 685.567,
+                  "benchmarkReturnPct": 74.828,
+                  "benchmarkMaxDrawdownPct": -12.596,
+                  "excessReturnPctPoints": -35.436,
+                  "mddGapPctPoints": 4.719
+                },
+                "40.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 18.9,
+                  "strategyReturnPct": 8.769,
+                  "strategyMaxDrawdownPct": -7.886,
+                  "strategyMonthlyTurnoverPct": 685.764,
+                  "benchmarkReturnPct": 74.653,
+                  "benchmarkMaxDrawdownPct": -12.596,
+                  "excessReturnPctPoints": -65.884,
+                  "mddGapPctPoints": 4.71
+                },
+                "57.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 18.9,
+                  "strategyReturnPct": -11.946,
+                  "strategyMaxDrawdownPct": -7.893,
+                  "strategyMonthlyTurnoverPct": 685.931,
+                  "benchmarkReturnPct": 74.504,
+                  "benchmarkMaxDrawdownPct": -12.596,
+                  "excessReturnPctPoints": -86.45,
+                  "mddGapPctPoints": 4.703
+                }
+              }
+            },
+            "4way-B": {
+              "label": "2018-01-01 ~ 2020-12-31",
+              "byCostBps": {
+                "0.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 90.532,
+                  "strategyMaxDrawdownPct": -26.787,
+                  "strategyMonthlyTurnoverPct": 685.747,
+                  "benchmarkReturnPct": 67.587,
+                  "benchmarkMaxDrawdownPct": -28.758,
+                  "excessReturnPctPoints": 22.945,
+                  "mddGapPctPoints": 1.97
+                },
+                "20.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 48.764,
+                  "strategyMaxDrawdownPct": -26.813,
+                  "strategyMonthlyTurnoverPct": 685.948,
+                  "benchmarkReturnPct": 67.419,
+                  "benchmarkMaxDrawdownPct": -28.758,
+                  "excessReturnPctPoints": -18.655,
+                  "mddGapPctPoints": 1.945
+                },
+                "40.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 16.089,
+                  "strategyMaxDrawdownPct": -26.839,
+                  "strategyMonthlyTurnoverPct": 686.15,
+                  "benchmarkReturnPct": 67.251,
+                  "benchmarkMaxDrawdownPct": -28.758,
+                  "excessReturnPctPoints": -51.163,
+                  "mddGapPctPoints": 1.919
+                },
+                "57.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": -6.017,
+                  "strategyMaxDrawdownPct": -26.861,
+                  "strategyMonthlyTurnoverPct": 686.323,
+                  "benchmarkReturnPct": 67.109,
+                  "benchmarkMaxDrawdownPct": -28.758,
+                  "excessReturnPctPoints": -73.126,
+                  "mddGapPctPoints": 1.897
+                }
+              }
+            },
+            "4way-C": {
+              "label": "2021-01-01 ~ 2023-12-31",
+              "byCostBps": {
+                "0.0": {
+                  "rebalanceCount": 156,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 46.428,
+                  "strategyMaxDrawdownPct": -43.111,
+                  "strategyMonthlyTurnoverPct": 691.719,
+                  "benchmarkReturnPct": 34.579,
+                  "benchmarkMaxDrawdownPct": -22.194,
+                  "excessReturnPctPoints": 11.848,
+                  "mddGapPctPoints": -20.917
+                },
+                "20.0": {
+                  "rebalanceCount": 156,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 14.22,
+                  "strategyMaxDrawdownPct": -43.143,
+                  "strategyMonthlyTurnoverPct": 691.927,
+                  "benchmarkReturnPct": 34.445,
+                  "benchmarkMaxDrawdownPct": -22.194,
+                  "excessReturnPctPoints": -20.225,
+                  "mddGapPctPoints": -20.949
+                },
+                "40.0": {
+                  "rebalanceCount": 156,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": -10.953,
+                  "strategyMaxDrawdownPct": -43.176,
+                  "strategyMonthlyTurnoverPct": 692.135,
+                  "benchmarkReturnPct": 34.31,
+                  "benchmarkMaxDrawdownPct": -22.194,
+                  "excessReturnPctPoints": -45.263,
+                  "mddGapPctPoints": -20.982
+                },
+                "57.0": {
+                  "rebalanceCount": 156,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": -27.968,
+                  "strategyMaxDrawdownPct": -43.203,
+                  "strategyMonthlyTurnoverPct": 692.313,
+                  "benchmarkReturnPct": 34.196,
+                  "benchmarkMaxDrawdownPct": -22.194,
+                  "excessReturnPctPoints": -62.164,
+                  "mddGapPctPoints": -21.009
+                }
+              }
+            },
+            "4way-D": {
+              "label": "2024-01-01 ~ 2026-09-10",
+              "byCostBps": {
+                "0.0": {
+                  "rebalanceCount": 141,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 143.926,
+                  "strategyMaxDrawdownPct": -18.243,
+                  "strategyMonthlyTurnoverPct": 709.57,
+                  "benchmarkReturnPct": 72.844,
+                  "benchmarkMaxDrawdownPct": -12.276,
+                  "excessReturnPctPoints": 71.082,
+                  "mddGapPctPoints": -5.968
+                },
+                "20.0": {
+                  "rebalanceCount": 141,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 93.846,
+                  "strategyMaxDrawdownPct": -18.264,
+                  "strategyMonthlyTurnoverPct": 709.794,
+                  "benchmarkReturnPct": 72.671,
+                  "benchmarkMaxDrawdownPct": -12.276,
+                  "excessReturnPctPoints": 21.175,
+                  "mddGapPctPoints": -5.989
+                },
+                "40.0": {
+                  "rebalanceCount": 141,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 53.967,
+                  "strategyMaxDrawdownPct": -18.285,
+                  "strategyMonthlyTurnoverPct": 710.02,
+                  "benchmarkReturnPct": 72.498,
+                  "benchmarkMaxDrawdownPct": -12.276,
+                  "excessReturnPctPoints": -18.532,
+                  "mddGapPctPoints": -6.01
+                },
+                "57.0": {
+                  "rebalanceCount": 141,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 26.538,
+                  "strategyMaxDrawdownPct": -18.303,
+                  "strategyMonthlyTurnoverPct": 710.212,
+                  "benchmarkReturnPct": 72.351,
+                  "benchmarkMaxDrawdownPct": -12.276,
+                  "excessReturnPctPoints": -45.814,
+                  "mddGapPctPoints": -6.028
+                }
+              }
+            }
+          }
+        },
+        "lookback4w": {
+          "2way": {
+            "2way-A": {
+              "label": "2015-01-01 ~ 2019-12-31",
+              "byCostBps": {
+                "0.0": {
+                  "rebalanceCount": 261,
+                  "avgHoldingsCount": 18.7,
+                  "strategyReturnPct": 153.033,
+                  "strategyMaxDrawdownPct": -16.455,
+                  "strategyMonthlyTurnoverPct": 340.732,
+                  "benchmarkReturnPct": 137.824,
+                  "benchmarkMaxDrawdownPct": -18.487,
+                  "excessReturnPctPoints": 15.209,
+                  "mddGapPctPoints": 2.032
+                },
+                "20.0": {
+                  "rebalanceCount": 261,
+                  "avgHoldingsCount": 18.7,
+                  "strategyReturnPct": 106.242,
+                  "strategyMaxDrawdownPct": -16.46,
+                  "strategyMonthlyTurnoverPct": 340.77,
+                  "benchmarkReturnPct": 137.586,
+                  "benchmarkMaxDrawdownPct": -18.487,
+                  "excessReturnPctPoints": -31.344,
+                  "mddGapPctPoints": 2.026
+                },
+                "40.0": {
+                  "rebalanceCount": 261,
+                  "avgHoldingsCount": 18.7,
+                  "strategyReturnPct": 68.065,
+                  "strategyMaxDrawdownPct": -16.466,
+                  "strategyMonthlyTurnoverPct": 340.812,
+                  "benchmarkReturnPct": 137.348,
+                  "benchmarkMaxDrawdownPct": -18.487,
+                  "excessReturnPctPoints": -69.283,
+                  "mddGapPctPoints": 2.02
+                },
+                "57.0": {
+                  "rebalanceCount": 261,
+                  "avgHoldingsCount": 18.7,
+                  "strategyReturnPct": 41.199,
+                  "strategyMaxDrawdownPct": -16.471,
+                  "strategyMonthlyTurnoverPct": 340.851,
+                  "benchmarkReturnPct": 137.146,
+                  "benchmarkMaxDrawdownPct": -18.487,
+                  "excessReturnPctPoints": -95.947,
+                  "mddGapPctPoints": 2.015
+                }
+              }
+            },
+            "2way-B": {
+              "label": "2020-01-01 ~ 2026-09-10",
+              "byCostBps": {
+                "0.0": {
+                  "rebalanceCount": 350,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 203.243,
+                  "strategyMaxDrawdownPct": -32.065,
+                  "strategyMonthlyTurnoverPct": 354.537,
+                  "benchmarkReturnPct": 224.252,
+                  "benchmarkMaxDrawdownPct": -29.36,
+                  "excessReturnPctPoints": -21.009,
+                  "mddGapPctPoints": -2.704
+                },
+                "20.0": {
+                  "rebalanceCount": 350,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 127.981,
+                  "strategyMaxDrawdownPct": -32.074,
+                  "strategyMonthlyTurnoverPct": 354.578,
+                  "benchmarkReturnPct": 223.928,
+                  "benchmarkMaxDrawdownPct": -29.36,
+                  "excessReturnPctPoints": -95.947,
+                  "mddGapPctPoints": -2.713
+                },
+                "40.0": {
+                  "rebalanceCount": 350,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 71.342,
+                  "strategyMaxDrawdownPct": -32.083,
+                  "strategyMonthlyTurnoverPct": 354.623,
+                  "benchmarkReturnPct": 223.604,
+                  "benchmarkMaxDrawdownPct": -29.36,
+                  "excessReturnPctPoints": -152.262,
+                  "mddGapPctPoints": -2.722
+                },
+                "57.0": {
+                  "rebalanceCount": 350,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 34.376,
+                  "strategyMaxDrawdownPct": -32.09,
+                  "strategyMonthlyTurnoverPct": 354.662,
+                  "benchmarkReturnPct": 223.328,
+                  "benchmarkMaxDrawdownPct": -29.36,
+                  "excessReturnPctPoints": -188.952,
+                  "mddGapPctPoints": -2.73
+                }
+              }
+            }
+          },
+          "4way": {
+            "4way-A": {
+              "label": "2015-01-01 ~ 2017-12-31",
+              "byCostBps": {
+                "0.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 18.5,
+                  "strategyReturnPct": 71.132,
+                  "strategyMaxDrawdownPct": -7.784,
+                  "strategyMonthlyTurnoverPct": 329.438,
+                  "benchmarkReturnPct": 75.003,
+                  "benchmarkMaxDrawdownPct": -12.596,
+                  "excessReturnPctPoints": -3.871,
+                  "mddGapPctPoints": 4.811
+                },
+                "20.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 18.5,
+                  "strategyReturnPct": 51.942,
+                  "strategyMaxDrawdownPct": -7.791,
+                  "strategyMonthlyTurnoverPct": 329.474,
+                  "benchmarkReturnPct": 74.828,
+                  "benchmarkMaxDrawdownPct": -12.596,
+                  "excessReturnPctPoints": -22.886,
+                  "mddGapPctPoints": 4.804
+                },
+                "40.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 18.5,
+                  "strategyReturnPct": 34.886,
+                  "strategyMaxDrawdownPct": -7.798,
+                  "strategyMonthlyTurnoverPct": 329.515,
+                  "benchmarkReturnPct": 74.653,
+                  "benchmarkMaxDrawdownPct": -12.596,
+                  "excessReturnPctPoints": -39.767,
+                  "mddGapPctPoints": 4.797
+                },
+                "57.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 18.5,
+                  "strategyReturnPct": 21.89,
+                  "strategyMaxDrawdownPct": -7.804,
+                  "strategyMonthlyTurnoverPct": 329.553,
+                  "benchmarkReturnPct": 74.504,
+                  "benchmarkMaxDrawdownPct": -12.596,
+                  "excessReturnPctPoints": -52.614,
+                  "mddGapPctPoints": 4.791
+                }
+              }
+            },
+            "4way-B": {
+              "label": "2018-01-01 ~ 2020-12-31",
+              "byCostBps": {
+                "0.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 72.985,
+                  "strategyMaxDrawdownPct": -33.026,
+                  "strategyMonthlyTurnoverPct": 361.166,
+                  "benchmarkReturnPct": 67.587,
+                  "benchmarkMaxDrawdownPct": -28.758,
+                  "excessReturnPctPoints": 5.398,
+                  "mddGapPctPoints": -4.268
+                },
+                "20.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 51.842,
+                  "strategyMaxDrawdownPct": -33.047,
+                  "strategyMonthlyTurnoverPct": 361.212,
+                  "benchmarkReturnPct": 67.419,
+                  "benchmarkMaxDrawdownPct": -28.758,
+                  "excessReturnPctPoints": -15.577,
+                  "mddGapPctPoints": -4.29
+                },
+                "40.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 33.264,
+                  "strategyMaxDrawdownPct": -33.069,
+                  "strategyMonthlyTurnoverPct": 361.261,
+                  "benchmarkReturnPct": 67.251,
+                  "benchmarkMaxDrawdownPct": -28.758,
+                  "excessReturnPctPoints": -33.988,
+                  "mddGapPctPoints": -4.311
+                },
+                "57.0": {
+                  "rebalanceCount": 157,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 19.255,
+                  "strategyMaxDrawdownPct": -33.087,
+                  "strategyMonthlyTurnoverPct": 361.304,
+                  "benchmarkReturnPct": 67.109,
+                  "benchmarkMaxDrawdownPct": -28.758,
+                  "excessReturnPctPoints": -47.853,
+                  "mddGapPctPoints": -4.329
+                }
+              }
+            },
+            "4way-C": {
+              "label": "2021-01-01 ~ 2023-12-31",
+              "byCostBps": {
+                "0.0": {
+                  "rebalanceCount": 156,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 35.959,
+                  "strategyMaxDrawdownPct": -30.819,
+                  "strategyMonthlyTurnoverPct": 345.144,
+                  "benchmarkReturnPct": 34.579,
+                  "benchmarkMaxDrawdownPct": -22.194,
+                  "excessReturnPctPoints": 1.38,
+                  "mddGapPctPoints": -8.625
+                },
+                "20.0": {
+                  "rebalanceCount": 156,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 20.124,
+                  "strategyMaxDrawdownPct": -30.833,
+                  "strategyMonthlyTurnoverPct": 345.183,
+                  "benchmarkReturnPct": 34.445,
+                  "benchmarkMaxDrawdownPct": -22.194,
+                  "excessReturnPctPoints": -14.321,
+                  "mddGapPctPoints": -8.639
+                },
+                "40.0": {
+                  "rebalanceCount": 156,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 6.119,
+                  "strategyMaxDrawdownPct": -30.847,
+                  "strategyMonthlyTurnoverPct": 345.227,
+                  "benchmarkReturnPct": 34.31,
+                  "benchmarkMaxDrawdownPct": -22.194,
+                  "excessReturnPctPoints": -28.191,
+                  "mddGapPctPoints": -8.653
+                },
+                "57.0": {
+                  "rebalanceCount": 156,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": -4.505,
+                  "strategyMaxDrawdownPct": -30.859,
+                  "strategyMonthlyTurnoverPct": 345.266,
+                  "benchmarkReturnPct": 34.196,
+                  "benchmarkMaxDrawdownPct": -22.194,
+                  "excessReturnPctPoints": -38.701,
+                  "mddGapPctPoints": -8.665
+                }
+              }
+            },
+            "4way-D": {
+              "label": "2024-01-01 ~ 2026-09-10",
+              "byCostBps": {
+                "0.0": {
+                  "rebalanceCount": 141,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 84.453,
+                  "strategyMaxDrawdownPct": -13.421,
+                  "strategyMonthlyTurnoverPct": 359.173,
+                  "benchmarkReturnPct": 72.844,
+                  "benchmarkMaxDrawdownPct": -12.276,
+                  "excessReturnPctPoints": 11.609,
+                  "mddGapPctPoints": -1.145
+                },
+                "20.0": {
+                  "rebalanceCount": 141,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 64.189,
+                  "strategyMaxDrawdownPct": -13.425,
+                  "strategyMonthlyTurnoverPct": 359.211,
+                  "benchmarkReturnPct": 72.671,
+                  "benchmarkMaxDrawdownPct": -12.276,
+                  "excessReturnPctPoints": -8.482,
+                  "mddGapPctPoints": -1.15
+                },
+                "40.0": {
+                  "rebalanceCount": 141,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 46.133,
+                  "strategyMaxDrawdownPct": -13.43,
+                  "strategyMonthlyTurnoverPct": 359.252,
+                  "benchmarkReturnPct": 72.498,
+                  "benchmarkMaxDrawdownPct": -12.276,
+                  "excessReturnPctPoints": -26.365,
+                  "mddGapPctPoints": -1.154
+                },
+                "57.0": {
+                  "rebalanceCount": 141,
+                  "avgHoldingsCount": 19.0,
+                  "strategyReturnPct": 32.341,
+                  "strategyMaxDrawdownPct": -13.434,
+                  "strategyMonthlyTurnoverPct": 359.289,
+                  "benchmarkReturnPct": 72.351,
+                  "benchmarkMaxDrawdownPct": -12.276,
+                  "excessReturnPctPoints": -40.01,
+                  "mddGapPctPoints": -1.158
+                }
+              }
+            }
+          }
+        }
+      },
+      "monthlyTurnoverRangePct": [
+        329,
+        710
+      ]
+    },
+    "report_path": "research/reports/track-b-short-term-reversal-validation.md",
+    "sources": [
+      {
+        "title": "Jegadeesh (1990) Evidence of Predictable Behavior of Security Returns",
+        "url": "",
+        "accessed": "2026-09-16"
+      },
+      {
+        "title": "Avramov, Chordia & Goyal (2006) - short-term reversal trading cost sensitivity",
+        "url": "",
+        "accessed": "2026-09-16"
+      }
+    ],
+    "confidence": "high",
+    "caveats": "(1) 검증 도중 momentum_engine.py(기존 코어, 수정하지 않음)의 매도 레그 거래비용이 실제 현금 잔고에 반영되지 않는 회계 버그를 발견했다 - 이 신규 스크립트에서는 독립 구현으로 수정했지만, DJIA/S&P100/변동성관리 오버레이 3개 기존 momentum 리포트는 이 버그가 있는 상태로 계산됐다. 세 리포트 모두 이미 기각 판정이었고, 회전율이 이번 후보의 1/30~1/40 수준(월 17.8~21.9%)으로 낮아 버그의 영향도 작으며, 실제 비용을 온전히 반영하면 그 결과는 지금 기록된 값보다 더 나빠질 뿐이므로 기각 결론에는 영향이 없다(재실행하지 않음). (2) 목표비율(하위20%)과 lookback(1주/4주)은 문헌 관행값으로 사전 고정했다. (3) 이 결과는 Track B 채택 근거가 아니다.",
+    "last_updated": "2026-09-16"
+  },
+  {
+    "id": "track-b-peg-valuation-sp100-2015-2026",
+    "type": "backtest",
+    "ticker": "SP100_101_TICKERS_MINUS_7_BANKS_SEE_MANIFEST",
+    "strategy_id": "track-b-peg-valuation-candidate",
+    "data_range": {
+      "start": "2015-01-01",
+      "end": "2026-09-10",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-16",
+    "summary": "제품이 이미 쓰는 PEG<1 && 추세확인 스크리닝(candidates.json)을 후행 PEG(TTM PE/YoY TTM EPS 성장률, 공시+60일 지연) + 10주 이동평균 필터로 S&P100 워크포워드 첫 실데이터 검증. 6개 구간 중 4개(2way-A/B, 4way-B/C)는 0bp에서도 이미 벤치마크 대비 음(-), 4way-A는 비용 반영시 부호반전, 4way-D(2024-2026)만 전 비용구간 안정적 양(+). 가치주 국면의존성 반론이 사전등록대로 재현되어 기각. 은행 7종은 Finnhub eps 데이터 부재로 제외.",
+    "metrics": {
+      "pegFormula": "TTM PE / YoY TTM EPS growth pct, growth<=0 excluded",
+      "reportingLagDays": 60,
+      "smaWeeks": 10,
+      "rebalanceWeeks": 4,
+      "excludedNoEpsData": [
+        "BAC",
+        "BNY",
+        "C",
+        "COF",
+        "JPM",
+        "USB",
+        "WFC"
+      ],
+      "costScenariosRoundTripBps": [
+        0,
+        20,
+        40,
+        57
+      ],
+      "partitions": {
+        "2way": {
+          "2way-A": {
+            "label": "2015-01-01 ~ 2019-12-31",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 66,
+                "pctRebalancesInvested": 95.5,
+                "avgHoldingsCountWhenInvested": 25.6,
+                "strategyReturnPct": 98.248,
+                "strategyMaxDrawdownPct": -12.59,
+                "strategyMonthlyTurnoverPct": 91.488,
+                "benchmarkReturnPct": 130.157,
+                "benchmarkMaxDrawdownPct": -18.064,
+                "excessReturnPctPoints": -31.909,
+                "mddGapPctPoints": 5.474
+              },
+              "20.0": {
+                "rebalanceCount": 66,
+                "pctRebalancesInvested": 95.5,
+                "avgHoldingsCountWhenInvested": 25.6,
+                "strategyReturnPct": 87.589,
+                "strategyMaxDrawdownPct": -12.592,
+                "strategyMonthlyTurnoverPct": 91.514,
+                "benchmarkReturnPct": 129.927,
+                "benchmarkMaxDrawdownPct": -18.064,
+                "excessReturnPctPoints": -42.338,
+                "mddGapPctPoints": 5.472
+              },
+              "40.0": {
+                "rebalanceCount": 66,
+                "pctRebalancesInvested": 95.5,
+                "avgHoldingsCountWhenInvested": 25.6,
+                "strategyReturnPct": 77.487,
+                "strategyMaxDrawdownPct": -12.595,
+                "strategyMonthlyTurnoverPct": 91.541,
+                "benchmarkReturnPct": 129.697,
+                "benchmarkMaxDrawdownPct": -18.064,
+                "excessReturnPctPoints": -52.21,
+                "mddGapPctPoints": 5.469
+              },
+              "57.0": {
+                "rebalanceCount": 66,
+                "pctRebalancesInvested": 95.5,
+                "avgHoldingsCountWhenInvested": 25.6,
+                "strategyReturnPct": 69.317,
+                "strategyMaxDrawdownPct": -12.597,
+                "strategyMonthlyTurnoverPct": 91.563,
+                "benchmarkReturnPct": 129.501,
+                "benchmarkMaxDrawdownPct": -18.064,
+                "excessReturnPctPoints": -60.184,
+                "mddGapPctPoints": 5.467
+              }
+            }
+          },
+          "2way-B": {
+            "label": "2020-01-01 ~ 2026-09-10",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 89,
+                "pctRebalancesInvested": 98.9,
+                "avgHoldingsCountWhenInvested": 24.5,
+                "strategyReturnPct": 202.001,
+                "strategyMaxDrawdownPct": -28.224,
+                "strategyMonthlyTurnoverPct": 93.055,
+                "benchmarkReturnPct": 224.252,
+                "benchmarkMaxDrawdownPct": -29.36,
+                "excessReturnPctPoints": -22.251,
+                "mddGapPctPoints": 1.136
+              },
+              "20.0": {
+                "rebalanceCount": 89,
+                "pctRebalancesInvested": 98.9,
+                "avgHoldingsCountWhenInvested": 24.5,
+                "strategyReturnPct": 179.937,
+                "strategyMaxDrawdownPct": -28.233,
+                "strategyMonthlyTurnoverPct": 93.077,
+                "benchmarkReturnPct": 223.928,
+                "benchmarkMaxDrawdownPct": -29.36,
+                "excessReturnPctPoints": -43.991,
+                "mddGapPctPoints": 1.128
+              },
+              "40.0": {
+                "rebalanceCount": 89,
+                "pctRebalancesInvested": 98.9,
+                "avgHoldingsCountWhenInvested": 24.5,
+                "strategyReturnPct": 159.456,
+                "strategyMaxDrawdownPct": -28.241,
+                "strategyMonthlyTurnoverPct": 93.099,
+                "benchmarkReturnPct": 223.604,
+                "benchmarkMaxDrawdownPct": -29.36,
+                "excessReturnPctPoints": -64.148,
+                "mddGapPctPoints": 1.119
+              },
+              "57.0": {
+                "rebalanceCount": 89,
+                "pctRebalancesInvested": 98.9,
+                "avgHoldingsCountWhenInvested": 24.5,
+                "strategyReturnPct": 143.208,
+                "strategyMaxDrawdownPct": -28.248,
+                "strategyMonthlyTurnoverPct": 93.118,
+                "benchmarkReturnPct": 223.328,
+                "benchmarkMaxDrawdownPct": -29.36,
+                "excessReturnPctPoints": -80.12,
+                "mddGapPctPoints": 1.112
+              }
+            }
+          }
+        },
+        "4way": {
+          "4way-A": {
+            "label": "2015-01-01 ~ 2017-12-31",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 40,
+                "pctRebalancesInvested": 92.5,
+                "avgHoldingsCountWhenInvested": 22.1,
+                "strategyReturnPct": 76.845,
+                "strategyMaxDrawdownPct": -12.642,
+                "strategyMonthlyTurnoverPct": 83.78,
+                "benchmarkReturnPct": 69.922,
+                "benchmarkMaxDrawdownPct": -12.343,
+                "excessReturnPctPoints": 6.923,
+                "mddGapPctPoints": -0.299
+              },
+              "20.0": {
+                "rebalanceCount": 40,
+                "pctRebalancesInvested": 92.5,
+                "avgHoldingsCountWhenInvested": 22.1,
+                "strategyReturnPct": 71.513,
+                "strategyMaxDrawdownPct": -12.645,
+                "strategyMonthlyTurnoverPct": 83.8,
+                "benchmarkReturnPct": 69.752,
+                "benchmarkMaxDrawdownPct": -12.343,
+                "excessReturnPctPoints": 1.761,
+                "mddGapPctPoints": -0.302
+              },
+              "40.0": {
+                "rebalanceCount": 40,
+                "pctRebalancesInvested": 92.5,
+                "avgHoldingsCountWhenInvested": 22.1,
+                "strategyReturnPct": 66.335,
+                "strategyMaxDrawdownPct": -12.648,
+                "strategyMonthlyTurnoverPct": 83.821,
+                "benchmarkReturnPct": 69.582,
+                "benchmarkMaxDrawdownPct": -12.343,
+                "excessReturnPctPoints": -3.248,
+                "mddGapPctPoints": -0.305
+              },
+              "57.0": {
+                "rebalanceCount": 40,
+                "pctRebalancesInvested": 92.5,
+                "avgHoldingsCountWhenInvested": 22.1,
+                "strategyReturnPct": 62.05,
+                "strategyMaxDrawdownPct": -12.65,
+                "strategyMonthlyTurnoverPct": 83.838,
+                "benchmarkReturnPct": 69.438,
+                "benchmarkMaxDrawdownPct": -12.343,
+                "excessReturnPctPoints": -7.388,
+                "mddGapPctPoints": -0.307
+              }
+            }
+          },
+          "4way-B": {
+            "label": "2018-01-01 ~ 2020-12-31",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 40,
+                "pctRebalancesInvested": 97.5,
+                "avgHoldingsCountWhenInvested": 29.9,
+                "strategyReturnPct": 31.37,
+                "strategyMaxDrawdownPct": -30.122,
+                "strategyMonthlyTurnoverPct": 90.23,
+                "benchmarkReturnPct": 67.587,
+                "benchmarkMaxDrawdownPct": -28.758,
+                "excessReturnPctPoints": -36.216,
+                "mddGapPctPoints": -1.364
+              },
+              "20.0": {
+                "rebalanceCount": 40,
+                "pctRebalancesInvested": 97.5,
+                "avgHoldingsCountWhenInvested": 29.9,
+                "strategyReturnPct": 27.085,
+                "strategyMaxDrawdownPct": -30.132,
+                "strategyMonthlyTurnoverPct": 90.251,
+                "benchmarkReturnPct": 67.419,
+                "benchmarkMaxDrawdownPct": -28.758,
+                "excessReturnPctPoints": -40.334,
+                "mddGapPctPoints": -1.374
+              },
+              "40.0": {
+                "rebalanceCount": 40,
+                "pctRebalancesInvested": 97.5,
+                "avgHoldingsCountWhenInvested": 29.9,
+                "strategyReturnPct": 22.933,
+                "strategyMaxDrawdownPct": -30.142,
+                "strategyMonthlyTurnoverPct": 90.272,
+                "benchmarkReturnPct": 67.251,
+                "benchmarkMaxDrawdownPct": -28.758,
+                "excessReturnPctPoints": -44.318,
+                "mddGapPctPoints": -1.384
+              },
+              "57.0": {
+                "rebalanceCount": 40,
+                "pctRebalancesInvested": 97.5,
+                "avgHoldingsCountWhenInvested": 29.9,
+                "strategyReturnPct": 19.507,
+                "strategyMaxDrawdownPct": -30.151,
+                "strategyMonthlyTurnoverPct": 90.291,
+                "benchmarkReturnPct": 67.109,
+                "benchmarkMaxDrawdownPct": -28.758,
+                "excessReturnPctPoints": -47.602,
+                "mddGapPctPoints": -1.393
+              }
+            }
+          },
+          "4way-C": {
+            "label": "2021-01-01 ~ 2023-12-31",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 40,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 24.5,
+                "strategyReturnPct": 25.035,
+                "strategyMaxDrawdownPct": -19.703,
+                "strategyMonthlyTurnoverPct": 99.652,
+                "benchmarkReturnPct": 34.579,
+                "benchmarkMaxDrawdownPct": -22.194,
+                "excessReturnPctPoints": -9.544,
+                "mddGapPctPoints": 2.491
+              },
+              "20.0": {
+                "rebalanceCount": 40,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 24.5,
+                "strategyReturnPct": 20.546,
+                "strategyMaxDrawdownPct": -19.707,
+                "strategyMonthlyTurnoverPct": 99.679,
+                "benchmarkReturnPct": 34.445,
+                "benchmarkMaxDrawdownPct": -22.194,
+                "excessReturnPctPoints": -13.899,
+                "mddGapPctPoints": 2.487
+              },
+              "40.0": {
+                "rebalanceCount": 40,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 24.5,
+                "strategyReturnPct": 16.212,
+                "strategyMaxDrawdownPct": -19.712,
+                "strategyMonthlyTurnoverPct": 99.706,
+                "benchmarkReturnPct": 34.31,
+                "benchmarkMaxDrawdownPct": -22.194,
+                "excessReturnPctPoints": -18.099,
+                "mddGapPctPoints": 2.482
+              },
+              "57.0": {
+                "rebalanceCount": 40,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 24.5,
+                "strategyReturnPct": 12.645,
+                "strategyMaxDrawdownPct": -19.716,
+                "strategyMonthlyTurnoverPct": 99.728,
+                "benchmarkReturnPct": 34.196,
+                "benchmarkMaxDrawdownPct": -22.194,
+                "excessReturnPctPoints": -21.551,
+                "mddGapPctPoints": 2.478
+              }
+            }
+          },
+          "4way-D": {
+            "label": "2024-01-01 ~ 2026-09-10",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 36,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 24.8,
+                "strategyReturnPct": 90.956,
+                "strategyMaxDrawdownPct": -6.378,
+                "strategyMonthlyTurnoverPct": 82.236,
+                "benchmarkReturnPct": 72.844,
+                "benchmarkMaxDrawdownPct": -12.276,
+                "excessReturnPctPoints": 18.112,
+                "mddGapPctPoints": 5.898
+              },
+              "20.0": {
+                "rebalanceCount": 36,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 24.8,
+                "strategyReturnPct": 85.856,
+                "strategyMaxDrawdownPct": -6.381,
+                "strategyMonthlyTurnoverPct": 82.253,
+                "benchmarkReturnPct": 72.671,
+                "benchmarkMaxDrawdownPct": -12.276,
+                "excessReturnPctPoints": 13.185,
+                "mddGapPctPoints": 5.894
+              },
+              "40.0": {
+                "rebalanceCount": 36,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 24.8,
+                "strategyReturnPct": 80.885,
+                "strategyMaxDrawdownPct": -6.385,
+                "strategyMonthlyTurnoverPct": 82.27,
+                "benchmarkReturnPct": 72.498,
+                "benchmarkMaxDrawdownPct": -12.276,
+                "excessReturnPctPoints": 8.387,
+                "mddGapPctPoints": 5.891
+              },
+              "57.0": {
+                "rebalanceCount": 36,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 24.8,
+                "strategyReturnPct": 76.76,
+                "strategyMaxDrawdownPct": -6.388,
+                "strategyMonthlyTurnoverPct": 82.285,
+                "benchmarkReturnPct": 72.351,
+                "benchmarkMaxDrawdownPct": -12.276,
+                "excessReturnPctPoints": 4.409,
+                "mddGapPctPoints": 5.888
+              }
+            }
+          }
+        }
+      },
+      "monthlyTurnoverRangePct": [
+        82,
+        100
+      ]
+    },
+    "report_path": "research/reports/track-b-peg-valuation-validation.md",
+    "sources": [
+      {
+        "title": "Lakonishok, Shleifer & Vishny (1994) Contrarian Investment, Extrapolation, and Risk",
+        "url": "",
+        "accessed": "2026-09-16"
+      },
+      {
+        "title": "research/reports/track-b-fundamental-data-provider-evaluation.md - Finnhub 데이터 확보 근거",
+        "url": "research/reports/track-b-fundamental-data-provider-evaluation.md",
+        "accessed": "2026-09-16"
+      },
+      {
+        "title": "research/data/candidates.json - 실제 제품 스크린 원본(선행 PEG 기반, 이 백테스트와 다름)",
+        "url": "research/data/candidates.json",
+        "accessed": "2026-09-16"
+      }
+    ],
+    "confidence": "medium-high",
+    "caveats": "(1) 이 백테스트는 후행 PEG(TTM 기반)를 쓰고, 실제 제품 스크린은 선행(forward) PEG를 쓴다 - 다른 지표이며 이 기각이 제품의 선행 PEG 스크린까지 자동으로 부정하지 않는다. (2) 은행/금융지주 7종(BAC,BNY,C,COF,JPM,USB,WFC)은 Finnhub eps 시계열 부재로 항상 제외됐다 - 섹터 편향 가능. (3) 유니버스는 여전히 point-in-time이 아니다(오늘 시점 S&P100 소급). (4) MDD는 여러 구간에서 벤치마크보다 개선됐다(임계값 필터의 현금보유 효과) - 수익률 기각과 별개로 리스크 관리 측면의 부분적 장점은 있었다. (5) 이 결과는 Track B 채택 근거가 아니다.",
+    "last_updated": "2026-09-16"
+  },
+  {
+    "id": "track-b-quality-lowvol-sp100-2015-2026",
+    "type": "backtest",
+    "ticker": "SP100_101_TICKERS_SEE_MANIFEST",
+    "strategy_id": "track-b-quality-lowvol-factor-candidate",
+    "data_range": {
+      "start": "2015-01-01",
+      "end": "2026-09-10",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-16",
+    "summary": "저변동성+퀄리티(수익성+안전성) 팩터: 0.5*퀄리티(ROE/ROA/부채비율 백분위 평균)+0.5*저변동성(52주 실현변동성 백분위 역순) 상위20%진입/40%유지, 분기 리밸런싱, 연간데이터 75일 지연. S&P100 워크포워드 6개 구간x4개 비용수준=24개 조합 전부 벤치마크 대비 음(-)(-11%p~-115%p) - 이번 세션 검증 후보 중 가장 일관된 기각. 회전율 낮아(월7.5~10%) 비용은 무관, 0bp에서도 전부 음. MDD는 6개 구간 전부 개선 - 2015-2026 메가캡 소수종목 견인 강세장에서 저변동성 필터가 상승분을 놓친 것으로 해석.",
+    "metrics": {
+      "qualityFields": [
+        "roe",
+        "roa",
+        "totalDebtToEquity(inverted)"
+      ],
+      "lowVolLookbackWeeks": 52,
+      "combinationWeights": {
+        "quality": 0.5,
+        "lowVol": 0.5
+      },
+      "reportingLagDays": 75,
+      "topTierFraction": 0.2,
+      "holdTierFraction": 0.4,
+      "rebalanceWeeks": 13,
+      "costScenariosRoundTripBps": [
+        0,
+        20,
+        40,
+        57
+      ],
+      "partitions": {
+        "2way": {
+          "2way-A": {
+            "label": "2015-01-01 ~ 2019-12-31",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 21,
+                "avgHoldingsCount": 21.0,
+                "strategyReturnPct": 90.018,
+                "strategyMaxDrawdownPct": -8.202,
+                "strategyMonthlyTurnoverPct": 8.1,
+                "benchmarkReturnPct": 137.824,
+                "benchmarkMaxDrawdownPct": -18.487,
+                "excessReturnPctPoints": -47.806,
+                "mddGapPctPoints": 10.285
+              },
+              "20.0": {
+                "rebalanceCount": 21,
+                "avgHoldingsCount": 21.0,
+                "strategyReturnPct": 89.069,
+                "strategyMaxDrawdownPct": -8.203,
+                "strategyMonthlyTurnoverPct": 8.101,
+                "benchmarkReturnPct": 137.586,
+                "benchmarkMaxDrawdownPct": -18.487,
+                "excessReturnPctPoints": -48.517,
+                "mddGapPctPoints": 10.284
+              },
+              "40.0": {
+                "rebalanceCount": 21,
+                "avgHoldingsCount": 21.0,
+                "strategyReturnPct": 88.125,
+                "strategyMaxDrawdownPct": -8.204,
+                "strategyMonthlyTurnoverPct": 8.102,
+                "benchmarkReturnPct": 137.348,
+                "benchmarkMaxDrawdownPct": -18.487,
+                "excessReturnPctPoints": -49.224,
+                "mddGapPctPoints": 10.283
+              },
+              "57.0": {
+                "rebalanceCount": 21,
+                "avgHoldingsCount": 21.0,
+                "strategyReturnPct": 87.325,
+                "strategyMaxDrawdownPct": -8.204,
+                "strategyMonthlyTurnoverPct": 8.102,
+                "benchmarkReturnPct": 137.146,
+                "benchmarkMaxDrawdownPct": -18.487,
+                "excessReturnPctPoints": -49.821,
+                "mddGapPctPoints": 10.282
+              }
+            }
+          },
+          "2way-B": {
+            "label": "2020-01-01 ~ 2026-09-10",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 28,
+                "avgHoldingsCount": 26.0,
+                "strategyReturnPct": 112.617,
+                "strategyMaxDrawdownPct": -26.788,
+                "strategyMonthlyTurnoverPct": 8.184,
+                "benchmarkReturnPct": 224.252,
+                "benchmarkMaxDrawdownPct": -29.36,
+                "excessReturnPctPoints": -111.635,
+                "mddGapPctPoints": 2.572
+              },
+              "20.0": {
+                "rebalanceCount": 28,
+                "avgHoldingsCount": 26.0,
+                "strategyReturnPct": 111.18,
+                "strategyMaxDrawdownPct": -26.795,
+                "strategyMonthlyTurnoverPct": 8.184,
+                "benchmarkReturnPct": 223.928,
+                "benchmarkMaxDrawdownPct": -29.36,
+                "excessReturnPctPoints": -112.748,
+                "mddGapPctPoints": 2.566
+              },
+              "40.0": {
+                "rebalanceCount": 28,
+                "avgHoldingsCount": 26.0,
+                "strategyReturnPct": 109.752,
+                "strategyMaxDrawdownPct": -26.801,
+                "strategyMonthlyTurnoverPct": 8.185,
+                "benchmarkReturnPct": 223.604,
+                "benchmarkMaxDrawdownPct": -29.36,
+                "excessReturnPctPoints": -113.852,
+                "mddGapPctPoints": 2.559
+              },
+              "57.0": {
+                "rebalanceCount": 28,
+                "avgHoldingsCount": 26.0,
+                "strategyReturnPct": 108.545,
+                "strategyMaxDrawdownPct": -26.807,
+                "strategyMonthlyTurnoverPct": 8.185,
+                "benchmarkReturnPct": 223.328,
+                "benchmarkMaxDrawdownPct": -29.36,
+                "excessReturnPctPoints": -114.783,
+                "mddGapPctPoints": 2.554
+              }
+            }
+          }
+        },
+        "4way": {
+          "4way-A": {
+            "label": "2015-01-01 ~ 2017-12-31",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 13,
+                "avgHoldingsCount": 17.5,
+                "strategyReturnPct": 49.977,
+                "strategyMaxDrawdownPct": -8.007,
+                "strategyMonthlyTurnoverPct": 7.479,
+                "benchmarkReturnPct": 75.003,
+                "benchmarkMaxDrawdownPct": -12.596,
+                "excessReturnPctPoints": -25.026,
+                "mddGapPctPoints": 4.589
+              },
+              "20.0": {
+                "rebalanceCount": 13,
+                "avgHoldingsCount": 17.5,
+                "strategyReturnPct": 49.546,
+                "strategyMaxDrawdownPct": -8.009,
+                "strategyMonthlyTurnoverPct": 7.48,
+                "benchmarkReturnPct": 74.828,
+                "benchmarkMaxDrawdownPct": -12.596,
+                "excessReturnPctPoints": -25.282,
+                "mddGapPctPoints": 4.587
+              },
+              "40.0": {
+                "rebalanceCount": 13,
+                "avgHoldingsCount": 17.5,
+                "strategyReturnPct": 49.116,
+                "strategyMaxDrawdownPct": -8.011,
+                "strategyMonthlyTurnoverPct": 7.48,
+                "benchmarkReturnPct": 74.653,
+                "benchmarkMaxDrawdownPct": -12.596,
+                "excessReturnPctPoints": -25.537,
+                "mddGapPctPoints": 4.585
+              },
+              "57.0": {
+                "rebalanceCount": 13,
+                "avgHoldingsCount": 17.5,
+                "strategyReturnPct": 48.751,
+                "strategyMaxDrawdownPct": -8.012,
+                "strategyMonthlyTurnoverPct": 7.481,
+                "benchmarkReturnPct": 74.504,
+                "benchmarkMaxDrawdownPct": -12.596,
+                "excessReturnPctPoints": -25.753,
+                "mddGapPctPoints": 4.584
+              }
+            }
+          },
+          "4way-B": {
+            "label": "2018-01-01 ~ 2020-12-31",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 13,
+                "avgHoldingsCount": 25.9,
+                "strategyReturnPct": 46.236,
+                "strategyMaxDrawdownPct": -20.868,
+                "strategyMonthlyTurnoverPct": 10.047,
+                "benchmarkReturnPct": 67.587,
+                "benchmarkMaxDrawdownPct": -28.758,
+                "excessReturnPctPoints": -21.351,
+                "mddGapPctPoints": 7.89
+              },
+              "20.0": {
+                "rebalanceCount": 13,
+                "avgHoldingsCount": 25.9,
+                "strategyReturnPct": 45.675,
+                "strategyMaxDrawdownPct": -20.868,
+                "strategyMonthlyTurnoverPct": 10.047,
+                "benchmarkReturnPct": 67.419,
+                "benchmarkMaxDrawdownPct": -28.758,
+                "excessReturnPctPoints": -21.744,
+                "mddGapPctPoints": 7.889
+              },
+              "40.0": {
+                "rebalanceCount": 13,
+                "avgHoldingsCount": 25.9,
+                "strategyReturnPct": 45.116,
+                "strategyMaxDrawdownPct": -20.869,
+                "strategyMonthlyTurnoverPct": 10.048,
+                "benchmarkReturnPct": 67.251,
+                "benchmarkMaxDrawdownPct": -28.758,
+                "excessReturnPctPoints": -22.136,
+                "mddGapPctPoints": 7.889
+              },
+              "57.0": {
+                "rebalanceCount": 13,
+                "avgHoldingsCount": 25.9,
+                "strategyReturnPct": 44.642,
+                "strategyMaxDrawdownPct": -20.87,
+                "strategyMonthlyTurnoverPct": 10.048,
+                "benchmarkReturnPct": 67.109,
+                "benchmarkMaxDrawdownPct": -28.758,
+                "excessReturnPctPoints": -22.467,
+                "mddGapPctPoints": 7.888
+              }
+            }
+          },
+          "4way-C": {
+            "label": "2021-01-01 ~ 2023-12-31",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 13,
+                "avgHoldingsCount": 25.8,
+                "strategyReturnPct": 23.608,
+                "strategyMaxDrawdownPct": -14.356,
+                "strategyMonthlyTurnoverPct": 8.537,
+                "benchmarkReturnPct": 34.579,
+                "benchmarkMaxDrawdownPct": -22.194,
+                "excessReturnPctPoints": -10.971,
+                "mddGapPctPoints": 7.838
+              },
+              "20.0": {
+                "rebalanceCount": 13,
+                "avgHoldingsCount": 25.8,
+                "strategyReturnPct": 23.2,
+                "strategyMaxDrawdownPct": -14.357,
+                "strategyMonthlyTurnoverPct": 8.538,
+                "benchmarkReturnPct": 34.445,
+                "benchmarkMaxDrawdownPct": -22.194,
+                "excessReturnPctPoints": -11.245,
+                "mddGapPctPoints": 7.837
+              },
+              "40.0": {
+                "rebalanceCount": 13,
+                "avgHoldingsCount": 25.8,
+                "strategyReturnPct": 22.793,
+                "strategyMaxDrawdownPct": -14.357,
+                "strategyMonthlyTurnoverPct": 8.539,
+                "benchmarkReturnPct": 34.31,
+                "benchmarkMaxDrawdownPct": -22.194,
+                "excessReturnPctPoints": -11.517,
+                "mddGapPctPoints": 7.836
+              },
+              "57.0": {
+                "rebalanceCount": 13,
+                "avgHoldingsCount": 25.8,
+                "strategyReturnPct": 22.448,
+                "strategyMaxDrawdownPct": -14.358,
+                "strategyMonthlyTurnoverPct": 8.541,
+                "benchmarkReturnPct": 34.196,
+                "benchmarkMaxDrawdownPct": -22.194,
+                "excessReturnPctPoints": -11.748,
+                "mddGapPctPoints": 7.836
+              }
+            }
+          },
+          "4way-D": {
+            "label": "2024-01-01 ~ 2026-09-10",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 12,
+                "avgHoldingsCount": 24.6,
+                "strategyReturnPct": 49.611,
+                "strategyMaxDrawdownPct": -6.711,
+                "strategyMonthlyTurnoverPct": 9.736,
+                "benchmarkReturnPct": 72.844,
+                "benchmarkMaxDrawdownPct": -12.276,
+                "excessReturnPctPoints": -23.233,
+                "mddGapPctPoints": 5.564
+              },
+              "20.0": {
+                "rebalanceCount": 12,
+                "avgHoldingsCount": 24.6,
+                "strategyReturnPct": 49.098,
+                "strategyMaxDrawdownPct": -6.712,
+                "strategyMonthlyTurnoverPct": 9.736,
+                "benchmarkReturnPct": 72.671,
+                "benchmarkMaxDrawdownPct": -12.276,
+                "excessReturnPctPoints": -23.573,
+                "mddGapPctPoints": 5.564
+              },
+              "40.0": {
+                "rebalanceCount": 12,
+                "avgHoldingsCount": 24.6,
+                "strategyReturnPct": 48.588,
+                "strategyMaxDrawdownPct": -6.713,
+                "strategyMonthlyTurnoverPct": 9.737,
+                "benchmarkReturnPct": 72.498,
+                "benchmarkMaxDrawdownPct": -12.276,
+                "excessReturnPctPoints": -23.911,
+                "mddGapPctPoints": 5.563
+              },
+              "57.0": {
+                "rebalanceCount": 12,
+                "avgHoldingsCount": 24.6,
+                "strategyReturnPct": 48.154,
+                "strategyMaxDrawdownPct": -6.713,
+                "strategyMonthlyTurnoverPct": 9.738,
+                "benchmarkReturnPct": 72.351,
+                "benchmarkMaxDrawdownPct": -12.276,
+                "excessReturnPctPoints": -24.197,
+                "mddGapPctPoints": 5.562
+              }
+            }
+          }
+        }
+      },
+      "monthlyTurnoverRangePct": [
+        7.5,
+        10.1
+      ]
+    },
+    "report_path": "research/reports/track-b-quality-lowvol-factor-validation.md",
+    "sources": [
+      {
+        "title": "Ang, Hodrick, Xing & Zhang (2006) The Cross-Section of Volatility and Expected Returns",
+        "url": "",
+        "accessed": "2026-09-16"
+      },
+      {
+        "title": "Asness, Frazzini & Pedersen - Quality Minus Junk",
+        "url": "",
+        "accessed": "2026-09-16"
+      },
+      {
+        "title": "research/reports/track-b-strategy-catalogue.md - 후보 원 제안",
+        "url": "research/reports/track-b-strategy-catalogue.md",
+        "accessed": "2026-09-16"
+      }
+    ],
+    "confidence": "high",
+    "caveats": "(1) QMJ의 4개 축(수익성/성장성/안전성/배당성향) 중 수익성·안전성 두 축만 재현했다 - 완전한 재현이 아니다. (2) 이 결과는 2015-2026 12년, S&P100 101종목이라는 특정 표본에서 나왔다 - 소수 고변동성 메가캡이 지수를 견인한 이 표본의 구조적 특징 때문일 수 있고, 원 논문들의 훨씬 긴 기간·넓은 국가 표본 결론까지 부정하지 않는다(상세 해석은 리포트 4절). (3) 유니버스는 여전히 point-in-time이 아니다. (4) 이 결과는 Track B 채택 근거가 아니다 - 오히려 이 후보를 마지막으로 카탈로그의 4개 후보 전부가 기각되어, Track B 규칙기반 자동화 확장의 근거가 이 데이터·표본 범위에서는 소진됐다.",
+    "last_updated": "2026-09-16"
+  },
+  {
+    "id": "track-b-dividend-growth-sp100-2015-2026",
+    "type": "backtest",
+    "ticker": "SP100_101_MINUS_13_NO_DIVIDEND_DATA_SEE_MANIFEST",
+    "strategy_id": "track-b-dividend-growth-candidate",
+    "data_range": {
+      "start": "2015-01-01",
+      "end": "2026-09-10",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-16",
+    "summary": "연속 배당성장>=3년 AND 0<지급성향<=75% 동시만족 종목 동일가중, 분기 리밸런싱. 배당은 payoutRatio*EPS/100 근사(Finnhub 무료에 DPS 시계열 없음), 공시+75일 지연. S&P100 6개 구간 전부 벤치마크 대비 음(-)(-0.09%p~-59.73%p)이나 저변동성+퀄리티보다 완만, 2021-2023은 사실상 무승부(-0.09%p). 회전율 최저(월4.8~6.8%). 무배당 고성장 메가캡(AMZN/NFLX/TSLA/NOW/ISRG) 구조적 배제가 원인으로 해석. 기각.",
+    "metrics": {
+      "minGrowthStreakYears": 3,
+      "maxPayoutRatioPct": 75,
+      "reportingLagDays": 75,
+      "rebalanceWeeks": 13,
+      "noDividendDataTickers": [
+        "AMZN",
+        "BAC",
+        "BNY",
+        "BRK-B",
+        "C",
+        "COF",
+        "ISRG",
+        "JPM",
+        "NFLX",
+        "NOW",
+        "TSLA",
+        "USB",
+        "WFC"
+      ],
+      "costScenariosRoundTripBps": [
+        0,
+        20,
+        40,
+        57
+      ],
+      "partitions": {
+        "2way": {
+          "2way-A": {
+            "label": "2015-01-01 ~ 2019-12-31",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 21,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 60.4,
+                "strategyReturnPct": 92.482,
+                "strategyMaxDrawdownPct": -14.3,
+                "strategyMonthlyTurnoverPct": 4.767,
+                "benchmarkReturnPct": 137.824,
+                "benchmarkMaxDrawdownPct": -18.487,
+                "excessReturnPctPoints": -45.342,
+                "mddGapPctPoints": 4.186
+              },
+              "20.0": {
+                "rebalanceCount": 21,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 60.4,
+                "strategyReturnPct": 91.911,
+                "strategyMaxDrawdownPct": -14.301,
+                "strategyMonthlyTurnoverPct": 4.767,
+                "benchmarkReturnPct": 137.586,
+                "benchmarkMaxDrawdownPct": -18.487,
+                "excessReturnPctPoints": -45.675,
+                "mddGapPctPoints": 4.186
+              },
+              "40.0": {
+                "rebalanceCount": 21,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 60.4,
+                "strategyReturnPct": 91.341,
+                "strategyMaxDrawdownPct": -14.302,
+                "strategyMonthlyTurnoverPct": 4.767,
+                "benchmarkReturnPct": 137.348,
+                "benchmarkMaxDrawdownPct": -18.487,
+                "excessReturnPctPoints": -46.007,
+                "mddGapPctPoints": 4.185
+              },
+              "57.0": {
+                "rebalanceCount": 21,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 60.4,
+                "strategyReturnPct": 90.858,
+                "strategyMaxDrawdownPct": -14.303,
+                "strategyMonthlyTurnoverPct": 4.767,
+                "benchmarkReturnPct": 137.146,
+                "benchmarkMaxDrawdownPct": -18.487,
+                "excessReturnPctPoints": -46.288,
+                "mddGapPctPoints": 4.184
+              }
+            }
+          },
+          "2way-B": {
+            "label": "2020-01-01 ~ 2026-09-10",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 28,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.5,
+                "strategyReturnPct": 166.659,
+                "strategyMaxDrawdownPct": -25.778,
+                "strategyMonthlyTurnoverPct": 4.902,
+                "benchmarkReturnPct": 224.252,
+                "benchmarkMaxDrawdownPct": -29.36,
+                "excessReturnPctPoints": -57.594,
+                "mddGapPctPoints": 3.582
+              },
+              "20.0": {
+                "rebalanceCount": 28,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.5,
+                "strategyReturnPct": 165.58,
+                "strategyMaxDrawdownPct": -25.78,
+                "strategyMonthlyTurnoverPct": 4.902,
+                "benchmarkReturnPct": 223.928,
+                "benchmarkMaxDrawdownPct": -29.36,
+                "excessReturnPctPoints": -58.348,
+                "mddGapPctPoints": 3.58
+              },
+              "40.0": {
+                "rebalanceCount": 28,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.5,
+                "strategyReturnPct": 164.505,
+                "strategyMaxDrawdownPct": -25.783,
+                "strategyMonthlyTurnoverPct": 4.902,
+                "benchmarkReturnPct": 223.604,
+                "benchmarkMaxDrawdownPct": -29.36,
+                "excessReturnPctPoints": -59.098,
+                "mddGapPctPoints": 3.578
+              },
+              "57.0": {
+                "rebalanceCount": 28,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.5,
+                "strategyReturnPct": 163.595,
+                "strategyMaxDrawdownPct": -25.784,
+                "strategyMonthlyTurnoverPct": 4.901,
+                "benchmarkReturnPct": 223.328,
+                "benchmarkMaxDrawdownPct": -29.36,
+                "excessReturnPctPoints": -59.733,
+                "mddGapPctPoints": 3.576
+              }
+            }
+          }
+        },
+        "4way": {
+          "4way-A": {
+            "label": "2015-01-01 ~ 2017-12-31",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 13,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 57.4,
+                "strategyReturnPct": 51.531,
+                "strategyMaxDrawdownPct": -8.914,
+                "strategyMonthlyTurnoverPct": 5.674,
+                "benchmarkReturnPct": 75.003,
+                "benchmarkMaxDrawdownPct": -12.596,
+                "excessReturnPctPoints": -23.472,
+                "mddGapPctPoints": 3.682
+              },
+              "20.0": {
+                "rebalanceCount": 13,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 57.4,
+                "strategyReturnPct": 51.199,
+                "strategyMaxDrawdownPct": -8.915,
+                "strategyMonthlyTurnoverPct": 5.674,
+                "benchmarkReturnPct": 74.828,
+                "benchmarkMaxDrawdownPct": -12.596,
+                "excessReturnPctPoints": -23.629,
+                "mddGapPctPoints": 3.681
+              },
+              "40.0": {
+                "rebalanceCount": 13,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 57.4,
+                "strategyReturnPct": 50.868,
+                "strategyMaxDrawdownPct": -8.915,
+                "strategyMonthlyTurnoverPct": 5.674,
+                "benchmarkReturnPct": 74.653,
+                "benchmarkMaxDrawdownPct": -12.596,
+                "excessReturnPctPoints": -23.785,
+                "mddGapPctPoints": 3.681
+              },
+              "57.0": {
+                "rebalanceCount": 13,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 57.4,
+                "strategyReturnPct": 50.587,
+                "strategyMaxDrawdownPct": -8.916,
+                "strategyMonthlyTurnoverPct": 5.674,
+                "benchmarkReturnPct": 74.504,
+                "benchmarkMaxDrawdownPct": -12.596,
+                "excessReturnPctPoints": -23.918,
+                "mddGapPctPoints": 3.68
+              }
+            }
+          },
+          "4way-B": {
+            "label": "2018-01-01 ~ 2020-12-31",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 13,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.2,
+                "strategyReturnPct": 49.526,
+                "strategyMaxDrawdownPct": -29.028,
+                "strategyMonthlyTurnoverPct": 5.834,
+                "benchmarkReturnPct": 67.587,
+                "benchmarkMaxDrawdownPct": -28.758,
+                "excessReturnPctPoints": -18.061,
+                "mddGapPctPoints": -0.27
+              },
+              "20.0": {
+                "rebalanceCount": 13,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.2,
+                "strategyReturnPct": 49.191,
+                "strategyMaxDrawdownPct": -29.03,
+                "strategyMonthlyTurnoverPct": 5.834,
+                "benchmarkReturnPct": 67.419,
+                "benchmarkMaxDrawdownPct": -28.758,
+                "excessReturnPctPoints": -18.228,
+                "mddGapPctPoints": -0.272
+              },
+              "40.0": {
+                "rebalanceCount": 13,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.2,
+                "strategyReturnPct": 48.856,
+                "strategyMaxDrawdownPct": -29.032,
+                "strategyMonthlyTurnoverPct": 5.834,
+                "benchmarkReturnPct": 67.251,
+                "benchmarkMaxDrawdownPct": -28.758,
+                "excessReturnPctPoints": -18.396,
+                "mddGapPctPoints": -0.275
+              },
+              "57.0": {
+                "rebalanceCount": 13,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.2,
+                "strategyReturnPct": 48.572,
+                "strategyMaxDrawdownPct": -29.034,
+                "strategyMonthlyTurnoverPct": 5.834,
+                "benchmarkReturnPct": 67.109,
+                "benchmarkMaxDrawdownPct": -28.758,
+                "excessReturnPctPoints": -18.537,
+                "mddGapPctPoints": -0.277
+              }
+            }
+          },
+          "4way-C": {
+            "label": "2021-01-01 ~ 2023-12-31",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 13,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.6,
+                "strategyReturnPct": 34.494,
+                "strategyMaxDrawdownPct": -20.345,
+                "strategyMonthlyTurnoverPct": 5.556,
+                "benchmarkReturnPct": 34.579,
+                "benchmarkMaxDrawdownPct": -22.194,
+                "excessReturnPctPoints": -0.085,
+                "mddGapPctPoints": 1.849
+              },
+              "20.0": {
+                "rebalanceCount": 13,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.6,
+                "strategyReturnPct": 34.203,
+                "strategyMaxDrawdownPct": -20.346,
+                "strategyMonthlyTurnoverPct": 5.556,
+                "benchmarkReturnPct": 34.445,
+                "benchmarkMaxDrawdownPct": -22.194,
+                "excessReturnPctPoints": -0.241,
+                "mddGapPctPoints": 1.848
+              },
+              "40.0": {
+                "rebalanceCount": 13,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.6,
+                "strategyReturnPct": 33.913,
+                "strategyMaxDrawdownPct": -20.347,
+                "strategyMonthlyTurnoverPct": 5.556,
+                "benchmarkReturnPct": 34.31,
+                "benchmarkMaxDrawdownPct": -22.194,
+                "excessReturnPctPoints": -0.397,
+                "mddGapPctPoints": 1.847
+              },
+              "57.0": {
+                "rebalanceCount": 13,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.6,
+                "strategyReturnPct": 33.667,
+                "strategyMaxDrawdownPct": -20.348,
+                "strategyMonthlyTurnoverPct": 5.556,
+                "benchmarkReturnPct": 34.196,
+                "benchmarkMaxDrawdownPct": -22.194,
+                "excessReturnPctPoints": -0.529,
+                "mddGapPctPoints": 1.846
+              }
+            }
+          },
+          "4way-D": {
+            "label": "2024-01-01 ~ 2026-09-10",
+            "byCostBps": {
+              "0.0": {
+                "rebalanceCount": 12,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.1,
+                "strategyReturnPct": 62.14,
+                "strategyMaxDrawdownPct": -9.788,
+                "strategyMonthlyTurnoverPct": 6.761,
+                "benchmarkReturnPct": 72.844,
+                "benchmarkMaxDrawdownPct": -12.276,
+                "excessReturnPctPoints": -10.704,
+                "mddGapPctPoints": 2.488
+              },
+              "20.0": {
+                "rebalanceCount": 12,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.1,
+                "strategyReturnPct": 61.752,
+                "strategyMaxDrawdownPct": -9.788,
+                "strategyMonthlyTurnoverPct": 6.761,
+                "benchmarkReturnPct": 72.671,
+                "benchmarkMaxDrawdownPct": -12.276,
+                "excessReturnPctPoints": -10.919,
+                "mddGapPctPoints": 2.488
+              },
+              "40.0": {
+                "rebalanceCount": 12,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.1,
+                "strategyReturnPct": 61.365,
+                "strategyMaxDrawdownPct": -9.788,
+                "strategyMonthlyTurnoverPct": 6.761,
+                "benchmarkReturnPct": 72.498,
+                "benchmarkMaxDrawdownPct": -12.276,
+                "excessReturnPctPoints": -11.133,
+                "mddGapPctPoints": 2.487
+              },
+              "57.0": {
+                "rebalanceCount": 12,
+                "pctRebalancesInvested": 100.0,
+                "avgHoldingsCountWhenInvested": 65.1,
+                "strategyReturnPct": 61.036,
+                "strategyMaxDrawdownPct": -9.788,
+                "strategyMonthlyTurnoverPct": 6.761,
+                "benchmarkReturnPct": 72.351,
+                "benchmarkMaxDrawdownPct": -12.276,
+                "excessReturnPctPoints": -11.315,
+                "mddGapPctPoints": 2.487
+              }
+            }
+          }
+        }
+      },
+      "monthlyTurnoverRangePct": [
+        4.8,
+        6.8
+      ]
+    },
+    "report_path": "research/reports/track-b-dividend-growth-validation.md",
+    "sources": [
+      {
+        "title": "Ned Davis Research dividend growers/cutters comparison studies (background hypothesis)",
+        "url": "",
+        "accessed": "2026-09-16"
+      },
+      {
+        "title": "research/reports/track-b-quality-lowvol-factor-validation.md - 유사 해석 패턴",
+        "url": "research/reports/track-b-quality-lowvol-factor-validation.md",
+        "accessed": "2026-09-16"
+      }
+    ],
+    "confidence": "high",
+    "caveats": "(1) DPS는 payoutRatio*EPS로 역산한 근사치이지 실측 주당배당금이 아니다. (2) 저변동성+퀄리티 팩터와 메커니즘이 일부 겹친다(독립 가설 아님). (3) 무배당 고성장 종목(AMZN/NFLX/TSLA/NOW/ISRG) 및 은행 7종이 데이터 부재로 항상 제외됐다. (4) 유니버스는 여전히 point-in-time이 아니다. (5) 이 결과는 Track B 채택 근거가 아니다 - 8개 후보(Track A 재사용/모멘텀 3종/MACD/단기반전/PEG/저변동성+퀄리티/배당성장) 전부 기각으로 현재 데이터·표본에서 Track B 규칙기반 자동화 근거 소진.",
+    "last_updated": "2026-09-16"
   }
 ]

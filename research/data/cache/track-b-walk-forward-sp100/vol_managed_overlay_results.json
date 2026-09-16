@@ -1,0 +1,419 @@
+{
+  "generatedBy": "research/scripts/track-b-walk-forward/momentum_vol_managed_overlay.py",
+  "hypothesis": "Barroso & Santa-Clara(2015)/Daniel & Moskowitz(2016)식 변동성관리 오버레이: 전략 자체의 과거 26주 실현 변동성 기준 목표 연변동성 15% 대비 노출을 min(1, 목표/실현)로 줄이고(무레버리지, 26주 미만 이력은 노출 1.0), 나머지는 현금 0%로 대기. 종목 선정(형성기간 48주/분기 리밸런싱/상위20-40%)은 불변.",
+  "targetAnnualVol": 0.15,
+  "volLookbackWeeks": 26,
+  "universe": {
+    "size": 101,
+    "excludedByQuality": {
+      "GEV": "UNSORTED_HISTORY",
+      "HONA": "UNSORTED_HISTORY",
+      "PLTR": "UNSORTED_HISTORY",
+      "UBER": "UNSORTED_HISTORY"
+    }
+  },
+  "parameters": {
+    "formationWeeks": 52,
+    "excludeRecentWeeks": 4,
+    "rebalancePeriodWeeks": 13,
+    "topTierFraction": 0.2,
+    "holdTierFraction": 0.4,
+    "costScenariosRoundTripBps": [
+      0.0,
+      20.0,
+      40.0,
+      57.0
+    ],
+    "initialCapital": 100000.0
+  },
+  "partitions": {
+    "2way": [
+      {
+        "id": "2way-A",
+        "label": "2015-01-01 ~ 2019-12-31",
+        "actualStart": "2015-01-01",
+        "actualEnd": "2019-12-26",
+        "byCostBps": {
+          "0.0": {
+            "unscaledStrategyReturnPct": 119.33,
+            "unscaledStrategyMaxDrawdownPct": -15.561,
+            "volManagedStrategyReturnPct": 128.061,
+            "volManagedStrategyMaxDrawdownPct": -13.619,
+            "benchmarkReturnPct": 120.662,
+            "benchmarkMaxDrawdownPct": -17.313,
+            "excessReturnPctPoints_volManagedVsBenchmark": 7.399,
+            "mddGapPctPoints_volManagedVsBenchmark": 3.694,
+            "mddGapPctPoints_unscaledVsBenchmark": 1.752,
+            "avgExposureScale": 0.965,
+            "minExposureScale": 0.692,
+            "rebalanceCount": 17
+          },
+          "20.0": {
+            "unscaledStrategyReturnPct": 119.291,
+            "unscaledStrategyMaxDrawdownPct": -15.549,
+            "volManagedStrategyReturnPct": 127.977,
+            "volManagedStrategyMaxDrawdownPct": -13.612,
+            "benchmarkReturnPct": 120.441,
+            "benchmarkMaxDrawdownPct": -17.313,
+            "excessReturnPctPoints_volManagedVsBenchmark": 7.536,
+            "mddGapPctPoints_volManagedVsBenchmark": 3.701,
+            "mddGapPctPoints_unscaledVsBenchmark": 1.764,
+            "avgExposureScale": 0.966,
+            "minExposureScale": 0.692,
+            "rebalanceCount": 17
+          },
+          "40.0": {
+            "unscaledStrategyReturnPct": 119.252,
+            "unscaledStrategyMaxDrawdownPct": -15.537,
+            "volManagedStrategyReturnPct": 127.893,
+            "volManagedStrategyMaxDrawdownPct": -13.605,
+            "benchmarkReturnPct": 120.22,
+            "benchmarkMaxDrawdownPct": -17.313,
+            "excessReturnPctPoints_volManagedVsBenchmark": 7.672,
+            "mddGapPctPoints_volManagedVsBenchmark": 3.707,
+            "mddGapPctPoints_unscaledVsBenchmark": 1.776,
+            "avgExposureScale": 0.966,
+            "minExposureScale": 0.692,
+            "rebalanceCount": 17
+          },
+          "57.0": {
+            "unscaledStrategyReturnPct": 119.218,
+            "unscaledStrategyMaxDrawdownPct": -15.526,
+            "volManagedStrategyReturnPct": 127.821,
+            "volManagedStrategyMaxDrawdownPct": -13.6,
+            "benchmarkReturnPct": 120.033,
+            "benchmarkMaxDrawdownPct": -17.313,
+            "excessReturnPctPoints_volManagedVsBenchmark": 7.789,
+            "mddGapPctPoints_volManagedVsBenchmark": 3.713,
+            "mddGapPctPoints_unscaledVsBenchmark": 1.786,
+            "avgExposureScale": 0.966,
+            "minExposureScale": 0.693,
+            "rebalanceCount": 17
+          }
+        }
+      },
+      {
+        "id": "2way-B",
+        "label": "2020-01-01 ~ 2026-09-10",
+        "actualStart": "2020-01-02",
+        "actualEnd": "2026-09-10",
+        "byCostBps": {
+          "0.0": {
+            "unscaledStrategyReturnPct": 369.435,
+            "unscaledStrategyMaxDrawdownPct": -28.541,
+            "volManagedStrategyReturnPct": 305.446,
+            "volManagedStrategyMaxDrawdownPct": -22.412,
+            "benchmarkReturnPct": 322.916,
+            "benchmarkMaxDrawdownPct": -25.202,
+            "excessReturnPctPoints_volManagedVsBenchmark": -17.469,
+            "mddGapPctPoints_volManagedVsBenchmark": 2.791,
+            "mddGapPctPoints_unscaledVsBenchmark": -3.339,
+            "avgExposureScale": 0.853,
+            "minExposureScale": 0.563,
+            "rebalanceCount": 26
+          },
+          "20.0": {
+            "unscaledStrategyReturnPct": 369.256,
+            "unscaledStrategyMaxDrawdownPct": -28.527,
+            "volManagedStrategyReturnPct": 305.293,
+            "volManagedStrategyMaxDrawdownPct": -22.411,
+            "benchmarkReturnPct": 322.493,
+            "benchmarkMaxDrawdownPct": -25.202,
+            "excessReturnPctPoints_volManagedVsBenchmark": -17.199,
+            "mddGapPctPoints_volManagedVsBenchmark": 2.791,
+            "mddGapPctPoints_unscaledVsBenchmark": -3.325,
+            "avgExposureScale": 0.853,
+            "minExposureScale": 0.563,
+            "rebalanceCount": 26
+          },
+          "40.0": {
+            "unscaledStrategyReturnPct": 369.076,
+            "unscaledStrategyMaxDrawdownPct": -28.513,
+            "volManagedStrategyReturnPct": 305.14,
+            "volManagedStrategyMaxDrawdownPct": -22.41,
+            "benchmarkReturnPct": 322.07,
+            "benchmarkMaxDrawdownPct": -25.202,
+            "excessReturnPctPoints_volManagedVsBenchmark": -16.929,
+            "mddGapPctPoints_volManagedVsBenchmark": 2.792,
+            "mddGapPctPoints_unscaledVsBenchmark": -3.311,
+            "avgExposureScale": 0.854,
+            "minExposureScale": 0.563,
+            "rebalanceCount": 26
+          },
+          "57.0": {
+            "unscaledStrategyReturnPct": 368.924,
+            "unscaledStrategyMaxDrawdownPct": -28.502,
+            "volManagedStrategyReturnPct": 305.01,
+            "volManagedStrategyMaxDrawdownPct": -22.409,
+            "benchmarkReturnPct": 321.71,
+            "benchmarkMaxDrawdownPct": -25.202,
+            "excessReturnPctPoints_volManagedVsBenchmark": -16.7,
+            "mddGapPctPoints_volManagedVsBenchmark": 2.793,
+            "mddGapPctPoints_unscaledVsBenchmark": -3.3,
+            "avgExposureScale": 0.854,
+            "minExposureScale": 0.564,
+            "rebalanceCount": 26
+          }
+        }
+      }
+    ],
+    "4way": [
+      {
+        "id": "4way-A",
+        "label": "2015-01-01 ~ 2017-12-31",
+        "actualStart": "2015-01-01",
+        "actualEnd": "2017-12-28",
+        "byCostBps": {
+          "0.0": {
+            "unscaledStrategyReturnPct": 68.797,
+            "unscaledStrategyMaxDrawdownPct": -13.473,
+            "volManagedStrategyReturnPct": 95.502,
+            "volManagedStrategyMaxDrawdownPct": -13.473,
+            "benchmarkReturnPct": 63.48,
+            "benchmarkMaxDrawdownPct": -8.354,
+            "excessReturnPctPoints_volManagedVsBenchmark": 32.023,
+            "mddGapPctPoints_volManagedVsBenchmark": -5.119,
+            "mddGapPctPoints_unscaledVsBenchmark": -5.119,
+            "avgExposureScale": 0.992,
+            "minExposureScale": 0.765,
+            "rebalanceCount": 9
+          },
+          "20.0": {
+            "unscaledStrategyReturnPct": 68.771,
+            "unscaledStrategyMaxDrawdownPct": -13.466,
+            "volManagedStrategyReturnPct": 95.458,
+            "volManagedStrategyMaxDrawdownPct": -13.466,
+            "benchmarkReturnPct": 63.316,
+            "benchmarkMaxDrawdownPct": -8.354,
+            "excessReturnPctPoints_volManagedVsBenchmark": 32.141,
+            "mddGapPctPoints_volManagedVsBenchmark": -5.112,
+            "mddGapPctPoints_unscaledVsBenchmark": -5.112,
+            "avgExposureScale": 0.992,
+            "minExposureScale": 0.766,
+            "rebalanceCount": 9
+          },
+          "40.0": {
+            "unscaledStrategyReturnPct": 68.744,
+            "unscaledStrategyMaxDrawdownPct": -13.459,
+            "volManagedStrategyReturnPct": 95.413,
+            "volManagedStrategyMaxDrawdownPct": -13.459,
+            "benchmarkReturnPct": 63.153,
+            "benchmarkMaxDrawdownPct": -8.354,
+            "excessReturnPctPoints_volManagedVsBenchmark": 32.26,
+            "mddGapPctPoints_volManagedVsBenchmark": -5.105,
+            "mddGapPctPoints_unscaledVsBenchmark": -5.105,
+            "avgExposureScale": 0.992,
+            "minExposureScale": 0.766,
+            "rebalanceCount": 9
+          },
+          "57.0": {
+            "unscaledStrategyReturnPct": 68.722,
+            "unscaledStrategyMaxDrawdownPct": -13.453,
+            "volManagedStrategyReturnPct": 95.375,
+            "volManagedStrategyMaxDrawdownPct": -13.453,
+            "benchmarkReturnPct": 63.014,
+            "benchmarkMaxDrawdownPct": -8.354,
+            "excessReturnPctPoints_volManagedVsBenchmark": 32.361,
+            "mddGapPctPoints_volManagedVsBenchmark": -5.099,
+            "mddGapPctPoints_unscaledVsBenchmark": -5.099,
+            "avgExposureScale": 0.992,
+            "minExposureScale": 0.767,
+            "rebalanceCount": 9
+          }
+        }
+      },
+      {
+        "id": "4way-B",
+        "label": "2018-01-01 ~ 2020-12-31",
+        "actualStart": "2018-01-04",
+        "actualEnd": "2020-12-31",
+        "byCostBps": {
+          "0.0": {
+            "unscaledStrategyReturnPct": 68.29,
+            "unscaledStrategyMaxDrawdownPct": -27.138,
+            "volManagedStrategyReturnPct": 53.592,
+            "volManagedStrategyMaxDrawdownPct": -22.206,
+            "benchmarkReturnPct": 73.823,
+            "benchmarkMaxDrawdownPct": -28.944,
+            "excessReturnPctPoints_volManagedVsBenchmark": -20.231,
+            "mddGapPctPoints_volManagedVsBenchmark": 6.738,
+            "mddGapPctPoints_unscaledVsBenchmark": 1.807,
+            "avgExposureScale": 0.772,
+            "minExposureScale": 0.449,
+            "rebalanceCount": 12
+          },
+          "20.0": {
+            "unscaledStrategyReturnPct": 68.277,
+            "unscaledStrategyMaxDrawdownPct": -27.132,
+            "volManagedStrategyReturnPct": 53.589,
+            "volManagedStrategyMaxDrawdownPct": -22.204,
+            "benchmarkReturnPct": 73.649,
+            "benchmarkMaxDrawdownPct": -28.944,
+            "excessReturnPctPoints_volManagedVsBenchmark": -20.059,
+            "mddGapPctPoints_volManagedVsBenchmark": 6.74,
+            "mddGapPctPoints_unscaledVsBenchmark": 1.813,
+            "avgExposureScale": 0.772,
+            "minExposureScale": 0.449,
+            "rebalanceCount": 12
+          },
+          "40.0": {
+            "unscaledStrategyReturnPct": 68.264,
+            "unscaledStrategyMaxDrawdownPct": -27.126,
+            "volManagedStrategyReturnPct": 53.587,
+            "volManagedStrategyMaxDrawdownPct": -22.203,
+            "benchmarkReturnPct": 73.475,
+            "benchmarkMaxDrawdownPct": -28.944,
+            "excessReturnPctPoints_volManagedVsBenchmark": -19.888,
+            "mddGapPctPoints_volManagedVsBenchmark": 6.742,
+            "mddGapPctPoints_unscaledVsBenchmark": 1.819,
+            "avgExposureScale": 0.772,
+            "minExposureScale": 0.449,
+            "rebalanceCount": 12
+          },
+          "57.0": {
+            "unscaledStrategyReturnPct": 68.253,
+            "unscaledStrategyMaxDrawdownPct": -27.121,
+            "volManagedStrategyReturnPct": 53.585,
+            "volManagedStrategyMaxDrawdownPct": -22.201,
+            "benchmarkReturnPct": 73.327,
+            "benchmarkMaxDrawdownPct": -28.944,
+            "excessReturnPctPoints_volManagedVsBenchmark": -19.742,
+            "mddGapPctPoints_volManagedVsBenchmark": 6.744,
+            "mddGapPctPoints_unscaledVsBenchmark": 1.824,
+            "avgExposureScale": 0.772,
+            "minExposureScale": 0.449,
+            "rebalanceCount": 12
+          }
+        }
+      },
+      {
+        "id": "4way-C",
+        "label": "2021-01-01 ~ 2023-12-31",
+        "actualStart": "2021-01-07",
+        "actualEnd": "2023-12-28",
+        "byCostBps": {
+          "0.0": {
+            "unscaledStrategyReturnPct": 10.068,
+            "unscaledStrategyMaxDrawdownPct": -42.28,
+            "volManagedStrategyReturnPct": 25.439,
+            "volManagedStrategyMaxDrawdownPct": -28.879,
+            "benchmarkReturnPct": 26.914,
+            "benchmarkMaxDrawdownPct": -22.476,
+            "excessReturnPctPoints_volManagedVsBenchmark": -1.475,
+            "mddGapPctPoints_volManagedVsBenchmark": -6.403,
+            "mddGapPctPoints_unscaledVsBenchmark": -19.803,
+            "avgExposureScale": 0.738,
+            "minExposureScale": 0.413,
+            "rebalanceCount": 12
+          },
+          "20.0": {
+            "unscaledStrategyReturnPct": 10.064,
+            "unscaledStrategyMaxDrawdownPct": -42.272,
+            "volManagedStrategyReturnPct": 25.441,
+            "volManagedStrategyMaxDrawdownPct": -28.878,
+            "benchmarkReturnPct": 26.787,
+            "benchmarkMaxDrawdownPct": -22.476,
+            "excessReturnPctPoints_volManagedVsBenchmark": -1.346,
+            "mddGapPctPoints_volManagedVsBenchmark": -6.402,
+            "mddGapPctPoints_unscaledVsBenchmark": -19.796,
+            "avgExposureScale": 0.738,
+            "minExposureScale": 0.413,
+            "rebalanceCount": 12
+          },
+          "40.0": {
+            "unscaledStrategyReturnPct": 10.06,
+            "unscaledStrategyMaxDrawdownPct": -42.265,
+            "volManagedStrategyReturnPct": 25.443,
+            "volManagedStrategyMaxDrawdownPct": -28.877,
+            "benchmarkReturnPct": 26.66,
+            "benchmarkMaxDrawdownPct": -22.476,
+            "excessReturnPctPoints_volManagedVsBenchmark": -1.217,
+            "mddGapPctPoints_volManagedVsBenchmark": -6.401,
+            "mddGapPctPoints_unscaledVsBenchmark": -19.789,
+            "avgExposureScale": 0.738,
+            "minExposureScale": 0.413,
+            "rebalanceCount": 12
+          },
+          "57.0": {
+            "unscaledStrategyReturnPct": 10.056,
+            "unscaledStrategyMaxDrawdownPct": -42.259,
+            "volManagedStrategyReturnPct": 25.445,
+            "volManagedStrategyMaxDrawdownPct": -28.877,
+            "benchmarkReturnPct": 26.552,
+            "benchmarkMaxDrawdownPct": -22.476,
+            "excessReturnPctPoints_volManagedVsBenchmark": -1.107,
+            "mddGapPctPoints_volManagedVsBenchmark": -6.4,
+            "mddGapPctPoints_unscaledVsBenchmark": -19.783,
+            "avgExposureScale": 0.738,
+            "minExposureScale": 0.413,
+            "rebalanceCount": 12
+          }
+        }
+      },
+      {
+        "id": "4way-D",
+        "label": "2024-01-01 ~ 2026-09-10",
+        "actualStart": "2024-01-04",
+        "actualEnd": "2026-09-10",
+        "byCostBps": {
+          "0.0": {
+            "unscaledStrategyReturnPct": 90.554,
+            "unscaledStrategyMaxDrawdownPct": -17.64,
+            "volManagedStrategyReturnPct": 82.766,
+            "volManagedStrategyMaxDrawdownPct": -17.406,
+            "benchmarkReturnPct": 54.306,
+            "benchmarkMaxDrawdownPct": -11.874,
+            "excessReturnPctPoints_volManagedVsBenchmark": 28.46,
+            "mddGapPctPoints_volManagedVsBenchmark": -5.531,
+            "mddGapPctPoints_unscaledVsBenchmark": -5.766,
+            "avgExposureScale": 0.876,
+            "minExposureScale": 0.639,
+            "rebalanceCount": 10
+          },
+          "20.0": {
+            "unscaledStrategyReturnPct": 90.526,
+            "unscaledStrategyMaxDrawdownPct": -17.633,
+            "volManagedStrategyReturnPct": 82.772,
+            "volManagedStrategyMaxDrawdownPct": -17.4,
+            "benchmarkReturnPct": 54.152,
+            "benchmarkMaxDrawdownPct": -11.874,
+            "excessReturnPctPoints_volManagedVsBenchmark": 28.62,
+            "mddGapPctPoints_volManagedVsBenchmark": -5.526,
+            "mddGapPctPoints_unscaledVsBenchmark": -5.758,
+            "avgExposureScale": 0.876,
+            "minExposureScale": 0.639,
+            "rebalanceCount": 10
+          },
+          "40.0": {
+            "unscaledStrategyReturnPct": 90.499,
+            "unscaledStrategyMaxDrawdownPct": -17.625,
+            "volManagedStrategyReturnPct": 82.778,
+            "volManagedStrategyMaxDrawdownPct": -17.394,
+            "benchmarkReturnPct": 53.997,
+            "benchmarkMaxDrawdownPct": -11.874,
+            "excessReturnPctPoints_volManagedVsBenchmark": 28.781,
+            "mddGapPctPoints_volManagedVsBenchmark": -5.52,
+            "mddGapPctPoints_unscaledVsBenchmark": -5.751,
+            "avgExposureScale": 0.876,
+            "minExposureScale": 0.639,
+            "rebalanceCount": 10
+          },
+          "57.0": {
+            "unscaledStrategyReturnPct": 90.475,
+            "unscaledStrategyMaxDrawdownPct": -17.619,
+            "volManagedStrategyReturnPct": 82.783,
+            "volManagedStrategyMaxDrawdownPct": -17.389,
+            "benchmarkReturnPct": 53.866,
+            "benchmarkMaxDrawdownPct": -11.874,
+            "excessReturnPctPoints_volManagedVsBenchmark": 28.917,
+            "mddGapPctPoints_volManagedVsBenchmark": -5.515,
+            "mddGapPctPoints_unscaledVsBenchmark": -5.745,
+            "avgExposureScale": 0.876,
+            "minExposureScale": 0.639,
+            "rebalanceCount": 10
+          }
+        }
+      }
+    ]
+  }
+}
