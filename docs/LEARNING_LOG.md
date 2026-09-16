@@ -141,14 +141,27 @@ git pull --ff-only
 
 장전 가이드 운영 문서(`docs/PREMARKET_GUIDE_OPERATIONS.md`)를 추가하고, 수동 생성·같은 날 스냅샷 재사용·`force=true` 강제 재생성·포트폴리오별 스케줄러 오류 격리를 테스트했다. 프리마켓 화면도 시장 데이터 429 응답 시 기존 저장 결과를 유지하면서 공통 재시도 대기 UI를 표시하도록 맞췄다. 자동 스케줄러는 외부 호출량을 확인하기 전까지 기본 비활성으로 유지하며, 운영 환경 변수로 명시적으로 켠다.
 
+2026-09-16에 장전 가이드, 종목별 손절 기준 재정의, 매매 계획 초안(trade-plan-preview) 기능을 5개 기능 단위 커밋으로 정리해 반영했다(`b145110`, `c3a3743`, `8cf4c82`, `579d0e1`, `660fd36`). Claude는 Git 경계 정책상 커밋·푸시를 직접 실행할 수 없어(권한 게이트로 거부 확인) 사용자가 직접 커밋·푸시를 수행했다.
+
+같은 날 "Toss 계좌 동기화 후 보유 수량 차이 정합성 처리"의 남은 절반을 확인·구현했다. 기존에는 `PortfolioBrokerHoldingAdjustment`가 증권사 수량이 원장보다 많은 경우(조정 매수)만 지원했고, 원장이 더 많은 경우(예: 실제로는 매도됐지만 Trade Guide에는 기록되지 않은 경우)는 422로 거부하며 "수동으로 정리하라"는 안내만 있었다. `PortfolioBrokerHoldingAdjustmentWriter`에 반대 방향(조정 매도) 처리를 추가했다: 실제 체결가를 알 수 없으므로 단가를 원장의 조정 전 평균 매입가와 동일하게 두어 실현손익을 0으로 만들고 평균 매입가를 그대로 유지한다. 두 수량이 이미 같은 경우만 여전히 422로 거부한다. API 계약(`POST/GET/DELETE .../broker-holding-adjustments`)은 변경하지 않았고, 방향은 서버가 자동 판정한다. `PortfolioBrokerHoldingAdjustmentWriterTest`를 갱신해 기존 두 개의 거부 테스트 중 하나를 "이미 수량이 같은 경우" 거부로 남기고, 다른 하나를 신규 조정 매도 생성 테스트로 교체했다. 백엔드 전체 테스트 1,017건 통과.
+
+프론트엔드 화면(`BrokerHoldingSnapshotSection.tsx`)은 아직 이 반대 방향을 위한 승인 버튼이 없다(`isNegativeOrEqualMismatch`일 때 안내 문구만 표시). 이 화면 변경은 Antigravity 담당이므로 작업 계약을 `docs/agent-tasks/antigravity-broker-holding-adjustment-sell-direction-20260916.md`에 남겼다.
+
+같은 날, 사용자가 매매 계획 초안에서 심각한 버그를 보고했다: SOXL 현재 주가가 102인데 손절 가이드는 113으로 표시되는 등, 실시간 주가와 무관한 손절 판정이 나왔다. `TradePlanPreviewService`를 확인한 결과 두 가지 문제가 있었다 - (1) 손절 판정 기준이 실시간 현재가가 아니라 최근 완료 주봉 종가(`referencePrice`, 최대 1주 전 가격)였고, (2) 더 심각하게는 주간 추세가 `HOLD`인 종목은 손절 판정 자체를 건너뛰는 구조였다(실제 주가가 이미 손절가 밑이어도 주간 추세만 `HOLD`면 손절 검토가 아예 안 나타남). `PortfolioValuationService`가 이미 계산해 두는 `HoldingValuation.currentPrice`(`PortfolioRiskPolicy.stopLossRatio` 설정 시에만 조회)를 손절 판정에 쓰도록 고치고, 이 판정을 `BUY`/`HOLD` 분기보다 먼저 실행해 주간 추세와 무관하게 안전 검토로 최우선 표시하도록 재구성했다. `TradePlanPreviewServiceTest`에 `prioritizesStopLossExitReviewOverHoldTrendWhenCurrentPriceHasAlreadyBreachedStopLoss` 테스트를 추가했고, 브라우저로 SOXL이 실제로 "손절 검토"로 바뀌는 것을 확인했다.
+
+같은 날 사용자가 "전략가이드에서 TQQQ는 티커만 나오고 있다"는 문제를 보고했다. `AssetDisplayNameResolver`(신규, `AssetListingRepository.findByMarketAndTicker` 조회, 없으면 티커로 대체)를 만들어 전략 가이드·매매 계획 초안·장전 가이드 응답(`AssetStrategyGuideResponse`, `AssetTradePlanPreviewResponse`, 배치 응답들, `PremarketGuideResponse`)에 `displayName`을 추가했다. Antigravity가 프론트엔드에서 종목명·시장 배지·티커를 그룹화해 표시하도록 맞췄고, 아코디언 UI 정리(밀도 감소, 제목-배지 간격 버그 수정)와 매매 기록 화면의 `BROKER_HOLDING_ADJUSTMENT` 출처 표시(삭제 버튼 대신 `/broker-accounts` 링크)도 같은 흐름에서 완료했다.
+
+이후 사용자 질문("시장 상황이나 추세 트레이딩 기법 없이 고정 손절만 가이드하는 게 맞나?")을 계기로 Claude 리서치 모드에서 Track A/B 전략 리서치를 대규모로 진행했다. **Track A**: 시장국면필터(SPY 40주선)를 TNA/FAS로 확장 검증(49사이클)했으나 필터가 구조적으로 발동하지 않음을 재확인했고, Chandelier Exit(추적 손절 + 매일 재계산 ATR, k=2/3)도 표준 배수가 3배 레버리지 ETF엔 너무 좁아(평균 손절폭 8.3%, 발동률 98%) 검증한 후보 중 가장 파괴적이었다 - 고정비율·ATR·추적손절·Chandelier Exit 4개 접근 모두 기각. **Track B**: 카탈로그 후보 4종(Track A 규칙 재사용, 횡단면 모멘텀, PEG/PER 밸류에이션, 저변동성+퀄리티 팩터)과 추가 가설 3종(MACD, 단기 반전, 배당성장)까지 8개 후보를 S&P100 101종목 실데이터로 워크포워드 검증했고 전부 기각됐다. 흥미로운 후속 진단(`research/reports/track-b-market-concentration-diagnosis.md`)은 이 반복된 기각이 전략 결함이 아니라 2015~2026 표본이 소수 메가캡(NVDA/AMD/AVGO 등)에 의해 비대칭적으로 견인된 국면 때문임을 실증했다(벤치마크에서 상위 5종목만 제외해도 초과수익 격차가 68~100% 줄어듦, 1개 구간은 부호 반전). 이 진단은 재채택 근거가 아니며, 사용자와 합의해 Track B는 당분간 규칙 기반 자동 매매 확장을 중단하고 지금의 후보 발굴 스크리닝 수준을 유지하기로 했다. 이 과정에서 (a) Finnhub 무료 API가 실제로는 시점별 재무 시계열을 제공한다는 것을 문서 추정이 아니라 실제 호출로 검증해 최초 판단을 정정했고, (b) `momentum_engine.py`의 매도 레그 거래비용이 실제 현금에 반영되지 않는 회계 버그를 발견해 신규 스크립트에서 수정했다(기존 3개 리포트는 회전율이 낮아 결론에 영향 없음, caveats로 기록). 전체 경과·리포트 목록은 `research/TASKS.md` 6~7절, 원자료는 `research/data/backtests.json`을 참고한다.
+
 ### 다음 작업
 
-1. 손절 없는 검토용 주문 초안은 허용하되, `stopLossPrice`가 없으면 증권사 전송 준비 상태가 되지 않도록 분리했다. Track A의 자동 손절 규칙은 아직 채택하지 않았으므로 기본값은 `NOT_CONFIGURED`로 유지한다. 사용자가 직접 입력한 손절 기준 비율이 있을 때만 보유 종목의 평균 매입가 또는 후보의 전략 기준 가격으로 검토용 손절가를 계산한다.
-2. 토스 주문 이력의 국내 시장 원장 반영은 통화·시장 판정, 원화 평가 모델, 자산 카탈로그 계약을 확정한 뒤 별도 슬라이스로 진행한다. 현재는 미국 주문만 반영하고 KRW 주문은 제외 건수로 보고한다.
-3. 토스의 장기 조회 범위(U-4)와 WTS 개인 이용약관(U-15)은 공식 기술 문서만으로 확정되지 않았다. 실제 서비스 공개 전 운영자 확인이 필요하며, 이를 코드가 확인된 것처럼 처리하지 않는다.
-4. 시장 데이터 제공자는 개발 환경의 요청 제한을 완화할 방법과 운영용 Twelve Data/Yahoo 사용 정책을 별도 결정한다. 공급자를 바꾸더라도 전략 기준 데이터와 조정 종가 규칙을 섞지 않는다.
-5. `trade-plan-preview`는 위험 한도와 사용자 손절가를 이용해 검토용 최대 매수 금액·수량과 예상 최대 손실을 계산한다. 이는 저장·자동 주문·증권사 전송 기능이 아니며, 가용 현금은 미연동 제약으로 표시한다. 일반 매도에는 임의 수량을 만들지 않고, 손절 기준 도달 때만 전량 손절 검토를 표시한다.
-6. 현재 누적 변경을 기능 단위로 검토한 뒤 커밋한다. 커밋 전 백엔드 전체 테스트, 프론트엔드 lint/build, 주요 화면 수동 검증을 다시 실행한다.
+1. **현재 누적된 미커밋 변경을 기능 단위로 검토한 뒤 커밋한다** - 실시간 손절 판정 수정, `displayName` 추가, 브로커 보유 조정 매도 방향, 아코디언 UI, Track A/B 리서치 산출물(`research/**`)이 전부 미커밋 상태다. Claude Code는 Git 경계 정책상 커밋·푸시를 직접 실행할 수 없으므로 사용자가 직접 수행한다. 커밋 전 백엔드 전체 테스트, 프론트엔드 lint/build, 주요 화면(전략 가이드·매매 계획 초안·보유 스냅샷) 수동 검증을 실행한다.
+2. Track B는 규칙 기반 자동 매매 확장을 중단하기로 했으므로, `StrategySelector.select(TRACK_B)`에 `TradingStrategy` 구현체를 추가하는 작업은 하지 않는다. 현재의 PEG<1 && 50일선 위 스크리닝(`research/data/candidates.json`)을 자동화할지(Finnhub 무료 API로 가능해짐, `research/reports/track-b-fundamental-data-provider-evaluation.md`)는 별도 결정 필요.
+3. 손절 없는 검토용 주문 초안은 허용하되, `stopLossPrice`가 없으면 증권사 전송 준비 상태가 되지 않도록 분리했다. Track A의 자동 손절 규칙은 채택하지 않는다(고정비율/ATR/추적손절/Chandelier Exit 4개 후보 전부 기각 확정, `research/TASKS.md` 6절). 기본값은 `NOT_CONFIGURED`로 유지하고, 사용자가 직접 입력한 손절 기준 비율이 있을 때만 검토용 손절가를 계산한다.
+4. 토스 주문 이력의 국내 시장 원장 반영은 통화·시장 판정, 원화 평가 모델, 자산 카탈로그 계약을 확정한 뒤 별도 슬라이스로 진행한다. 현재는 미국 주문만 반영하고 KRW 주문은 제외 건수로 보고한다.
+5. 토스의 장기 조회 범위(U-4)와 WTS 개인 이용약관(U-15)은 공식 기술 문서만으로 확정되지 않았다. 실제 서비스 공개 전 운영자 확인이 필요하며, 이를 코드가 확인된 것처럼 처리하지 않는다.
+6. 시장 데이터 제공자는 개발 환경의 요청 제한을 완화할 방법과 운영용 Twelve Data/Yahoo 사용 정책을 별도 결정한다. 공급자를 바꾸더라도 전략 기준 데이터와 조정 종가 규칙을 섞지 않는다.
+7. `trade-plan-preview`는 위험 한도와 사용자 손절가를 이용해 검토용 최대 매수 금액·수량과 예상 최대 손실을 계산한다. 이는 저장·자동 주문·증권사 전송 기능이 아니며, 가용 현금은 미연동 제약으로 표시한다. 일반 매도에는 임의 수량을 만들지 않고, 손절 기준 도달 때만 전량 손절 검토를 표시한다.
 
 ## 새 대화 시작용 인계 문구
 

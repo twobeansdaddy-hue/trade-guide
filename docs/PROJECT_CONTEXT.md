@@ -50,6 +50,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `Holding`은 매매 이력으로 계산하는 현재 보유 상태이며 DB에 저장하지 않는다.
 - `HoldingValuation`, `PortfolioValuation`은 현재가 기반의 평가 결과다.
 - `AssetListing`은 `market + ticker`, 표시명, 상장 상태를 관리하는 거래 가능한 종목 기준 엔터티다. `AssetProfile`은 하나의 상장 종목과 투자 트랙을 연결하는 시스템 전략 카탈로그이며, 사용자별 목표 수익률 설정이 아니다.
+- 전략 가이드·매매 계획 초안·장전 가이드 응답에는 `AssetDisplayNameResolver`(`AssetListingRepository.findByMarketAndTicker`의 `displayName`, 없으면 티커로 대체)로 조회한 `displayName`이 항상 포함된다(2026-09-16 추가) - 이전에는 일부 응답(예: TQQQ)이 티커만 노출해 사용자가 종목명을 알아보기 어려웠다.
 - 미국 종목 검색은 `AssetListing`의 활성 종목을 우선 반환하고 Twelve Data `symbol_search` 결과를 함께 사용한다. 외부 검색 결과는 조회용이며 자동으로 DB에 저장하지 않는다. 동일 시장·검색어의 외부 결과는 5분간 캐시한다.
 - `StrategySignal`은 시장 데이터만으로 계산한 추세 상태, 교차 이벤트, 기준 가격과 근거다.
 - `StrategyDecision`은 보유 여부 같은 사용자 맥락과 `StrategySignal`을 결합한 최종 행동과 근거다.
@@ -58,10 +59,12 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `QuantityRatioBasis.PORTFOLIO_VALUE`는 포트폴리오 평가액 기준의 신규 매수 비율이고, `HOLDING_QUANTITY`는 보유 종목 수량 기준의 매도 또는 부분 매도 비율이다.
 - `PortfolioRiskPolicy`는 주문당 최대 손실 비율, 종목당 최대 노출 비율, 선택적인 사용자 설정 손절 기준 비율을 검증하는 JPA 값 객체다. `Portfolio`에 포함되어 `portfolios` 테이블의 소수점 여섯 자리 컬럼으로 저장되며, 설정·조회 API와 종목별 노출 초과 경고에 사용된다.
 - `GET /api/members/{memberId}/portfolios/{portfolioId}/trade-plan-preview`는 DB 저장이나 증권사 전송 없이 검토용 매매 계획을 계산한다. 후보 `BUY`는 `포트폴리오 평가액 × 주문당 최대 손실 비율 ÷ (전략 기준 가격 - 사용자 손절가)`로 위험 기준 수량을 구한 뒤 종목당 최대 노출 한도로 제한한다. 기준 가격은 실시간 주문가가 아니며, 가용 현금은 아직 공통 연동 계약이 없어 `AVAILABLE_CASH_NOT_SYNCED` 제약으로만 표시한다.
-- 보유 종목은 전략 기준 가격이 사용자 손절가 이하일 때만 현재 보유 수량 전량의 `STOP_LOSS_EXIT_REVIEW`를 반환한다. 일반 하락 추세 `SELL_REVIEW`에는 임의의 부분 매도 수량을 만들지 않는다. 모든 계획은 사용자 최종 확인이 필요하며, `TradePlan` 저장·증권사 주문 전송과 연결하지 않는다.
+- 보유 종목은 **실시간 현재가**(`PortfolioValuationService`의 `HoldingValuation.currentPrice`, `PortfolioRiskPolicy.stopLossRatio`가 설정된 경우에만 조회)가 사용자 손절가 이하일 때 현재 보유 수량 전량의 `STOP_LOSS_EXIT_REVIEW`를 반환한다(2026-09-16 수정). 이전에는 최근 완료 주봉 종가(`referencePrice`, 최대 1주 전 가격)로만 판정해 주간 사이 하락을 놓칠 수 있었고, 주간 추세가 `HOLD`인 종목은 손절 판정 자체를 건너뛰는 구조적 결함도 있었다(실제 주가가 이미 손절가 밑이어도 주간 추세만 `HOLD`면 손절 검토가 나타나지 않음). 지금은 손절 판정을 `BUY`/`HOLD` 트렌드 분기보다 먼저 확인해, 주간 추세와 무관하게 안전 검토로 최우선 표시한다. 일반 하락 추세 `SELL_REVIEW`에는 임의의 부분 매도 수량을 만들지 않는다. 모든 계획은 사용자 최종 확인이 필요하며, `TradePlan` 저장·증권사 주문 전송과 연결하지 않는다.
 - `REDUCE`는 보유 종목의 부분 매도를 뜻한다. 교차 후 5~8주인 미보유 후보의 축소 진입에는 사용하지 않으며, 해당 구간은 현재 `WATCH`를 유지한다.
 - `TradePlan.quantityRatio` 자체의 영구 주문 초안 산식은 아직 채택하지 않았다. 현재 수량 공식은 위험 한도 기반의 read-only 미리보기에만 한정하며, 가용 현금·트랙별 예산·부분 매도 정책을 임의로 가정하지 않는다.
 - Track A 손절 후보 중 고정 비율 `-25%`는 추가 검증 필요이며, ATR 기반 손절은 채택하지 않는다. 사용자가 포트폴리오 설정에 직접 입력한 손절 기준 비율은 검토용 가이드에만 적용하고, 전략 기본값이나 `TradePlanGenerator`의 자동 규칙으로 사용하지 않는다.
+- 2026-09-16 리서치로 Track A 알고리즘 손절/청산 오버레이 후보 4종(고정비율, ATR 기반, 추적손절, Chandelier Exit)이 전부 기각됐고, 시장국면필터(SPY 40주선)도 TNA/FAS 확장 검증(49사이클)에서 구조적으로 발동하지 않음이 재확인됐다(`research/reports/track-a-chandelier-exit-review.md`, `research/reports/track-a-market-regime-filter-tna-fas-extension.md`). Track A의 손절 레이어는 현재도 사용자가 직접 입력하는 검토용 비율(위 항목)만 유효하며, 어떤 알고리즘 손절 규칙도 자동 적용하지 않는다.
+- Track B는 2026-09-16 리서치로 카탈로그 후보 4종(Track A 규칙 재사용, 횡단면 모멘텀, PEG/PER 밸류에이션, 저변동성+퀄리티 팩터)과 추가 가설 3종(MACD, 단기 반전, 배당성장)을 합쳐 8개 후보를 S&P100 실데이터 워크포워드로 전부 검증했고 전부 기각됐다. 후속 진단(`research/reports/track-b-market-concentration-diagnosis.md`)은 이 반복된 기각이 전략 결함보다 2015~2026 표본이 소수 메가캡(NVDA/AMD/AVGO 등)에 의해 비대칭적으로 견인된 시장 국면 때문이라는 것을 실증했다(벤치마크에서 상위 5종목만 제외해도 격차가 68~100% 줄어듦). 이 진단은 후보 재채택 근거가 아니다 - Track B는 당분간 매수 신호가 아닌 후보 발굴 스크리닝(PEG<1 && 50일선 위) 수준을 유지하고, 규칙 기반 자동 매매로 확장하지 않는다. 전체 경과는 `research/TASKS.md` 7절과 `research/data/backtests.json`을 참고한다.
 - `TradeGuideCalculator`와 `/api/trade-guide/calculate`은 초기 학습용 단순 계산 API다. 사용자가 입력한 목표 수익률·최대 손실률을 계산하며, 현재 전략 엔진의 정책이나 결과에 연결하지 않는다.
 
 ## 현재 전략 엔진 상태
@@ -118,5 +121,6 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `/api/admin/**`은 인증 활성화 상태에서 차단한다. 역할 기반 관리자 기능과 운영자용 자산 카탈로그 관리는 아직 구현하지 않았다.
 - 완료 주봉 캐시는 애플리케이션 메모리를 사용하므로 애플리케이션 재시작 시 초기화된다. 분산 캐시나 다중 인스턴스 운영은 아직 고려하지 않았다.
 - 시장 데이터 제공자 선택과 증권 계좌 연결은 별도 모델이다. 포트폴리오는 가격·캔들·자산 참조 제공자를 기록하는 `PortfolioMarketDataPreference`를 가지며, 현재 시장 데이터에는 `TWELVE_DATA`만 선택할 수 있다. 사용자별 토스증권 자격 증명과 계좌 참조값은 암호화된 `BrokerConnection`·`BrokerAccount`로 관리하고, 연결 확인과 계좌 목록·보유 종목 읽기 전용 조회를 지원한다.
-- 사용자가 명시적으로 갱신한 토스증권 보유 종목은 `PortfolioBrokerHoldingSnapshot`으로 별도 저장한다. 저장된 최신 스냅샷 조회와 Trade Guide 보유 종목 비교는 외부 증권사 API를 호출하거나 자격 증명을 복호화하지 않는다. 스냅샷은 수동 `TradeTransaction`과 파생 `Holding`을 자동 생성·수정하지 않는다. 다만 `ONLY_IN_BROKER` 항목은 사용자가 하나씩 승인할 때만 `BROKER_OPENING_BALANCE` 출처의 개시 잔고 매수 원장으로 반영하며, 수량 불일치·Trade Guide에만 있는 항목은 자동으로 수정하지 않는다.
+- 사용자가 명시적으로 갱신한 토스증권 보유 종목은 `PortfolioBrokerHoldingSnapshot`으로 별도 저장한다. 저장된 최신 스냅샷 조회와 Trade Guide 보유 종목 비교는 외부 증권사 API를 호출하거나 자격 증명을 복호화하지 않는다. 스냅샷은 수동 `TradeTransaction`과 파생 `Holding`을 자동 생성·수정하지 않는다. `ONLY_IN_BROKER` 항목은 사용자가 하나씩 승인할 때만 `BROKER_OPENING_BALANCE` 출처의 개시 잔고 매수 원장으로 반영한다.
+- 이미 원장에 있는 종목의 `QUANTITY_MISMATCH`(수량 불일치)는 `PortfolioBrokerHoldingAdjustment` 승인으로 해소한다. 증권사 수량이 원장보다 많으면 부족분을 조정 매수로, **원장 수량이 증권사보다 많으면 초과분을 조정 매도로** 반영하며(2026-09-16 추가), 두 방향 모두 `BROKER_HOLDING_ADJUSTMENT` 출처의 매매 기록을 만들고 언제든 취소(원복)할 수 있다. 조정 매도는 실제 체결가를 알 수 없으므로 단가를 원장의 조정 전 평균 매입가와 동일하게 두어 실현손익을 0으로 만들고 평균 매입가를 그대로 유지한다. 두 수량이 이미 같으면 조정 자체를 거부한다. 어떤 방향도 실제 증권사 주문을 발생시키지 않는다.
 - 토스증권 주문 이력은 읽기 전용 미리보기·정합성 대조·사용자 승인 후 `BROKER_ORDER_HISTORY` 원장 반영까지 구현되어 있다. 다만 현재 주문 어댑터의 원장 반영 시장은 미국으로 제한되고, 비매매 이벤트·개별 체결 단위·정정/취소 체인 연결은 토스 API가 제공하지 않는다. 주문 전송과 자동 매매는 구현하지 않았으며, 다중 사용자 운영에는 사용자별 자격 증명 수명주기와 운영 암호화 키 관리가 추가로 필요하다. 상세 기준은 `docs/BROKER_AND_PROVIDER_ARCHITECTURE.md`를 따른다.
