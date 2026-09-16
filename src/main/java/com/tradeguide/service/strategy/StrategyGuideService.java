@@ -2,12 +2,16 @@ package com.tradeguide.service.strategy;
 
 import com.tradeguide.domain.market.CandleInterval;
 import com.tradeguide.domain.market.MarketCandle;
+import com.tradeguide.domain.market.MarketDataProvider;
 import com.tradeguide.domain.strategy.AssetProfile;
 import com.tradeguide.domain.strategy.InvestmentTrack;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.strategy.StrategySignal;
 import com.tradeguide.exception.AssetProfileNotFoundException;
 import com.tradeguide.repository.strategy.AssetProfileRepository;
+import com.tradeguide.repository.portfolio.PortfolioRepository;
+import com.tradeguide.exception.PortfolioNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.tradeguide.service.market.CompletedWeeklyCandleCache;
 import com.tradeguide.service.market.CompletedWeeklyCandleFilter;
 import com.tradeguide.service.market.MarketHistoryService;
@@ -28,7 +32,28 @@ public class StrategyGuideService {
     private final CompletedWeeklyCandleFilter completedWeeklyCandleFilter;
     private final WeeklyCandleFreshnessValidator weeklyCandleFreshnessValidator;
     private final CompletedWeeklyCandleCache completedWeeklyCandleCache;
+    private final PortfolioRepository portfolioRepository;
 
+    @Autowired
+    public StrategyGuideService(
+            AssetProfileRepository assetProfileRepository,
+            MarketHistoryService marketHistoryService,
+            StrategySelector strategySelector,
+            CompletedWeeklyCandleFilter completedWeeklyCandleFilter,
+            WeeklyCandleFreshnessValidator weeklyCandleFreshnessValidator,
+            CompletedWeeklyCandleCache completedWeeklyCandleCache,
+            PortfolioRepository portfolioRepository
+    ) {
+        this.assetProfileRepository = assetProfileRepository;
+        this.marketHistoryService = marketHistoryService;
+        this.strategySelector = strategySelector;
+        this.completedWeeklyCandleFilter = completedWeeklyCandleFilter;
+        this.weeklyCandleFreshnessValidator = weeklyCandleFreshnessValidator;
+        this.completedWeeklyCandleCache = completedWeeklyCandleCache;
+        this.portfolioRepository = portfolioRepository;
+    }
+
+    /** 기존 단위/통합 테스트와 컨텍스트 없는 공용 전략 엔드포인트를 위한 생성자다. */
     public StrategyGuideService(
             AssetProfileRepository assetProfileRepository,
             MarketHistoryService marketHistoryService,
@@ -37,12 +62,15 @@ public class StrategyGuideService {
             WeeklyCandleFreshnessValidator weeklyCandleFreshnessValidator,
             CompletedWeeklyCandleCache completedWeeklyCandleCache
     ) {
-        this.assetProfileRepository = assetProfileRepository;
-        this.marketHistoryService = marketHistoryService;
-        this.strategySelector = strategySelector;
-        this.completedWeeklyCandleFilter = completedWeeklyCandleFilter;
-        this.weeklyCandleFreshnessValidator = weeklyCandleFreshnessValidator;
-        this.completedWeeklyCandleCache = completedWeeklyCandleCache;
+        this(
+                assetProfileRepository,
+                marketHistoryService,
+                strategySelector,
+                completedWeeklyCandleFilter,
+                weeklyCandleFreshnessValidator,
+                completedWeeklyCandleCache,
+                null
+        );
     }
 
     public StrategySignal getStrategySignal(
@@ -72,6 +100,32 @@ public class StrategyGuideService {
         return resolveSignal(assetProfile);
     }
 
+    /** 포트폴리오의 캔들 제공자 설정을 적용해 전략 신호를 계산한다. */
+    public StrategySignal getStrategySignal(
+            Long portfolioId,
+            Market market,
+            String ticker
+    ) {
+        AssetProfile assetProfile = assetProfileRepository
+                .findByMarketAndTicker(market, ticker)
+                .orElseThrow(() -> new AssetProfileNotFoundException(market, ticker));
+
+        return resolveSignalForPortfolio(portfolioId, assetProfile);
+    }
+
+    /** 전역 프로필 없이 포트폴리오 범위에서 명시한 트랙으로 신호를 계산한다. */
+    public StrategySignal getStrategySignal(
+            Long portfolioId,
+            Market market,
+            String ticker,
+            InvestmentTrack investmentTrack
+    ) {
+        return resolveSignalForPortfolio(
+                portfolioId,
+                new AssetProfile(market, ticker, investmentTrack)
+        );
+    }
+
     private StrategySignal resolveSignal(AssetProfile assetProfile) {
         List<MarketCandle> candles = completedWeeklyCandleCache.getOrLoad(
                 assetProfile.getMarket(),
@@ -93,6 +147,36 @@ public class StrategyGuideService {
                 assetProfile.getInvestmentTrack()
         );
 
+        return strategy.decide(assetProfile, completedCandles);
+    }
+
+    private StrategySignal resolveSignalForPortfolio(
+            Long portfolioId,
+            AssetProfile assetProfile
+    ) {
+        MarketDataProvider candleProvider = portfolioRepository.findById(portfolioId)
+                .map(portfolio -> portfolio.getMarketDataPreference().getCandleProvider())
+                .orElseThrow(() -> new PortfolioNotFoundException("포트폴리오를 찾을 수 없습니다."));
+
+        List<MarketCandle> candles = completedWeeklyCandleCache.getOrLoad(
+                candleProvider.name(),
+                assetProfile.getMarket(),
+                assetProfile.getTicker(),
+                WEEKLY_CANDLE_OUTPUT_SIZE,
+                () -> marketHistoryService.getCandles(
+                        candleProvider,
+                        portfolioId,
+                        assetProfile.getMarket(),
+                        assetProfile.getTicker(),
+                        CandleInterval.WEEKLY,
+                        WEEKLY_CANDLE_OUTPUT_SIZE
+                )
+        );
+
+        List<MarketCandle> completedCandles = completedWeeklyCandleFilter.filter(candles);
+        weeklyCandleFreshnessValidator.validate(completedCandles);
+
+        TradingStrategy strategy = strategySelector.select(assetProfile.getInvestmentTrack());
         return strategy.decide(assetProfile, completedCandles);
     }
 }

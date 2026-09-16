@@ -3,6 +3,9 @@ package com.tradeguide.service.strategy;
 import com.tradeguide.domain.broker.PortfolioBrokerHoldingSnapshot;
 import com.tradeguide.domain.broker.PortfolioBrokerHoldingSnapshotItem;
 import com.tradeguide.domain.holding.Holding;
+import com.tradeguide.domain.portfolio.Portfolio;
+import com.tradeguide.domain.risk.PortfolioAssetRiskOverride;
+import com.tradeguide.domain.risk.PortfolioRiskPolicy;
 import com.tradeguide.domain.strategy.*;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.AssetProfileNotFoundException;
@@ -11,6 +14,7 @@ import com.tradeguide.exception.MarketDataUnavailableException;
 import com.tradeguide.exception.UnsupportedInvestmentTrackException;
 import com.tradeguide.repository.broker.PortfolioBrokerHoldingSnapshotRepository;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
+import com.tradeguide.repository.risk.PortfolioAssetRiskOverrideRepository;
 import com.tradeguide.repository.strategy.PortfolioAssetStrategyProfileRepository;
 import com.tradeguide.service.holding.HoldingService;
 import org.junit.jupiter.api.Test;
@@ -46,6 +50,9 @@ class PortfolioStrategyGuideServiceTest {
 
     @Mock
     private PortfolioAssetStrategyProfileRepository portfolioAssetStrategyProfileRepository;
+
+    @Mock
+    private PortfolioAssetRiskOverrideRepository portfolioAssetRiskOverrideRepository;
 
     @Mock
     private PortfolioBrokerHoldingSnapshotRepository portfolioBrokerHoldingSnapshotRepository;
@@ -141,6 +148,101 @@ class PortfolioStrategyGuideServiceTest {
         verify(strategyGuideService).getStrategySignal(Market.US, "AAPL");
         verify(strategyDecisionMaker).decideForHolding(soxlSignal);
         verify(strategyDecisionMaker).decideForHolding(aaplSignal);
+    }
+
+    /**
+     * 실제 {@link StrategyDecisionMaker}(모의 객체가 아님)를 조립해, 이미 보유 중인
+     * 종목에 Track A 신규 매수 조건(상승 추세 + 최근 교차 후 0~4주)이 충족되면 실제 운영
+     * 로직 경로로 BUY 판단에 도달함을 검증한다. 이 BUY 판단은
+     * {@link TradePlanPreviewService}가 매도가 아닌 포지션 추가 검토로 다루는 입력이다.
+     */
+    @Test
+    void producesBuyDecisionForHeldAssetWithinTrackAEntryWindowUsingRealDecisionMaker() {
+        PortfolioStrategyGuideService serviceWithRealDecisionMaker = new PortfolioStrategyGuideService(
+                holdingService,
+                strategyGuideService,
+                new StrategyDecisionMaker(),
+                portfolioAssetStrategyProfileRepository,
+                portfolioAssetRiskOverrideRepository,
+                portfolioBrokerHoldingSnapshotRepository,
+                portfolioRepository
+        );
+
+        Holding tqqqHolding = new Holding(
+                Market.US,
+                "TQQQ",
+                new BigDecimal("10"),
+                new BigDecimal("70")
+        );
+
+        StrategySignal tqqqSignal = new StrategySignal(
+                new BigDecimal("90"),
+                "상향 교차 이후 보유 중",
+                new StrategyMetadata(
+                        "test-strategy",
+                        "test-v1",
+                        LocalDate.of(2026, 8, 10)
+                ),
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE,
+                2
+        );
+
+        when(holdingService.getHoldings(1L, 10L)).thenReturn(List.of(tqqqHolding));
+        when(strategyGuideService.getStrategySignal(Market.US, "TQQQ")).thenReturn(tqqqSignal);
+
+        StrategyGuideBatch result = serviceWithRealDecisionMaker.getPortfolioStrategyGuides(1L, 10L);
+
+        assertThat(result.getGuides()).hasSize(1);
+        StrategyDecision decision = result.getGuides().get(0).getStrategyDecision();
+        assertThat(decision.getAction()).isEqualTo(StrategyAction.BUY);
+        assertThat(decision.getGuidance().getEntryTimingStatus()).isEqualTo("ELIGIBLE_NOW");
+    }
+
+    /**
+     * 같은 실제 {@link StrategyDecisionMaker} 조립으로, 교차 후 4주를 넘긴(또는 교차
+     * 정보가 없는) 상승 추세 보유 종목은 여전히 HOLD로 유지됨을 확인한다.
+     */
+    @Test
+    void keepsHoldDecisionForHeldAssetOutsideTrackAEntryWindowUsingRealDecisionMaker() {
+        PortfolioStrategyGuideService serviceWithRealDecisionMaker = new PortfolioStrategyGuideService(
+                holdingService,
+                strategyGuideService,
+                new StrategyDecisionMaker(),
+                portfolioAssetStrategyProfileRepository,
+                portfolioAssetRiskOverrideRepository,
+                portfolioBrokerHoldingSnapshotRepository,
+                portfolioRepository
+        );
+
+        Holding tqqqHolding = new Holding(
+                Market.US,
+                "TQQQ",
+                new BigDecimal("10"),
+                new BigDecimal("70")
+        );
+
+        StrategySignal tqqqSignal = new StrategySignal(
+                new BigDecimal("90"),
+                "상승 추세 유지, 교차 후 4주 초과",
+                new StrategyMetadata(
+                        "test-strategy",
+                        "test-v1",
+                        LocalDate.of(2026, 8, 10)
+                ),
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE,
+                8
+        );
+
+        when(holdingService.getHoldings(1L, 10L)).thenReturn(List.of(tqqqHolding));
+        when(strategyGuideService.getStrategySignal(Market.US, "TQQQ")).thenReturn(tqqqSignal);
+
+        StrategyGuideBatch result = serviceWithRealDecisionMaker.getPortfolioStrategyGuides(1L, 10L);
+
+        assertThat(result.getGuides()).hasSize(1);
+        assertThat(result.getGuides().get(0).getStrategyDecision().getAction())
+                .isEqualTo(StrategyAction.HOLD);
     }
 
     @Test
@@ -555,5 +657,199 @@ class PortfolioStrategyGuideServiceTest {
         assertThat(result.getUnavailableAssets()).hasSize(1);
         assertThat(result.getUnavailableAssets().get(0).getReason())
                 .isEqualTo(StrategyGuideUnavailableReason.MARKET_DATA_UNAVAILABLE);
+    }
+
+    @Test
+    void usesAssetRiskOverrideStopLossRatioInsteadOfPortfolioDefaultWhenPresent() {
+        Holding soxlHolding = new Holding(
+                Market.US,
+                "SOXL",
+                new BigDecimal("10"),
+                new BigDecimal("20")
+        );
+
+        StrategySignal soxlSignal = new StrategySignal(
+                new BigDecimal("25"),
+                "테스트 시장 신호",
+                new StrategyMetadata(
+                        "test-strategy",
+                        "test-v1",
+                        LocalDate.of(2026, 8, 10)
+                ),
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE,
+                2
+        );
+
+        StrategyDecision soxlDecision = new StrategyDecision(
+                StrategyAction.HOLD,
+                "테스트 보유 판단",
+                soxlSignal
+        );
+
+        Portfolio portfolio = mock(Portfolio.class);
+        when(portfolio.getRiskPolicy()).thenReturn(
+                new PortfolioRiskPolicy(
+                        new BigDecimal("0.02"),
+                        new BigDecimal("0.3"),
+                        new BigDecimal("0.1")
+                )
+        );
+
+        PortfolioAssetRiskOverride override = mock(PortfolioAssetRiskOverride.class);
+        when(override.getStopLossRatio()).thenReturn(new BigDecimal("0.05"));
+
+        when(holdingService.getHoldings(1L, 10L)).thenReturn(List.of(soxlHolding));
+        when(portfolioRepository.findByMember_IdAndId(1L, 10L))
+                .thenReturn(Optional.of(portfolio));
+        when(portfolioAssetRiskOverrideRepository
+                .findByPortfolio_IdAndMarketAndTicker(10L, Market.US, "SOXL"))
+                .thenReturn(Optional.of(override));
+        when(strategyGuideService.getStrategySignal(Market.US, "SOXL"))
+                .thenReturn(soxlSignal);
+        when(strategyDecisionMaker.decideForHolding(
+                soxlSignal,
+                new BigDecimal("20"),
+                new BigDecimal("0.05")
+        )).thenReturn(soxlDecision);
+
+        StrategyGuideBatch result =
+                portfolioStrategyGuideService.getPortfolioStrategyGuides(1L, 10L);
+
+        assertThat(result.getGuides()).hasSize(1);
+        assertThat(result.getGuides().get(0).getStrategyDecision()).isSameAs(soxlDecision);
+
+        verify(strategyDecisionMaker).decideForHolding(
+                soxlSignal,
+                new BigDecimal("20"),
+                new BigDecimal("0.05")
+        );
+        verify(strategyDecisionMaker, never()).decideForHolding(
+                soxlSignal,
+                new BigDecimal("20"),
+                new BigDecimal("0.1")
+        );
+    }
+
+    @Test
+    void fallsBackToPortfolioDefaultStopLossRatioWhenNoAssetRiskOverrideExists() {
+        Holding soxlHolding = new Holding(
+                Market.US,
+                "SOXL",
+                new BigDecimal("10"),
+                new BigDecimal("20")
+        );
+
+        StrategySignal soxlSignal = new StrategySignal(
+                new BigDecimal("25"),
+                "테스트 시장 신호",
+                new StrategyMetadata(
+                        "test-strategy",
+                        "test-v1",
+                        LocalDate.of(2026, 8, 10)
+                ),
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE,
+                2
+        );
+
+        StrategyDecision soxlDecision = new StrategyDecision(
+                StrategyAction.HOLD,
+                "테스트 보유 판단",
+                soxlSignal
+        );
+
+        Portfolio portfolio = mock(Portfolio.class);
+        when(portfolio.getRiskPolicy()).thenReturn(
+                new PortfolioRiskPolicy(
+                        new BigDecimal("0.02"),
+                        new BigDecimal("0.3"),
+                        new BigDecimal("0.1")
+                )
+        );
+
+        when(holdingService.getHoldings(1L, 10L)).thenReturn(List.of(soxlHolding));
+        when(portfolioRepository.findByMember_IdAndId(1L, 10L))
+                .thenReturn(Optional.of(portfolio));
+        when(portfolioAssetRiskOverrideRepository
+                .findByPortfolio_IdAndMarketAndTicker(10L, Market.US, "SOXL"))
+                .thenReturn(Optional.empty());
+        when(strategyGuideService.getStrategySignal(Market.US, "SOXL"))
+                .thenReturn(soxlSignal);
+        when(strategyDecisionMaker.decideForHolding(
+                soxlSignal,
+                new BigDecimal("20"),
+                new BigDecimal("0.1")
+        )).thenReturn(soxlDecision);
+
+        StrategyGuideBatch result =
+                portfolioStrategyGuideService.getPortfolioStrategyGuides(1L, 10L);
+
+        assertThat(result.getGuides()).hasSize(1);
+        assertThat(result.getGuides().get(0).getStrategyDecision()).isSameAs(soxlDecision);
+
+        verify(strategyDecisionMaker).decideForHolding(
+                soxlSignal,
+                new BigDecimal("20"),
+                new BigDecimal("0.1")
+        );
+    }
+
+    @Test
+    void resolvesNoStopLossRatioAfterAssetRiskOverrideIsRemovedAndNoPortfolioDefaultExists() {
+        Holding soxlHolding = new Holding(
+                Market.US,
+                "SOXL",
+                new BigDecimal("10"),
+                new BigDecimal("20")
+        );
+
+        StrategySignal soxlSignal = new StrategySignal(
+                new BigDecimal("25"),
+                "테스트 시장 신호",
+                new StrategyMetadata(
+                        "test-strategy",
+                        "test-v1",
+                        LocalDate.of(2026, 8, 10)
+                ),
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE,
+                2
+        );
+
+        StrategyDecision soxlDecision = new StrategyDecision(
+                StrategyAction.HOLD,
+                "테스트 보유 판단",
+                soxlSignal
+        );
+
+        Portfolio portfolio = mock(Portfolio.class);
+        when(portfolio.getRiskPolicy()).thenReturn(
+                new PortfolioRiskPolicy(
+                        new BigDecimal("0.02"),
+                        new BigDecimal("0.3")
+                )
+        );
+
+        when(holdingService.getHoldings(1L, 10L)).thenReturn(List.of(soxlHolding));
+        when(portfolioRepository.findByMember_IdAndId(1L, 10L))
+                .thenReturn(Optional.of(portfolio));
+        when(portfolioAssetRiskOverrideRepository
+                .findByPortfolio_IdAndMarketAndTicker(10L, Market.US, "SOXL"))
+                .thenReturn(Optional.empty());
+        when(strategyGuideService.getStrategySignal(Market.US, "SOXL"))
+                .thenReturn(soxlSignal);
+        when(strategyDecisionMaker.decideForHolding(soxlSignal))
+                .thenReturn(soxlDecision);
+
+        StrategyGuideBatch result =
+                portfolioStrategyGuideService.getPortfolioStrategyGuides(1L, 10L);
+
+        assertThat(result.getGuides()).hasSize(1);
+        assertThat(result.getGuides().get(0).getStrategyDecision()).isSameAs(soxlDecision);
+
+        verify(strategyDecisionMaker).decideForHolding(soxlSignal);
+        verify(strategyDecisionMaker, never())
+                .decideForHolding(any(), any(), any());
     }
 }

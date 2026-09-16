@@ -8,19 +8,26 @@ import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.domain.strategy.StrategyGuideBatch;
 import com.tradeguide.domain.risk.PortfolioRiskPolicy;
 import com.tradeguide.domain.risk.PortfolioRiskAlert;
+import com.tradeguide.domain.risk.PortfolioAssetRiskOverride;
 import com.tradeguide.dto.backtest.PortfolioAssetBacktestResponse;
 import com.tradeguide.dto.holding.HoldingResponse;
 import com.tradeguide.dto.portfolio.PortfolioCreateRequest;
 import com.tradeguide.dto.portfolio.PortfolioResponse;
 import com.tradeguide.dto.valuation.PortfolioValuationResponse;
 import com.tradeguide.dto.strategy.StrategyGuideBatchResponse;
+import com.tradeguide.dto.strategy.TradePlanPreviewBatchResponse;
 import com.tradeguide.dto.risk.HoldingExposureResponse;
 import com.tradeguide.dto.risk.PortfolioRiskPolicyResponse;
 import com.tradeguide.dto.risk.PortfolioRiskPolicyUpdateRequest;
 import com.tradeguide.dto.risk.PortfolioRiskAlertResponse;
+import com.tradeguide.dto.risk.PortfolioAssetRiskOverrideResponse;
+import com.tradeguide.dto.risk.PortfolioAssetRiskOverrideUpsertRequest;
 import com.tradeguide.dto.market.MarketDataProviderResponse;
 import com.tradeguide.dto.market.PortfolioMarketDataPreferenceResponse;
 import com.tradeguide.dto.market.PortfolioMarketDataPreferenceUpdateRequest;
+import com.tradeguide.exception.PortfolioNotFoundException;
+import com.tradeguide.repository.portfolio.PortfolioRepository;
+import com.tradeguide.repository.risk.PortfolioAssetRiskOverrideRepository;
 import com.tradeguide.service.backtest.PortfolioAssetBacktestService;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
@@ -28,6 +35,7 @@ import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
 import com.tradeguide.service.risk.PortfolioExposureService;
 import com.tradeguide.service.strategy.PortfolioCandidateStrategyGuideService;
+import com.tradeguide.service.strategy.TradePlanPreviewService;
 import com.tradeguide.service.risk.PortfolioRiskAlertService;
 import com.tradeguide.service.auth.MemberAccessService;
 import com.tradeguide.service.market.MarketDataProviderCatalog;
@@ -38,9 +46,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/members/{memberId}/portfolios")
@@ -51,10 +63,14 @@ public class PortfolioController {
     private final PortfolioStrategyGuideService portfolioStrategyGuideService;
     private final PortfolioExposureService portfolioExposureService;
     private final PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
+    private final TradePlanPreviewService tradePlanPreviewService;
     private final PortfolioRiskAlertService portfolioRiskAlertService;
     private final MemberAccessService memberAccessService;
     private final MarketDataProviderCatalog marketDataProviderCatalog;
     private final PortfolioAssetBacktestService portfolioAssetBacktestService;
+    private final PortfolioAssetRiskOverrideRepository portfolioAssetRiskOverrideRepository;
+    private final PortfolioRepository portfolioRepository;
+    private final Clock clock;
 
     public PortfolioController(
             PortfolioService portfolioService,
@@ -63,10 +79,14 @@ public class PortfolioController {
             PortfolioStrategyGuideService portfolioStrategyGuideService,
             PortfolioExposureService portfolioExposureService,
             PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService,
+            TradePlanPreviewService tradePlanPreviewService,
             PortfolioRiskAlertService portfolioRiskAlertService,
             MemberAccessService memberAccessService,
             MarketDataProviderCatalog marketDataProviderCatalog,
-            PortfolioAssetBacktestService portfolioAssetBacktestService
+            PortfolioAssetBacktestService portfolioAssetBacktestService,
+            PortfolioAssetRiskOverrideRepository portfolioAssetRiskOverrideRepository,
+            PortfolioRepository portfolioRepository,
+            Clock clock
     ) {
         this.portfolioService = portfolioService;
         this.holdingService = holdingService;
@@ -74,10 +94,14 @@ public class PortfolioController {
         this.portfolioStrategyGuideService = portfolioStrategyGuideService;
         this.portfolioExposureService = portfolioExposureService;
         this.portfolioCandidateStrategyGuideService = portfolioCandidateStrategyGuideService;
+        this.tradePlanPreviewService = tradePlanPreviewService;
         this.portfolioRiskAlertService = portfolioRiskAlertService;
         this.memberAccessService = memberAccessService;
         this.marketDataProviderCatalog = marketDataProviderCatalog;
         this.portfolioAssetBacktestService = portfolioAssetBacktestService;
+        this.portfolioAssetRiskOverrideRepository = portfolioAssetRiskOverrideRepository;
+        this.portfolioRepository = portfolioRepository;
+        this.clock = clock;
     }
 
     @ModelAttribute
@@ -210,6 +234,16 @@ public class PortfolioController {
         return StrategyGuideBatchResponse.from(strategyGuideBatch);
     }
 
+    @GetMapping("/{portfolioId}/trade-plan-preview")
+    public TradePlanPreviewBatchResponse getTradePlanPreview(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId
+    ) {
+        return TradePlanPreviewBatchResponse.from(
+                tradePlanPreviewService.getTradePlanPreview(memberId, portfolioId)
+        );
+    }
+
     @GetMapping("/{portfolioId}/risk-policy")
     public PortfolioRiskPolicyResponse getRiskPolicy(
             @PathVariable Long memberId,
@@ -265,6 +299,73 @@ public class PortfolioController {
         return PortfolioMarketDataPreferenceResponse.from(
                 portfolioService.updateMarketDataPreference(memberId, portfolioId, request.getProvider())
         );
+    }
+
+    @GetMapping("/{portfolioId}/asset-risk-overrides")
+    public List<PortfolioAssetRiskOverrideResponse> getAssetRiskOverrides(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId
+    ) {
+        requirePortfolio(memberId, portfolioId);
+
+        return portfolioAssetRiskOverrideRepository.findAllByPortfolio_Id(portfolioId)
+                .stream()
+                .map(PortfolioAssetRiskOverrideResponse::from)
+                .toList();
+    }
+
+    @PutMapping("/{portfolioId}/assets/{market}/{ticker}/risk-override")
+    @Transactional
+    public PortfolioAssetRiskOverrideResponse upsertAssetRiskOverride(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId,
+            @PathVariable Market market,
+            @PathVariable String ticker,
+            @Valid @RequestBody PortfolioAssetRiskOverrideUpsertRequest request
+    ) {
+        Portfolio portfolio = requirePortfolio(memberId, portfolioId);
+        LocalDateTime now = LocalDateTime.now(clock);
+
+        Optional<PortfolioAssetRiskOverride> existing = portfolioAssetRiskOverrideRepository
+                .findByPortfolio_IdAndMarketAndTicker(portfolioId, market, ticker);
+
+        PortfolioAssetRiskOverride override;
+        if (existing.isPresent()) {
+            override = existing.get();
+            override.changeStopLossRatio(request.getStopLossRatio(), now);
+        } else {
+            override = new PortfolioAssetRiskOverride(
+                    portfolio,
+                    market,
+                    ticker,
+                    request.getStopLossRatio(),
+                    now
+            );
+        }
+
+        return PortfolioAssetRiskOverrideResponse.from(
+                portfolioAssetRiskOverrideRepository.save(override)
+        );
+    }
+
+    @DeleteMapping("/{portfolioId}/assets/{market}/{ticker}/risk-override")
+    @Transactional
+    public ResponseEntity<Void> deleteAssetRiskOverride(
+            @PathVariable Long memberId,
+            @PathVariable Long portfolioId,
+            @PathVariable Market market,
+            @PathVariable String ticker
+    ) {
+        requirePortfolio(memberId, portfolioId);
+
+        portfolioAssetRiskOverrideRepository.deleteByPortfolio_IdAndMarketAndTicker(portfolioId, market, ticker);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    private Portfolio requirePortfolio(Long memberId, Long portfolioId) {
+        return portfolioRepository.findByMember_IdAndId(memberId, portfolioId)
+                .orElseThrow(() -> new PortfolioNotFoundException("포트폴리오를 찾을 수 없습니다."));
     }
 
 }

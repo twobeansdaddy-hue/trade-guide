@@ -15,7 +15,7 @@ export async function getHeldAssetStrategyProfiles(
 
     return getJsonResponse<PortfolioAssetStrategyProfile[]>(
         response,
-        "보유 종목 투자 트랙 설정을 불러오지 못했습니다.",
+        "보유 종목 투자 트랙 및 손절 기준 설정을 불러오지 못했습니다.",
     );
 }
 

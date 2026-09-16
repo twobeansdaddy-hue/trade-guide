@@ -64,6 +64,8 @@ function SettingsContent({memberId, portfolioId}: {memberId: number; portfolioId
     useEffect(() => {
         if (window.location.hash === "#market-data-provider") {
             document.getElementById("market-data-provider")?.scrollIntoView({behavior: "smooth", block: "start"});
+        } else if (window.location.hash === "#risk-policy") {
+            document.getElementById("risk-policy")?.scrollIntoView({behavior: "smooth", block: "start"});
         }
     }, []);
 
@@ -157,7 +159,7 @@ function SettingsContent({memberId, portfolioId}: {memberId: number; portfolioId
             ) : policyResource.error ? (
                 <RequestError message={policyResource.error.message} onRetry={policyResource.refresh} retryLabel="위험 한도 다시 시도"/>
             ) : null}
-            <form className="risk-policy-editor" onSubmit={submit}>
+            <form className="risk-policy-editor" id="risk-policy" onSubmit={submit}>
                 <h2>위험 한도 변경</h2>
                 <label>
                     <span>주문당 최대 손실 (포트폴리오 대비 %)</span>

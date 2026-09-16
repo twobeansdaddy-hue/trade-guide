@@ -13,6 +13,7 @@ import com.tradeguide.exception.MarketDataUnavailableException;
 import com.tradeguide.domain.market.PortfolioMarketDataPreference;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.risk.PortfolioRiskPolicy;
+import com.tradeguide.domain.risk.PortfolioAssetRiskOverride;
 import com.tradeguide.domain.strategy.*;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.valuation.HoldingValuation;
@@ -20,17 +21,21 @@ import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.domain.risk.HoldingExposure;
 import com.tradeguide.domain.risk.PortfolioRiskAlert;
 import com.tradeguide.exception.PortfolioRiskPolicyNotFoundException;
+import com.tradeguide.repository.portfolio.PortfolioRepository;
+import com.tradeguide.repository.risk.PortfolioAssetRiskOverrideRepository;
 import com.tradeguide.service.backtest.PortfolioAssetBacktestService;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.strategy.PortfolioCandidateStrategyGuideService;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
+import com.tradeguide.service.strategy.TradePlanPreviewService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
 import com.tradeguide.service.risk.PortfolioExposureService;
 import com.tradeguide.service.risk.PortfolioRiskAlertService;
 import com.tradeguide.service.auth.MemberAccessService;
 import com.tradeguide.service.market.MarketDataProviderCatalog;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
+import com.tradeguide.exception.PortfolioNotFoundException;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +46,17 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -78,6 +90,9 @@ class PortfolioControllerTest {
     private PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
 
     @MockitoBean
+    private TradePlanPreviewService tradePlanPreviewService;
+
+    @MockitoBean
     private PortfolioRiskAlertService portfolioRiskAlertService;
 
     @MockitoBean
@@ -88,6 +103,15 @@ class PortfolioControllerTest {
 
     @MockitoBean
     private PortfolioAssetBacktestService portfolioAssetBacktestService;
+
+    @MockitoBean
+    private PortfolioAssetRiskOverrideRepository portfolioAssetRiskOverrideRepository;
+
+    @MockitoBean
+    private PortfolioRepository portfolioRepository;
+
+    @MockitoBean
+    private Clock clock;
 
     @Test
     void createsPortfolio() throws Exception {
@@ -479,6 +503,102 @@ class PortfolioControllerTest {
     }
 
     @Test
+    void getsTradePlanPreview() throws Exception {
+        StrategyMetadata metadata = new StrategyMetadata(
+                "weekly-ma-crossover",
+                "test-v1",
+                LocalDate.of(2026, 8, 10),
+                "low-medium",
+                List.of("Track A 검증 표본 한정")
+        );
+
+        AssetTradePlanPreview buyPlan = new AssetTradePlanPreview(
+                Market.US,
+                "TQQQ",
+                TradePlanPreviewStatus.BUY,
+                null,
+                new BigDecimal("90.00"),
+                new BigDecimal("81.00"),
+                new BigDecimal("11.111111"),
+                new BigDecimal("1000.00"),
+                new BigDecimal("100.00"),
+                List.of(TradePlanPreviewConstraint.AVAILABLE_CASH_NOT_SYNCED),
+                "검토용 매수 계획입니다.",
+                metadata
+        );
+
+        PlannedTradeAction protectiveExitAction = new PlannedTradeAction(
+                PlannedTradeActionType.PROTECTIVE_EXIT_REVIEW,
+                new BigDecimal("22.50"),
+                new BigDecimal("50"),
+                new BigDecimal("1125.00"),
+                "손절가 도달 시 전량 청산을 검토합니다.",
+                metadata
+        );
+
+        AssetTradePlanPreview stopLossExitPlan = new AssetTradePlanPreview(
+                Market.US,
+                "SOXL",
+                TradePlanPreviewStatus.STOP_LOSS_EXIT_REVIEW,
+                null,
+                new BigDecimal("20.00"),
+                new BigDecimal("22.50"),
+                new BigDecimal("50"),
+                null,
+                null,
+                List.of(),
+                "손절 검토가 필요합니다.",
+                metadata,
+                List.of(protectiveExitAction)
+        );
+
+        when(tradePlanPreviewService.getTradePlanPreview(10L, 100L))
+                .thenReturn(new TradePlanPreviewBatch(
+                        List.of(buyPlan),
+                        List.of(stopLossExitPlan),
+                        List.of()
+                ));
+
+        mockMvc.perform(
+                        get("/api/members/10/portfolios/100/trade-plan-preview")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.candidatePlans[0].market").value("US"))
+                .andExpect(jsonPath("$.candidatePlans[0].ticker").value("TQQQ"))
+                .andExpect(jsonPath("$.candidatePlans[0].currency").value("USD"))
+                .andExpect(jsonPath("$.candidatePlans[0].status").value("BUY"))
+                .andExpect(jsonPath("$.candidatePlans[0].quantity").value(11.111111))
+                .andExpect(jsonPath("$.candidatePlans[0].amount").value(1000.00))
+                .andExpect(jsonPath("$.candidatePlans[0].estimatedMaxLoss").value(100.00))
+                .andExpect(jsonPath("$.candidatePlans[0].constraints[0]").value("AVAILABLE_CASH_NOT_SYNCED"))
+                .andExpect(jsonPath("$.candidatePlans[0].requiresUserConfirmation").value(true))
+                .andExpect(jsonPath("$.heldAssetPlans[0].ticker").value("SOXL"))
+                .andExpect(jsonPath("$.heldAssetPlans[0].status").value("STOP_LOSS_EXIT_REVIEW"))
+                .andExpect(jsonPath("$.heldAssetPlans[0].quantity").value(50))
+                .andExpect(jsonPath("$.heldAssetPlans[0].plannedActions[0].type").value("PROTECTIVE_EXIT_REVIEW"))
+                .andExpect(jsonPath("$.heldAssetPlans[0].plannedActions[0].triggerPrice").value(22.50))
+                .andExpect(jsonPath("$.heldAssetPlans[0].plannedActions[0].quantity").value(50))
+                .andExpect(jsonPath("$.heldAssetPlans[0].plannedActions[0].amount").value(1125.00))
+                .andExpect(jsonPath("$.heldAssetPlans[0].plannedActions[0].requiresUserConfirmation").value(true))
+                .andExpect(jsonPath("$.candidatePlans[0].plannedActions").isEmpty())
+                .andExpect(jsonPath("$.unavailableAssets").isEmpty());
+
+        verify(tradePlanPreviewService).getTradePlanPreview(10L, 100L);
+    }
+
+    @Test
+    void returnsNotFoundWhenTradePlanPreviewPortfolioDoesNotBelongToMember() throws Exception {
+        when(tradePlanPreviewService.getTradePlanPreview(10L, 999L))
+                .thenThrow(new PortfolioNotFoundException("포트폴리오를 찾을 수 없습니다."));
+
+        mockMvc.perform(get("/api/members/10/portfolios/999/trade-plan-preview"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("포트폴리오를 찾을 수 없습니다."));
+
+        verify(tradePlanPreviewService).getTradePlanPreview(10L, 999L);
+    }
+
+    @Test
     void getsPortfolioExposures() throws Exception {
         HoldingExposure exposure = new HoldingExposure(
                 Market.US,
@@ -825,5 +945,106 @@ class PortfolioControllerTest {
                                 .param("initialCash", "1000")
                 )
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getsAssetRiskOverrides() throws Exception {
+        Portfolio portfolio = mock(Portfolio.class);
+        when(portfolioRepository.findByMember_IdAndId(10L, 100L))
+                .thenReturn(Optional.of(portfolio));
+
+        PortfolioAssetRiskOverride override = mock(PortfolioAssetRiskOverride.class);
+        when(override.getMarket()).thenReturn(Market.US);
+        when(override.getTicker()).thenReturn("SOXL");
+        when(override.getStopLossRatio()).thenReturn(new BigDecimal("0.05"));
+        when(override.getUpdatedAt()).thenReturn(LocalDateTime.of(2026, 9, 15, 9, 0));
+
+        when(portfolioAssetRiskOverrideRepository.findAllByPortfolio_Id(100L))
+                .thenReturn(List.of(override));
+
+        mockMvc.perform(get("/api/members/10/portfolios/100/asset-risk-overrides"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].market").value("US"))
+                .andExpect(jsonPath("$[0].ticker").value("SOXL"))
+                .andExpect(jsonPath("$[0].stopLossRatio").value(0.05));
+    }
+
+    @Test
+    void returnsNotFoundWhenListingAssetRiskOverridesForUnownedPortfolio() throws Exception {
+        when(portfolioRepository.findByMember_IdAndId(777L, 999L))
+                .thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/members/777/portfolios/999/asset-risk-overrides"))
+                .andExpect(status().isNotFound());
+
+        verifyNoInteractions(portfolioAssetRiskOverrideRepository);
+    }
+
+    @Test
+    void createsAssetRiskOverride() throws Exception {
+        Portfolio portfolio = mock(Portfolio.class);
+        when(portfolioRepository.findByMember_IdAndId(10L, 100L))
+                .thenReturn(Optional.of(portfolio));
+        when(portfolioAssetRiskOverrideRepository
+                .findByPortfolio_IdAndMarketAndTicker(100L, Market.US, "SOXL"))
+                .thenReturn(Optional.empty());
+        when(clock.instant()).thenReturn(Instant.parse("2026-09-15T09:00:00Z"));
+        when(clock.getZone()).thenReturn(ZoneOffset.UTC);
+        when(portfolioAssetRiskOverrideRepository.save(any(PortfolioAssetRiskOverride.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        mockMvc.perform(put("/api/members/10/portfolios/100/assets/US/SOXL/risk-override")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "stopLossRatio": 0.05
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.market").value("US"))
+                .andExpect(jsonPath("$.ticker").value("SOXL"))
+                .andExpect(jsonPath("$.stopLossRatio").value(0.05));
+
+        verify(portfolioAssetRiskOverrideRepository).save(any(PortfolioAssetRiskOverride.class));
+    }
+
+    @Test
+    void returnsBadRequestWhenAssetRiskOverrideRatioIsOutOfRange() throws Exception {
+        mockMvc.perform(put("/api/members/10/portfolios/100/assets/US/SOXL/risk-override")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "stopLossRatio": 1
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("손절 기준 비율은 1보다 작아야 합니다."));
+
+        verifyNoInteractions(portfolioAssetRiskOverrideRepository);
+    }
+
+    @Test
+    void deletesAssetRiskOverrideToResetToPortfolioDefault() throws Exception {
+        Portfolio portfolio = mock(Portfolio.class);
+        when(portfolioRepository.findByMember_IdAndId(10L, 100L))
+                .thenReturn(Optional.of(portfolio));
+
+        mockMvc.perform(delete("/api/members/10/portfolios/100/assets/US/SOXL/risk-override"))
+                .andExpect(status().isNoContent());
+
+        verify(portfolioAssetRiskOverrideRepository)
+                .deleteByPortfolio_IdAndMarketAndTicker(100L, Market.US, "SOXL");
+    }
+
+    @Test
+    void returnsNotFoundWhenDeletingAssetRiskOverrideForUnownedPortfolio() throws Exception {
+        when(portfolioRepository.findByMember_IdAndId(777L, 999L))
+                .thenReturn(Optional.empty());
+
+        mockMvc.perform(delete("/api/members/777/portfolios/999/assets/US/SOXL/risk-override"))
+                .andExpect(status().isNotFound());
+
+        verify(portfolioAssetRiskOverrideRepository, never())
+                .deleteByPortfolio_IdAndMarketAndTicker(any(), any(), any());
     }
 }

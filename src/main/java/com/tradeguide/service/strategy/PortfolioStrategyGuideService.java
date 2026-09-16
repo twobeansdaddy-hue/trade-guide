@@ -10,11 +10,13 @@ import com.tradeguide.domain.strategy.StrategyGuideBatch;
 import com.tradeguide.domain.strategy.StrategyGuideUnavailableReason;
 import com.tradeguide.domain.strategy.StrategySignal;
 import com.tradeguide.domain.strategy.UnavailableAsset;
+import com.tradeguide.domain.risk.PortfolioAssetRiskOverride;
 import com.tradeguide.exception.AssetProfileNotFoundException;
 import com.tradeguide.exception.MarketDataRateLimitExceededException;
 import com.tradeguide.exception.MarketDataUnavailableException;
 import com.tradeguide.repository.broker.PortfolioBrokerHoldingSnapshotRepository;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
+import com.tradeguide.repository.risk.PortfolioAssetRiskOverrideRepository;
 import com.tradeguide.repository.strategy.PortfolioAssetStrategyProfileRepository;
 import com.tradeguide.service.holding.HoldingService;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class PortfolioStrategyGuideService {
     private final StrategyGuideService strategyGuideService;
     private final StrategyDecisionMaker strategyDecisionMaker;
     private final PortfolioAssetStrategyProfileRepository portfolioAssetStrategyProfileRepository;
+    private final PortfolioAssetRiskOverrideRepository portfolioAssetRiskOverrideRepository;
     private final PortfolioBrokerHoldingSnapshotRepository portfolioBrokerHoldingSnapshotRepository;
     private final PortfolioRepository portfolioRepository;
 
@@ -39,6 +42,7 @@ public class PortfolioStrategyGuideService {
             StrategyGuideService strategyGuideService,
             StrategyDecisionMaker strategyDecisionMaker,
             PortfolioAssetStrategyProfileRepository portfolioAssetStrategyProfileRepository,
+            PortfolioAssetRiskOverrideRepository portfolioAssetRiskOverrideRepository,
             PortfolioBrokerHoldingSnapshotRepository portfolioBrokerHoldingSnapshotRepository,
             PortfolioRepository portfolioRepository
     ) {
@@ -46,6 +50,7 @@ public class PortfolioStrategyGuideService {
         this.strategyGuideService = strategyGuideService;
         this.strategyDecisionMaker = strategyDecisionMaker;
         this.portfolioAssetStrategyProfileRepository = portfolioAssetStrategyProfileRepository;
+        this.portfolioAssetRiskOverrideRepository = portfolioAssetRiskOverrideRepository;
         this.portfolioBrokerHoldingSnapshotRepository = portfolioBrokerHoldingSnapshotRepository;
         this.portfolioRepository = portfolioRepository;
     }
@@ -69,13 +74,18 @@ public class PortfolioStrategyGuideService {
 
         List<AssetStrategyGuide> guides = new ArrayList<>();
         List<UnavailableAsset> unavailableAssets = new ArrayList<>();
-        BigDecimal stopLossRatio = resolveStopLossRatio(memberId, portfolioId);
+        BigDecimal portfolioDefaultStopLossRatio = resolveStopLossRatio(memberId, portfolioId);
 
         for (int index = 0; index < holdings.size(); index++) {
             Holding holding = holdings.get(index);
 
             try {
                 StrategySignal signal = resolveSignal(portfolioId, holding);
+                BigDecimal stopLossRatio = resolveHoldingStopLossRatio(
+                        portfolioId,
+                        holding,
+                        portfolioDefaultStopLossRatio
+                );
 
                 guides.add(new AssetStrategyGuide(
                         holding.getMarket(),
@@ -165,10 +175,27 @@ public class PortfolioStrategyGuideService {
                 );
 
         if (override.isPresent()) {
+            if (portfolioRepository.findById(portfolioId).isPresent()) {
+                return strategyGuideService.getStrategySignal(
+                        portfolioId,
+                        holding.getMarket(),
+                        holding.getTicker(),
+                        override.get().getInvestmentTrack()
+                );
+            }
+
             return strategyGuideService.getStrategySignal(
                     holding.getMarket(),
                     holding.getTicker(),
                     override.get().getInvestmentTrack()
+            );
+        }
+
+        if (portfolioRepository.findById(portfolioId).isPresent()) {
+            return strategyGuideService.getStrategySignal(
+                    portfolioId,
+                    holding.getMarket(),
+                    holding.getTicker()
             );
         }
 
@@ -193,6 +220,22 @@ public class PortfolioStrategyGuideService {
                     StrategyGuideUnavailableReason.MARKET_DATA_RATE_LIMIT_EXCEEDED
             ));
         }
+    }
+
+    /**
+     * 종목별 손절 기준 재정의({@link PortfolioAssetRiskOverride})가 있으면 그 값을,
+     * 없으면 포트폴리오 기본값을 사용한다. 둘 다 없으면 {@code null}이며, 이는 참고용
+     * 정보이지 자동 매도 판단이 아니다.
+     */
+    private BigDecimal resolveHoldingStopLossRatio(
+            Long portfolioId,
+            Holding holding,
+            BigDecimal portfolioDefaultStopLossRatio
+    ) {
+        return portfolioAssetRiskOverrideRepository
+                .findByPortfolio_IdAndMarketAndTicker(portfolioId, holding.getMarket(), holding.getTicker())
+                .map(PortfolioAssetRiskOverride::getStopLossRatio)
+                .orElse(portfolioDefaultStopLossRatio);
     }
 
     private BigDecimal resolveStopLossRatio(Long memberId, Long portfolioId) {

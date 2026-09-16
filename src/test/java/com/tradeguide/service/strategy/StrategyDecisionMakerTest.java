@@ -19,7 +19,37 @@ class StrategyDecisionMakerTest {
             new StrategyDecisionMaker();
 
     @Test
-    void returnsHoldForHeldAssetInAboveTrend() {
+    void returnsHoldForHeldAssetInAboveTrendMoreThanFourWeeksAfterCross() {
+        StrategySignal signal = signal(
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE,
+                5
+        );
+
+        StrategyDecision decision =
+                strategyDecisionMaker.decideForHolding(signal);
+
+        assertThat(decision.getAction()).isEqualTo(StrategyAction.HOLD);
+        assertThat(decision.getSignal()).isSameAs(signal);
+    }
+
+    @Test
+    void returnsHoldForHeldAssetInAboveTrendWhenCrossHistoryIsUnknown() {
+        StrategySignal signal = signal(
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE,
+                null
+        );
+
+        StrategyDecision decision =
+                strategyDecisionMaker.decideForHolding(signal);
+
+        assertThat(decision.getAction()).isEqualTo(StrategyAction.HOLD);
+        assertThat(decision.getSignal()).isSameAs(signal);
+    }
+
+    @Test
+    void returnsBuyForHeldAssetWithinFourWeeksAfterCross() {
         StrategySignal signal = signal(
                 StrategyTrend.ABOVE_LONG_AVERAGE,
                 StrategySignalEvent.NONE,
@@ -29,8 +59,34 @@ class StrategyDecisionMakerTest {
         StrategyDecision decision =
                 strategyDecisionMaker.decideForHolding(signal);
 
-        assertThat(decision.getAction()).isEqualTo(StrategyAction.HOLD);
+        assertThat(decision.getAction()).isEqualTo(StrategyAction.BUY);
+        assertThat(decision.getReason()).contains("포지션 추가");
+        assertThat(decision.getGuidance().getEntryTimingStatus())
+                .isEqualTo("ELIGIBLE_NOW");
+        assertThat(decision.getGuidance().getEntryTimingMessage())
+                .contains("최근 교차 후 0~4주");
         assertThat(decision.getSignal()).isSameAs(signal);
+    }
+
+    @Test
+    void calculatesUserDefinedStopLossForHoldingBuyFromAveragePurchasePrice() {
+        StrategySignal signal = signal(
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.NONE,
+                2
+        );
+
+        StrategyDecision decision = strategyDecisionMaker.decideForHolding(
+                signal,
+                new BigDecimal("100"),
+                new BigDecimal("0.10")
+        );
+
+        assertThat(decision.getAction()).isEqualTo(StrategyAction.BUY);
+        assertThat(decision.getGuidance().getStopLossPrice())
+                .isEqualByComparingTo("90");
+        assertThat(decision.getGuidance().getStopLossMessage())
+                .contains("평균 매입가");
     }
 
     @Test
@@ -102,7 +158,7 @@ class StrategyDecisionMakerTest {
         StrategySignal signal = signal(
                 StrategyTrend.ABOVE_LONG_AVERAGE,
                 StrategySignalEvent.NONE,
-                4
+                5
         );
 
         StrategyDecision decision = strategyDecisionMaker.decideForHolding(
@@ -111,6 +167,7 @@ class StrategyDecisionMakerTest {
                 new BigDecimal("0.10")
         );
 
+        assertThat(decision.getAction()).isEqualTo(StrategyAction.HOLD);
         assertThat(decision.getGuidance().getStopLossPrice())
                 .isEqualByComparingTo("90");
         assertThat(decision.getGuidance().getStopLossMessage())

@@ -8,8 +8,12 @@ import RequestError from "../components/common/RequestError";
 import StrategyGuideList from "../components/strategy/StrategyGuideList";
 import PortfolioAssetStrategyProfileSection from "../components/strategy/PortfolioAssetStrategyProfileSection";
 import PortfolioCandidateAssetManager from "../components/strategy/PortfolioCandidateAssetManager";
+import PremarketGuidePanel from "../components/strategy/PremarketGuidePanel";
+import TradePlanPreviewSection from "../components/strategy/TradePlanPreviewSection";
 import MarketDataRateLimitNotice from "../components/valuation/MarketDataRateLimitNotice";
 import {getCandidateStrategyGuides, getPortfolioStrategyGuides} from "../api/strategyGuideApi";
+import {getTodayPremarketGuide} from "../api/premarketGuideApi";
+import {getTradePlanPreview} from "../api/tradePlanPreviewApi";
 import {usePortfolioContext} from "../context/portfolioContext";
 import {usePortfolioResource} from "../hooks/usePortfolioResource";
 
@@ -23,6 +27,8 @@ export default function StrategyGuidesPage() {
 function StrategyGuidesContent({memberId, portfolioId}: {memberId: number; portfolioId: number}) {
     const holdingsResource = usePortfolioResource(memberId, portfolioId, getPortfolioStrategyGuides);
     const candidatesResource = usePortfolioResource(memberId, portfolioId, getCandidateStrategyGuides);
+    const premarketGuideResource = usePortfolioResource(memberId, portfolioId, getTodayPremarketGuide);
+    const tradePlanResource = usePortfolioResource(memberId, portfolioId, getTradePlanPreview);
     const [candidateCount, setCandidateCount] = useState<number | null>(null);
     const dataAsOfDates = [holdingsResource.data, candidatesResource.data]
         .flatMap((batch) => batch?.guides.map((guide) => guide.decision.metadata.dataAsOf) ?? [])
@@ -137,6 +143,16 @@ function StrategyGuidesContent({memberId, portfolioId}: {memberId: number; portf
                 <p>가이드는 자동 주문이 아닌 최종 판단 전 검토 정보입니다.</p>
                 {dataAsOfLabel ? <p className="data-as-of">시세 데이터 기준일 {dataAsOfLabel}</p> : null}
             </header>
+            <PremarketGuidePanel
+                memberId={memberId}
+                portfolioId={portfolioId}
+                resource={premarketGuideResource}
+            />
+            <TradePlanPreviewSection
+                memberId={memberId}
+                portfolioId={portfolioId}
+                resource={tradePlanResource}
+            />
             <section className="content-section">
                 <div className="section-heading">
                     <div>
@@ -201,7 +217,10 @@ function StrategyGuidesContent({memberId, portfolioId}: {memberId: number; portf
                 <PortfolioCandidateAssetManager
                     memberId={memberId}
                     portfolioId={portfolioId}
-                    onCandidateChanged={candidatesResource.refresh}
+                    onCandidateChanged={() => {
+                        candidatesResource.refresh();
+                        tradePlanResource.refresh();
+                    }}
                     onCandidateCountChange={setCandidateCount}
                 />
                 {render(
@@ -219,7 +238,10 @@ function StrategyGuidesContent({memberId, portfolioId}: {memberId: number; portf
             <PortfolioAssetStrategyProfileSection
                 memberId={memberId}
                 portfolioId={portfolioId}
-                onProfileChanged={holdingsResource.refresh}
+                onProfileChanged={() => {
+                    holdingsResource.refresh();
+                    tradePlanResource.refresh();
+                }}
             />
         </>
     );

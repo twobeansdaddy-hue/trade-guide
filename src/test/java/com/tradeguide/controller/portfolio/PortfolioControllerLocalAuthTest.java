@@ -1,6 +1,8 @@
 package com.tradeguide.controller.portfolio;
 
 import com.tradeguide.domain.portfolio.Portfolio;
+import com.tradeguide.repository.portfolio.PortfolioRepository;
+import com.tradeguide.repository.risk.PortfolioAssetRiskOverrideRepository;
 import com.tradeguide.service.auth.AuthIdentityService;
 import com.tradeguide.service.auth.MemberAccessService;
 import com.tradeguide.service.backtest.PortfolioAssetBacktestService;
@@ -8,6 +10,7 @@ import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
 import com.tradeguide.service.strategy.PortfolioCandidateStrategyGuideService;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
+import com.tradeguide.service.strategy.TradePlanPreviewService;
 import com.tradeguide.service.risk.PortfolioExposureService;
 import com.tradeguide.service.risk.PortfolioRiskAlertService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
@@ -21,6 +24,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Clock;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -54,6 +58,8 @@ class PortfolioControllerLocalAuthTest {
     @MockitoBean
     private PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
     @MockitoBean
+    private TradePlanPreviewService tradePlanPreviewService;
+    @MockitoBean
     private PortfolioRiskAlertService portfolioRiskAlertService;
     @MockitoBean
     private AuthIdentityService authIdentityService;
@@ -61,6 +67,12 @@ class PortfolioControllerLocalAuthTest {
     private MarketDataProviderCatalog marketDataProviderCatalog;
     @MockitoBean
     private PortfolioAssetBacktestService portfolioAssetBacktestService;
+    @MockitoBean
+    private PortfolioAssetRiskOverrideRepository portfolioAssetRiskOverrideRepository;
+    @MockitoBean
+    private PortfolioRepository portfolioRepository;
+    @MockitoBean
+    private Clock clock;
 
     @Test
     void allowsUnauthenticatedLocalRequestWhenAuthenticationIsDisabled() throws Exception {

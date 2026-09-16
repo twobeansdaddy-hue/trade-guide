@@ -2,10 +2,15 @@ package com.tradeguide.service.strategy;
 
 import com.tradeguide.domain.market.CandleInterval;
 import com.tradeguide.domain.market.MarketCandle;
+import com.tradeguide.domain.market.MarketDataProvider;
+import com.tradeguide.domain.market.PortfolioMarketDataPreference;
+import com.tradeguide.domain.member.Member;
+import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.strategy.*;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.AssetProfileNotFoundException;
 import com.tradeguide.exception.StaleMarketDataException;
+import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.strategy.AssetProfileRepository;
 import com.tradeguide.service.market.CompletedWeeklyCandleFilter;
 import com.tradeguide.service.market.MarketHistoryService;
@@ -28,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -50,6 +56,8 @@ class StrategyGuideServiceTest {
     private WeeklyCandleFreshnessValidator weeklyCandleFreshnessValidator;
     @Mock
     private CompletedWeeklyCandleCache completedWeeklyCandleCache;
+    @Mock
+    private PortfolioRepository portfolioRepository;
 
     @InjectMocks
     private StrategyGuideService strategyGuideService;
@@ -290,5 +298,119 @@ class StrategyGuideServiceTest {
         assertThat(profileCaptor.getValue().getTicker()).isEqualTo("SOXL");
         assertThat(profileCaptor.getValue().getInvestmentTrack())
                 .isEqualTo(InvestmentTrack.TRACK_B);
+    }
+
+    @Test
+    void getsStrategySignalForPortfolioUsesProviderQualifiedRouting() {
+        Long portfolioId = 42L;
+
+        Member member = new Member("owner@example.com", "owner");
+        Portfolio portfolio = new Portfolio(member, "토스증권 포트폴리오");
+        portfolio.changeMarketDataPreference(
+                PortfolioMarketDataPreference.unified(MarketDataProvider.TOSS_SECURITIES)
+        );
+
+        AssetProfile assetProfile = new AssetProfile(
+                Market.US,
+                "SOXL",
+                InvestmentTrack.TRACK_A
+        );
+
+        List<MarketCandle> fetchedCandles = List.of();
+        List<MarketCandle> completedCandles = List.of();
+
+        StrategySignal expected = new StrategySignal(
+                new BigDecimal("120"),
+                "포트폴리오 전략 신호",
+                new StrategyMetadata(
+                        "test-strategy",
+                        "test-v1",
+                        LocalDate.of(2026, 8, 7)
+                ),
+                StrategyTrend.ABOVE_LONG_AVERAGE,
+                StrategySignalEvent.CROSS_UP,
+                0
+        );
+
+        when(portfolioRepository.findById(portfolioId))
+                .thenReturn(Optional.of(portfolio));
+
+        when(assetProfileRepository.findByMarketAndTicker(
+                Market.US,
+                "SOXL"
+        )).thenReturn(Optional.of(assetProfile));
+
+        when(marketHistoryService.getCandles(
+                MarketDataProvider.TOSS_SECURITIES,
+                portfolioId,
+                Market.US,
+                "SOXL",
+                CandleInterval.WEEKLY,
+                101
+        )).thenReturn(fetchedCandles);
+
+        when(completedWeeklyCandleCache.getOrLoad(
+                eq(MarketDataProvider.TOSS_SECURITIES.name()),
+                eq(Market.US),
+                eq("SOXL"),
+                eq(101),
+                any()
+        )).thenAnswer(invocation -> invocation
+                .<Supplier<List<MarketCandle>>>getArgument(4)
+                .get()
+        );
+
+        when(completedWeeklyCandleFilter.filter(fetchedCandles))
+                .thenReturn(completedCandles);
+
+        when(strategySelector.select(InvestmentTrack.TRACK_A))
+                .thenReturn(tradingStrategy);
+
+        when(tradingStrategy.decide(assetProfile, completedCandles))
+                .thenReturn(expected);
+
+        StrategySignal result = strategyGuideService.getStrategySignal(
+                portfolioId,
+                Market.US,
+                "SOXL"
+        );
+
+        assertThat(result).isSameAs(expected);
+
+        verify(portfolioRepository).findById(portfolioId);
+
+        verify(completedWeeklyCandleCache).getOrLoad(
+                eq(MarketDataProvider.TOSS_SECURITIES.name()),
+                eq(Market.US),
+                eq("SOXL"),
+                eq(101),
+                any()
+        );
+        verify(completedWeeklyCandleCache, never()).getOrLoad(
+                any(Market.class),
+                any(String.class),
+                any(Integer.class),
+                any()
+        );
+
+        verify(marketHistoryService).getCandles(
+                MarketDataProvider.TOSS_SECURITIES,
+                portfolioId,
+                Market.US,
+                "SOXL",
+                CandleInterval.WEEKLY,
+                101
+        );
+        verify(marketHistoryService, never()).getCandles(
+                any(Market.class),
+                any(String.class),
+                any(CandleInterval.class),
+                any(Integer.class)
+        );
+
+        verify(strategySelector).select(InvestmentTrack.TRACK_A);
+        verify(completedWeeklyCandleFilter).filter(fetchedCandles);
+        verify(tradingStrategy).decide(assetProfile, completedCandles);
+        verify(weeklyCandleFreshnessValidator).validate(completedCandles);
     }
 }

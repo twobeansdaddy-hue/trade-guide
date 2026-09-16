@@ -78,9 +78,9 @@ function renderReasonPill(reason?: string | null) {
 function getUnavailableItemMessage(asset: UnavailableAsset): string {
     switch (asset.reason) {
         case "ASSET_PROFILE_NOT_FOUND":
-            return "이 종목에 적용할 전략 프로필이 등록되지 않았습니다. 하단 '보유 종목 투자 트랙 설정'에서 Track A를 설정해 주세요.";
+            return "이 종목에 적용할 전략 프로필이 등록되지 않았습니다. 하단 '보유 종목 투자 트랙 및 손절 기준 설정'에서 Track A를 설정해 주세요.";
         case "MARKET_DATA_RATE_LIMIT_EXCEEDED":
-            return "시장 데이터 제공자(Twelve Data) 분당 요청 제한(Rate Limit)을 초과했습니다. 잠시 후 다시 시도해 주세요.";
+            return "선택한 시장 데이터 제공자의 요청 제한(Rate Limit)을 초과했습니다. 잠시 후 다시 시도해 주세요.";
         case "MARKET_DATA_UNAVAILABLE":
             return "외부 시장 데이터 제공자로부터 시세 데이터를 조회하지 못했습니다. 잠시 후 다시 시도해 주세요.";
         default:
@@ -109,7 +109,7 @@ function getUnavailableSectionDescription(assets: UnavailableAsset[], isCandidat
     if (assets.some((a) => a.reason === "ASSET_PROFILE_NOT_FOUND")) {
         return isCandidate
             ? "후보 종목의 전략 프로필이 등록되지 않아 가이드를 계산할 수 없습니다."
-            : "전략 프로필이 없는 종목은 하단 '보유 종목 투자 트랙 설정'에서 Track A를 지정해야 가이드가 계산됩니다.";
+            : "전략 프로필이 없는 종목은 하단 '보유 종목 투자 트랙 및 손절 기준 설정'에서 Track A를 지정해야 가이드가 계산됩니다.";
     }
     if (assets.every((a) => a.reason === "MARKET_DATA_RATE_LIMIT_EXCEEDED")) {
         return "외부 시세 제공자의 분당 호출 한도(8회)를 초과했습니다. 잠시 후(약 1분 뒤) 다시 시도해 주세요.";
@@ -164,7 +164,7 @@ export default function StrategyGuideList({
                         <h3 className="strategy-guide-empty-title">보유 종목에 적용할 전략 프로필이 없습니다</h3>
                         <p className="strategy-guide-empty-message">
                             매매 원장에 등록된 보유 종목이 있으나, 적용 가능한 전략 프로필(Track A)이 설정되지 않아 전략 가이드를 계산할 수 없습니다.
-                            아래 &apos;보유 종목 투자 트랙 설정&apos;에서 Track A를 설정해 주세요.
+                            아래 &apos;보유 종목 투자 트랙 및 손절 기준 설정&apos;에서 Track A를 설정해 주세요.
                         </p>
                         <div className="strategy-guide-empty-actions">
                             <a href="#held-asset-strategy-profiles" className="primary-button">
@@ -183,7 +183,7 @@ export default function StrategyGuideList({
                         </div>
                         <h3 className="strategy-guide-empty-title">시장 데이터 요청 제한으로 가이드를 조회하지 못했습니다</h3>
                         <p className="strategy-guide-empty-message">
-                            외부 시세 제공자(Twelve Data)의 분당 요청 한도(Rate Limit)를 초과했습니다. 잠시 후(약 1분 뒤) 다시 시도해 주세요.
+                            선택한 외부 시세 제공자의 분당 요청 한도(Rate Limit)를 초과했습니다. 잠시 후 다시 시도해 주세요.
                         </p>
                         {onRetry ? (
                             <div className="strategy-guide-empty-actions">

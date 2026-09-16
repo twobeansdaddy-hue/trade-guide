@@ -21,6 +21,25 @@ public class StrategyDecisionMaker {
             BigDecimal averagePurchasePrice,
             BigDecimal stopLossRatio
     ) {
+        if (signal.getTrend() == StrategyTrend.ABOVE_LONG_AVERAGE
+                && signal.getWeeksSinceCross() != null
+                && signal.getWeeksSinceCross() <= 4) {
+            return new StrategyDecision(
+                    StrategyAction.BUY,
+                    "상승 추세가 유지되고 있고 최근 교차 후 4주 이내여서 이미 보유 중인 종목의 "
+                            + "포지션 추가를 검토합니다.",
+                    signal,
+                    createGuidance(
+                            "ELIGIBLE_NOW",
+                            "이미 보유 중인 종목이지만 최근 교차 후 0~4주 구간이므로 포지션 추가를 "
+                                    + "검토할 수 있습니다.",
+                            averagePurchasePrice,
+                            stopLossRatio,
+                            "평균 매입가"
+                    )
+            );
+        }
+
         if (signal.getTrend() == StrategyTrend.ABOVE_LONG_AVERAGE) {
             return new StrategyDecision(
                     StrategyAction.HOLD,

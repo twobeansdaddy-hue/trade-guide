@@ -73,16 +73,7 @@ public class PortfolioCandidateStrategyGuideService {
             CandidateAssetRef candidateRef = candidateRefs.get(index);
 
             try {
-                StrategySignal signal = candidateRef.investmentTrack() != null
-                        ? strategyGuideService.getStrategySignal(
-                                candidateRef.market(),
-                                candidateRef.ticker(),
-                                candidateRef.investmentTrack()
-                        )
-                        : strategyGuideService.getStrategySignal(
-                                candidateRef.market(),
-                                candidateRef.ticker()
-                        );
+                StrategySignal signal = resolveSignal(portfolioId, candidateRef);
 
                 guides.add(new AssetStrategyGuide(
                         candidateRef.market(),
@@ -117,6 +108,38 @@ public class PortfolioCandidateStrategyGuideService {
         }
 
         return new StrategyGuideBatch(guides, unavailableAssets);
+    }
+
+    private StrategySignal resolveSignal(Long portfolioId, CandidateAssetRef candidateRef) {
+        if (portfolioRepository.findById(portfolioId).isPresent()) {
+            if (candidateRef.investmentTrack() != null) {
+                return strategyGuideService.getStrategySignal(
+                        portfolioId,
+                        candidateRef.market(),
+                        candidateRef.ticker(),
+                        candidateRef.investmentTrack()
+                );
+            }
+
+            return strategyGuideService.getStrategySignal(
+                    portfolioId,
+                    candidateRef.market(),
+                    candidateRef.ticker()
+            );
+        }
+
+        if (candidateRef.investmentTrack() != null) {
+            return strategyGuideService.getStrategySignal(
+                    candidateRef.market(),
+                    candidateRef.ticker(),
+                    candidateRef.investmentTrack()
+            );
+        }
+
+        return strategyGuideService.getStrategySignal(
+                candidateRef.market(),
+                candidateRef.ticker()
+        );
     }
 
     /**

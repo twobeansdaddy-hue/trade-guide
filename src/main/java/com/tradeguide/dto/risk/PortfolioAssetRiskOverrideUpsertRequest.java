@@ -1,0 +1,27 @@
+package com.tradeguide.dto.risk;
+
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+
+import java.math.BigDecimal;
+
+public class PortfolioAssetRiskOverrideUpsertRequest {
+
+    @NotNull(message = "손절 기준 비율은 필수입니다.")
+    @DecimalMin(
+            value = "0.0",
+            inclusive = false,
+            message = "손절 기준 비율은 0보다 커야 합니다."
+    )
+    @DecimalMax(
+            value = "1.0",
+            inclusive = false,
+            message = "손절 기준 비율은 1보다 작아야 합니다."
+    )
+    private BigDecimal stopLossRatio;
+
+    public BigDecimal getStopLossRatio() {
+        return stopLossRatio;
+    }
+}
