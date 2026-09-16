@@ -56,6 +56,7 @@
 > 추천할 수 있도록 확장. Track A(SOXL 등 레버리지/고변동성)는 타이밍·리스크관리 중심,
 > Track B(일반 대형주)는 밸류에이션 중심 + 보조적 타이밍으로 역할을 분리.
 - [x] Track B 대표 종목(AAPL/JPM/PG) 이동평균 타이밍 규칙 실데이터 백테스트
+- [x] Track B MACD(12,26,9) + 50일 추세 필터 연구 검증 — 수익률 우위 게이트 불충족으로 운영 엔진 미채택 (`research/reports/track-b-macd-validation.md`)
 - [x] 투트랙 전략 프레임워크 문서화 (Track A/B 구분 기준, 밸류에이션 접근법 차이 — PEG/PER은 기존 연구 인용)
 - [x] 신규 후보 종목 스크리닝 스키마(candidates.schema.json) 설계 및 첫 스냅샷 기록 (S&P500, PEG<1 + 50일선 위)
 - [x] 주간 스케줄 작업에 Track B 스크리닝 갱신 + 이전 후보군 결과 추적 추가
