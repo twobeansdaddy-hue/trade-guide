@@ -32,13 +32,17 @@ import java.time.LocalDateTime;
  * 증권사 잔고 조정 승인 한 건을 실제로 생성하는 트랜잭션 경계다.
  *
  * <p>대상은 이미 Trade Guide 원장에 있는 종목 중 스냅샷 비교가
- * {@link BrokerHoldingComparison#QUANTITY_MISMATCH}이고 증권사 수량이 원장 수량보다
- * 많은 경우뿐이다. 신규 종목({@code ONLY_IN_BROKER})은 개시 잔고 승인
- * ({@link PortfolioBrokerHoldingImportWriter})의 대상이며 이 클래스는 다루지 않는다.
+ * {@link BrokerHoldingComparison#QUANTITY_MISMATCH}인 경우뿐이다. 신규 종목
+ * ({@code ONLY_IN_BROKER})은 개시 잔고 승인({@link PortfolioBrokerHoldingImportWriter})의
+ * 대상이며 이 클래스는 다루지 않는다.
  *
- * <p>이 클래스는 어떤 경우에도 실제 증권사 주문을 내지 않는다. 조정 매수 한 건만
- * 명시적 사용자 승인으로 생성하며, 수량은 증권사·원장 수량의 차이(delta), 단가는
- * 반영 후 내부 가중평균이 증권사 스냅샷 평균과 일치하도록 역산한 값이다.
+ * <p>이 클래스는 어떤 경우에도 실제 증권사 주문을 내지 않는다. 조정 매매 한 건만
+ * 명시적 사용자 승인으로 생성한다. 증권사 수량이 원장보다 많으면 조정 매수를 만들고,
+ * 단가는 반영 후 내부 가중평균이 증권사 스냅샷 평균과 일치하도록 역산한 값이다.
+ * 원장 수량이 증권사보다 많으면(예: 원장에는 기록됐지만 실제로는 매도된 경우) 조정
+ * 매도를 만들며, 실제 체결가를 알 수 없으므로 임의의 손익을 만들지 않도록 단가를
+ * 원장의 조정 전 평균 매입가와 동일하게 두어 실현손익이 0이 되게 한다. 이 경우
+ * 원장 평균 매입가는 그대로 유지된다.
  *
  * <p>{@link PortfolioBrokerHoldingAdjustmentService}와 별도 빈으로 분리한 이유는
  * {@link PortfolioBrokerHoldingImportWriter}와 같다. 동시 요청으로 인한 유니크 제약
@@ -126,27 +130,38 @@ public class PortfolioBrokerHoldingAdjustmentWriter {
         BigDecimal ledgerAveragePurchasePriceBefore =
                 ledgerHolding == null ? BigDecimal.ZERO : ledgerHolding.getAveragePurchasePrice();
 
-        // 이 API는 증권사 수량이 원장 수량보다 많은 경우만 지원한다. 원장이 더 많거나
-        // 같으면(부족분 반영, 초과분 매도 반영 등) 매수만으로 해소할 수 없으므로 422로 거부한다.
-        if (brokerQuantity.compareTo(ledgerQuantityBefore) <= 0) {
+        if (brokerQuantity.compareTo(ledgerQuantityBefore) == 0) {
             throw new BrokerHoldingAdjustmentUnprocessableException(
-                    "증권사 수량이 Trade Guide 보유 수량보다 많은 경우만 잔고 조정을 반영할 수 있습니다."
+                    "증권사 수량과 Trade Guide 보유 수량이 이미 같아 잔고 조정이 필요하지 않습니다."
             );
         }
 
-        BigDecimal deltaQuantity = brokerQuantity.subtract(ledgerQuantityBefore);
+        BigDecimal deltaQuantity;
+        BigDecimal unitPrice;
+        TradeType tradeType;
 
-        // 반영 후 내부 가중평균이 증권사 스냅샷 평균과 일치하도록 단가를 역산한다.
-        // brokerAvg * brokerQty = ledgerAvg * ledgerQty + unitPrice * delta
-        BigDecimal brokerTotalCost = brokerQuantity.multiply(brokerAveragePurchasePrice);
-        BigDecimal ledgerTotalCost = ledgerQuantityBefore.multiply(ledgerAveragePurchasePriceBefore);
-        BigDecimal unitPrice = brokerTotalCost.subtract(ledgerTotalCost)
-                .divide(deltaQuantity, PRICE_SCALE, RoundingMode.HALF_UP);
+        if (brokerQuantity.compareTo(ledgerQuantityBefore) > 0) {
+            // 증권사 수량이 더 많다: 부족분을 조정 매수로 반영한다. 반영 후 내부 가중평균이
+            // 증권사 스냅샷 평균과 일치하도록 단가를 역산한다.
+            // brokerAvg * brokerQty = ledgerAvg * ledgerQty + unitPrice * delta
+            deltaQuantity = brokerQuantity.subtract(ledgerQuantityBefore);
+            BigDecimal brokerTotalCost = brokerQuantity.multiply(brokerAveragePurchasePrice);
+            BigDecimal ledgerTotalCost = ledgerQuantityBefore.multiply(ledgerAveragePurchasePriceBefore);
+            unitPrice = brokerTotalCost.subtract(ledgerTotalCost)
+                    .divide(deltaQuantity, PRICE_SCALE, RoundingMode.HALF_UP);
 
-        if (unitPrice.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new BrokerHoldingAdjustmentUnprocessableException(
-                    "산출된 조정 단가가 0 이하여서 잔고 조정을 반영할 수 없습니다."
-            );
+            if (unitPrice.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new BrokerHoldingAdjustmentUnprocessableException(
+                        "산출된 조정 단가가 0 이하여서 잔고 조정을 반영할 수 없습니다."
+                );
+            }
+            tradeType = TradeType.BUY;
+        } else {
+            // 원장 수량이 더 많다: 초과분을 조정 매도로 반영한다. 실제 체결가를 알 수 없으므로
+            // 원장의 조정 전 평균 매입가를 그대로 단가로 사용해 실현손익을 0으로 만든다.
+            deltaQuantity = ledgerQuantityBefore.subtract(brokerQuantity);
+            unitPrice = ledgerAveragePurchasePriceBefore;
+            tradeType = TradeType.SELL;
         }
 
         Instant approvedAtInstant = Instant.now(clock);
@@ -156,7 +171,7 @@ public class PortfolioBrokerHoldingAdjustmentWriter {
                 portfolio,
                 item.getMarket(),
                 item.getTicker(),
-                TradeType.BUY,
+                tradeType,
                 deltaQuantity,
                 unitPrice,
                 BigDecimal.ZERO,

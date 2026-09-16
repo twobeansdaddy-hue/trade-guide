@@ -191,11 +191,11 @@ class PortfolioBrokerHoldingAdjustmentWriterTest {
     }
 
     @Test
-    void rejectsWhenBrokerQuantityIsNotGreaterThanLedgerQuantity() {
+    void rejectsWhenBrokerQuantityEqualsLedgerQuantity() {
         when(portfolioBrokerHoldingSnapshotService.getLatestSnapshotComparison(10L, 20L))
-                .thenReturn(comparisonWith(BrokerHoldingComparison.QUANTITY_MISMATCH, new BigDecimal("20")));
+                .thenReturn(comparisonWith(BrokerHoldingComparison.QUANTITY_MISMATCH, new BigDecimal("15")));
         when(holdingService.getHoldings(10L, 20L))
-                .thenReturn(List.of(new Holding(Market.US, "SOXL", new BigDecimal("20"), new BigDecimal("100.00"))));
+                .thenReturn(List.of(new Holding(Market.US, "SOXL", new BigDecimal("15"), new BigDecimal("100.00"))));
 
         assertThatThrownBy(() -> writer.createAdjustment(10L, 20L, 55L, 10L))
                 .isInstanceOf(BrokerHoldingAdjustmentUnprocessableException.class);
@@ -203,17 +203,45 @@ class PortfolioBrokerHoldingAdjustmentWriterTest {
         verifyNoInteractions(tradeTransactionRepository, portfolioBrokerHoldingAdjustmentRepository);
     }
 
+    /**
+     * 원장 수량이 증권사보다 많은 경우(예: 실제로는 매도됐지만 Trade Guide에는 기록되지
+     * 않은 경우)는 조정 매도를 생성한다. 실제 체결가를 알 수 없으므로 단가는 원장의
+     * 조정 전 평균 매입가와 동일하게 두어 실현손익을 0으로 만들고, 원장 평균 매입가는
+     * 그대로 유지되어야 한다.
+     */
     @Test
-    void rejectsWhenLedgerQuantityIsGreaterThanBrokerQuantity() {
+    void createsSellAdjustmentWhenLedgerQuantityExceedsBroker() {
         when(portfolioBrokerHoldingSnapshotService.getLatestSnapshotComparison(10L, 20L))
                 .thenReturn(comparisonWith(BrokerHoldingComparison.QUANTITY_MISMATCH, new BigDecimal("30")));
         when(holdingService.getHoldings(10L, 20L))
                 .thenReturn(List.of(new Holding(Market.US, "SOXL", new BigDecimal("30"), new BigDecimal("100.00"))));
+        when(tradeTransactionRepository.save(any(TradeTransaction.class)))
+                .thenAnswer(invocation -> {
+                    TradeTransaction transaction = invocation.getArgument(0);
+                    ReflectionTestUtils.setField(transaction, "id", 901L);
+                    return transaction;
+                });
+        when(portfolioBrokerHoldingAdjustmentRepository.saveAndFlush(any(PortfolioBrokerHoldingAdjustment.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        assertThatThrownBy(() -> writer.createAdjustment(10L, 20L, 55L, 10L))
-                .isInstanceOf(BrokerHoldingAdjustmentUnprocessableException.class);
+        // 증권사 15주, 원장 30주 -> 초과분 15주를 조정 매도로 반영한다.
+        PortfolioBrokerHoldingAdjustment result = writer.createAdjustment(10L, 20L, 55L, 10L);
 
-        verifyNoInteractions(tradeTransactionRepository, portfolioBrokerHoldingAdjustmentRepository);
+        assertThat(result.getDeltaQuantity()).isEqualByComparingTo("15");
+        assertThat(result.getUnitPrice()).isEqualByComparingTo("100.00");
+        assertThat(result.getBrokerQuantity()).isEqualByComparingTo("15");
+        assertThat(result.getLedgerQuantityBefore()).isEqualByComparingTo("30");
+        assertThat(result.getLedgerAveragePurchasePriceBefore()).isEqualByComparingTo("100.00");
+        assertThat(result.getTradeTransactionId()).isEqualTo(901L);
+
+        ArgumentCaptor<TradeTransaction> captor = ArgumentCaptor.forClass(TradeTransaction.class);
+        org.mockito.Mockito.verify(tradeTransactionRepository).save(captor.capture());
+        TradeTransaction saved = captor.getValue();
+        assertThat(saved.getTradeType()).isEqualTo(TradeType.SELL);
+        assertThat(saved.getSource()).isEqualTo(TradeTransactionSource.BROKER_HOLDING_ADJUSTMENT);
+        assertThat(saved.getQuantity()).isEqualByComparingTo("15");
+        // 단가를 원장 평균 매입가와 동일하게 둬 실현손익이 0이 되도록 한다.
+        assertThat(saved.getExecutedPrice()).isEqualByComparingTo(result.getLedgerAveragePurchasePriceBefore());
     }
 
     /**
