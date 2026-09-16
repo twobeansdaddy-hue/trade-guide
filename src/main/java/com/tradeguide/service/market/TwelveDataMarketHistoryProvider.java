@@ -39,6 +39,11 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
     }
 
     @Override
+    public MarketDataProvider getProvider() {
+        return MarketDataProvider.TWELVE_DATA;
+    }
+
+    @Override
     public List<MarketCandle> getCandles(
             Market market,
             String ticker,

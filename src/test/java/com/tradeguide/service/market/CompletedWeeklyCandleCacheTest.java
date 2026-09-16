@@ -10,6 +10,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,5 +96,60 @@ class CompletedWeeklyCandleCacheTest {
 
         assertThat(result).isSameAs(currentWeekCandles);
         assertThat(loadCount).hasValue(2);
+    }
+
+    @Test
+    void mergesConcurrentLoadsForSameTickerAndCompletedWeek() throws Exception {
+        when(weeklyCandleSchedule.getExpectedLatestCompletedCandleStart())
+                .thenReturn(LocalDate.of(2026, 8, 3));
+
+        AtomicInteger loadCount = new AtomicInteger();
+        CountDownLatch loaderStarted = new CountDownLatch(1);
+        CountDownLatch releaseLoader = new CountDownLatch(1);
+        List<MarketCandle> loadedCandles = List.of();
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        try {
+            Future<List<MarketCandle>> first = executor.submit(() -> completedWeeklyCandleCache.getOrLoad(
+                    Market.US,
+                    "SOXL",
+                    101,
+                    () -> {
+                        loadCount.incrementAndGet();
+                        loaderStarted.countDown();
+                        await(releaseLoader);
+                        return loadedCandles;
+                    }
+            ));
+
+            assertThat(loaderStarted.await(1, TimeUnit.SECONDS)).isTrue();
+
+            Future<List<MarketCandle>> second = executor.submit(() -> completedWeeklyCandleCache.getOrLoad(
+                    Market.US,
+                    "soxl",
+                    101,
+                    () -> {
+                        loadCount.incrementAndGet();
+                        return List.of();
+                    }
+            ));
+
+            releaseLoader.countDown();
+
+            assertThat(first.get(1, TimeUnit.SECONDS)).isSameAs(loadedCandles);
+            assertThat(second.get(1, TimeUnit.SECONDS)).isSameAs(loadedCandles);
+            assertThat(loadCount).hasValue(1);
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    private static void await(CountDownLatch latch) {
+        try {
+            latch.await(1, TimeUnit.SECONDS);
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new AssertionError("테스트 로더가 중단되었습니다.", exception);
+        }
     }
 }

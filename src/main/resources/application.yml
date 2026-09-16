@@ -33,6 +33,11 @@ twelve-data:
 tradeguide:
   auth:
     enabled: false
+  premarket:
+    scheduler:
+      # 운영에서 거래소 휴장일과 시세 제공자 호출 한도를 확인한 뒤 true로 켠다.
+      enabled: ${TRADEGUIDE_PREMARKET_SCHEDULER_ENABLED:false}
+      cron: ${TRADEGUIDE_PREMARKET_SCHEDULER_CRON:0 0 8 * * MON-FRI}
   broker:
     # 기존 단일 키 프로퍼티. 아래 encryption-keys에 값이 있는 항목이 하나도 없으면
     # 이 값을 버전 1 키로 취급해 하위 호환한다.
