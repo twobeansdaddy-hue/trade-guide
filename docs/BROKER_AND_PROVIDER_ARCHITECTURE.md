@@ -40,7 +40,7 @@ Initial catalog:
 | Provider | Kind | Credentials | Intended use | Initial status |
 | --- | --- | --- | --- | --- |
 | `TWELVE_DATA` | Market data | Service-managed key | US prices, candles, asset search | Available |
-| `TOSS_SECURITIES` | Broker and market data | Member-owned broker connection | Read-only account, holdings, transactions, KR/US market data where supported | Design only |
+| `TOSS_SECURITIES` | Broker and market data | Member-owned broker connection | Read-only account, holdings, transactions, prices, and candles for connected KR/US accounts where supported | Implemented for local read-only flow |
 | `YAHOO_FINANCE` | Research data | No user key in this service | Research and backtest comparison | Not selectable for production |
 
 Yahoo Finance must not become a production fallback merely because a public endpoint is
@@ -85,7 +85,11 @@ such as Twelve Data candles with a broker price while displaying one unnamed sou
 
 Automatic fallback is disabled in v1. A provider failure is shown with its provider name
 and retry guidance. Cross-provider fallback changes data provenance and must be an
-explicit future policy with timestamp and source disclosure.
+explicit future policy with timestamp and source disclosure. For Toss Securities, the
+official candle API currently supplies daily candles; the application aggregates those
+daily candles into completed weekly candles before running the Track A strategy. This
+keeps the selected portfolio provider consistent without pretending that Toss returned a
+native weekly interval.
 
 ## Broker Credential Security
 

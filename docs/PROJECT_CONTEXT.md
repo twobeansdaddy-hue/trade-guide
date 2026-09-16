@@ -56,16 +56,19 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - `StrategyAction`에는 `BUY`, `HOLD`, `REDUCE`, `SELL`, `WATCH`가 있다. `StrategyDecisionMaker`는 보유 종목의 `HOLD`/`SELL`과 미보유 후보의 `BUY`/`WATCH`를 결정한다. 후보 `BUY`는 상승 추세의 교차 후 0~4주에만 허용한다. `REDUCE`는 주문 초안 생성 규칙과 부분 매도 정책이 확정될 때까지 사용하지 않는다.
 - `TradePlan`은 주문 비율, 비율 기준, 주문 유형, 지정가, 손절가, 유효 기간, 근거와 전략 메타데이터를 담는 주문 초안 도메인 모델이다. DB에 저장하거나 증권사에 전송하지 않는다.
 - `QuantityRatioBasis.PORTFOLIO_VALUE`는 포트폴리오 평가액 기준의 신규 매수 비율이고, `HOLDING_QUANTITY`는 보유 종목 수량 기준의 매도 또는 부분 매도 비율이다.
-- `PortfolioRiskPolicy`는 주문당 최대 손실 비율, 종목당 최대 노출 비율, 선택적인 사용자 설정 손절 기준 비율을 검증하는 JPA 값 객체다. `Portfolio`에 포함되어 `portfolios` 테이블의 소수점 여섯 자리 컬럼으로 저장되며, 설정·조회 API와 종목별 노출 초과 경고에 사용된다. 손절 기준 비율은 사용자가 직접 입력한 검토용 기준일 때만 전략 가이드에 연결하고, 리서치가 검증한 자동 손절 규칙이나 주문 수량 산식으로 해석하지 않는다.
-- 주문 초안을 만드는 전략별 가격·수량·손절·유효 기간 규칙은 아직 확정하지 않았으므로 `TradePlanGenerator`는 구현하지 않았다.
+- `PortfolioRiskPolicy`는 주문당 최대 손실 비율, 종목당 최대 노출 비율, 선택적인 사용자 설정 손절 기준 비율을 검증하는 JPA 값 객체다. `Portfolio`에 포함되어 `portfolios` 테이블의 소수점 여섯 자리 컬럼으로 저장되며, 설정·조회 API와 종목별 노출 초과 경고에 사용된다.
+- `GET /api/members/{memberId}/portfolios/{portfolioId}/trade-plan-preview`는 DB 저장이나 증권사 전송 없이 검토용 매매 계획을 계산한다. 후보 `BUY`는 `포트폴리오 평가액 × 주문당 최대 손실 비율 ÷ (전략 기준 가격 - 사용자 손절가)`로 위험 기준 수량을 구한 뒤 종목당 최대 노출 한도로 제한한다. 기준 가격은 실시간 주문가가 아니며, 가용 현금은 아직 공통 연동 계약이 없어 `AVAILABLE_CASH_NOT_SYNCED` 제약으로만 표시한다.
+- 보유 종목은 전략 기준 가격이 사용자 손절가 이하일 때만 현재 보유 수량 전량의 `STOP_LOSS_EXIT_REVIEW`를 반환한다. 일반 하락 추세 `SELL_REVIEW`에는 임의의 부분 매도 수량을 만들지 않는다. 모든 계획은 사용자 최종 확인이 필요하며, `TradePlan` 저장·증권사 주문 전송과 연결하지 않는다.
 - `REDUCE`는 보유 종목의 부분 매도를 뜻한다. 교차 후 5~8주인 미보유 후보의 축소 진입에는 사용하지 않으며, 해당 구간은 현재 `WATCH`를 유지한다.
-- `TradePlan.quantityRatio`의 분모와 자동 산출식은 아직 채택하지 않았다. 계좌 총자산, 가용 현금, 트랙별 배정 예산, 위험 허용 비율 중 어떤 입력을 사용할지와 `RiskPolicy` 도입 여부를 먼저 결정해야 한다.
+- `TradePlan.quantityRatio` 자체의 영구 주문 초안 산식은 아직 채택하지 않았다. 현재 수량 공식은 위험 한도 기반의 read-only 미리보기에만 한정하며, 가용 현금·트랙별 예산·부분 매도 정책을 임의로 가정하지 않는다.
 - Track A 손절 후보 중 고정 비율 `-25%`는 추가 검증 필요이며, ATR 기반 손절은 채택하지 않는다. 사용자가 포트폴리오 설정에 직접 입력한 손절 기준 비율은 검토용 가이드에만 적용하고, 전략 기본값이나 `TradePlanGenerator`의 자동 규칙으로 사용하지 않는다.
 - `TradeGuideCalculator`와 `/api/trade-guide/calculate`은 초기 학습용 단순 계산 API다. 사용자가 입력한 목표 수익률·최대 손실률을 계산하며, 현재 전략 엔진의 정책이나 결과에 연결하지 않는다.
 
 ## 현재 전략 엔진 상태
 
-- Twelve Data에서 현재가, 일봉, 주봉을 조회한다.
+- 포트폴리오의 시장 데이터 제공자 설정에 따라 현재가와 캔들을 조회한다. Twelve Data는
+  서버 키 기반으로, 토스증권은 해당 포트폴리오에 연결·검증된 계좌 자격 증명으로 조회한다.
+  토스증권은 일봉을 조회한 뒤 전략 엔진용 주봉으로 애플리케이션에서 집계한다.
 - Twelve Data에서 미국 주식·ETF의 종목명 또는 티커 검색도 조회한다. 한국 시장 검색과 통화 표시는 별도 제공자·환율·통화 모델 설계 전까지 완전 지원으로 표시하지 않는다.
 - 주봉 10/40 이동평균 전략은 `TRACK_A` 자산에 적용한다.
 - 진행 중인 주봉이 신호에 섞이지 않도록 완료 주봉 필터를 적용했다.
@@ -74,7 +77,9 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
 - 응답에는 `trend`와 `signalEvent`도 포함한다. 교차가 발생한 한 주만이 아니라 현재 추세도 구분한다.
 - `weeksSinceCross`는 가장 최근 교차 이후 경과한 주 수다. 미보유 종목의 추격 매수를 막는 후속 정책에서 사용한다.
 - `referencePrice`는 전략 판단에 사용한 최신 완료 주봉 종가다. 주문 지정가나 목표가가 아니다.
-- Track A 골든 테스트는 실행 시세 제공자인 Twelve Data의 고정 주봉 스냅샷을 사용한다. Yahoo 기반 리서치와 교차 시점이 다르면 차이를 기록하고, 실행 기준을 임의로 섞지 않는다.
+- Track A 골든 테스트는 Twelve Data의 고정 주봉 스냅샷을 명시적으로 사용한다. 실제 포트폴리오
+  전략 분석은 해당 포트폴리오의 캔들 제공자 설정과 캐시 키를 따른다. Yahoo 기반 리서치와
+  실행 데이터의 교차 시점이 다르면 차이를 기록하고, 실행 기준을 임의로 섞지 않는다.
 
 ### 현재 API 계약
 
@@ -89,6 +94,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
   - `unavailableAssets`는 시장 데이터 조회 실패, 요청 제한, 오래된 데이터로 판단하지 못한 종목과 메시지 목록이다.
   - 요청 제한(429)이 발생하면 이후 종목은 외부 API를 추가 호출하지 않고 요청 제한 메시지로 `unavailableAssets`에 기록한다.
   - 포트폴리오 자체가 없거나 보유 종목 계산에 실패하면 기존 오류 응답을 유지한다.
+- `GET`/`POST /api/members/{memberId}/portfolios/{portfolioId}/premarket-guide/today`는 미국 동부시간 기준 다음 거래일의 장전 가이드를 조회·생성한다. 같은 거래일에 이미 생성된 스냅샷은 기본적으로 재사용하며, `force=true`일 때만 시장 데이터를 다시 조회한다. 결과는 보유·후보 가이드, 조회 불가 종목, 기준일과 생성 시각을 함께 보존한다.
 - 현재 후보 유니버스는 관리자가 등록한 `TRACK_A` 프로필이며, S&P 500 전체 스크리닝이나 `TRACK_B` 후보 탐색은 아직 구현하지 않았다.
 - `referencePrice`는 최신 완료 주봉 종가이며, 주문 지정가·목표가·손절가는 아니다.
 - `decision.metadata`에는 전략 ID·버전·데이터 기준일과 함께 전략별 `confidence`, `caveats`가 포함될 수 있다. 현재 Track A는 `low-medium` 신뢰도와 과거 데이터·기술적 신호·비주문 계산 범위에 대한 주의사항을 제공한다.
