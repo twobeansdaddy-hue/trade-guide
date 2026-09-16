@@ -23,6 +23,7 @@ import com.tradeguide.domain.risk.PortfolioRiskAlert;
 import com.tradeguide.exception.PortfolioRiskPolicyNotFoundException;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.risk.PortfolioAssetRiskOverrideRepository;
+import com.tradeguide.service.asset.AssetDisplayNameResolver;
 import com.tradeguide.service.backtest.PortfolioAssetBacktestService;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
@@ -112,6 +113,9 @@ class PortfolioControllerTest {
 
     @MockitoBean
     private Clock clock;
+
+    @MockitoBean
+    private AssetDisplayNameResolver displayNameResolver;
 
     @Test
     void createsPortfolio() throws Exception {

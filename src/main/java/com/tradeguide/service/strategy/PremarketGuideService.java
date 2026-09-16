@@ -13,6 +13,7 @@ import com.tradeguide.dto.strategy.PremarketGuideResponse;
 import com.tradeguide.exception.PortfolioNotFoundException;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.strategy.PremarketGuideSnapshotRepository;
+import com.tradeguide.service.asset.AssetDisplayNameResolver;
 import com.tradeguide.service.market.UsEquityTradingCalendar;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ public class PremarketGuideService {
     private final PortfolioStrategyGuideService portfolioStrategyGuideService;
     private final PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
     private final UsEquityTradingCalendar tradingCalendar;
+    private final AssetDisplayNameResolver displayNameResolver;
 
     public PremarketGuideService(
             Clock clock,
@@ -42,7 +44,8 @@ public class PremarketGuideService {
             PremarketGuideSnapshotRepository snapshotRepository,
             PortfolioStrategyGuideService portfolioStrategyGuideService,
             PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService,
-            UsEquityTradingCalendar tradingCalendar
+            UsEquityTradingCalendar tradingCalendar,
+            AssetDisplayNameResolver displayNameResolver
     ) {
         this.clock = clock;
         this.portfolioRepository = portfolioRepository;
@@ -50,6 +53,7 @@ public class PremarketGuideService {
         this.portfolioStrategyGuideService = portfolioStrategyGuideService;
         this.portfolioCandidateStrategyGuideService = portfolioCandidateStrategyGuideService;
         this.tradingCalendar = tradingCalendar;
+        this.displayNameResolver = displayNameResolver;
     }
 
     @Transactional
@@ -68,7 +72,7 @@ public class PremarketGuideService {
                 .orElseGet(() -> new PremarketGuideSnapshot(portfolio, guideDate, generatedAt));
 
         if (!force && snapshot.getId() != null) {
-            return PremarketGuideResponse.from(snapshot);
+            return PremarketGuideResponse.from(snapshot, displayNameResolver);
         }
 
         StrategyGuideBatch heldBatch = portfolioStrategyGuideService
@@ -94,7 +98,7 @@ public class PremarketGuideService {
         MarketDataProvider marketDataProvider = portfolio.getMarketDataPreference().getCandleProvider();
         snapshot.replaceResults(status, items, emptyGuidance, generatedAt, marketDataProvider);
 
-        return PremarketGuideResponse.from(snapshotRepository.save(snapshot));
+        return PremarketGuideResponse.from(snapshotRepository.save(snapshot), displayNameResolver);
     }
 
     @Transactional(readOnly = true)
@@ -104,7 +108,7 @@ public class PremarketGuideService {
 
         LocalDate guideDate = currentGuideDate();
         return snapshotRepository.findByPortfolio_IdAndGuideDate(portfolioId, guideDate)
-                .map(PremarketGuideResponse::from)
+                .map(snapshot -> PremarketGuideResponse.from(snapshot, displayNameResolver))
                 .orElseGet(() -> PremarketGuideResponse.notGenerated(guideDate));
     }
 

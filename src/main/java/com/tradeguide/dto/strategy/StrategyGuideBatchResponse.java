@@ -1,6 +1,7 @@
 package com.tradeguide.dto.strategy;
 
 import com.tradeguide.domain.strategy.StrategyGuideBatch;
+import com.tradeguide.service.asset.AssetDisplayNameResolver;
 
 import java.util.List;
 
@@ -28,11 +29,15 @@ public class StrategyGuideBatchResponse {
     }
 
     public static StrategyGuideBatchResponse from(
-            StrategyGuideBatch strategyGuideBatch
+            StrategyGuideBatch strategyGuideBatch,
+            AssetDisplayNameResolver displayNameResolver
     ) {
         return new StrategyGuideBatchResponse(
                 strategyGuideBatch.getGuides().stream()
-                        .map(AssetStrategyGuideResponse::from)
+                        .map(guide -> AssetStrategyGuideResponse.from(
+                                guide,
+                                displayNameResolver.resolve(guide.getMarket(), guide.getTicker())
+                        ))
                         .toList(),
                 strategyGuideBatch.getUnavailableAssets().stream()
                         .map(UnavailableAssetResponse::from)

@@ -8,6 +8,7 @@ import com.tradeguide.domain.strategy.PremarketGuideStatus;
 import com.tradeguide.domain.strategy.StrategyDecisionGuidance;
 import com.tradeguide.domain.strategy.StrategyMetadata;
 import com.tradeguide.domain.strategy.StrategySignal;
+import com.tradeguide.service.asset.AssetDisplayNameResolver;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -46,7 +47,10 @@ public record PremarketGuideResponse(
         );
     }
 
-    public static PremarketGuideResponse from(PremarketGuideSnapshot snapshot) {
+    public static PremarketGuideResponse from(
+            PremarketGuideSnapshot snapshot,
+            AssetDisplayNameResolver displayNameResolver
+    ) {
         List<PremarketGuideItem> items = snapshot.getItems();
         List<PremarketGuideItem> availableItems = items.stream()
                 .filter(item -> item.getStatus() == PremarketGuideItemStatus.AVAILABLE)
@@ -54,11 +58,11 @@ public record PremarketGuideResponse(
 
         List<AssetStrategyGuideResponse> heldGuides = availableItems.stream()
                 .filter(item -> item.getScope() == PremarketGuideScope.HELD)
-                .map(PremarketGuideResponse::toGuideResponse)
+                .map(item -> toGuideResponse(item, displayNameResolver))
                 .toList();
         List<AssetStrategyGuideResponse> candidateGuides = availableItems.stream()
                 .filter(item -> item.getScope() == PremarketGuideScope.CANDIDATE)
-                .map(PremarketGuideResponse::toGuideResponse)
+                .map(item -> toGuideResponse(item, displayNameResolver))
                 .toList();
         List<UnavailableAssetResponse> unavailableAssets = items.stream()
                 .filter(item -> item.getStatus() == PremarketGuideItemStatus.UNAVAILABLE)
@@ -104,7 +108,10 @@ public record PremarketGuideResponse(
         );
     }
 
-    private static AssetStrategyGuideResponse toGuideResponse(PremarketGuideItem item) {
+    private static AssetStrategyGuideResponse toGuideResponse(
+            PremarketGuideItem item,
+            AssetDisplayNameResolver displayNameResolver
+    ) {
         StrategyMetadata metadata = new StrategyMetadata(
                 item.getStrategyId(),
                 item.getStrategyVersion(),
@@ -132,6 +139,7 @@ public record PremarketGuideResponse(
         return new AssetStrategyGuideResponse(
                 item.getMarket(),
                 item.getTicker(),
+                displayNameResolver.resolve(item.getMarket(), item.getTicker()),
                 new StrategyDecisionResponse(
                         item.getAction(),
                         item.getReferencePrice(),

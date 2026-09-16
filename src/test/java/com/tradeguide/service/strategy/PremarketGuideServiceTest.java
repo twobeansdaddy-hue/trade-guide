@@ -15,6 +15,7 @@ import com.tradeguide.domain.trade.Market;
 import com.tradeguide.dto.strategy.PremarketGuideResponse;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.strategy.PremarketGuideSnapshotRepository;
+import com.tradeguide.service.asset.AssetDisplayNameResolver;
 import com.tradeguide.service.market.UsEquityTradingCalendar;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,7 +57,8 @@ class PremarketGuideServiceTest {
                 snapshotRepository,
                 portfolioStrategyGuideService,
                 portfolioCandidateStrategyGuideService,
-                new UsEquityTradingCalendar()
+                new UsEquityTradingCalendar(),
+                mock(AssetDisplayNameResolver.class)
         );
     }
 

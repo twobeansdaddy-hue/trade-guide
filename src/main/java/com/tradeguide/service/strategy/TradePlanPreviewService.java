@@ -19,6 +19,7 @@ import com.tradeguide.domain.strategy.TradePlanPreviewNotReadyReason;
 import com.tradeguide.domain.strategy.TradePlanPreviewStatus;
 import com.tradeguide.domain.strategy.UnavailableAsset;
 import com.tradeguide.domain.trade.Market;
+import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.exception.PortfolioNotFoundException;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
@@ -57,8 +58,9 @@ public class TradePlanPreviewService {
             "포트폴리오 위험 한도와 사용자 설정 손절가를 기준으로 계산한 검토용 매수 계획입니다. "
                     + "실제 주문 여부와 수량은 사용자가 최종 확인해야 합니다.";
     private static final String STOP_LOSS_EXIT_REVIEW_REASON =
-            "전략 기준 가격이 사용자 설정 손절가에 도달해 보유 수량 전체에 대한 손절 검토가 필요합니다. "
-                    + "이 계획은 검토용이며 자동으로 주문을 전송하지 않습니다.";
+            "실시간 현재가가 사용자 설정 손절가에 도달해 보유 수량 전체에 대한 손절 검토가 필요합니다. "
+                    + "주간 추세 신호와 무관하게 우선 표시하는 안전 검토이며, 이 계획은 검토용이라 자동으로 "
+                    + "주문을 전송하지 않습니다.";
     private static final String SELL_REVIEW_REASON =
             "손절 기준 도달과 무관하게 하락 추세에 따라 보유 수량 매도를 검토합니다. "
                     + "임의로 산출한 매도 수량은 제공하지 않습니다.";
@@ -118,15 +120,22 @@ public class TradePlanPreviewService {
         }
 
         BigDecimal portfolioMarketValue = null;
+        Map<String, BigDecimal> currentPricesByKey = new HashMap<>();
         if (riskPolicy != null && riskPolicy.getStopLossRatio() != null) {
             PortfolioValuation valuation = portfolioValuationService
                     .getPortfolioValuation(memberId, portfolioId);
             portfolioMarketValue = valuation.getTotalMarketValue();
+            for (HoldingValuation holdingValuation : valuation.getHoldingValuations()) {
+                currentPricesByKey.put(
+                        key(holdingValuation.getMarket(), holdingValuation.getTicker()),
+                        holdingValuation.getCurrentPrice()
+                );
+            }
         }
 
         List<AssetTradePlanPreview> heldAssetPlans = new ArrayList<>();
         for (AssetStrategyGuide guide : heldBatch.getGuides()) {
-            heldAssetPlans.add(buildHeldAssetPlan(guide, holdingsByKey, riskPolicy, portfolioMarketValue));
+            heldAssetPlans.add(buildHeldAssetPlan(guide, holdingsByKey, riskPolicy, portfolioMarketValue, currentPricesByKey));
         }
 
         List<AssetTradePlanPreview> candidatePlans = new ArrayList<>();
@@ -145,7 +154,8 @@ public class TradePlanPreviewService {
             AssetStrategyGuide guide,
             Map<String, Holding> holdingsByKey,
             PortfolioRiskPolicy riskPolicy,
-            BigDecimal portfolioMarketValue
+            BigDecimal portfolioMarketValue,
+            Map<String, BigDecimal> currentPricesByKey
     ) {
         StrategyDecision decision = guide.getStrategyDecision();
         StrategySignal signal = decision.getSignal();
@@ -153,6 +163,7 @@ public class TradePlanPreviewService {
         StrategyMetadata metadata = signal.getMetadata();
         BigDecimal referencePrice = signal.getReferencePrice();
         BigDecimal stopLossPrice = guidance.getStopLossPrice();
+        BigDecimal currentPrice = currentPricesByKey.get(key(guide.getMarket(), guide.getTicker()));
 
         Holding holding = holdingsByKey.get(key(guide.getMarket(), guide.getTicker()));
         BigDecimal heldQuantity = holding == null ? null : holding.getQuantity();
@@ -165,6 +176,32 @@ public class TradePlanPreviewService {
         List<PlannedTradeAction> plannedActions = new ArrayList<>();
         if (hasValidHolding && stopLossPrice != null) {
             plannedActions.add(buildProtectiveExitAction(stopLossPrice, heldQuantity, metadata));
+        }
+
+        // 손절 도달 여부는 완료 주봉 종가(추세 판단용, 최대 한 주 이상 오래될 수 있음)가 아니라
+        // 실시간 현재가로 판단한다. 레버리지 상품 등은 주중 낙폭이 커서 주봉 종가만으로는
+        // 이미 손절 기준을 넘어선 하락을 놓칠 수 있다. 이 판정은 추세 신호(BUY/HOLD)보다
+        // 우선하며, 현재가를 조회하지 못한 경우에는 안전하게 트리거하지 않는다(추세 분기로 진행).
+        boolean stopLossTriggered = stopLossPrice != null
+                && currentPrice != null
+                && currentPrice.compareTo(stopLossPrice) <= 0;
+
+        if (hasValidHolding && stopLossTriggered) {
+            return new AssetTradePlanPreview(
+                    guide.getMarket(),
+                    guide.getTicker(),
+                    TradePlanPreviewStatus.STOP_LOSS_EXIT_REVIEW,
+                    null,
+                    currentPrice,
+                    stopLossPrice,
+                    heldQuantity,
+                    null,
+                    null,
+                    List.of(),
+                    STOP_LOSS_EXIT_REVIEW_REASON,
+                    metadata,
+                    plannedActions
+            );
         }
 
         if (decision.getAction() == StrategyAction.BUY) {
@@ -181,9 +218,6 @@ public class TradePlanPreviewService {
             );
         }
 
-        boolean stopLossTriggered = stopLossPrice != null
-                && referencePrice != null
-                && referencePrice.compareTo(stopLossPrice) <= 0;
         boolean isProfitable = hasValidAveragePurchasePrice
                 && referencePrice != null
                 && referencePrice.compareTo(averagePurchasePrice) > 0;
@@ -205,24 +239,6 @@ public class TradePlanPreviewService {
                     null,
                     List.of(),
                     decision.getReason(),
-                    metadata,
-                    plannedActions
-            );
-        }
-
-        if (stopLossTriggered) {
-            return new AssetTradePlanPreview(
-                    guide.getMarket(),
-                    guide.getTicker(),
-                    TradePlanPreviewStatus.STOP_LOSS_EXIT_REVIEW,
-                    null,
-                    referencePrice,
-                    stopLossPrice,
-                    heldQuantity,
-                    null,
-                    null,
-                    List.of(),
-                    STOP_LOSS_EXIT_REVIEW_REASON,
                     metadata,
                     plannedActions
             );

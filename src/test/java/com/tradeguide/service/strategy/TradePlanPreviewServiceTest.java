@@ -5,6 +5,7 @@ import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.risk.PortfolioRiskPolicy;
 import com.tradeguide.domain.strategy.*;
 import com.tradeguide.domain.trade.Market;
+import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.service.holding.HoldingService;
@@ -26,7 +27,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -186,32 +186,50 @@ class TradePlanPreviewServiceTest {
     @Test
     void returnsStopLossExitReviewForHeldAssetAtOrBelowStopLossPrice() {
         Portfolio portfolio = mock(Portfolio.class);
+        PortfolioRiskPolicy riskPolicy = new PortfolioRiskPolicy(
+                new BigDecimal("0.02"),
+                new BigDecimal("0.5"),
+                new BigDecimal("0.10")
+        );
+        when(portfolio.getRiskPolicy()).thenReturn(riskPolicy);
         when(portfolioRepository.findByMember_IdAndId(MEMBER_ID, PORTFOLIO_ID))
                 .thenReturn(Optional.of(portfolio));
 
         Holding holding = new Holding(Market.US, "SOXL", new BigDecimal("50"), new BigDecimal("25"));
         when(holdingService.getHoldings(MEMBER_ID, PORTFOLIO_ID)).thenReturn(List.of(holding));
 
+        // 완료 주봉 종가(referencePrice)는 22.50(손절가)보다 높지만, 실시간 현재가는
+        // 20.00으로 이미 손절가 아래다. 손절 판정은 실시간 현재가를 따라야 한다.
         AssetStrategyGuide guide = heldSellGuide(
                 "SOXL",
-                new BigDecimal("20.00"),
+                new BigDecimal("30.00"),
                 new BigDecimal("22.50")
         );
         when(portfolioStrategyGuideService.getPortfolioStrategyGuides(MEMBER_ID, PORTFOLIO_ID))
                 .thenReturn(new StrategyGuideBatch(List.of(guide), List.of()));
         when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(MEMBER_ID, PORTFOLIO_ID))
                 .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
+        when(portfolioValuationService.getPortfolioValuation(MEMBER_ID, PORTFOLIO_ID))
+                .thenReturn(portfolioValuationWithCurrentPrice("SOXL", new BigDecimal("20.00")));
 
         TradePlanPreviewBatch batch = tradePlanPreviewService.getTradePlanPreview(MEMBER_ID, PORTFOLIO_ID);
         AssetTradePlanPreview plan = batch.getHeldAssetPlans().get(0);
 
         assertThat(plan.getStatus()).isEqualTo(TradePlanPreviewStatus.STOP_LOSS_EXIT_REVIEW);
         assertThat(plan.getQuantity()).isEqualByComparingTo("50");
+        // 상태의 기준 가격도 실시간 현재가로 노출되어야 한다(주봉 종가가 아님).
+        assertThat(plan.getReferencePrice()).isEqualByComparingTo("20.00");
     }
 
     @Test
     void includesProtectiveExitPlannedActionForFullHeldQuantityWhenStopIsConfigured() {
         Portfolio portfolio = mock(Portfolio.class);
+        PortfolioRiskPolicy riskPolicy = new PortfolioRiskPolicy(
+                new BigDecimal("0.02"),
+                new BigDecimal("0.5"),
+                new BigDecimal("0.10")
+        );
+        when(portfolio.getRiskPolicy()).thenReturn(riskPolicy);
         when(portfolioRepository.findByMember_IdAndId(MEMBER_ID, PORTFOLIO_ID))
                 .thenReturn(Optional.of(portfolio));
 
@@ -220,13 +238,15 @@ class TradePlanPreviewServiceTest {
 
         AssetStrategyGuide guide = heldSellGuide(
                 "SOXL",
-                new BigDecimal("20.00"),
+                new BigDecimal("30.00"),
                 new BigDecimal("22.50")
         );
         when(portfolioStrategyGuideService.getPortfolioStrategyGuides(MEMBER_ID, PORTFOLIO_ID))
                 .thenReturn(new StrategyGuideBatch(List.of(guide), List.of()));
         when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(MEMBER_ID, PORTFOLIO_ID))
                 .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
+        when(portfolioValuationService.getPortfolioValuation(MEMBER_ID, PORTFOLIO_ID))
+                .thenReturn(portfolioValuationWithCurrentPrice("SOXL", new BigDecimal("20.00")));
 
         TradePlanPreviewBatch batch = tradePlanPreviewService.getTradePlanPreview(MEMBER_ID, PORTFOLIO_ID);
         AssetTradePlanPreview plan = batch.getHeldAssetPlans().get(0);
@@ -239,8 +259,48 @@ class TradePlanPreviewServiceTest {
         assertThat(action.getQuantity()).isEqualByComparingTo("50");
         assertThat(action.getAmount()).isEqualByComparingTo("1125.00");
         assertThat(action.isRequiresUserConfirmation()).isTrue();
+    }
 
-        verifyNoInteractions(portfolioValuationService);
+    /**
+     * 완료 주봉 추세 신호가 HOLD(상승 추세 유지)라도, 실시간 현재가가 이미 손절가
+     * 이하로 떨어졌다면 추세 신호보다 손절 검토를 우선해야 한다. 주봉은 최대 한 주 이상
+     * 오래될 수 있어 이 우선순위가 없으면 실제로는 손절 구간인데도 "보유"로 잘못 안내한다.
+     */
+    @Test
+    void prioritizesStopLossExitReviewOverHoldTrendWhenCurrentPriceHasAlreadyBreachedStopLoss() {
+        Portfolio portfolio = mock(Portfolio.class);
+        PortfolioRiskPolicy riskPolicy = new PortfolioRiskPolicy(
+                new BigDecimal("0.02"),
+                new BigDecimal("0.5"),
+                new BigDecimal("0.10")
+        );
+        when(portfolio.getRiskPolicy()).thenReturn(riskPolicy);
+        when(portfolioRepository.findByMember_IdAndId(MEMBER_ID, PORTFOLIO_ID))
+                .thenReturn(Optional.of(portfolio));
+
+        Holding holding = new Holding(Market.US, "SOXL", new BigDecimal("7"), new BigDecimal("125.65"));
+        when(holdingService.getHoldings(MEMBER_ID, PORTFOLIO_ID)).thenReturn(List.of(holding));
+
+        // 완료 주봉 종가(121.82)는 여전히 상승 추세라 HOLD를 반환하지만, 실시간 현재가(102.72)는
+        // 손절가(113.14)를 이미 하회한 상태다.
+        AssetStrategyGuide guide = heldHoldGuide(
+                "SOXL",
+                new BigDecimal("121.82"),
+                new BigDecimal("113.14")
+        );
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(MEMBER_ID, PORTFOLIO_ID))
+                .thenReturn(new StrategyGuideBatch(List.of(guide), List.of()));
+        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(MEMBER_ID, PORTFOLIO_ID))
+                .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
+        when(portfolioValuationService.getPortfolioValuation(MEMBER_ID, PORTFOLIO_ID))
+                .thenReturn(portfolioValuationWithCurrentPrice("SOXL", new BigDecimal("102.72")));
+
+        TradePlanPreviewBatch batch = tradePlanPreviewService.getTradePlanPreview(MEMBER_ID, PORTFOLIO_ID);
+        AssetTradePlanPreview plan = batch.getHeldAssetPlans().get(0);
+
+        assertThat(plan.getStatus()).isEqualTo(TradePlanPreviewStatus.STOP_LOSS_EXIT_REVIEW);
+        assertThat(plan.getQuantity()).isEqualByComparingTo("7");
+        assertThat(plan.getReferencePrice()).isEqualByComparingTo("102.72");
     }
 
     @Test
@@ -658,6 +718,31 @@ class TradePlanPreviewServiceTest {
                 List.of(),
                 BigDecimal.ZERO,
                 totalMarketValue,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO
+        );
+    }
+
+    /**
+     * 실시간 손절 판정 테스트용으로, 지정한 종목의 현재가만 있는 최소 평가 결과를 만든다.
+     * 총 평가액은 이 테스트들의 관심사가 아니므로 0으로 둔다.
+     */
+    private PortfolioValuation portfolioValuationWithCurrentPrice(String ticker, BigDecimal currentPrice) {
+        HoldingValuation holdingValuation = new HoldingValuation(
+                Market.US,
+                ticker,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                currentPrice,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO
+        );
+        return new PortfolioValuation(
+                List.of(holdingValuation),
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
                 BigDecimal.ZERO,
                 BigDecimal.ZERO
         );

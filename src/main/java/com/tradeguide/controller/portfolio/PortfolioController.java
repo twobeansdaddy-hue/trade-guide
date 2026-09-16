@@ -28,6 +28,7 @@ import com.tradeguide.dto.market.PortfolioMarketDataPreferenceUpdateRequest;
 import com.tradeguide.exception.PortfolioNotFoundException;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.risk.PortfolioAssetRiskOverrideRepository;
+import com.tradeguide.service.asset.AssetDisplayNameResolver;
 import com.tradeguide.service.backtest.PortfolioAssetBacktestService;
 import com.tradeguide.service.holding.HoldingService;
 import com.tradeguide.service.portfolio.PortfolioService;
@@ -71,6 +72,7 @@ public class PortfolioController {
     private final PortfolioAssetRiskOverrideRepository portfolioAssetRiskOverrideRepository;
     private final PortfolioRepository portfolioRepository;
     private final Clock clock;
+    private final AssetDisplayNameResolver displayNameResolver;
 
     public PortfolioController(
             PortfolioService portfolioService,
@@ -86,7 +88,8 @@ public class PortfolioController {
             PortfolioAssetBacktestService portfolioAssetBacktestService,
             PortfolioAssetRiskOverrideRepository portfolioAssetRiskOverrideRepository,
             PortfolioRepository portfolioRepository,
-            Clock clock
+            Clock clock,
+            AssetDisplayNameResolver displayNameResolver
     ) {
         this.portfolioService = portfolioService;
         this.holdingService = holdingService;
@@ -102,6 +105,7 @@ public class PortfolioController {
         this.portfolioAssetRiskOverrideRepository = portfolioAssetRiskOverrideRepository;
         this.portfolioRepository = portfolioRepository;
         this.clock = clock;
+        this.displayNameResolver = displayNameResolver;
     }
 
     @ModelAttribute
@@ -189,7 +193,7 @@ public class PortfolioController {
                         portfolioId
                 );
 
-        return StrategyGuideBatchResponse.from(strategyGuideBatch);
+        return StrategyGuideBatchResponse.from(strategyGuideBatch, displayNameResolver);
     }
 
     @GetMapping("/{portfolioId}/exposures")
@@ -231,7 +235,7 @@ public class PortfolioController {
                 portfolioCandidateStrategyGuideService
                         .getCandidateStrategyGuides(memberId, portfolioId);
 
-        return StrategyGuideBatchResponse.from(strategyGuideBatch);
+        return StrategyGuideBatchResponse.from(strategyGuideBatch, displayNameResolver);
     }
 
     @GetMapping("/{portfolioId}/trade-plan-preview")
@@ -240,7 +244,8 @@ public class PortfolioController {
             @PathVariable Long portfolioId
     ) {
         return TradePlanPreviewBatchResponse.from(
-                tradePlanPreviewService.getTradePlanPreview(memberId, portfolioId)
+                tradePlanPreviewService.getTradePlanPreview(memberId, portfolioId),
+                displayNameResolver
         );
     }
 

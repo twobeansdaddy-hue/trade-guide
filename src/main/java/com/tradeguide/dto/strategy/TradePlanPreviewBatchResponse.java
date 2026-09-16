@@ -1,6 +1,7 @@
 package com.tradeguide.dto.strategy;
 
 import com.tradeguide.domain.strategy.TradePlanPreviewBatch;
+import com.tradeguide.service.asset.AssetDisplayNameResolver;
 
 import java.util.List;
 
@@ -20,13 +21,22 @@ public class TradePlanPreviewBatchResponse {
         this.unavailableAssets = unavailableAssets;
     }
 
-    public static TradePlanPreviewBatchResponse from(TradePlanPreviewBatch batch) {
+    public static TradePlanPreviewBatchResponse from(
+            TradePlanPreviewBatch batch,
+            AssetDisplayNameResolver displayNameResolver
+    ) {
         return new TradePlanPreviewBatchResponse(
                 batch.getCandidatePlans().stream()
-                        .map(AssetTradePlanPreviewResponse::from)
+                        .map(plan -> AssetTradePlanPreviewResponse.from(
+                                plan,
+                                displayNameResolver.resolve(plan.getMarket(), plan.getTicker())
+                        ))
                         .toList(),
                 batch.getHeldAssetPlans().stream()
-                        .map(AssetTradePlanPreviewResponse::from)
+                        .map(plan -> AssetTradePlanPreviewResponse.from(
+                                plan,
+                                displayNameResolver.resolve(plan.getMarket(), plan.getTicker())
+                        ))
                         .toList(),
                 batch.getUnavailableAssets().stream()
                         .map(UnavailableAssetResponse::from)

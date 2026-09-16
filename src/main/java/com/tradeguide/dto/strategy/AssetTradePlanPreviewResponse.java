@@ -13,6 +13,7 @@ public class AssetTradePlanPreviewResponse {
 
     private final Market market;
     private final String ticker;
+    private final String displayName;
     private final String currency;
     private final TradePlanPreviewStatus status;
     private final TradePlanPreviewNotReadyReason notReadyReason;
@@ -30,6 +31,7 @@ public class AssetTradePlanPreviewResponse {
     public AssetTradePlanPreviewResponse(
             Market market,
             String ticker,
+            String displayName,
             String currency,
             TradePlanPreviewStatus status,
             TradePlanPreviewNotReadyReason notReadyReason,
@@ -46,6 +48,7 @@ public class AssetTradePlanPreviewResponse {
     ) {
         this.market = market;
         this.ticker = ticker;
+        this.displayName = displayName;
         this.currency = currency;
         this.status = status;
         this.notReadyReason = notReadyReason;
@@ -61,10 +64,11 @@ public class AssetTradePlanPreviewResponse {
         this.plannedActions = plannedActions;
     }
 
-    public static AssetTradePlanPreviewResponse from(AssetTradePlanPreview preview) {
+    public static AssetTradePlanPreviewResponse from(AssetTradePlanPreview preview, String displayName) {
         return new AssetTradePlanPreviewResponse(
                 preview.getMarket(),
                 preview.getTicker(),
+                displayName,
                 resolveCurrency(preview.getMarket()),
                 preview.getStatus(),
                 preview.getNotReadyReason(),
@@ -93,6 +97,10 @@ public class AssetTradePlanPreviewResponse {
 
     public String getTicker() {
         return ticker;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getCurrency() {

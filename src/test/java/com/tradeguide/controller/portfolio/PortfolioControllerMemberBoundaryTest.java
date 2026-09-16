@@ -5,6 +5,7 @@ import com.tradeguide.domain.member.Member;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.risk.PortfolioAssetRiskOverrideRepository;
+import com.tradeguide.service.asset.AssetDisplayNameResolver;
 import com.tradeguide.service.auth.AuthIdentityService;
 import com.tradeguide.service.auth.MemberAccessService;
 import com.tradeguide.service.backtest.PortfolioAssetBacktestService;
@@ -82,6 +83,9 @@ class PortfolioControllerMemberBoundaryTest {
     private PortfolioRepository portfolioRepository;
     @MockitoBean
     private Clock clock;
+
+    @MockitoBean
+    private AssetDisplayNameResolver displayNameResolver;
 
     @Test
     void allowsRequestWhenAuthenticatedMemberMatchesPathMemberId() throws Exception {
