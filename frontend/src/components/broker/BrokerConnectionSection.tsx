@@ -864,6 +864,7 @@ export default function BrokerConnectionSection({
                         className={isConnected && !isVerificationStep ? "quiet-action" : "primary-button"}
                         onClick={() => void verify(connection.id, connection.displayName)}
                         disabled={isAnyActionPending}
+                        aria-label={`${connection.displayName} ${isConnected ? "연결 다시 확인" : "연결 확인"}`}
                     >
                         {isBeingVerified
                             ? "확인 중..."
@@ -877,6 +878,7 @@ export default function BrokerConnectionSection({
                         onClick={() => handleRenewClick(connection)}
                         disabled={isAnyActionPending}
                         title="보안을 위해 기존 값을 노출하지 않고 새 자격 증명을 입력해 갱신합니다."
+                        aria-label={`${connection.displayName} 자격 증명 갱신`}
                     >
                         자격 증명 갱신
                     </button>
@@ -885,6 +887,7 @@ export default function BrokerConnectionSection({
                         className="quiet-action danger-action"
                         onClick={() => void disconnect(connection.id)}
                         disabled={isAnyActionPending}
+                        aria-label={`${connection.displayName} 연결 해제`}
                     >
                         {isBeingDeleted ? "해제 중..." : "연결 해제"}
                     </button>

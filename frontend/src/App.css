@@ -20,7 +20,6 @@
     background: rgba(255, 255, 255, 0.92);
     box-shadow: 0 18px 42px rgba(20, 46, 40, 0.08);
 }
-
 .sign-in-brand {
     display: flex;
     align-items: center;
@@ -29,7 +28,6 @@
     font-size: 16px;
     font-weight: 800;
 }
-
 .sign-in-panel .eyebrow {
     margin: 42px 0 10px;
 }
@@ -765,6 +763,176 @@ dt {
     margin-top: 42px;
 }
 
+.premarket-guide-panel {
+    margin-top: 28px;
+    padding: 24px;
+    border: 1px solid #b8d8d1;
+    border-radius: 8px;
+    background: #f8fcfb;
+    box-sizing: border-box;
+}
+
+.premarket-guide-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.premarket-guide-panel-header h2 {
+    margin: 6px 0 0;
+    color: #17232c;
+    font-size: 22px;
+}
+
+.premarket-guide-description {
+    max-width: 720px;
+    margin: 8px 0 0;
+    color: #526875;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.premarket-guide-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    margin-top: 20px;
+    color: #526875;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.premarket-guide-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    width: fit-content;
+    max-width: fit-content;
+    flex-shrink: 0;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+.premarket-guide-meta-item,
+.premarket-guide-meta > span:not(.premarket-guide-status) {
+    display: inline-flex;
+    align-items: center;
+    font-size: 13px;
+    color: #526875;
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow-wrap: normal;
+    line-height: 1.5;
+}
+
+.premarket-guide-status.completed {
+    color: #126457;
+    background: #dff5ed;
+}
+
+.premarket-guide-status.partial {
+    color: #9a5b08;
+    background: #fff0c7;
+}
+
+.premarket-guide-status.not-generated {
+    color: #596c79;
+    background: #e8eeee;
+}
+
+.premarket-guide-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.premarket-guide-stats > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 1px solid #dfe6e6;
+    border-radius: 6px;
+    background: #ffffff;
+}
+
+.premarket-guide-stats strong {
+    color: #17232c;
+    font-size: 20px;
+    font-variant-numeric: tabular-nums;
+}
+
+.premarket-guide-stats span {
+    color: #61717e;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: right;
+}
+
+.premarket-guide-preview {
+    display: grid;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.premarket-guide-row {
+    display: grid;
+    grid-template-columns: 44px minmax(72px, 0.35fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid #dfe6e6;
+    border-radius: 6px;
+    background: #ffffff;
+}
+
+.premarket-guide-row-scope {
+    color: #61717e;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.premarket-guide-row strong {
+    min-width: 0;
+    color: #17232c;
+    overflow-wrap: anywhere;
+}
+
+.premarket-guide-row-reason {
+    min-width: 0;
+    color: #526875;
+    font-size: 13px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.premarket-guide-more,
+.premarket-guide-empty,
+.premarket-guide-warning {
+    margin: 8px 0 0;
+    color: #526875;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.premarket-guide-warning {
+    color: #9a5b08;
+}
+
 .market-data-provider-section {
     margin-top: 42px;
 }
@@ -1323,14 +1491,17 @@ dt {
 .broker-connection-feedback,
 .broker-link-feedback,
 .broker-holding-action-feedback {
-    min-height: 52px;
-    margin-top: 14px;
+    margin-top: 12px;
     box-sizing: border-box;
     width: 100%;
     min-width: 0;
 }
 
-.form-feedback-area:empty {
+.form-feedback-area:empty,
+.broker-connection-feedback:empty,
+.broker-link-feedback:empty,
+.broker-holding-action-feedback:empty {
+    display: none;
     min-height: 0;
     margin-top: 0;
 }
@@ -1425,6 +1596,7 @@ dt {
     margin: 20px 0 0;
     padding: 0;
     list-style: none;
+    align-items: start;
 }
 
 .broker-link-list li,
@@ -2593,11 +2765,13 @@ dt {
     font-weight: 800;
 }
 
-.action-badge.buy { color: #126342; background: #e3f4ea; }
+.action-badge.buy,
+.action-badge.add { color: #126342; background: #e3f4ea; }
 .action-badge.hold { color: #1c5d82; background: #e7f1f8; }
 .action-badge.sell,
 .action-badge.reduce { color: #a62e28; background: #fde9e7; }
 .action-badge.watch { color: #775c16; background: #fbf2d9; }
+.action-badge.not-ready { color: #526875; background: #eef3f3; }
 
 .guide-reason {
     min-height: 42px;
@@ -2914,6 +3088,509 @@ dt {
     font-size: 11.5px;
     line-height: 1.45;
     color: #61737e;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* ==========================================================================
+   Trade Plan Preview Styles
+   ========================================================================== */
+
+.trade-plan-preview-section {
+    margin-top: 28px;
+}
+
+.trade-plan-scope-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #1a5676;
+    background: #eef5f8;
+    border: 1px solid #c7dce5;
+    white-space: nowrap;
+}
+
+.trade-plan-disclaimer {
+    margin-top: 14px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    border: 1px solid #dce7e4;
+    border-radius: 8px;
+    background: #f6faf9;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.trade-plan-disclaimer p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #26343c;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.trade-plan-disclaimer strong {
+    color: #16564e;
+}
+
+.trade-plan-profile-notice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 14px 16px;
+    border: 1px solid #cce3de;
+    border-radius: 8px;
+    background: #f0f7f5;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.trade-plan-profile-notice-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex: 1;
+}
+
+.trade-plan-profile-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #176558;
+    background: #ffffff;
+    border: 1px solid #b8d8d1;
+    white-space: nowrap;
+}
+
+.trade-plan-profile-notice-text p {
+    margin: 0;
+    font-size: 13px;
+    color: #26343c;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.trade-plan-profile-link {
+    white-space: nowrap;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.trade-plan-other-notice {
+    margin: 0 0 16px;
+    font-size: 13px;
+    color: #61737e;
+    line-height: 1.5;
+}
+
+.trade-plan-group {
+    margin-top: 20px;
+}
+
+.trade-plan-group:first-of-type {
+    margin-top: 16px;
+}
+
+.trade-plan-group-title {
+    margin: 0 0 12px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #17232c;
+}
+
+.trade-plan-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.trade-plan-card {
+    display: flex;
+    flex-direction: column;
+    padding: 18px 20px;
+    border: 1px solid #e0e7e6;
+    border-radius: 8px;
+    background: #ffffff;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.trade-plan-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+}
+
+.trade-plan-asset {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.trade-plan-ticker {
+    font-size: 18px;
+    font-weight: 800;
+    color: #17232c;
+    overflow-wrap: anywhere;
+}
+
+.trade-plan-scope-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #526875;
+    background: #edf2f4;
+    white-space: nowrap;
+}
+
+.trade-plan-reason {
+    margin: 14px 0 0;
+    color: #4f5e6a;
+    font-size: 13.5px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.trade-plan-stop-loss-alert {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border: 1px solid #f4c7c3;
+    border-radius: 6px;
+    background: #fdf3f2;
+    min-width: 0;
+}
+
+.trade-plan-stop-loss-title {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #a62e28;
+    margin-bottom: 4px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.trade-plan-stop-loss-desc {
+    margin: 0;
+    font-size: 12.5px;
+    color: #63231f;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.trade-plan-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 14px;
+    margin: 16px 0 0;
+}
+
+.trade-plan-details div {
+    min-width: 0;
+}
+
+.trade-plan-details dt {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #61727d;
+}
+
+.trade-plan-details dd {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #26343c;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.trade-plan-loss-value {
+    color: #a62e28 !important;
+}
+
+.trade-plan-constraints-box {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed #e2eae8;
+    min-width: 0;
+}
+
+.trade-plan-constraints-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.trade-plan-constraint-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.trade-plan-constraint-badge.cash-not-synced {
+    color: #8c5307;
+    background: #fef4e5;
+    border: 1px solid #f2dab4;
+}
+
+.trade-plan-constraint-badge.exposure-cap {
+    color: #1a5676;
+    background: #eef5f8;
+    border: 1px solid #c7dce5;
+}
+
+.trade-plan-constraint-note {
+    margin: 6px 0 0;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: #705527;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.trade-plan-not-ready-block {
+    margin-top: 0;
+    min-width: 0;
+}
+
+.trade-plan-not-ready-action {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed #e2eae8;
+    display: flex;
+    align-items: center;
+}
+
+.trade-plan-actions-container {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #e2eae8;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.trade-plan-actions-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.trade-plan-actions-title {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #1f333e;
+    letter-spacing: -0.01em;
+}
+
+.trade-plan-actions-count {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #5c707d;
+    background: #eef3f3;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.trade-plan-actions-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.trade-plan-action-item {
+    padding: 12px 14px;
+    background: #f8faf9;
+    border: 1px solid #e3ebe9;
+    border-left: 3.5px solid #6c828d;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.trade-plan-action-item.action-type-exit {
+    border-left-color: #cb3831;
+    background: #fdfaf9;
+}
+
+.trade-plan-action-item.action-type-add {
+    border-left-color: #126342;
+    background: #f6faf8;
+}
+
+.trade-plan-action-item.action-type-profit {
+    border-left-color: #1b658d;
+    background: #f5f9fc;
+}
+
+.trade-plan-action-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.trade-plan-action-title-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.trade-plan-action-step-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #3b505c;
+    background: #e6eded;
+    white-space: nowrap;
+}
+
+.trade-plan-action-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2.5px 8px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.trade-plan-action-badge.exit {
+    color: #a62e28;
+    background: #fde9e7;
+}
+
+.trade-plan-action-badge.add {
+    color: #126342;
+    background: #e3f4ea;
+}
+
+.trade-plan-action-badge.profit {
+    color: #1c5d82;
+    background: #e7f1f8;
+}
+
+.trade-plan-action-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+.trade-plan-action-tag.manual {
+    color: #526875;
+    background: #eef3f3;
+    border: 1px solid #d5e2e2;
+}
+
+.trade-plan-action-tag.pending {
+    color: #7d5916;
+    background: #fdf6e6;
+    border: 1px solid #f2dfb6;
+}
+
+.trade-plan-action-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 12px;
+    margin: 0;
+    padding: 0;
+}
+
+.trade-plan-action-details div {
+    min-width: 0;
+}
+
+.trade-plan-action-details dt {
+    margin: 0 0 3px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #61727d;
+    overflow-wrap: anywhere;
+    word-break: keep-all;
+}
+
+.trade-plan-action-details dd {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #26343c;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.trade-plan-manual-text {
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    color: #4f6370 !important;
+}
+
+.trade-plan-pending-text,
+.trade-plan-value-pending {
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    color: #8c5e1b !important;
+}
+
+.trade-plan-action-reason {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #576773;
     overflow-wrap: anywhere;
     word-break: break-word;
 }
@@ -3849,7 +4526,8 @@ dt {
 
 @media (max-width: 900px) {
     .page-content { padding: 38px 30px 64px; }
-    .guide-list { grid-template-columns: minmax(0, 1fr); }
+    .guide-list,
+    .trade-plan-list { grid-template-columns: minmax(0, 1fr); }
     .risk-alert-item { grid-template-columns: 1fr; }
     .risk-details { justify-content: start; }
     .risk-details dd { text-align: left; }
@@ -4079,15 +4757,22 @@ dt {
     }
     .broker-connection-actions {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
         width: 100%;
     }
     .broker-connection-actions button {
         width: 100%;
         justify-content: center;
-        min-height: 44px;
+        min-height: 42px;
+        height: 42px;
+        padding: 0 10px;
+        font-size: 13px;
+        box-sizing: border-box;
         white-space: nowrap;
+    }
+    .broker-connection-actions button.danger-action {
+        grid-column: auto;
     }
     .broker-link-current {
         flex-direction: column;
@@ -4253,6 +4938,9 @@ dt {
 }
 
 @media (max-width: 480px) {
+    .broker-connection-actions {
+        grid-template-columns: minmax(0, 1fr);
+    }
     .transaction-history-heading {
         align-items: flex-start;
         flex-direction: column;
@@ -7773,22 +8461,37 @@ dt {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    align-self: start;
+    height: auto;
+    min-height: 0;
     padding: 18px 20px;
     border: 1px solid #dce5e4;
     border-radius: 8px;
     background: #ffffff;
     margin-bottom: 12px;
-    gap: 16px;
-    flex-wrap: wrap;
+    gap: 20px;
+    flex-wrap: nowrap;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .broker-conn-main-info {
-    flex: 1 1 320px;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     gap: 8px;
     min-width: 0;
+}
+
+.broker-connection-item-card .broker-connection-actions {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-self: flex-start;
 }
 
 .broker-conn-title-row {
@@ -8030,24 +8733,33 @@ dt {
 @media (max-width: 768px) {
     .broker-connection-item-card {
         flex-direction: column;
+        justify-content: flex-start;
         align-items: stretch;
-        padding: 14px;
+        padding: 16px 14px;
         gap: 14px;
     }
 
     .broker-connection-item-card .broker-connection-actions {
         width: 100%;
-        justify-content: stretch;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
     }
 
     .broker-connection-item-card .broker-connection-actions button {
         width: 100%;
+        min-height: 42px;
+        height: 42px;
         text-align: center;
-        padding: 8px 10px;
-        font-size: 12.5px;
+        justify-content: center;
+        padding: 0 10px;
+        font-size: 13px;
+        box-sizing: border-box;
+        white-space: nowrap;
+    }
+
+    .broker-connection-item-card .broker-connection-actions button.danger-action {
+        grid-column: auto;
     }
 
     .broker-connection-renewal-form {
@@ -8065,6 +8777,30 @@ dt {
 }
 
 @media (max-width: 480px) {
+    .broker-connection-item-card .broker-connection-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .broker-connection-item-card .broker-connection-actions button {
+        width: 100%;
+        min-height: 42px;
+        height: 42px;
+        padding: 0 12px;
+        font-size: 13px;
+        box-sizing: border-box;
+        justify-content: center;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .broker-connection-item-card .broker-connection-actions button.danger-action {
+        grid-column: auto;
+        width: 100%;
+    }
+
     .broker-conn-meta-details {
         flex-direction: column;
         gap: 4px;
@@ -8075,7 +8811,11 @@ dt {
     }
 
     .broker-secret-security-note {
-        font-size: 11px;
+        font-size: 11.5px;
+        line-height: 1.45;
+        padding: 6px 8px;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 }
 
@@ -8367,6 +9107,90 @@ dt {
     font-weight: 600;
 }
 
+.strategy-profile-divider {
+    margin: 18px 0;
+    border: none;
+    border-top: 1px solid #e5ebe9;
+    height: 1px;
+}
+
+.asset-stop-loss-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+.asset-stop-loss-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.asset-stop-loss-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    color: #17232c;
+}
+
+.asset-stop-loss-status-desc {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #61737e;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.asset-stop-loss-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.asset-stop-loss-form .strategy-profile-field input {
+    width: 100%;
+    height: 42px;
+    min-height: 42px;
+    box-sizing: border-box;
+    border: 1px solid #c7d2d1;
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: #17232c;
+    background: #fff;
+    font: inherit;
+    font-size: 14px;
+}
+
+.asset-stop-loss-form .strategy-profile-field input:focus {
+    outline: 2px solid #158476;
+    outline-offset: 2px;
+}
+
+.asset-stop-loss-feedback {
+    margin-top: 0;
+}
+
+@media (min-width: 769px) {
+    .asset-stop-loss-form {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        gap: 12px 16px;
+    }
+
+    .asset-stop-loss-form .strategy-profile-actions {
+        margin-bottom: 0;
+    }
+
+    .asset-stop-loss-feedback {
+        grid-column: 1 / -1;
+    }
+}
+
 /* Responsive Styles for Strategy Profile */
 @media (max-width: 900px) {
     .strategy-profile-card-list {
@@ -8412,6 +9236,14 @@ dt {
 }
 
 @media (max-width: 360px) {
+    .asset-stop-loss-header h3 {
+        font-size: 13px;
+    }
+
+    .asset-stop-loss-status-desc {
+        font-size: 11.5px;
+    }
+
     .strategy-track-policy-notice {
         padding: 12px 10px;
     }
@@ -8530,6 +9362,31 @@ dt {
 }
 
 @media (max-width: 640px) {
+    .premarket-guide-panel {
+        padding: 18px 14px;
+    }
+
+    .premarket-guide-panel-header {
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .premarket-guide-panel-header .quiet-action {
+        width: 100%;
+    }
+
+    .premarket-guide-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .premarket-guide-row {
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+    }
+
+    .premarket-guide-row-reason {
+        grid-column: 2 / -1;
+    }
+
     .strategy-guide-empty-card {
         padding: 16px 14px;
     }
@@ -9147,5 +10004,952 @@ dt {
     .override-audit-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+}
+
+/* ==========================================================================
+   Comprehensive UI Layout & Responsive Stabilization
+   ========================================================================== */
+
+/* 1. Global Viewport & Container Overflow Prevention */
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+#root,
+.application-frame,
+.main-layout,
+.page-content {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.page-header,
+.content-section,
+.guide-card,
+.broker-connection-item-card,
+.broker-flow-context-card,
+.broker-stepper,
+.broker-holding-confirm-panel,
+.risk-policy-editor,
+.market-data-provider-editor,
+.broker-connection-editor,
+.broker-connection-renewal-form {
+    box-sizing: border-box;
+    max-width: 100%;
+    min-width: 0;
+}
+
+/* 2. Common Form Controls & Button Sizing Stabilization */
+.form-grid input,
+.form-grid select,
+.risk-policy-editor input,
+.market-data-provider-editor select,
+.broker-connection-editor input,
+.broker-connection-editor select,
+.broker-connection-renewal-form input,
+.broker-connection-renewal-form select,
+.primary-button,
+.secondary-button,
+.form-actions button {
+    height: 42px;
+    min-height: 42px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.primary-button,
+.secondary-button,
+.form-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+}
+
+button.quiet-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    min-height: 38px;
+    padding: 0 12px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+button.quiet-action.danger-action,
+.quiet-action.danger-action {
+    color: #b91c1c;
+    border-color: #fca5a5;
+    background: #fef2f2;
+}
+
+button.quiet-action.danger-action:hover:not(:disabled),
+.quiet-action.danger-action:hover:not(:disabled) {
+    color: #991b1b;
+    border-color: #f87171;
+    background: #fee2e2;
+}
+
+.broker-conn-meta-item .meta-value {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    min-width: 0;
+}
+
+/* 3. Feedback Areas & Message Layout Shift Prevention */
+.form-feedback-area,
+.broker-connection-feedback,
+.broker-link-feedback,
+.broker-holding-action-feedback,
+.broker-order-import-action-feedback,
+.profile-card-feedback {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.form-feedback-area:empty,
+.broker-connection-feedback:empty,
+.broker-link-feedback:empty,
+.broker-holding-action-feedback:empty,
+.broker-order-import-action-feedback:empty,
+.profile-card-feedback:empty {
+    display: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.form-error-message,
+.form-success-message,
+.form-warning-message,
+.form-helper-note {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 10px 0 0;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.form-feedback-area > p:first-child,
+.broker-connection-feedback > p:first-child,
+.broker-link-feedback > p:first-child,
+.broker-holding-action-feedback > p:first-child,
+.profile-card-feedback > p:first-child {
+    margin-top: 0;
+}
+
+/* 4. Settings: Broker Connection Card Desktop Stabilization */
+@media (min-width: 1025px) {
+    .broker-connection-list {
+        display: grid;
+        gap: 12px;
+        align-items: start;
+    }
+
+    .broker-connection-item-card {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        align-self: start;
+        height: auto;
+        min-height: 0;
+        gap: 20px;
+        flex-wrap: nowrap;
+        padding: 18px 20px;
+        box-sizing: border-box;
+    }
+
+    .broker-conn-main-info {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .broker-connection-item-card .broker-connection-actions {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: nowrap;
+        align-self: flex-start;
+        width: auto;
+        margin-top: 0;
+    }
+
+    .broker-connection-item-card .broker-connection-actions button,
+    .broker-connection-item-card .broker-connection-actions .quiet-action,
+    .broker-connection-item-card .broker-connection-actions .primary-button,
+    .broker-connection-item-card .broker-connection-actions .secondary-button {
+        height: 38px;
+        min-height: 38px;
+        padding: 0 14px;
+        font-size: 13px;
+        white-space: nowrap;
+        width: auto;
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+}
+
+/* 5. Strategy Guides Card Layout Stabilization */
+.guide-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.guide-card-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.guide-asset {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.guide-asset strong {
+    font-size: 18px;
+    color: #17232c;
+}
+
+.candidate-track-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: #158476;
+    background: #eef7f5;
+    border: 1px solid #c9e4df;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.action-badge {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.guide-reason {
+    margin: 16px 0 0;
+    color: #4f5e6a;
+    font-size: 14px;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.guide-details {
+    display: grid;
+    gap: 12px;
+    margin: 16px 0 0;
+}
+
+.guide-details div {
+    min-width: 0;
+}
+
+.guide-details dt {
+    color: #61717e;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.guide-details dd {
+    margin: 0;
+    color: #26343c;
+    font-size: 13.5px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    min-width: 0;
+}
+
+.guide-decision-guidance {
+    display: grid;
+    gap: 10px;
+    margin: 16px 0 0;
+    padding: 12px 14px;
+    border: 1px solid #e6e1d5;
+    border-radius: 6px;
+    background: #fffdf7;
+    min-width: 0;
+}
+
+.guide-decision-guidance dt {
+    color: #6e6045;
+    font-size: 11.5px;
+    font-weight: 800;
+}
+
+.guide-decision-guidance dd {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 0;
+    min-width: 0;
+}
+
+.guide-decision-guidance strong {
+    color: #3f3421;
+    font-size: 13px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.guide-decision-guidance span {
+    color: #6b6253;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.guide-evidence {
+    min-width: 0;
+    margin-top: 14px;
+}
+
+.guide-caveats ul {
+    padding-left: 18px;
+    margin: 6px 0 0;
+}
+
+.guide-caveats li {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #55666b;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.candidate-card-disclaimer {
+    display: block;
+    margin-top: 14px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: #71848a;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* 6. Tablet Layout Adjustments (1024px and below) */
+@media (max-width: 1024px) {
+    .page-content {
+        padding: 24px 20px 48px;
+    }
+
+    .guide-list {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+    }
+
+    .broker-stepper-list {
+        gap: 4px;
+    }
+
+    .stepper-label {
+        font-size: 12px;
+    }
+
+    .stepper-status-pill {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+
+    /* Broker Connection Card on Tablet and Intermediate Widths */
+    .broker-connection-item-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+        padding: 16px 14px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .broker-conn-main-info {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .broker-connection-item-card .broker-connection-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 0;
+    }
+
+    .broker-connection-item-card .broker-connection-actions button,
+    .broker-connection-item-card .broker-connection-actions .quiet-action,
+    .broker-connection-item-card .broker-connection-actions .primary-button,
+    .broker-connection-item-card .broker-connection-actions .secondary-button {
+        width: 100%;
+        min-height: 42px;
+        height: 42px;
+        text-align: center;
+        justify-content: center;
+        padding: 0 10px;
+        font-size: 13px;
+        box-sizing: border-box;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+    }
+
+    .broker-connection-item-card .broker-connection-actions button.danger-action {
+        grid-column: auto;
+        width: 100%;
+    }
+}
+
+/* 7. Mobile Layout Adjustments (768px and below) */
+@media (max-width: 768px) {
+    .page-content {
+        padding: 20px 14px 44px;
+    }
+
+    .form-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .form-actions button,
+    .form-actions a {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Broker Connection Card on Mobile */
+    .broker-connection-item-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+        padding: 16px 14px;
+        width: 100%;
+    }
+
+    .broker-conn-main-info {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .broker-connection-item-card .broker-connection-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .broker-connection-item-card .broker-connection-actions button,
+    .broker-connection-item-card .broker-connection-actions .quiet-action,
+    .broker-connection-item-card .broker-connection-actions .primary-button,
+    .broker-connection-item-card .broker-connection-actions .secondary-button {
+        width: 100%;
+        min-height: 42px;
+        height: 42px;
+        text-align: center;
+        justify-content: center;
+        padding: 0 10px;
+        font-size: 13px;
+        box-sizing: border-box;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+    }
+
+    .broker-connection-item-card .broker-connection-actions button.danger-action {
+        grid-column: auto;
+        width: 100%;
+    }
+
+
+    /* Broker Flow Context Bar on Mobile */
+    .broker-flow-context-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .broker-flow-context-items {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .broker-flow-context-col {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .broker-flow-context-col strong {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .broker-flow-context-divider {
+        display: none;
+    }
+
+    .broker-flow-context-actions {
+        width: 100%;
+    }
+
+    .broker-flow-context-actions .quiet-action {
+        width: 100%;
+        min-height: 40px;
+        justify-content: center;
+    }
+
+    /* Broker List Items on Mobile */
+    .broker-link-list li,
+    .broker-link-current,
+    .broker-preview li,
+    .broker-holding-import-list li {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 14px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .broker-link-current-info,
+    .broker-preview-item-main {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .broker-link-list li button,
+    .broker-link-current button,
+    .broker-preview li button,
+    .broker-holding-import-list button {
+        width: 100%;
+        min-height: 42px;
+        height: 42px;
+        justify-content: center;
+    }
+
+    /* Stepper Mobile Horizontal Scroll Isolation */
+    .broker-stepper {
+        padding: 12px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .broker-stepper-list {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 6px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .broker-stepper-item {
+        flex-shrink: 0;
+        min-width: 80px;
+    }
+
+    /* Strategy Guides on Mobile */
+    .guide-details {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .strategy-guide-empty-actions a,
+    .strategy-guide-empty-actions button {
+        width: 100%;
+        min-height: 42px;
+        justify-content: center;
+    }
+
+    .unavailable-assets-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .unavailable-retry-btn {
+        width: 100%;
+        min-height: 42px;
+        justify-content: center;
+    }
+}
+
+/* 8. Small Mobile Screens (480px and below, including 430px and 390px) */
+@media (max-width: 480px) {
+    .page-content {
+        padding: 16px 12px 40px;
+    }
+
+    .topbar {
+        padding: 0 14px;
+        min-height: 60px;
+    }
+
+    /* Broker Connection Actions Stack in 1 Column for perfect fit */
+    .broker-connection-item-card .broker-connection-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .broker-connection-item-card .broker-connection-actions button,
+    .broker-connection-item-card .broker-connection-actions .quiet-action,
+    .broker-connection-item-card .broker-connection-actions .primary-button,
+    .broker-connection-item-card .broker-connection-actions .secondary-button {
+        width: 100%;
+        min-height: 42px;
+        height: 42px;
+        padding: 0 12px;
+        font-size: 13px;
+        box-sizing: border-box;
+        justify-content: center;
+        text-align: center;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+    }
+
+    .broker-connection-item-card .broker-connection-actions button.danger-action {
+        grid-column: auto;
+        width: 100%;
+    }
+
+    .broker-conn-meta-details {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .broker-conn-title-row {
+        gap: 6px;
+    }
+
+    .broker-secret-security-note {
+        font-size: 11.5px;
+        line-height: 1.45;
+        padding: 6px 10px;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    /* Guide Card Heading & Badges */
+    .guide-card {
+        padding: 16px 14px;
+    }
+
+    .guide-card-heading {
+        gap: 8px;
+    }
+
+    .guide-asset {
+        gap: 6px;
+    }
+
+    .candidate-track-badge {
+        font-size: 10.5px;
+        padding: 2px 6px;
+    }
+
+    .action-badge {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+
+    .guide-details {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 10px;
+    }
+
+    .guide-details dt {
+        font-size: 11.5px;
+    }
+
+    .guide-details dd {
+        font-size: 13px;
+    }
+
+    .guide-decision-guidance {
+        padding: 10px 12px;
+    }
+
+    .guide-decision-guidance strong {
+        font-size: 12.5px;
+    }
+
+    .guide-decision-guidance span {
+        font-size: 11.5px;
+    }
+
+    /* Premarket Guide Mobile */
+    .premarket-guide-panel {
+        padding: 16px 12px;
+    }
+
+    .premarket-guide-stats {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    .premarket-guide-row {
+        grid-template-columns: 36px minmax(0, 1fr) auto;
+        gap: 8px;
+        padding: 8px 10px;
+    }
+
+    .premarket-guide-row-reason {
+        grid-column: 2 / -1;
+    }
+
+    /* Broker Table Wrappers */
+    .broker-holding-table-wrapper,
+    .broker-order-import-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 10px;
+    }
+}
+
+/* 9. Extra Small Screens (360px and below) */
+@media (max-width: 360px) {
+    .page-content {
+        padding: 14px 8px 36px;
+    }
+
+    .guide-card,
+    .trade-plan-card {
+        padding: 12px 10px;
+    }
+
+    .broker-connection-item-card {
+        padding: 12px 10px;
+    }
+
+    .broker-flow-context-card {
+        padding: 10px;
+    }
+
+    .guide-asset strong,
+    .trade-plan-ticker {
+        font-size: 16px;
+    }
+
+    .guide-reason,
+    .trade-plan-reason {
+        font-size: 13px;
+    }
+
+    .trade-plan-details dt {
+        font-size: 11.5px;
+    }
+
+    .trade-plan-details dd {
+        font-size: 13px;
+    }
+
+    .trade-plan-profile-notice {
+        padding: 10px 12px;
+    }
+
+    .trade-plan-action-item {
+        padding: 10px 10px;
+    }
+
+    .trade-plan-action-details dd {
+        font-size: 13px;
+    }
+}
+
+/* Keep the application shell and daily guide readable on narrow phone screens. */
+@media (max-width: 480px) {
+    .topbar-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .portfolio-selector,
+    .topbar-link {
+        width: 100%;
+    }
+
+    .topbar-link {
+        order: 2;
+    }
+
+    .nav-link {
+        overflow-wrap: anywhere;
+        word-break: normal;
+    }
+
+    .premarket-guide-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 10px;
+    }
+
+    .premarket-guide-meta .premarket-guide-status {
+        width: fit-content;
+        max-width: fit-content;
+        flex-shrink: 0;
+        margin-bottom: 2px;
+    }
+
+    .premarket-guide-meta-item,
+    .premarket-guide-meta > span:not(.premarket-guide-status) {
+        display: inline-flex;
+        white-space: normal;
+        word-break: keep-all;
+        overflow-wrap: normal;
+        min-width: 0;
+        line-height: 1.45;
+    }
+
+    .premarket-guide-stats > div,
+    .premarket-guide-stats span {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .premarket-guide-row {
+        grid-template-columns: 36px minmax(0, 1fr);
+    }
+
+    .premarket-guide-row .strategy-action {
+        grid-column: 2;
+        justify-self: start;
+    }
+
+    .premarket-guide-row-reason {
+        grid-column: 1 / -1;
+    }
+
+    .trade-plan-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .trade-plan-details {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .trade-plan-profile-notice {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .trade-plan-profile-notice-text {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .trade-plan-profile-link {
+        width: 100%;
+        text-align: center;
+    }
+
+    .trade-plan-actions-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .trade-plan-action-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .trade-plan-action-title-group {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .trade-plan-action-details {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    .trade-plan-not-ready-action {
+        width: 100%;
+    }
+
+    .trade-plan-not-ready-action a.quiet-action {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+/* Broker Connection Actions Alignment in Tablet Range (481px-1024px) */
+@media (min-width: 481px) and (max-width: 1024px) {
+    .broker-connection-item-card .broker-connection-actions > button,
+    .broker-connection-item-card .broker-connection-actions button,
+    .broker-connection-item-card .broker-connection-actions .quiet-action,
+    .broker-connection-item-card .broker-connection-actions .primary-button,
+    .broker-connection-item-card .broker-connection-actions .secondary-button {
+        margin: 0;
+    }
+}
+
+/* Broker Connection Actions Spacing in Mobile Stack (max-width: 480px) */
+@media (max-width: 480px) {
+    .broker-connection-item-card .broker-connection-actions > button,
+    .broker-connection-item-card .broker-connection-actions button,
+    .broker-connection-item-card .broker-connection-actions .quiet-action,
+    .broker-connection-item-card .broker-connection-actions .primary-button,
+    .broker-connection-item-card .broker-connection-actions .secondary-button {
+        margin: 0;
     }
 }
