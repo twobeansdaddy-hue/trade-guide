@@ -9,6 +9,7 @@ import com.tradeguide.domain.market.MarketDataProvider;
 import com.tradeguide.domain.market.MarketPrice;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.portfolio.PortfolioBrokerLink;
+import com.tradeguide.domain.trade.Currency;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.exception.BrokerConnectionUnavailableException;
 import com.tradeguide.exception.MarketDataProviderNotConfiguredException;
@@ -85,7 +86,7 @@ class MarketPriceProviderRegistryTest {
         when(portfolioBrokerLinkRepository.findByPortfolio_Id(100L)).thenReturn(Optional.of(link));
         when(brokerCredentialLoader.load(connection)).thenReturn(credentials);
 
-        MarketPrice price = new MarketPrice(Market.US, "AAPL", new BigDecimal("210.50"), Instant.now());
+        MarketPrice price = new MarketPrice(Market.US, "AAPL", new BigDecimal("210.50"), Currency.USD, Instant.now());
         when(tossSecuritiesMarketPriceProvider.getCurrentPrices(credentials, Market.US, List.of("AAPL")))
                 .thenReturn(Map.of("AAPL", price));
 

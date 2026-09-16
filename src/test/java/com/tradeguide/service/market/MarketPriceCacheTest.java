@@ -1,6 +1,7 @@
 package com.tradeguide.service.market;
 
 import com.tradeguide.domain.market.MarketPrice;
+import com.tradeguide.domain.trade.Currency;
 import com.tradeguide.domain.trade.Market;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +34,7 @@ class MarketPriceCacheTest {
                 Market.US,
                 "AAPL",
                 new BigDecimal("210.50"),
+                Currency.USD,
                 Instant.now()
         );
 
@@ -53,6 +55,7 @@ class MarketPriceCacheTest {
                             Market.US,
                             "AAPL",
                             new BigDecimal("999.99"),
+                            Currency.USD,
                             Instant.now()
                     );
                 }
@@ -70,12 +73,14 @@ class MarketPriceCacheTest {
                 Market.US,
                 "AAPL",
                 new BigDecimal("210.50"),
+                Currency.USD,
                 Instant.now().minus(Duration.ofMinutes(2))
         );
         MarketPrice refreshedPrice = new MarketPrice(
                 Market.US,
                 "AAPL",
                 new BigDecimal("211.00"),
+                Currency.USD,
                 Instant.now()
         );
 
@@ -124,6 +129,7 @@ class MarketPriceCacheTest {
                                             Market.US,
                                             "AAPL",
                                             new BigDecimal("210.50"),
+                                            Currency.USD,
                                             Instant.now()
                                     );
                                 }
@@ -163,6 +169,7 @@ class MarketPriceCacheTest {
                 Market.US,
                 "AAPL",
                 new BigDecimal("210.50"),
+                Currency.USD,
                 Instant.now()
         );
         MarketPrice result = cache.getOrLoad(
@@ -222,7 +229,7 @@ class MarketPriceCacheTest {
     void batchLoadsOnlyTheMissingTickersInOneCallAndReusesFreshCacheForTheRest() {
         AtomicInteger batchCallCount = new AtomicInteger();
         MarketPrice cachedAapl = new MarketPrice(
-                Market.US, "AAPL", new BigDecimal("210.50"), Instant.now()
+                Market.US, "AAPL", new BigDecimal("210.50"), Currency.USD, Instant.now()
         );
         cache.getOrLoad(Market.US, "AAPL", () -> cachedAapl);
 
@@ -233,7 +240,7 @@ class MarketPriceCacheTest {
                     batchCallCount.incrementAndGet();
                     assertThat(missingTickers).containsExactly("MSFT");
                     return Map.of("MSFT", new MarketPrice(
-                            Market.US, "MSFT", new BigDecimal("400.10"), Instant.now()
+                            Market.US, "MSFT", new BigDecimal("400.10"), Currency.USD, Instant.now()
                     ));
                 }
         );
@@ -249,7 +256,7 @@ class MarketPriceCacheTest {
                 Market.US,
                 List.of("AAPL", "BADSYM"),
                 missingTickers -> Map.of(
-                        "AAPL", new MarketPrice(Market.US, "AAPL", new BigDecimal("210.50"), Instant.now())
+                        "AAPL", new MarketPrice(Market.US, "AAPL", new BigDecimal("210.50"), Currency.USD, Instant.now())
                 )
         );
 
@@ -276,7 +283,7 @@ class MarketPriceCacheTest {
                                     loadCount.incrementAndGet();
                                     sleepBriefly();
                                     return Map.of("AAPL", new MarketPrice(
-                                            Market.US, "AAPL", new BigDecimal("210.50"), Instant.now()
+                                            Market.US, "AAPL", new BigDecimal("210.50"), Currency.USD, Instant.now()
                                     ));
                                 }
                         );

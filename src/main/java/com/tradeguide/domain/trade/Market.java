@@ -2,5 +2,12 @@ package com.tradeguide.domain.trade;
 
 public enum Market {
     US,
-    KR
+    KR;
+
+    public Currency getCurrency() {
+        return switch (this) {
+            case US -> Currency.USD;
+            case KR -> Currency.KRW;
+        };
+    }
 }

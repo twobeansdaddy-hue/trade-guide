@@ -278,9 +278,13 @@ class TossSecuritiesOrderHistoryProviderTest {
     /**
      * 주문 응답에는 시장 필드가 없다. 통화와 종목 코드 표기로만 추론하므로 애매한 건은 통과시키지 않고
      * 사유별로 나눠 보고한다. 조회 건수와 제외 건수의 합은 항상 반환 건수와 같아야 한다.
+     *
+     * <p>US(USD, 영문 티커)와 KR(KRW, KRX 6자리 숫자)은 둘 다 지원 대상이다(2026-09-16 확장).
+     * 통화와 종목 코드 표기가 서로 다른 시장을 가리키는 조합(예: 6자리 숫자인데 USD)은 여전히
+     * 애매한 것으로 보고 제외한다.
      */
     @Test
-    void excludesOrdersOutsideTheSupportedUsdMarketAndReportsReasons() {
+    void includesUsAndKrOrdersButExcludesAmbiguousOrUnknownCombinations() {
         givenToken();
         server.expect(requestTo(startsWith(ORDERS_URL)))
                 .andRespond(withSuccess("""
@@ -304,9 +308,14 @@ class TossSecuritiesOrderHistoryProviderTest {
 
         BrokerOrderHistoryPage page = provider.fetchOrders(tossCredentials("id", "secret"), "1", closedFirstPage());
 
-        assertThat(page.records()).extracting(BrokerOrderRecord::ticker).containsExactly("AAPL");
+        // AAPL/USD는 US로, 005930/KRW는 KR로 각각 통화·종목코드 표기가 일치해 반영된다.
+        assertThat(page.records()).extracting(BrokerOrderRecord::ticker).containsExactly("AAPL", "005930");
+        assertThat(page.records()).extracting(BrokerOrderRecord::market)
+                .containsExactly(Market.US, Market.KR);
         assertThat(page.exclusions().fetchedCount()).isEqualTo(4);
-        assertThat(page.exclusions().unsupportedCurrencyCount()).isEqualTo(2);
+        // JPY(7203)만 미지원 통화다.
+        assertThat(page.exclusions().unsupportedCurrencyCount()).isEqualTo(1);
+        // 123456/USD는 종목코드가 KRX 숫자 표기인데 통화가 USD라 시장이 애매해 제외된다.
         assertThat(page.exclusions().unsupportedMarketCount()).isEqualTo(1);
         // JPY는 미지의 통화이기도 하므로 신호 건수에도 잡힌다. 제외 건수와는 별개 축이다.
         assertThat(page.exclusions().unknownEnumCount()).isEqualTo(1);

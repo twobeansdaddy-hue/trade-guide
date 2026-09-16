@@ -6,6 +6,7 @@ import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.market.MarketDataProvider;
 import com.tradeguide.domain.market.PortfolioMarketDataPreference;
 import com.tradeguide.domain.market.MarketPrice;
+import com.tradeguide.domain.trade.Currency;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.valuation.HoldingValuation;
 import com.tradeguide.domain.valuation.PortfolioValuation;
@@ -86,6 +87,7 @@ class PortfolioValuationServiceTest {
                 Market.US,
                 "AAPL",
                 new BigDecimal("110"),
+                Currency.USD,
                 Instant.parse("2026-08-04T00:00:00Z")
         );
         HoldingValuation holdingValuation = new HoldingValuation(

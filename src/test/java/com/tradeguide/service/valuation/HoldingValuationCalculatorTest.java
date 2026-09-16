@@ -2,6 +2,7 @@ package com.tradeguide.service.valuation;
 
 import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.market.MarketPrice;
+import com.tradeguide.domain.trade.Currency;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.valuation.HoldingValuation;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ class HoldingValuationCalculatorTest {
                 Market.US,
                 "AAPL",
                 new BigDecimal("110"),
+                Currency.USD,
                 Instant.parse("2026-08-03T00:00:00Z")
         );
 
@@ -62,6 +64,7 @@ class HoldingValuationCalculatorTest {
                 Market.US,
                 "MSFT",
                 new BigDecimal("110"),
+                Currency.USD,
                 Instant.parse("2026-08-03T00:00:00Z")
         );
 

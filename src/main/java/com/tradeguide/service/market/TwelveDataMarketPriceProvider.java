@@ -168,7 +168,7 @@ public class TwelveDataMarketPriceProvider implements MarketPriceProvider {
                 continue;
             }
             try {
-                result.put(ticker, new MarketPrice(market, ticker, new BigDecimal(rawPrice), capturedAt));
+                result.put(ticker, new MarketPrice(market, ticker, new BigDecimal(rawPrice), market.getCurrency(), capturedAt));
             } catch (NumberFormatException exception) {
                 // 형식이 잘못된 심볼도 같은 방식으로, 그 심볼만 결과에서 뺀다.
             }

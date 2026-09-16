@@ -51,7 +51,8 @@ import java.util.regex.Pattern;
  *
  * <p>주문 응답에는 {@code marketCountry}가 없다. 보유 종목 어댑터의 시장 매핑을 재사용할 수 없어
  * {@code currency}와 종목 코드 표기로 추론하며, 애매한 건은 통과시키지 않고 제외 + 건수 보고로 처리한다.
- * 현재 원장이 다루는 범위가 US/USD뿐이라 이 추론의 위험은 사실상 {@code currency == USD} 검사로 수렴한다.
+ * US(USD, 영문 티커)와 KR(KRW, KRX 6자리 숫자 종목코드) 두 조합만 지원하고, 통화와 종목 코드
+ * 표기가 서로 다른 시장을 가리키면(예: KRW인데 영문 티커) 애매한 것으로 보고 제외한다.
  */
 @Component
 public class TossSecuritiesOrderHistoryProvider implements BrokerOrderHistoryProvider {
@@ -61,7 +62,7 @@ public class TossSecuritiesOrderHistoryProvider implements BrokerOrderHistoryPro
     private static final String INVALID_RESPONSE_MESSAGE = "토스증권 주문 이력 응답이 올바르지 않습니다.";
     private static final String FETCH_FAILED_MESSAGE = "토스증권 주문 이력 조회에 실패했습니다.";
 
-    private static final String SUPPORTED_CURRENCY = "USD";
+    private static final Set<String> SUPPORTED_CURRENCIES = Set.of("USD", "KRW");
     private static final Set<String> KNOWN_CURRENCIES = Set.of("KRW", "USD");
     private static final Set<String> KNOWN_ORDER_TYPES = Set.of("LIMIT", "MARKET");
     private static final Set<String> KNOWN_TIME_IN_FORCES = Set.of("DAY", "CLS", "OPG");
@@ -77,6 +78,8 @@ public class TossSecuritiesOrderHistoryProvider implements BrokerOrderHistoryPro
 
     /** US 티커 표기(영문 시작, 영문·점·하이픈). KRX 6자리 숫자와 구분하기 위한 최소 규칙이다. */
     private static final Pattern US_TICKER = Pattern.compile("[A-Za-z][A-Za-z.\\-]*");
+    /** KRX 종목 코드 표기(숫자 6자리 고정). */
+    private static final Pattern KRX_TICKER = Pattern.compile("\\d{6}");
 
     private final RestClient restClient;
     private final TossSecuritiesAccessTokenIssuer accessTokenIssuer;
@@ -170,13 +173,15 @@ public class TossSecuritiesOrderHistoryProvider implements BrokerOrderHistoryPro
                 unknownEnumCount++;
             }
 
-            if (!SUPPORTED_CURRENCY.equals(currency)) {
+            if (!SUPPORTED_CURRENCIES.contains(currency)) {
                 unsupportedCurrencyCount++;
                 continue;
             }
 
             Market market = toMarket(requireText(item.symbol()));
-            if (market != Market.US) {
+            if (market == null || !market.getCurrency().name().equals(currency)) {
+                // 종목 코드 표기로 추론한 시장이 없거나, 그 시장의 통화가 응답의 통화와
+                // 다르면(예: KRW인데 영문 티커) 애매한 조합이므로 통과시키지 않는다.
                 unsupportedMarketCount++;
                 continue;
             }
@@ -293,6 +298,9 @@ public class TossSecuritiesOrderHistoryProvider implements BrokerOrderHistoryPro
     private Market toMarket(String symbol) {
         if (US_TICKER.matcher(symbol).matches()) {
             return Market.US;
+        }
+        if (KRX_TICKER.matcher(symbol).matches()) {
+            return Market.KR;
         }
         return null;
     }

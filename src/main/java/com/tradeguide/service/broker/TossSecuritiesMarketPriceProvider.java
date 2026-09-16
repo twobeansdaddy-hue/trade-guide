@@ -137,7 +137,7 @@ public class TossSecuritiesMarketPriceProvider {
             throw new MarketDataUnavailableException("토스증권 현재가 응답이 올바르지 않습니다.");
         }
 
-        String expectedCurrency = expectedCurrency(market);
+        String expectedCurrency = market.getCurrency().name();
 
         Map<String, MarketPrice> result = new LinkedHashMap<>();
         for (PriceItem item : response.result()) {
@@ -145,11 +145,9 @@ public class TossSecuritiesMarketPriceProvider {
                 // 종목 하나의 누락·오류 항목이 나머지 종목 결과를 막지 않는다.
                 continue;
             }
-            if (expectedCurrency != null && item.currency() != null
-                    && !expectedCurrency.equalsIgnoreCase(item.currency().trim())) {
-                // 통화가 기대와 다른 종목은 원장 통화를 오염시키지 않도록 조용히 뺀다.
-                // Trade Guide 원장은 현재 단일 통화(USD)만 가정하므로, 다른 통화 값을
-                // 그 통화인 척 섞지 않는다.
+            if (item.currency() != null && !expectedCurrency.equalsIgnoreCase(item.currency().trim())) {
+                // 통화가 그 시장의 기대 통화와 다른 종목은 조용히 뺀다 - 예를 들어 US로
+                // 요청했는데 KRW 응답이 섞여 오면 원장 통화를 오염시키지 않는다.
                 continue;
             }
             try {
@@ -159,6 +157,7 @@ public class TossSecuritiesMarketPriceProvider {
                                 market,
                                 item.symbol().trim().toUpperCase(Locale.ROOT),
                                 new BigDecimal(item.lastPrice()),
+                                market.getCurrency(),
                                 capturedAt
                         )
                 );
@@ -167,15 +166,6 @@ public class TossSecuritiesMarketPriceProvider {
             }
         }
         return result;
-    }
-
-    /**
-     * 이 시장에서 기대하는 통화 코드다. {@link Market#KR}은 아직 원화 원장을 지원하지
-     * 않으므로 {@code null}을 돌려주고, 그 시장의 응답은 통화로 걸러내지 않는다(다른
-     * 계층이 이미 KR 원장 반영을 막는다).
-     */
-    private String expectedCurrency(Market market) {
-        return market == Market.US ? "USD" : null;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
