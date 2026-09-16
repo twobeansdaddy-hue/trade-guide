@@ -7,6 +7,7 @@ import {
     verifyBrokerConnection,
 } from "../../api/brokerConnectionApi";
 import RequestError from "../common/RequestError";
+import AccordionSection from "../strategy/AccordionSection";
 import type {
     BrokerConnection,
     BrokerConnectionCreateRequest,
@@ -1048,13 +1049,20 @@ export default function BrokerConnectionSection({
 
     // Default / "all" view (e.g. on SettingsPage)
     return (
-        <section className="content-section broker-connection-section">
-            <div className="section-heading">
-                <div>
-                    <p className="section-label">1. BROKER CONNECTION</p>
-                    <h2>증권사 연결 등록</h2>
-                </div>
-            </div>
+        <AccordionSection
+            id="broker-connections"
+            className="broker-connection-section"
+            sectionLabel="1. BROKER CONNECTION"
+            title="증권사 연결 등록"
+            defaultOpen={false}
+            summary={
+                connections && connections.length > 0
+                    ? `연결 ${connections.length}건`
+                    : !isLoading && !loadError
+                        ? "연결 없음"
+                        : undefined
+            }
+        >
             <p className="section-description">
                 증권사 접근 정보는 암호화해 저장합니다. 연결한 계좌의 보유 종목은 사용자가 직접 갱신해 스냅샷으로 저장하고 비교할 수 있으며, 주문 전송이나 자동 동기화는 실행하지 않습니다.
             </p>
@@ -1082,6 +1090,6 @@ export default function BrokerConnectionSection({
             ) : null}
 
             {renewingConnection ? renderCredentialRenewalForm() : renderConnectionEditorForm()}
-        </section>
+        </AccordionSection>
     );
 }

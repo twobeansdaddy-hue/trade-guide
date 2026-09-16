@@ -27,6 +27,7 @@ export type StrategyDecision = {
 export type AssetStrategyGuide = {
     market: string;
     ticker: string;
+    displayName?: string;
     decision: StrategyDecision;
 };
 

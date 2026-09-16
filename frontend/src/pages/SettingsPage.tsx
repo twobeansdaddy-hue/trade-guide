@@ -7,6 +7,7 @@ import {
 } from "../api/marketDataProviderApi";
 import {getPortfolioExposures, getPortfolioRiskPolicy, updatePortfolioRiskPolicy} from "../api/portfolioRiskApi";
 import RequestError from "../components/common/RequestError";
+import AccordionSection from "../components/strategy/AccordionSection";
 import BrokerConnectionSection from "../components/broker/BrokerConnectionSection";
 import PortfolioExposureList from "../components/risk/PortfolioExposureList";
 import {usePortfolioContext} from "../context/portfolioContext";
@@ -159,73 +160,90 @@ function SettingsContent({memberId, portfolioId}: {memberId: number; portfolioId
             ) : policyResource.error ? (
                 <RequestError message={policyResource.error.message} onRetry={policyResource.refresh} retryLabel="위험 한도 다시 시도"/>
             ) : null}
-            <form className="risk-policy-editor" id="risk-policy" onSubmit={submit}>
-                <h2>위험 한도 변경</h2>
-                <label>
-                    <span>주문당 최대 손실 (포트폴리오 대비 %)</span>
-                    <span className="form-field-hint">포트폴리오 총 평가액 대비 1회 주문에서 감수할 최대 손실 비율</span>
-                    <input
-                        type="number"
-                        value={maxLoss}
-                        onChange={(event) => {
-                            setMaxLoss(event.target.value);
-                            setSuccess(null);
-                        }}
-                        min="0"
-                        max="100"
-                        step="0.01"
-                        placeholder="예: 2.0"
-                    />
-                </label>
-                <label>
-                    <span>종목당 최대 노출 (포트폴리오 대비 %)</span>
-                    <span className="form-field-hint">포트폴리오 총 평가액 대비 단일 종목의 최대 보유 비중</span>
-                    <input
-                        type="number"
-                        value={maxExposure}
-                        onChange={(event) => {
-                            setMaxExposure(event.target.value);
-                            setSuccess(null);
-                        }}
-                        min="0"
-                        max="100"
-                        step="0.01"
-                        placeholder="예: 20.0"
-                    />
-                </label>
-                <label>
-                    <span>손절 기준 (매입·기준 가격 대비 %)</span>
-                    <span className="form-field-hint">입력한 비율을 기준 가격에서 차감해 검토용 손절가를 계산합니다. 비워 두면 손절가를 계산하지 않습니다.</span>
-                    <input
-                        type="number"
-                        value={stopLoss}
-                        onChange={(event) => {
-                            setStopLoss(event.target.value);
-                            setSuccess(null);
-                        }}
-                        min="0"
-                        max="99.99"
-                        step="0.01"
-                        placeholder="예: 25.0 (선택)"
-                    />
-                </label>
-                <div className="form-feedback-area" aria-live="polite">
-                    {error ? <p className="form-error-message" role="alert">{error}</p> : null}
-                    {success ? <p className="form-success-message" role="status">{success}</p> : null}
-                </div>
-                <div className="form-actions">
-                    <button type="submit" className="primary-button" disabled={isSaving}>
-                        {isSaving ? "저장 중..." : "위험 한도 저장"}
-                    </button>
-                </div>
-            </form>
-            <section className="market-data-provider-section" id="market-data-provider">
-                <div className="section-heading">
-                    <div>
-                        <p className="section-label">MARKET DATA</p>
-                        <h2>시장 데이터 제공자</h2>
+            <AccordionSection
+                id="risk-policy"
+                className="risk-policy-accordion"
+                sectionLabel="RISK LIMITS"
+                title="위험 한도 변경"
+                defaultOpen={true}
+                summary={
+                    policy
+                        ? `손실 ${formatRatio(policy.maxLossPerTradeRatio)} · 노출 ${formatRatio(policy.maxSingleAssetExposureRatio)} · 손절 ${policy.stopLossRatio == null ? "미설정" : formatRatio(policy.stopLossRatio)}`
+                        : "미설정"
+                }
+            >
+                <form className="risk-policy-editor" onSubmit={submit}>
+                    <label>
+                        <span>주문당 최대 손실 (포트폴리오 대비 %)</span>
+                        <span className="form-field-hint">포트폴리오 총 평가액 대비 1회 주문에서 감수할 최대 손실 비율</span>
+                        <input
+                            type="number"
+                            value={maxLoss}
+                            onChange={(event) => {
+                                setMaxLoss(event.target.value);
+                                setSuccess(null);
+                            }}
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            placeholder="예: 2.0"
+                        />
+                    </label>
+                    <label>
+                        <span>종목당 최대 노출 (포트폴리오 대비 %)</span>
+                        <span className="form-field-hint">포트폴리오 총 평가액 대비 단일 종목의 최대 보유 비중</span>
+                        <input
+                            type="number"
+                            value={maxExposure}
+                            onChange={(event) => {
+                                setMaxExposure(event.target.value);
+                                setSuccess(null);
+                            }}
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            placeholder="예: 20.0"
+                        />
+                    </label>
+                    <label>
+                        <span>손절 기준 (매입·기준 가격 대비 %)</span>
+                        <span className="form-field-hint">입력한 비율을 기준 가격에서 차감해 검토용 손절가를 계산합니다. 비워 두면 손절가를 계산하지 않습니다.</span>
+                        <input
+                            type="number"
+                            value={stopLoss}
+                            onChange={(event) => {
+                                setStopLoss(event.target.value);
+                                setSuccess(null);
+                            }}
+                            min="0"
+                            max="99.99"
+                            step="0.01"
+                            placeholder="예: 25.0 (선택)"
+                        />
+                    </label>
+                    <div className="form-feedback-area" aria-live="polite">
+                        {error ? <p className="form-error-message" role="alert">{error}</p> : null}
+                        {success ? <p className="form-success-message" role="status">{success}</p> : null}
                     </div>
-                </div>
+                    <div className="form-actions">
+                        <button type="submit" className="primary-button" disabled={isSaving}>
+                            {isSaving ? "저장 중..." : "위험 한도 저장"}
+                        </button>
+                    </div>
+                </form>
+            </AccordionSection>
+            <AccordionSection
+                id="market-data-provider"
+                className="market-data-provider-section"
+                sectionLabel="MARKET DATA"
+                title="시장 데이터 제공자"
+                defaultOpen={false}
+                summary={
+                    selectedProviderCapability
+                        ? selectedProviderCapability.displayName
+                        : selectedMarketDataProvider || "설정"
+                }
+            >
                 <p className="section-description">현재가, 캔들, 종목 정보에 사용할 제공자를 선택합니다. 연결이 필요한 제공자는 계좌 연결 기능이 준비된 뒤 선택할 수 있습니다.</p>
                 {marketDataProvidersResource.isLoading || marketDataPreferenceResource.isLoading ? (
                     <p className="status-message" aria-live="polite">시장 데이터 제공자 설정을 불러오는 중입니다.</p>
@@ -263,15 +281,20 @@ function SettingsContent({memberId, portfolioId}: {memberId: number; portfolioId
                         </div>
                     </form>
                 )}
-            </section>
+            </AccordionSection>
             <BrokerConnectionSection memberId={memberId}/>
-            <section className="exposure-section">
-                <div className="section-heading">
-                    <div>
-                        <p className="section-label">CURRENT ALLOCATION</p>
-                        <h2>보유 종목 비중</h2>
-                    </div>
-                </div>
+            <AccordionSection
+                id="portfolio-exposures"
+                className="exposure-section"
+                sectionLabel="CURRENT ALLOCATION"
+                title="보유 종목 비중"
+                defaultOpen={false}
+                summary={
+                    exposureResource.data && exposureResource.data.length > 0
+                        ? `종목 ${exposureResource.data.length}건`
+                        : undefined
+                }
+            >
                 {exposureResource.isLoading ? (
                     <p className="status-message" aria-live="polite">보유 종목 비중을 불러오는 중입니다.</p>
                 ) : exposureResource.error ? (
@@ -279,7 +302,7 @@ function SettingsContent({memberId, portfolioId}: {memberId: number; portfolioId
                 ) : exposureResource.data ? (
                     <PortfolioExposureList exposures={exposureResource.data} maximumExposureRate={maximumExposureRate}/>
                 ) : null}
-            </section>
+            </AccordionSection>
         </>
     );
 }

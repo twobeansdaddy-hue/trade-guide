@@ -5,6 +5,7 @@ import {
 } from "../../api/apiError";
 import RequestError from "../common/RequestError";
 import MarketDataRateLimitNotice from "../valuation/MarketDataRateLimitNotice";
+import AccordionSection from "./AccordionSection";
 import {generateTodayPremarketGuide} from "../../api/premarketGuideApi";
 import type {PremarketGuide} from "../../types/premarketGuide";
 
@@ -66,16 +67,18 @@ export default function PremarketGuidePanel({memberId, portfolioId, resource}: P
     const unavailableMessage = getUnavailableMessage(guide?.unavailableAssets ?? []);
 
     return (
-        <section className="premarket-guide-panel" aria-labelledby="premarket-guide-title">
-            <div className="premarket-guide-panel-header">
-                <div>
-                    <p className="section-label">DAILY PRE-MARKET</p>
-                    <h2 id="premarket-guide-title">오늘 장전 가이드</h2>
-                    <p className="premarket-guide-description">
-                        오늘 장 시작 전 확인할 Track A 보유·후보 종목의 매수·매도 검토 결과입니다.
-                        자동 주문이 아니라 최종 판단을 위한 기록입니다.
-                    </p>
-                </div>
+        <AccordionSection
+            id="premarket-guide"
+            className="premarket-guide-panel"
+            sectionLabel="DAILY PRE-MARKET"
+            title="오늘 장전 가이드"
+            defaultOpen={true}
+            summary={
+                <span className={`premarket-guide-status ${statusClass}`}>
+                    {statusLabel}
+                </span>
+            }
+            headerExtra={
                 <button
                     type="button"
                     className="quiet-action"
@@ -88,7 +91,12 @@ export default function PremarketGuidePanel({memberId, portfolioId, resource}: P
                             ? "오늘 가이드 생성"
                             : "오늘 가이드 다시 생성"}
                 </button>
-            </div>
+            }
+        >
+            <p className="premarket-guide-description">
+                오늘 장 시작 전 확인할 Track A 보유·후보 종목의 매수·매도 검토 결과입니다.
+                자동 주문이 아니라 최종 판단을 위한 기록입니다.
+            </p>
 
             {resource.isLoading && !guide ? (
                 <p className="status-message" aria-live="polite">오늘 가이드 상태를 확인하는 중입니다.</p>
@@ -154,7 +162,17 @@ export default function PremarketGuidePanel({memberId, portfolioId, resource}: P
                             {guideRows.map((item) => (
                                 <div className="premarket-guide-row" key={`${item.scopeLabel}-${item.market}-${item.ticker}`}>
                                     <span className="premarket-guide-row-scope">{item.scopeLabel}</span>
-                                    <strong>{item.ticker}</strong>
+                                    {item.displayName && item.displayName !== item.ticker ? (
+                                        <div className="premarket-guide-row-name broker-snapshot-item-identity">
+                                            <strong className="broker-snapshot-item-name">{item.displayName}</strong>
+                                            <div className="broker-snapshot-item-symbol">
+                                                <span className="market-badge">{item.market}</span>
+                                                <span className="broker-ticker">{item.ticker}</span>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <strong>{item.ticker}</strong>
+                                    )}
                                     <span className={`strategy-action action-${item.decision.action.toLowerCase()}`}>
                                         {toActionLabel(item.decision.action)}
                                     </span>
@@ -177,7 +195,7 @@ export default function PremarketGuidePanel({memberId, portfolioId, resource}: P
                     ) : null}
                 </>
             ) : null}
-        </section>
+        </AccordionSection>
     );
 }
 

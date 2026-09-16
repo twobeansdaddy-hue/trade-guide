@@ -1,5 +1,6 @@
 import {Link} from "react-router-dom";
 import RequestError from "../common/RequestError";
+import AccordionSection from "./AccordionSection";
 import {formatUsd} from "../../utils/format";
 import type {
     AssetTradePlanPreview,
@@ -28,10 +29,11 @@ function formatPlanPrice(value: number | null | undefined, currency = "USD"): st
 
 function scrollToHeldAssetProfiles(event: React.MouseEvent<HTMLAnchorElement>) {
     event.preventDefault();
+    window.location.hash = "#held-asset-strategy-profiles";
+    window.dispatchEvent(new CustomEvent("expand-accordion", { detail: "held-asset-strategy-profiles" }));
     const element = document.getElementById("held-asset-strategy-profiles");
     if (element) {
         element.scrollIntoView({behavior: "smooth", block: "start"});
-        window.history.replaceState(null, "", "#held-asset-strategy-profiles");
     }
 }
 
@@ -55,19 +57,23 @@ export default function TradePlanPreviewSection({resource}: Props) {
     const hasAnyPlans = candidatePlans.length > 0 || heldAssetPlans.length > 0;
 
     return (
-        <section
-            className="content-section trade-plan-preview-section"
-            aria-labelledby="trade-plan-preview-title"
+        <AccordionSection
+            id="trade-plan-preview"
+            className="trade-plan-preview-section"
+            sectionLabel="TRADE PLAN PREVIEW"
+            title={
+                <span className="section-title-row">
+                    <span>매매 계획 초안</span>
+                    <span className="trade-plan-scope-badge">검토 전용 · 자동 주문 없음</span>
+                </span>
+            }
+            defaultOpen={true}
+            summary={
+                hasAnyPlans
+                    ? `총 ${candidatePlans.length + heldAssetPlans.length}건`
+                    : undefined
+            }
         >
-            <div className="section-heading">
-                <div className="section-title-wrap">
-                    <p className="section-label">TRADE PLAN PREVIEW</p>
-                    <div className="section-title-row">
-                        <h2 id="trade-plan-preview-title">매매 계획 초안</h2>
-                        <span className="trade-plan-scope-badge">검토 전용 · 자동 주문 없음</span>
-                    </div>
-                </div>
-            </div>
 
             <p className="section-description">
                 전략 기준 가격과 위험 한도를 바탕으로 산출한 검토용 매매 계획입니다.
@@ -158,7 +164,7 @@ export default function TradePlanPreviewSection({resource}: Props) {
                     </ul>
                 </div>
             ) : null}
-        </section>
+        </AccordionSection>
     );
 }
 
@@ -210,11 +216,26 @@ function TradePlanCard({
         <li className="trade-plan-card">
             <div className="trade-plan-card-header">
                 <div className="trade-plan-asset">
-                    <span className="market-badge">{plan.market}</span>
-                    <strong className="trade-plan-ticker">{plan.ticker}</strong>
-                    <span className="trade-plan-scope-tag">
-                        {isHeld ? "보유 종목" : "Track A 후보"}
-                    </span>
+                    {plan.displayName && plan.displayName !== plan.ticker ? (
+                        <div className="broker-snapshot-item-identity">
+                            <strong className="broker-snapshot-item-name">{plan.displayName}</strong>
+                            <div className="broker-snapshot-item-symbol">
+                                <span className="market-badge">{plan.market}</span>
+                                <span className="broker-ticker">{plan.ticker}</span>
+                                <span className="trade-plan-scope-tag">
+                                    {isHeld ? "보유 종목" : "Track A 후보"}
+                                </span>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <span className="market-badge">{plan.market}</span>
+                            <strong className="trade-plan-ticker">{plan.ticker}</strong>
+                            <span className="trade-plan-scope-tag">
+                                {isHeld ? "보유 종목" : "Track A 후보"}
+                            </span>
+                        </>
+                    )}
                 </div>
                 <span className={`action-badge ${actionBadgeClass}`}>
                     {actionLabel}

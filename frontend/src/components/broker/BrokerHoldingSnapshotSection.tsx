@@ -374,6 +374,7 @@ export default function BrokerHoldingSnapshotSection({
         const brokerQty = item.brokerQuantity ?? 0;
         const tgQty = item.tradeGuideQuantity ?? 0;
         const deltaQty = brokerQty - tgQty;
+        const isSell = deltaQty < 0;
 
         setApprovingAdjustmentItemId(snapshotItemId);
         setActionError(null);
@@ -384,12 +385,19 @@ export default function BrokerHoldingSnapshotSection({
             await approveBrokerHoldingAdjustment(memberId, portfolioId, snapshotItemId);
             await reloadAfterAdjustmentChange();
             setPendingAdjustmentItem(null);
-            setActionSuccess(`${item.displayName} (${item.ticker}) 수량 차이 ${deltaQty > 0 ? `+${deltaQty}` : deltaQty}주 조정을 원장에 반영했습니다.`);
+            const deltaDisplay = isSell
+                ? `-${Math.abs(deltaQty).toLocaleString("en-US")}주 (매도)`
+                : `+${deltaQty.toLocaleString("en-US")}주 (매수)`;
+            setActionSuccess(`${item.displayName} (${item.ticker}) 수량 차이 ${deltaDisplay} 조정을 원장에 반영했습니다.`);
         } catch (reason) {
             if (hasApiStatus(reason, 409)) {
                 setActionError("수량 불일치 상태가 변경되었거나 이미 처리된 항목입니다. 보유 종목을 다시 갱신해 주세요.");
             } else if (hasApiStatus(reason, 422)) {
-                setActionError("증권사 수량이 Trade Guide 보유 수량보다 많은 경우만 잔고 조정을 반영할 수 있습니다.");
+                setActionError(
+                    reason instanceof Error && reason.message
+                        ? reason.message
+                        : "수량 차이 조정을 반영할 수 없는 상태입니다."
+                );
             } else if (hasApiStatus(reason, 404)) {
                 setActionError("최신 스냅샷에서 해당 증권사 보유 종목을 찾을 수 없습니다.");
             } else {
@@ -618,9 +626,11 @@ export default function BrokerHoldingSnapshotSection({
                                     const tgQty = item.tradeGuideQuantity ?? 0;
                                     const deltaQuantity = brokerQty - tgQty;
                                     const isPositiveMismatch = isQuantityMismatch && deltaQuantity > 0 && item.snapshotItemId !== null;
-                                    const isNegativeOrEqualMismatch = isQuantityMismatch && deltaQuantity <= 0;
+                                    const isNegativeMismatch = isQuantityMismatch && deltaQuantity < 0 && item.snapshotItemId !== null;
+                                    const isZeroMismatch = isQuantityMismatch && deltaQuantity === 0;
+                                    const isAdjustmentAvailable = isPositiveMismatch || isNegativeMismatch;
                                     const isSelectedForAdjustment = pendingAdjustmentItem !== null && pendingAdjustmentItem.snapshotItemId === item.snapshotItemId;
-                                    const showAdjustmentAction = isPositiveMismatch && !isSelectedForAdjustment;
+                                    const showAdjustmentAction = isAdjustmentAvailable && !isSelectedForAdjustment;
                                     const hasActions = isOnlyInBroker || showAdjustmentAction;
 
                                     return (
@@ -658,30 +668,49 @@ export default function BrokerHoldingSnapshotSection({
                                                             className="primary-button"
                                                             onClick={() => openAdjustmentConfirm(item)}
                                                             disabled={isAnyActionPending}
-                                                            aria-label={`${item.displayName} 수량 차이 조정 반영`}
+                                                            aria-label={`${item.displayName} ${isNegativeMismatch ? "초과분 매도 조정 반영" : "수량 차이 조정 반영"}`}
                                                         >
-                                                            수량 차이 조정 반영
+                                                            {isNegativeMismatch ? "초과분 매도 조정 반영" : "수량 차이 조정 반영"}
                                                         </button>
                                                     </div>
                                                 ) : null}
                                             </div>
 
                                             {isSelectedForAdjustment ? (
-                                                <div className="broker-holding-confirm-panel" aria-label="수량 차이 조정 반영 확인">
-                                                    <h3>수량 차이 조정을 반영하시겠습니까?</h3>
+                                                <div
+                                                    className="broker-holding-confirm-panel"
+                                                    aria-label={deltaQuantity < 0 ? "초과분 매도 조정 반영 확인" : "수량 차이 조정 반영 확인"}
+                                                >
+                                                    <h3>{deltaQuantity < 0 ? "초과분 매도 조정을 반영하시겠습니까?" : "수량 차이 조정을 반영하시겠습니까?"}</h3>
                                                     <dl className="broker-holding-confirm-details">
                                                         <div><dt>종목</dt><dd>{item.displayName}</dd></div>
                                                         <div><dt>시장 · 티커</dt><dd>{item.market} · {item.ticker}</dd></div>
                                                         <div>
                                                             <dt>조정 수량</dt>
                                                             <dd>
-                                                                <strong>+{deltaQuantity.toLocaleString("en-US")}주</strong>
+                                                                <strong>
+                                                                    {deltaQuantity < 0
+                                                                        ? `-${Math.abs(deltaQuantity).toLocaleString("en-US")}주`
+                                                                        : `+${deltaQuantity.toLocaleString("en-US")}주`}
+                                                                </strong>
                                                                 <span className="broker-confirm-quantity-sub"> (증권사 {formatQuantity(item.brokerQuantity)} / 원장 {formatQuantity(item.tradeGuideQuantity)})</span>
                                                             </dd>
                                                         </div>
-                                                        <div><dt>기준 단가</dt><dd>{formatPrice(item.brokerAveragePurchasePrice)}</dd></div>
+                                                        <div>
+                                                            <dt>기준 단가</dt>
+                                                            <dd>
+                                                                {deltaQuantity < 0
+                                                                    ? "원장 평균 매입가 적용 (실현손익 0)"
+                                                                    : formatPrice(item.brokerAveragePurchasePrice)}
+                                                            </dd>
+                                                        </div>
                                                         <div><dt>저장 시각</dt><dd>{comparisonResource.data?.syncedAt ? formatDateTime(comparisonResource.data.syncedAt) : "미기록"}</dd></div>
                                                     </dl>
+                                                    {deltaQuantity < 0 ? (
+                                                        <p className="broker-holding-confirm-note">
+                                                            실제 체결가를 알 수 없어 <strong>원장 평균 매입가를 그대로 사용해 실현손익 없이 처리</strong>합니다.
+                                                        </p>
+                                                    ) : null}
                                                     <p className="broker-holding-confirm-note">
                                                         이 작업은 Trade Guide 내부 잔고 조정(ADJUSTMENT) 기록만 생성하며, <strong>실제 증권사 주문은 절대 내지 않습니다.</strong>
                                                     </p>
@@ -695,7 +724,11 @@ export default function BrokerHoldingSnapshotSection({
                                                             onClick={() => void confirmAdjustment()}
                                                             disabled={approvingAdjustmentItemId !== null}
                                                         >
-                                                            {approvingAdjustmentItemId !== null ? "조정 반영 중..." : "수량 차이 조정 반영"}
+                                                            {approvingAdjustmentItemId !== null
+                                                                ? "조정 반영 중..."
+                                                                : deltaQuantity < 0
+                                                                    ? "초과분 매도 조정 반영"
+                                                                    : "수량 차이 조정 반영"}
                                                         </button>
                                                         <button
                                                             type="button"
@@ -709,20 +742,11 @@ export default function BrokerHoldingSnapshotSection({
                                                 </div>
                                             ) : null}
 
-                                            {isNegativeOrEqualMismatch ? (
+                                            {isZeroMismatch ? (
                                                 <div className="broker-mismatch-manual-explanation" role="note">
                                                     <p className="broker-mismatch-explanation-text">
-                                                        증권사 수량이 Trade Guide 원장 수량보다 적거나 같습니다. 자동 잔고 조정을 지원하지 않으므로, 누락된 매도 체결이 있는지 5단계 주문 이력 검토를 확인하거나 수동으로 원장을 정리해 주세요.
+                                                        증권사 수량과 Trade Guide 원장 수량이 이미 같습니다. 잔고 조정이 필요하지 않습니다.
                                                     </p>
-                                                    {onGoToStep ? (
-                                                        <button
-                                                            type="button"
-                                                            className="quiet-action"
-                                                            onClick={() => onGoToStep(5, "order-history")}
-                                                        >
-                                                            주문 이력 검토로 이동 →
-                                                        </button>
-                                                    ) : null}
                                                 </div>
                                             ) : null}
                                         </li>
@@ -1158,75 +1182,81 @@ export default function BrokerHoldingSnapshotSection({
                     {!isLoadingAdjustments && adjustments.length > 0 ? (
                         <>
                             <ul className="broker-holding-import-list">
-                                {adjustments.map((adjRecord) => (
-                                    <li
-                                        key={adjRecord.id}
-                                        className={adjRecord.status === "REVOKED" ? "broker-holding-import-revoked" : undefined}
-                                    >
-                                        <div>
-                                            <div className="broker-snapshot-item-identity">
-                                                <strong className="broker-snapshot-item-name">{adjRecord.displayName}</strong>
-                                                <div className="broker-snapshot-item-symbol">
-                                                    <span className="market-badge">{adjRecord.market}</span>
-                                                    <span className="broker-ticker">{adjRecord.ticker}</span>
-                                                </div>
-                                            </div>
-                                            <span>
-                                                조정 수량: <strong>+{formatQuantity(adjRecord.deltaQuantity)}</strong>
-                                                {" · "}
-                                                반영 전 원장 {formatQuantity(adjRecord.ledgerQuantityBefore)} → 증권사 {formatQuantity(adjRecord.brokerQuantity)}
-                                                {" · "}
-                                                기준 단가 {formatPrice(adjRecord.unitPrice)}
-                                            </span>
-                                            <span>
-                                                스냅샷 저장 {adjRecord.snapshotSyncedAt ? formatDateTime(adjRecord.snapshotSyncedAt) : "미기록"}
-                                                {" · "}
-                                                {adjRecord.status === "ACTIVE"
-                                                    ? `승인 ${formatDateTime(adjRecord.approvedAt)}`
-                                                    : `취소됨 · 승인 ${formatDateTime(adjRecord.approvedAt)}`}
-                                            </span>
-                                        </div>
-                                        {adjRecord.status === "ACTIVE" ? (
-                                            pendingRevokeAdjustmentId === adjRecord.id ? (
-                                                <div className="broker-holding-confirm-panel broker-holding-revoke-confirm">
-                                                    <p>이 수량 차이 조정 반영을 취소하시겠습니까?</p>
-                                                    <p className="broker-holding-confirm-note">
-                                                        매매 원장에서 해당 잔고 조정 기록이 삭제되며 포트폴리오 잔고가 재계산됩니다. 실제 증권사 주문이나 잔고에는 영향을 주지 않습니다.
-                                                    </p>
-                                                    <div className="form-actions">
-                                                        <button
-                                                            type="button"
-                                                            className="primary-button danger-button"
-                                                            onClick={() => void confirmRevokeAdjustment(adjRecord.id)}
-                                                            disabled={revokingAdjustmentId !== null}
-                                                        >
-                                                            {revokingAdjustmentId === adjRecord.id ? "취소 처리 중..." : "취소 확인"}
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="secondary-button"
-                                                            onClick={() => setPendingRevokeAdjustmentId(null)}
-                                                            disabled={revokingAdjustmentId !== null}
-                                                        >
-                                                            닫기
-                                                        </button>
+                                {adjustments.map((adjRecord) => {
+                                    const isSellAdjustment = adjRecord.brokerQuantity < adjRecord.ledgerQuantityBefore;
+                                    return (
+                                        <li
+                                            key={adjRecord.id}
+                                            className={adjRecord.status === "REVOKED" ? "broker-holding-import-revoked" : undefined}
+                                        >
+                                            <div>
+                                                <div className="broker-snapshot-item-identity">
+                                                    <strong className="broker-snapshot-item-name">{adjRecord.displayName}</strong>
+                                                    <div className="broker-snapshot-item-symbol">
+                                                        <span className="market-badge">{adjRecord.market}</span>
+                                                        <span className="broker-ticker">{adjRecord.ticker}</span>
+                                                        <span className={`status-pill ${isSellAdjustment ? "pill-sell" : "pill-buy"}`}>
+                                                            {isSellAdjustment ? "매도 조정" : "매수 조정"}
+                                                        </span>
                                                     </div>
                                                 </div>
+                                                <span>
+                                                    조정 수량: <strong>{isSellAdjustment ? `-${formatQuantity(adjRecord.deltaQuantity)}` : `+${formatQuantity(adjRecord.deltaQuantity)}`}</strong>
+                                                    {" · "}
+                                                    반영 전 원장 {formatQuantity(adjRecord.ledgerQuantityBefore)} → 증권사 {formatQuantity(adjRecord.brokerQuantity)}
+                                                    {" · "}
+                                                    기준 단가 {formatPrice(adjRecord.unitPrice)}
+                                                </span>
+                                                <span>
+                                                    스냅샷 저장 {adjRecord.snapshotSyncedAt ? formatDateTime(adjRecord.snapshotSyncedAt) : "미기록"}
+                                                    {" · "}
+                                                    {adjRecord.status === "ACTIVE"
+                                                        ? `승인 ${formatDateTime(adjRecord.approvedAt)}`
+                                                        : `취소됨 · 승인 ${formatDateTime(adjRecord.approvedAt)}`}
+                                                </span>
+                                            </div>
+                                            {adjRecord.status === "ACTIVE" ? (
+                                                pendingRevokeAdjustmentId === adjRecord.id ? (
+                                                    <div className="broker-holding-confirm-panel broker-holding-revoke-confirm">
+                                                        <p>이 수량 차이 조정 반영을 취소하시겠습니까?</p>
+                                                        <p className="broker-holding-confirm-note">
+                                                            매매 원장에서 해당 잔고 조정 기록이 삭제되며 포트폴리오 잔고가 재계산됩니다. 실제 증권사 주문이나 잔고에는 영향을 주지 않습니다.
+                                                        </p>
+                                                        <div className="form-actions">
+                                                            <button
+                                                                type="button"
+                                                                className="primary-button danger-button"
+                                                                onClick={() => void confirmRevokeAdjustment(adjRecord.id)}
+                                                                disabled={revokingAdjustmentId !== null}
+                                                            >
+                                                                {revokingAdjustmentId === adjRecord.id ? "취소 처리 중..." : "취소 확인"}
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                className="secondary-button"
+                                                                onClick={() => setPendingRevokeAdjustmentId(null)}
+                                                                disabled={revokingAdjustmentId !== null}
+                                                            >
+                                                                닫기
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        className="quiet-action"
+                                                        onClick={() => openRevokeAdjustmentConfirm(adjRecord.id)}
+                                                        disabled={isAnyActionPending}
+                                                    >
+                                                        반영 취소
+                                                    </button>
+                                                )
                                             ) : (
-                                                <button
-                                                    type="button"
-                                                    className="quiet-action"
-                                                    onClick={() => openRevokeAdjustmentConfirm(adjRecord.id)}
-                                                    disabled={isAnyActionPending}
-                                                >
-                                                    반영 취소
-                                                </button>
-                                            )
-                                        ) : (
-                                            <span className="broker-holding-import-status">취소됨</span>
-                                        )}
-                                    </li>
-                                ))}
+                                                <span className="broker-holding-import-status">취소됨</span>
+                                            )}
+                                        </li>
+                                    );
+                                })}
                             </ul>
                             {hasNextAdjustments ? (
                                 <div className="broker-history-load-more">
@@ -1408,9 +1438,11 @@ export default function BrokerHoldingSnapshotSection({
                                 const tgQty = item.tradeGuideQuantity ?? 0;
                                 const deltaQuantity = brokerQty - tgQty;
                                 const isPositiveMismatch = isQuantityMismatch && deltaQuantity > 0 && item.snapshotItemId !== null;
-                                const isNegativeOrEqualMismatch = isQuantityMismatch && deltaQuantity <= 0;
+                                const isNegativeMismatch = isQuantityMismatch && deltaQuantity < 0 && item.snapshotItemId !== null;
+                                const isZeroMismatch = isQuantityMismatch && deltaQuantity === 0;
+                                const isAdjustmentAvailable = isPositiveMismatch || isNegativeMismatch;
                                 const isSelectedForAdjustment = pendingAdjustmentItem !== null && pendingAdjustmentItem.snapshotItemId === item.snapshotItemId;
-                                const showAdjustmentAction = isPositiveMismatch && !isSelectedForAdjustment;
+                                const showAdjustmentAction = isAdjustmentAvailable && !isSelectedForAdjustment;
 
                                 const hasActions = showApproveAction || showAdjustmentAction;
                                 const itemClasses = [
@@ -1453,9 +1485,9 @@ export default function BrokerHoldingSnapshotSection({
                                                         className="primary-button"
                                                         onClick={() => openAdjustmentConfirm(item)}
                                                         disabled={isAnyActionPending}
-                                                        aria-label={`${item.displayName} 수량 차이 조정 반영`}
+                                                        aria-label={`${item.displayName} ${isNegativeMismatch ? "초과분 매도 조정 반영" : "수량 차이 조정 반영"}`}
                                                     >
-                                                        수량 차이 조정 반영
+                                                        {isNegativeMismatch ? "초과분 매도 조정 반영" : "수량 차이 조정 반영"}
                                                     </button>
                                                 </div>
                                             ) : null}
@@ -1495,21 +1527,40 @@ export default function BrokerHoldingSnapshotSection({
                                         ) : null}
 
                                         {isSelectedForAdjustment ? (
-                                            <div className="broker-holding-confirm-panel" aria-label="수량 차이 조정 반영 확인">
-                                                <h3>수량 차이 조정을 반영하시겠습니까?</h3>
+                                            <div
+                                                className="broker-holding-confirm-panel"
+                                                aria-label={deltaQuantity < 0 ? "초과분 매도 조정 반영 확인" : "수량 차이 조정 반영 확인"}
+                                            >
+                                                <h3>{deltaQuantity < 0 ? "초과분 매도 조정을 반영하시겠습니까?" : "수량 차이 조정을 반영하시겠습니까?"}</h3>
                                                 <dl className="broker-holding-confirm-details">
                                                     <div><dt>종목</dt><dd>{item.displayName}</dd></div>
                                                     <div><dt>시장 · 티커</dt><dd>{item.market} · {item.ticker}</dd></div>
                                                     <div>
                                                         <dt>조정 수량</dt>
                                                         <dd>
-                                                            <strong>+{deltaQuantity.toLocaleString("en-US")}주</strong>
+                                                            <strong>
+                                                                {deltaQuantity < 0
+                                                                    ? `-${Math.abs(deltaQuantity).toLocaleString("en-US")}주`
+                                                                    : `+${deltaQuantity.toLocaleString("en-US")}주`}
+                                                            </strong>
                                                             <span className="broker-confirm-quantity-sub"> (증권사 {formatQuantity(item.brokerQuantity)} / 원장 {formatQuantity(item.tradeGuideQuantity)})</span>
                                                         </dd>
                                                     </div>
-                                                    <div><dt>기준 단가</dt><dd>{formatPrice(item.brokerAveragePurchasePrice)}</dd></div>
+                                                    <div>
+                                                        <dt>기준 단가</dt>
+                                                        <dd>
+                                                            {deltaQuantity < 0
+                                                                ? "원장 평균 매입가 적용 (실현손익 0)"
+                                                                : formatPrice(item.brokerAveragePurchasePrice)}
+                                                        </dd>
+                                                    </div>
                                                     <div><dt>저장 시각</dt><dd>{comparisonResource.data?.syncedAt ? formatDateTime(comparisonResource.data.syncedAt) : "미기록"}</dd></div>
                                                 </dl>
+                                                {deltaQuantity < 0 ? (
+                                                    <p className="broker-holding-confirm-note">
+                                                        실제 체결가를 알 수 없어 <strong>원장 평균 매입가를 그대로 사용해 실현손익 없이 처리</strong>합니다.
+                                                    </p>
+                                                ) : null}
                                                 <p className="broker-holding-confirm-note">
                                                     이 작업은 Trade Guide 내부 잔고 조정(ADJUSTMENT) 기록만 생성하며, <strong>실제 증권사 주문은 절대 내지 않습니다.</strong>
                                                 </p>
@@ -1523,7 +1574,11 @@ export default function BrokerHoldingSnapshotSection({
                                                         onClick={() => void confirmAdjustment()}
                                                         disabled={approvingAdjustmentItemId !== null}
                                                     >
-                                                        {approvingAdjustmentItemId !== null ? "조정 반영 중..." : "수량 차이 조정 반영"}
+                                                        {approvingAdjustmentItemId !== null
+                                                            ? "조정 반영 중..."
+                                                            : deltaQuantity < 0
+                                                                ? "초과분 매도 조정 반영"
+                                                                : "수량 차이 조정 반영"}
                                                     </button>
                                                     <button
                                                         type="button"
@@ -1537,20 +1592,11 @@ export default function BrokerHoldingSnapshotSection({
                                             </div>
                                         ) : null}
 
-                                        {isNegativeOrEqualMismatch ? (
+                                        {isZeroMismatch ? (
                                             <div className="broker-mismatch-manual-explanation" role="note">
                                                 <p className="broker-mismatch-explanation-text">
-                                                    증권사 수량이 Trade Guide 원장 수량보다 적거나 같습니다. 자동 잔고 조정을 지원하지 않으므로, 누락된 매도 체결이 있는지 5단계 주문 이력 검토를 확인하거나 수동으로 원장을 정리해 주세요.
+                                                    증권사 수량과 Trade Guide 원장 수량이 이미 같습니다. 잔고 조정이 필요하지 않습니다.
                                                 </p>
-                                                {onGoToStep ? (
-                                                    <button
-                                                        type="button"
-                                                        className="quiet-action"
-                                                        onClick={() => onGoToStep(5, "order-history")}
-                                                    >
-                                                        주문 이력 검토로 이동 →
-                                                    </button>
-                                                ) : null}
                                             </div>
                                         ) : null}
                                     </li>
@@ -1742,75 +1788,81 @@ export default function BrokerHoldingSnapshotSection({
                 {!isLoadingAdjustments && adjustments.length > 0 ? (
                     <>
                         <ul className="broker-holding-import-list">
-                            {adjustments.map((adjRecord) => (
-                                <li
-                                    key={adjRecord.id}
-                                    className={adjRecord.status === "REVOKED" ? "broker-holding-import-revoked" : undefined}
-                                >
-                                    <div>
-                                        <div className="broker-snapshot-item-identity">
-                                            <strong className="broker-snapshot-item-name">{adjRecord.displayName}</strong>
-                                            <div className="broker-snapshot-item-symbol">
-                                                <span className="market-badge">{adjRecord.market}</span>
-                                                <span className="broker-ticker">{adjRecord.ticker}</span>
-                                            </div>
-                                        </div>
-                                        <span>
-                                            조정 수량: <strong>+{formatQuantity(adjRecord.deltaQuantity)}</strong>
-                                            {" · "}
-                                            반영 전 원장 {formatQuantity(adjRecord.ledgerQuantityBefore)} → 증권사 {formatQuantity(adjRecord.brokerQuantity)}
-                                            {" · "}
-                                            기준 단가 {formatPrice(adjRecord.unitPrice)}
-                                        </span>
-                                        <span>
-                                            스냅샷 저장 {adjRecord.snapshotSyncedAt ? formatDateTime(adjRecord.snapshotSyncedAt) : "미기록"}
-                                            {" · "}
-                                            {adjRecord.status === "ACTIVE"
-                                                ? `승인 ${formatDateTime(adjRecord.approvedAt)}`
-                                                : `취소됨 · 승인 ${formatDateTime(adjRecord.approvedAt)}`}
-                                        </span>
-                                    </div>
-                                    {adjRecord.status === "ACTIVE" ? (
-                                        pendingRevokeAdjustmentId === adjRecord.id ? (
-                                            <div className="broker-holding-confirm-panel broker-holding-revoke-confirm">
-                                                <p>이 수량 차이 조정 반영을 취소하시겠습니까?</p>
-                                                <p className="broker-holding-confirm-note">
-                                                    매매 원장에서 해당 잔고 조정 기록이 삭제되며 포트폴리오 잔고가 재계산됩니다. 실제 증권사 주문이나 잔고에는 영향을 주지 않습니다.
-                                                </p>
-                                                <div className="form-actions">
-                                                    <button
-                                                        type="button"
-                                                        className="primary-button danger-button"
-                                                        onClick={() => void confirmRevokeAdjustment(adjRecord.id)}
-                                                        disabled={revokingAdjustmentId !== null}
-                                                    >
-                                                        {revokingAdjustmentId === adjRecord.id ? "취소 처리 중..." : "취소 확인"}
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="secondary-button"
-                                                        onClick={() => setPendingRevokeAdjustmentId(null)}
-                                                        disabled={revokingAdjustmentId !== null}
-                                                    >
-                                                        닫기
-                                                    </button>
+                            {adjustments.map((adjRecord) => {
+                                const isSellAdjustment = adjRecord.brokerQuantity < adjRecord.ledgerQuantityBefore;
+                                return (
+                                    <li
+                                        key={adjRecord.id}
+                                        className={adjRecord.status === "REVOKED" ? "broker-holding-import-revoked" : undefined}
+                                    >
+                                        <div>
+                                            <div className="broker-snapshot-item-identity">
+                                                <strong className="broker-snapshot-item-name">{adjRecord.displayName}</strong>
+                                                <div className="broker-snapshot-item-symbol">
+                                                    <span className="market-badge">{adjRecord.market}</span>
+                                                    <span className="broker-ticker">{adjRecord.ticker}</span>
+                                                    <span className={`status-pill ${isSellAdjustment ? "pill-sell" : "pill-buy"}`}>
+                                                        {isSellAdjustment ? "매도 조정" : "매수 조정"}
+                                                    </span>
                                                 </div>
                                             </div>
+                                            <span>
+                                                조정 수량: <strong>{isSellAdjustment ? `-${formatQuantity(adjRecord.deltaQuantity)}` : `+${formatQuantity(adjRecord.deltaQuantity)}`}</strong>
+                                                {" · "}
+                                                반영 전 원장 {formatQuantity(adjRecord.ledgerQuantityBefore)} → 증권사 {formatQuantity(adjRecord.brokerQuantity)}
+                                                {" · "}
+                                                기준 단가 {formatPrice(adjRecord.unitPrice)}
+                                            </span>
+                                            <span>
+                                                스냅샷 저장 {adjRecord.snapshotSyncedAt ? formatDateTime(adjRecord.snapshotSyncedAt) : "미기록"}
+                                                {" · "}
+                                                {adjRecord.status === "ACTIVE"
+                                                    ? `승인 ${formatDateTime(adjRecord.approvedAt)}`
+                                                    : `취소됨 · 승인 ${formatDateTime(adjRecord.approvedAt)}`}
+                                            </span>
+                                        </div>
+                                        {adjRecord.status === "ACTIVE" ? (
+                                            pendingRevokeAdjustmentId === adjRecord.id ? (
+                                                <div className="broker-holding-confirm-panel broker-holding-revoke-confirm">
+                                                    <p>이 수량 차이 조정 반영을 취소하시겠습니까?</p>
+                                                    <p className="broker-holding-confirm-note">
+                                                        매매 원장에서 해당 잔고 조정 기록이 삭제되며 포트폴리오 잔고가 재계산됩니다. 실제 증권사 주문이나 잔고에는 영향을 주지 않습니다.
+                                                    </p>
+                                                    <div className="form-actions">
+                                                        <button
+                                                            type="button"
+                                                            className="primary-button danger-button"
+                                                            onClick={() => void confirmRevokeAdjustment(adjRecord.id)}
+                                                            disabled={revokingAdjustmentId !== null}
+                                                        >
+                                                            {revokingAdjustmentId === adjRecord.id ? "취소 처리 중..." : "취소 확인"}
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className="secondary-button"
+                                                            onClick={() => setPendingRevokeAdjustmentId(null)}
+                                                            disabled={revokingAdjustmentId !== null}
+                                                        >
+                                                            닫기
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    className="quiet-action"
+                                                    onClick={() => openRevokeAdjustmentConfirm(adjRecord.id)}
+                                                    disabled={isAnyActionPending}
+                                                >
+                                                    반영 취소
+                                                </button>
+                                            )
                                         ) : (
-                                            <button
-                                                type="button"
-                                                className="quiet-action"
-                                                onClick={() => openRevokeAdjustmentConfirm(adjRecord.id)}
-                                                disabled={isAnyActionPending}
-                                            >
-                                                반영 취소
-                                            </button>
-                                        )
-                                    ) : (
-                                        <span className="broker-holding-import-status">취소됨</span>
-                                    )}
-                                </li>
-                            ))}
+                                            <span className="broker-holding-import-status">취소됨</span>
+                                        )}
+                                    </li>
+                                );
+                            })}
                         </ul>
                         {hasNextAdjustments ? (
                             <div className="broker-history-load-more">

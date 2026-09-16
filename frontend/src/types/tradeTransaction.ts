@@ -2,7 +2,7 @@ export type Market = "US" | "KR";
 
 export type TradeType = "BUY" | "SELL";
 
-export type TradeTransactionSource = "MANUAL" | "BROKER_OPENING_BALANCE" | "BROKER_ORDER_HISTORY";
+export type TradeTransactionSource = "MANUAL" | "BROKER_OPENING_BALANCE" | "BROKER_ORDER_HISTORY" | "BROKER_HOLDING_ADJUSTMENT";
 
 export type TradeTransactionCreateRequest = {
     market: Market

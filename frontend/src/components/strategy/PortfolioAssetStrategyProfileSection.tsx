@@ -11,6 +11,7 @@ import {
 } from "../../api/portfolioAssetRiskOverrideApi";
 import {getPortfolioRiskPolicy} from "../../api/portfolioRiskApi";
 import RequestError from "../common/RequestError";
+import AccordionSection from "./AccordionSection";
 import type {
     InvestmentTrack,
     PortfolioAssetStrategyProfile,
@@ -180,17 +181,19 @@ export default function PortfolioAssetStrategyProfileSection({
     );
 
     return (
-        <section
-            className="content-section portfolio-strategy-profile-section"
+        <AccordionSection
             id="held-asset-strategy-profiles"
-            aria-labelledby="portfolio-strategy-profile-heading"
+            anchorIds={["held-asset-strategy-profiles", "strategy-profiles"]}
+            className="portfolio-strategy-profile-section"
+            sectionLabel="PORTFOLIO TRACK & STOP-LOSS SETTINGS"
+            title="보유 종목 투자 트랙 및 손절 기준 설정"
+            defaultOpen={false}
+            summary={
+                profiles && profiles.length > 0
+                    ? `설정 ${profiles.length}건`
+                    : undefined
+            }
         >
-            <div className="section-heading">
-                <div>
-                    <p className="section-label">PORTFOLIO TRACK &amp; STOP-LOSS SETTINGS</p>
-                    <h2 id="portfolio-strategy-profile-heading">보유 종목 투자 트랙 및 손절 기준 설정</h2>
-                </div>
-            </div>
             <p className="section-description">
                 이 설정은 현재 포트폴리오에 실제로 매수하여 보유 중인 종목의 가이드 생성에만 적용되며, 전역 자산
                 카탈로그(/api/admin/asset-profiles)나 다른 포트폴리오, 미보유 후보 종목(후보 가이드)에는
@@ -244,7 +247,7 @@ export default function PortfolioAssetStrategyProfileSection({
                     ))}
                 </ul>
             ) : null}
-        </section>
+        </AccordionSection>
     );
 }
 

@@ -39,6 +39,7 @@ export type PlannedTradeAction = {
 export type AssetTradePlanPreview = {
     market: string;
     ticker: string;
+    displayName?: string;
     currency: string;
     status: TradePlanPreviewStatus;
     notReadyReason: TradePlanPreviewNotReadyReason | null;

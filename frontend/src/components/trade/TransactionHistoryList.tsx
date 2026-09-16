@@ -17,6 +17,7 @@ const sourceLabels: Record<TradeTransactionSource, string> = {
     MANUAL: "직접 등록",
     BROKER_OPENING_BALANCE: "증권사 개시 잔고",
     BROKER_ORDER_HISTORY: "증권사 주문 이력",
+    BROKER_HOLDING_ADJUSTMENT: "증권사 잔고 조정",
 };
 
 export default function TransactionHistoryList({
@@ -33,6 +34,7 @@ export default function TransactionHistoryList({
             const source: TradeTransactionSource = transaction.source ?? "MANUAL";
             const isBrokerOpeningBalance = source === "BROKER_OPENING_BALANCE";
             const isBrokerOrderHistory = source === "BROKER_ORDER_HISTORY";
+            const isBrokerHoldingAdjustment = source === "BROKER_HOLDING_ADJUSTMENT";
 
             return <li key={transaction.id}>
             <div className="transaction-history-heading">
@@ -63,6 +65,14 @@ export default function TransactionHistoryList({
                         >
                             주문 이력에서 반영 취소
                         </Link>
+                    ) : isBrokerHoldingAdjustment ? (
+                        <Link
+                            className="transaction-source-link"
+                            to="/broker-accounts#broker-holding-adjustments"
+                            aria-label={`${transaction.ticker} 증권사 잔고 조정 이력에서 반영 취소`}
+                        >
+                            잔고 조정 이력에서 반영 취소
+                        </Link>
                     ) : (
                         <button
                             type="button"
@@ -77,9 +87,9 @@ export default function TransactionHistoryList({
                 </div>
             </div>
             <dl>
-                <div><dt>{isBrokerOpeningBalance ? "반영 시각" : "체결 시각"}</dt><dd>{formatDateTime(transaction.tradedAt)}</dd></div>
+                <div><dt>{isBrokerOpeningBalance || isBrokerHoldingAdjustment ? "반영 시각" : "체결 시각"}</dt><dd>{formatDateTime(transaction.tradedAt)}</dd></div>
                 <div><dt>수량</dt><dd>{transaction.quantity}</dd></div>
-                <div><dt>{isBrokerOpeningBalance ? "증권사 평단가" : "체결 단가"}</dt><dd>{formatUsd(transaction.executedPrice)}</dd></div>
+                <div><dt>{isBrokerOpeningBalance || isBrokerHoldingAdjustment ? "증권사 평단가" : "체결 단가"}</dt><dd>{formatUsd(transaction.executedPrice)}</dd></div>
                 <div><dt>수수료</dt><dd>{formatUsd(transaction.fee)}</dd></div>
             </dl>
         </li>;

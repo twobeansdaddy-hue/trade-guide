@@ -890,7 +890,7 @@ dt {
 
 .premarket-guide-row {
     display: grid;
-    grid-template-columns: 44px minmax(72px, 0.35fr) auto minmax(0, 1fr);
+    grid-template-columns: 44px minmax(120px, 0.65fr) 76px minmax(0, 1fr);
     align-items: center;
     gap: 10px;
     min-width: 0;
@@ -904,6 +904,7 @@ dt {
     color: #61717e;
     font-size: 11px;
     font-weight: 800;
+    grid-column: 1;
 }
 
 .premarket-guide-row strong {
@@ -912,7 +913,21 @@ dt {
     overflow-wrap: anywhere;
 }
 
+.premarket-guide-row-name {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    min-width: 0;
+    grid-column: 2;
+}
+
+.premarket-guide-row .strategy-action {
+    grid-column: 3;
+}
+
 .premarket-guide-row-reason {
+    grid-column: 4;
     min-width: 0;
     color: #526875;
     font-size: 13px;
@@ -1654,14 +1669,14 @@ dt {
         min-width: 0;
     }
 
-    .broker-snapshot-item-identity {
+    .broker-preview-item-main .broker-snapshot-item-identity {
         grid-column: 1;
         grid-row: 1;
         min-width: 0;
         width: 100%;
     }
 
-    .broker-holding-comparison {
+    .broker-preview-item-main .broker-holding-comparison {
         grid-column: 2;
         grid-row: 1;
         min-width: 0;
@@ -3243,6 +3258,7 @@ dt {
     gap: 8px;
     min-width: 0;
     flex-wrap: wrap;
+    flex: 1 1 auto;
 }
 
 .trade-plan-ticker {
@@ -7803,6 +7819,16 @@ dt {
     color: #64748b;
 }
 
+.status-pill.pill-buy {
+    background: #e3f4ea;
+    color: #126342;
+}
+
+.status-pill.pill-sell {
+    background: #fde9e7;
+    color: #a62e28;
+}
+
 .broker-reconciliation-section {
     margin-top: 32px;
 }
@@ -9380,7 +9406,7 @@ dt {
     }
 
     .premarket-guide-row {
-        grid-template-columns: 40px minmax(0, 1fr) auto;
+        grid-template-columns: 40px minmax(0, 1fr) 76px;
     }
 
     .premarket-guide-row-reason {
@@ -10239,6 +10265,7 @@ button.quiet-action.danger-action:hover:not(:disabled),
     gap: 8px;
     flex-wrap: wrap;
     min-width: 0;
+    flex: 1 1 auto;
 }
 
 .guide-asset strong {
@@ -10738,7 +10765,7 @@ button.quiet-action.danger-action:hover:not(:disabled),
     }
 
     .premarket-guide-row {
-        grid-template-columns: 36px minmax(0, 1fr) auto;
+        grid-template-columns: 36px minmax(0, 1fr) 76px;
         gap: 8px;
         padding: 8px 10px;
     }
@@ -10953,3 +10980,215 @@ button.quiet-action.danger-action:hover:not(:disabled),
         margin: 0;
     }
 }
+
+/* ==========================================================================
+   Accordion Section Styles (Density Reduction & Expand/Collapse Pattern)
+   ========================================================================== */
+
+.accordion-section {
+    min-width: 0;
+}
+
+.accordion-section.is-collapsed {
+    padding-bottom: 0;
+}
+
+.premarket-guide-panel.accordion-section.is-collapsed {
+    padding-bottom: 20px;
+}
+
+.accordion-header-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    min-width: 0;
+    margin-bottom: 16px;
+}
+
+.accordion-section.is-collapsed .accordion-header-row {
+    margin-bottom: 0;
+}
+
+.accordion-heading-group {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.accordion-heading {
+    margin: 5px 0 0;
+    padding: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+}
+
+.accordion-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 4px 0;
+    margin: 0;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+    gap: 14px;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.accordion-toggle-btn:focus-visible {
+    outline: 2px solid #167568;
+    outline-offset: 4px;
+}
+
+.accordion-toggle-btn:hover .accordion-title-text {
+    color: #167568;
+}
+
+.accordion-title-container {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-width: 0;
+}
+
+.accordion-title-text {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: #1b2931;
+    font-size: 21px;
+    font-weight: 800;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+    word-break: keep-all;
+    transition: color 0.15s ease;
+}
+
+.section-title-row {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.accordion-summary-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    background: #eef5f4;
+    color: #167568;
+    border: 1px solid #cce2dc;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.accordion-toggle-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    color: #526875;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: #edf2f2;
+    border: 1px solid #d8e2e1;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.accordion-toggle-btn:hover .accordion-toggle-indicator {
+    background: #dfe8e7;
+    color: #17232c;
+    border-color: #ccd7d6;
+}
+
+.accordion-chevron-icon {
+    display: inline-block;
+    font-size: 12px;
+    line-height: 1;
+    transition: transform 0.2s ease;
+}
+
+.accordion-chevron-icon.is-expanded {
+    transform: rotate(180deg);
+}
+
+.accordion-header-extra {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.accordion-content {
+    min-width: 0;
+}
+
+.accordion-content[hidden] {
+    display: none !important;
+}
+
+.accordion-section .risk-policy-editor {
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: none;
+}
+
+.accordion-section.risk-policy-accordion {
+    margin-top: 28px;
+    padding-top: 26px;
+    border-top: 1px solid #dfe6e6;
+    border-bottom: 1px solid #dfe6e6;
+}
+
+.accordion-section.risk-policy-accordion.is-collapsed {
+    padding-bottom: 20px;
+}
+
+@media (max-width: 480px) {
+    .accordion-header-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .accordion-header-extra {
+        align-self: flex-start;
+        width: 100%;
+    }
+
+    .accordion-header-extra > button,
+    .accordion-header-extra > a {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .accordion-title-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .accordion-title-text {
+        font-size: 19px;
+    }
+
+    .accordion-toggle-indicator {
+        align-self: flex-start;
+        margin-top: 4px;
+    }
+}
+

@@ -261,7 +261,7 @@ export default function StrategyGuideList({
                 renderEmptyState()
             ) : (
                 <ul className="guide-list">
-                    {guides.map(({market, ticker, decision}) => {
+                    {guides.map(({market, ticker, displayName, decision}) => {
                         const caveats = decision.metadata.caveats ?? [];
                         const hasEvidence = Boolean(decision.metadata.confidence) || caveats.length > 0;
                         const guidance = decision.guidance ?? {
@@ -277,11 +277,26 @@ export default function StrategyGuideList({
                             <li key={`${market}-${ticker}`} className="guide-card">
                             <div className="guide-card-heading">
                                 <div className="guide-asset">
-                                    <span className="market-badge">{market}</span>
-                                    <strong>{ticker}</strong>
-                                    {isCandidate ? (
-                                        <span className="candidate-track-badge">Track A 후보 (미보유)</span>
-                                    ) : null}
+                                    {displayName && displayName !== ticker ? (
+                                        <div className="broker-snapshot-item-identity">
+                                            <strong className="broker-snapshot-item-name">{displayName}</strong>
+                                            <div className="broker-snapshot-item-symbol">
+                                                <span className="market-badge">{market}</span>
+                                                <span className="broker-ticker">{ticker}</span>
+                                                {isCandidate ? (
+                                                    <span className="candidate-track-badge">Track A 후보 (미보유)</span>
+                                                ) : null}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <span className="market-badge">{market}</span>
+                                            <strong>{ticker}</strong>
+                                            {isCandidate ? (
+                                                <span className="candidate-track-badge">Track A 후보 (미보유)</span>
+                                            ) : null}
+                                        </>
+                                    )}
                                 </div>
                                 <span className={`action-badge ${decision.action.toLowerCase()}`}>
                                      {actionLabels[decision.action]}

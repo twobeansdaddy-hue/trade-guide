@@ -5,6 +5,7 @@ import {
     isMarketDataRateLimitExceeded,
 } from "../api/apiError";
 import RequestError from "../components/common/RequestError";
+import AccordionSection from "../components/strategy/AccordionSection";
 import StrategyGuideList from "../components/strategy/StrategyGuideList";
 import PortfolioAssetStrategyProfileSection from "../components/strategy/PortfolioAssetStrategyProfileSection";
 import PortfolioCandidateAssetManager from "../components/strategy/PortfolioCandidateAssetManager";
@@ -153,30 +154,41 @@ function StrategyGuidesContent({memberId, portfolioId}: {memberId: number; portf
                 portfolioId={portfolioId}
                 resource={tradePlanResource}
             />
-            <section className="content-section">
-                <div className="section-heading">
-                    <div>
-                        <p className="section-label">HELD ASSETS</p>
-                        <h2>보유 종목 가이드</h2>
-                    </div>
-                </div>
+            <AccordionSection
+                id="held-asset-guides"
+                sectionLabel="HELD ASSETS"
+                title="보유 종목 가이드"
+                defaultOpen={true}
+                summary={
+                    holdingsResource.data
+                        ? `총 ${holdingsResource.data.guides.length}건`
+                        : undefined
+                }
+            >
                 {render(
                     holdingsResource,
                     "전략 가이드를 표시할 보유 종목이 없습니다.",
                     "보유 종목 가이드 다시 시도",
                     "전략 프로필이 등록되지 않은 보유 종목이 포함되어 있거나, 전략 가이드를 표시할 보유 종목이 없습니다.",
                 )}
-            </section>
-            <section className="content-section candidate-guides-section">
-                <div className="section-heading">
-                    <div className="section-title-wrap">
-                        <p className="section-label">TRACK A CANDIDATES (NON-HELD ASSETS)</p>
-                        <div className="section-title-row">
-                            <h2>Track A 후보 가이드</h2>
-                            <span className="candidate-scope-badge">미보유 종목 전용 · 검토용</span>
-                        </div>
-                    </div>
-                </div>
+            </AccordionSection>
+            <AccordionSection
+                id="candidate-guides"
+                className="candidate-guides-section"
+                sectionLabel="TRACK A CANDIDATES (NON-HELD ASSETS)"
+                title={
+                    <span className="section-title-row">
+                        <span>Track A 후보 가이드</span>
+                        <span className="candidate-scope-badge">미보유 종목 전용 · 검토용</span>
+                    </span>
+                }
+                defaultOpen={false}
+                summary={
+                    candidatesResource.data
+                        ? `후보 ${candidatesResource.data.guides.length}건`
+                        : undefined
+                }
+            >
                 <p className="section-description">
                     {candidateCount !== null && candidateCount > 0
                         ? `이 포트폴리오에 직접 등록한 Track A 후보(${candidateCount}개) 중 현재 미보유 종목을 대상으로 완료 주봉 10주/40주 이동평균(SMA) 신호를 계산한 기술적 검토 가이드입니다.`
@@ -234,7 +246,7 @@ function StrategyGuidesContent({memberId, portfolioId}: {memberId: number; portf
                     undefined,
                     "candidate",
                 )}
-            </section>
+            </AccordionSection>
             <PortfolioAssetStrategyProfileSection
                 memberId={memberId}
                 portfolioId={portfolioId}
