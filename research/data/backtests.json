@@ -3660,5 +3660,696 @@
     "confidence": "high",
     "caveats": "(1) DPS는 payoutRatio*EPS로 역산한 근사치이지 실측 주당배당금이 아니다. (2) 저변동성+퀄리티 팩터와 메커니즘이 일부 겹친다(독립 가설 아님). (3) 무배당 고성장 종목(AMZN/NFLX/TSLA/NOW/ISRG) 및 은행 7종이 데이터 부재로 항상 제외됐다. (4) 유니버스는 여전히 point-in-time이 아니다. (5) 이 결과는 Track B 채택 근거가 아니다 - 8개 후보(Track A 재사용/모멘텀 3종/MACD/단기반전/PEG/저변동성+퀄리티/배당성장) 전부 기각으로 현재 데이터·표본에서 Track B 규칙기반 자동화 근거 소진.",
     "last_updated": "2026-09-16"
+  },
+  {
+    "id": "track-c-kospi200-track-a-rule-2015-2026",
+    "type": "backtest",
+    "ticker": "KOSPI200_199_TICKERS_SEE_MANIFEST",
+    "strategy_id": "track-c-track-a-rule-reuse-candidate",
+    "data_range": {
+      "start": "2015-01-01",
+      "end": "2026-09-10",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-16",
+    "summary": "Track C 첫 가설: Track A 프로덕션 규칙(10주/40주 SMA 골든크로스, 진입 0-4주)을 파라미터 변경 없이 KOSPI200 199종목에 포트폴리오 단위(동일가중, 매주 재조정)로 적용. 0bp에서도 6개 구간 중 3개 이미 음(-), 57bp에서는 5개 음(-). 월환산 회전율 49~77%로 전 구간 50% 기준 초과. two-track-strategy-framework.md가 미국 우량주(AAPL/JPM/PG)에서 확인한 실패 패턴이 한국 시장에서도 재현됨 - Track A 우위는 레버리지ETF 특유 대형낙폭 회피 효과이지 규칙 자체의 보편적 우월성이 아님을 뒷받침. 기각.",
+    "metrics": {
+      "shortPeriodWeeks": 10,
+      "longPeriodWeeks": 40,
+      "entryWindowWeeks": [
+        0,
+        4
+      ],
+      "costScenariosRoundTripBps": [
+        0,
+        20,
+        40,
+        57
+      ],
+      "partitions": {
+        "2way": {
+          "2way-A": {
+            "label": "2015-01-01 ~ 2019-12-31",
+            "byCostBps": {
+              "0.0": {
+                "avgHoldingsCount": 63.9,
+                "strategyReturnPct": -4.606,
+                "strategyMaxDrawdownPct": -29.92,
+                "strategyMonthlyTurnoverPct": 56.219,
+                "benchmarkReturnPct": 2.36,
+                "benchmarkMaxDrawdownPct": -28.577,
+                "excessReturnPctPoints": -6.965,
+                "mddGapPctPoints": -1.343
+              },
+              "20.0": {
+                "avgHoldingsCount": 63.9,
+                "strategyReturnPct": -7.774,
+                "strategyMaxDrawdownPct": -29.92,
+                "strategyMonthlyTurnoverPct": 56.224,
+                "benchmarkReturnPct": 2.257,
+                "benchmarkMaxDrawdownPct": -28.577,
+                "excessReturnPctPoints": -10.031,
+                "mddGapPctPoints": -1.342
+              },
+              "40.0": {
+                "avgHoldingsCount": 63.9,
+                "strategyReturnPct": -10.838,
+                "strategyMaxDrawdownPct": -29.919,
+                "strategyMonthlyTurnoverPct": 56.23,
+                "benchmarkReturnPct": 2.155,
+                "benchmarkMaxDrawdownPct": -28.577,
+                "excessReturnPctPoints": -12.993,
+                "mddGapPctPoints": -1.341
+              },
+              "57.0": {
+                "avgHoldingsCount": 63.9,
+                "strategyReturnPct": -13.364,
+                "strategyMaxDrawdownPct": -29.918,
+                "strategyMonthlyTurnoverPct": 56.235,
+                "benchmarkReturnPct": 2.068,
+                "benchmarkMaxDrawdownPct": -28.577,
+                "excessReturnPctPoints": -15.432,
+                "mddGapPctPoints": -1.34
+              }
+            }
+          },
+          "2way-B": {
+            "label": "2020-01-01 ~ 2026-09-10",
+            "byCostBps": {
+              "0.0": {
+                "avgHoldingsCount": 81.5,
+                "strategyReturnPct": 299.752,
+                "strategyMaxDrawdownPct": -40.448,
+                "strategyMonthlyTurnoverPct": 57.752,
+                "benchmarkReturnPct": 264.493,
+                "benchmarkMaxDrawdownPct": -39.781,
+                "excessReturnPctPoints": 35.259,
+                "mddGapPctPoints": -0.667
+              },
+              "20.0": {
+                "avgHoldingsCount": 81.5,
+                "strategyReturnPct": 281.61,
+                "strategyMaxDrawdownPct": -40.452,
+                "strategyMonthlyTurnoverPct": 57.755,
+                "benchmarkReturnPct": 264.129,
+                "benchmarkMaxDrawdownPct": -39.781,
+                "excessReturnPctPoints": 17.481,
+                "mddGapPctPoints": -0.671
+              },
+              "40.0": {
+                "avgHoldingsCount": 81.5,
+                "strategyReturnPct": 264.286,
+                "strategyMaxDrawdownPct": -40.456,
+                "strategyMonthlyTurnoverPct": 57.758,
+                "benchmarkReturnPct": 263.764,
+                "benchmarkMaxDrawdownPct": -39.781,
+                "excessReturnPctPoints": 0.522,
+                "mddGapPctPoints": -0.675
+              },
+              "57.0": {
+                "avgHoldingsCount": 81.5,
+                "strategyReturnPct": 250.177,
+                "strategyMaxDrawdownPct": -40.46,
+                "strategyMonthlyTurnoverPct": 57.76,
+                "benchmarkReturnPct": 263.455,
+                "benchmarkMaxDrawdownPct": -39.781,
+                "excessReturnPctPoints": -13.278,
+                "mddGapPctPoints": -0.679
+              }
+            }
+          }
+        },
+        "4way": {
+          "4way-A": {
+            "label": "2015-01-01 ~ 2017-12-31",
+            "byCostBps": {
+              "0.0": {
+                "avgHoldingsCount": 70.6,
+                "strategyReturnPct": 22.947,
+                "strategyMaxDrawdownPct": -19.236,
+                "strategyMonthlyTurnoverPct": 49.113,
+                "benchmarkReturnPct": 22.74,
+                "benchmarkMaxDrawdownPct": -9.432,
+                "excessReturnPctPoints": 0.207,
+                "mddGapPctPoints": -9.804
+              },
+              "20.0": {
+                "avgHoldingsCount": 70.6,
+                "strategyReturnPct": 20.786,
+                "strategyMaxDrawdownPct": -19.238,
+                "strategyMonthlyTurnoverPct": 49.121,
+                "benchmarkReturnPct": 22.618,
+                "benchmarkMaxDrawdownPct": -9.432,
+                "excessReturnPctPoints": -1.831,
+                "mddGapPctPoints": -9.806
+              },
+              "40.0": {
+                "avgHoldingsCount": 70.6,
+                "strategyReturnPct": 18.662,
+                "strategyMaxDrawdownPct": -19.239,
+                "strategyMonthlyTurnoverPct": 49.13,
+                "benchmarkReturnPct": 22.495,
+                "benchmarkMaxDrawdownPct": -9.432,
+                "excessReturnPctPoints": -3.833,
+                "mddGapPctPoints": -9.807
+              },
+              "57.0": {
+                "avgHoldingsCount": 70.6,
+                "strategyReturnPct": 16.884,
+                "strategyMaxDrawdownPct": -19.24,
+                "strategyMonthlyTurnoverPct": 49.138,
+                "benchmarkReturnPct": 22.39,
+                "benchmarkMaxDrawdownPct": -9.432,
+                "excessReturnPctPoints": -5.506,
+                "mddGapPctPoints": -9.808
+              }
+            }
+          },
+          "4way-B": {
+            "label": "2018-01-01 ~ 2020-12-31",
+            "byCostBps": {
+              "0.0": {
+                "avgHoldingsCount": 52.2,
+                "strategyReturnPct": 30.264,
+                "strategyMaxDrawdownPct": -57.418,
+                "strategyMonthlyTurnoverPct": 76.369,
+                "benchmarkReturnPct": 13.413,
+                "benchmarkMaxDrawdownPct": -45.239,
+                "excessReturnPctPoints": 16.851,
+                "mddGapPctPoints": -12.18
+              },
+              "20.0": {
+                "avgHoldingsCount": 52.2,
+                "strategyReturnPct": 26.719,
+                "strategyMaxDrawdownPct": -57.42,
+                "strategyMonthlyTurnoverPct": 76.38,
+                "benchmarkReturnPct": 13.3,
+                "benchmarkMaxDrawdownPct": -45.239,
+                "excessReturnPctPoints": 13.419,
+                "mddGapPctPoints": -12.182
+              },
+              "40.0": {
+                "avgHoldingsCount": 52.2,
+                "strategyReturnPct": 23.269,
+                "strategyMaxDrawdownPct": -57.422,
+                "strategyMonthlyTurnoverPct": 76.39,
+                "benchmarkReturnPct": 13.186,
+                "benchmarkMaxDrawdownPct": -45.239,
+                "excessReturnPctPoints": 10.082,
+                "mddGapPctPoints": -12.184
+              },
+              "57.0": {
+                "avgHoldingsCount": 52.2,
+                "strategyReturnPct": 20.408,
+                "strategyMaxDrawdownPct": -57.424,
+                "strategyMonthlyTurnoverPct": 76.399,
+                "benchmarkReturnPct": 13.09,
+                "benchmarkMaxDrawdownPct": -45.239,
+                "excessReturnPctPoints": 7.318,
+                "mddGapPctPoints": -12.186
+              }
+            }
+          },
+          "4way-C": {
+            "label": "2021-01-01 ~ 2023-12-31",
+            "byCostBps": {
+              "0.0": {
+                "avgHoldingsCount": 44.7,
+                "strategyReturnPct": 14.593,
+                "strategyMaxDrawdownPct": -31.736,
+                "strategyMonthlyTurnoverPct": 66.871,
+                "benchmarkReturnPct": 24.242,
+                "benchmarkMaxDrawdownPct": -23.123,
+                "excessReturnPctPoints": -9.65,
+                "mddGapPctPoints": -8.614
+              },
+              "20.0": {
+                "avgHoldingsCount": 44.7,
+                "strategyReturnPct": 11.872,
+                "strategyMaxDrawdownPct": -31.737,
+                "strategyMonthlyTurnoverPct": 66.877,
+                "benchmarkReturnPct": 24.118,
+                "benchmarkMaxDrawdownPct": -23.123,
+                "excessReturnPctPoints": -12.246,
+                "mddGapPctPoints": -8.614
+              },
+              "40.0": {
+                "avgHoldingsCount": 44.7,
+                "strategyReturnPct": 9.214,
+                "strategyMaxDrawdownPct": -31.737,
+                "strategyMonthlyTurnoverPct": 66.883,
+                "benchmarkReturnPct": 23.994,
+                "benchmarkMaxDrawdownPct": -23.123,
+                "excessReturnPctPoints": -14.78,
+                "mddGapPctPoints": -8.614
+              },
+              "57.0": {
+                "avgHoldingsCount": 44.7,
+                "strategyReturnPct": 7.004,
+                "strategyMaxDrawdownPct": -31.737,
+                "strategyMonthlyTurnoverPct": 66.888,
+                "benchmarkReturnPct": 23.888,
+                "benchmarkMaxDrawdownPct": -23.123,
+                "excessReturnPctPoints": -16.884,
+                "mddGapPctPoints": -8.614
+              }
+            }
+          },
+          "4way-D": {
+            "label": "2024-01-01 ~ 2026-09-10",
+            "byCostBps": {
+              "0.0": {
+                "avgHoldingsCount": 76.3,
+                "strategyReturnPct": 92.424,
+                "strategyMaxDrawdownPct": -20.73,
+                "strategyMonthlyTurnoverPct": 57.144,
+                "benchmarkReturnPct": 110.464,
+                "benchmarkMaxDrawdownPct": -32.017,
+                "excessReturnPctPoints": -18.04,
+                "mddGapPctPoints": 11.287
+              },
+              "20.0": {
+                "avgHoldingsCount": 76.3,
+                "strategyReturnPct": 88.897,
+                "strategyMaxDrawdownPct": -20.731,
+                "strategyMonthlyTurnoverPct": 57.148,
+                "benchmarkReturnPct": 110.254,
+                "benchmarkMaxDrawdownPct": -32.017,
+                "excessReturnPctPoints": -21.357,
+                "mddGapPctPoints": 11.286
+              },
+              "40.0": {
+                "avgHoldingsCount": 76.3,
+                "strategyReturnPct": 85.434,
+                "strategyMaxDrawdownPct": -20.732,
+                "strategyMonthlyTurnoverPct": 57.151,
+                "benchmarkReturnPct": 110.043,
+                "benchmarkMaxDrawdownPct": -32.017,
+                "excessReturnPctPoints": -24.61,
+                "mddGapPctPoints": 11.285
+              },
+              "57.0": {
+                "avgHoldingsCount": 76.3,
+                "strategyReturnPct": 82.539,
+                "strategyMaxDrawdownPct": -20.733,
+                "strategyMonthlyTurnoverPct": 57.154,
+                "benchmarkReturnPct": 109.864,
+                "benchmarkMaxDrawdownPct": -32.017,
+                "excessReturnPctPoints": -27.326,
+                "mddGapPctPoints": 11.284
+              }
+            }
+          }
+        }
+      },
+      "monthlyTurnoverRangePct": [
+        49.1,
+        76.4
+      ]
+    },
+    "report_path": "research/reports/track-c-kospi200-track-a-rule-validation.md",
+    "sources": [
+      {
+        "title": "src/main/java/com/tradeguide/service/strategy/tracka/WeeklyMaCrossoverStrategy.java - 재현한 프로덕션 규칙",
+        "url": "",
+        "accessed": "2026-09-16"
+      },
+      {
+        "title": "research/reports/two-track-strategy-framework.md - 기존 진단(미국 우량주 실패 패턴)",
+        "url": "research/reports/two-track-strategy-framework.md",
+        "accessed": "2026-09-16"
+      },
+      {
+        "title": "KOSPI 200 (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/KOSPI_200",
+        "accessed": "2026-09-16"
+      }
+    ],
+    "confidence": "high",
+    "caveats": "(1) 비용 가정(0/20/40/57bp)은 미국 시장(Novy-Marx & Velikov 2016) 수치를 차용했다 - 한국 시장 고유 거래비용·슬리피지 실측치는 조사하지 않았다. (2) 유니버스는 오늘 시점 KOSPI200 구성을 2015년까지 소급 적용한 것으로 point-in-time이 아니다(생존편향 가능). (3) 포트폴리오 구성 방식(동일가중 임계값 필터, 매주 재조정)은 이 검증에서 새로 정한 것으로 Track A 프로덕션 자체에는 포지션 사이징 규칙이 없다. (4) 이 결과는 Track C 채택 근거가 아니다 - 오히려 순수 가격 기반 추세추종 규칙의 재사용은 한국 시장에서도 기각됨을 시사한다.",
+    "last_updated": "2026-09-16"
+  },
+  {
+    "id": "track-a-kr-leverage-rule-validation-2010-2026",
+    "type": "backtest",
+    "ticker": "122630,233740,267770",
+    "strategy_id": "track-a-kr-leverage-rule-reuse-candidate",
+    "data_range": {
+      "start": "2010-02-22",
+      "end": "2026-09-17",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-17",
+    "summary": "Track A 프로덕션 규칙(10주/40주 SMA 골든크로스, 진입 0-4주=delay 0, 청산 CROSS_DOWN 당주)을 국내 레버리지 ETF 3종(KODEX 레버리지 122630, KODEX 코스닥150레버리지 233740, TIGER 200선물레버리지 267770)에 개별 종목·사이클 단위로 적용. 전체 표본(25사이클)은 승률 32.0%/평균 +43.96%로 보이지만, 민감도 분석 결과 이 우위가 데이터 경계에서 막 종료된 단일 사이클(122630/267770 모두 2025-05-26 진입, +492.73%/+498.3%)에 전부 의존함을 확인 - 이 사이클을 빼면 122630은 순손실(-26.64%), 267770은 손익분기(+3.24%), 3종 통합 승률 26.1%·평균 +4.69%로 급락(지금까지 기각된 Track B 후보들과 유사한 수준). 233740은 자산 자체 하락(-38.19%) 구간에서 전략이 낙폭 일부만 회피(-19.60%, 여전히 손실). 국내 레버리지 ETF에 Track A 진입 규칙을 그대로 적용하는 것은 현재 표본 근거로는 기각에 가까움(채택 불가).",
+    "metrics": {
+      "shortPeriodWeeks": 10,
+      "longPeriodWeeks": 40,
+      "entryWindowWeeks": [
+        0,
+        4
+      ],
+      "costScenariosRoundTripBps": [
+        0,
+        20,
+        40,
+        57
+      ],
+      "perTicker": {
+        "122630": {
+          "name": "KODEX 레버리지",
+          "dataRange": {
+            "start": "2010-02-22",
+            "end": "2026-09-17",
+            "weeklyCandleCount": 865
+          },
+          "numClosedCycles": 12,
+          "buyAndHoldReturnPct": 975.97,
+          "buyAndHoldMaxDrawdownPct": -61.43,
+          "byCostBps": {
+            "0.0": {
+              "numClosedCycles": 12,
+              "winRatePct": 25.0,
+              "avgReturnPct": 43.18,
+              "medianReturnPct": -9.11,
+              "sequentialCompoundedReturnPct": 334.82
+            },
+            "20.0": {
+              "numClosedCycles": 12,
+              "winRatePct": 25.0,
+              "avgReturnPct": 42.9,
+              "medianReturnPct": -9.29,
+              "sequentialCompoundedReturnPct": 324.51
+            },
+            "40.0": {
+              "numClosedCycles": 12,
+              "winRatePct": 25.0,
+              "avgReturnPct": 42.61,
+              "medianReturnPct": -9.47,
+              "sequentialCompoundedReturnPct": 314.44
+            },
+            "57.0": {
+              "numClosedCycles": 12,
+              "winRatePct": 25.0,
+              "avgReturnPct": 42.37,
+              "medianReturnPct": -9.63,
+              "sequentialCompoundedReturnPct": 306.07
+            }
+          }
+        },
+        "233740": {
+          "name": "KODEX 코스닥150레버리지",
+          "dataRange": {
+            "start": "2015-12-14",
+            "end": "2026-09-17",
+            "weeklyCandleCount": 562
+          },
+          "numClosedCycles": 7,
+          "buyAndHoldReturnPct": -38.19,
+          "buyAndHoldMaxDrawdownPct": -82.81,
+          "byCostBps": {
+            "0.0": {
+              "numClosedCycles": 7,
+              "winRatePct": 42.9,
+              "avgReturnPct": 5.71,
+              "medianReturnPct": -3.52,
+              "sequentialCompoundedReturnPct": -19.6
+            },
+            "20.0": {
+              "numClosedCycles": 7,
+              "winRatePct": 42.9,
+              "avgReturnPct": 5.5,
+              "medianReturnPct": -3.71,
+              "sequentialCompoundedReturnPct": -20.72
+            },
+            "40.0": {
+              "numClosedCycles": 7,
+              "winRatePct": 42.9,
+              "avgReturnPct": 5.29,
+              "medianReturnPct": -3.9,
+              "sequentialCompoundedReturnPct": -21.82
+            },
+            "57.0": {
+              "numClosedCycles": 7,
+              "winRatePct": 42.9,
+              "avgReturnPct": 5.11,
+              "medianReturnPct": -4.07,
+              "sequentialCompoundedReturnPct": -22.75
+            }
+          }
+        },
+        "267770": {
+          "name": "TIGER 200선물레버리지",
+          "dataRange": {
+            "start": "2017-04-24",
+            "end": "2026-09-17",
+            "weeklyCandleCount": 491
+          },
+          "numClosedCycles": 6,
+          "buyAndHoldReturnPct": 675.03,
+          "buyAndHoldMaxDrawdownPct": -61.32,
+          "byCostBps": {
+            "0.0": {
+              "numClosedCycles": 6,
+              "winRatePct": 33.3,
+              "avgReturnPct": 90.12,
+              "medianReturnPct": -1.53,
+              "sequentialCompoundedReturnPct": 517.66
+            },
+            "20.0": {
+              "numClosedCycles": 6,
+              "winRatePct": 33.3,
+              "avgReturnPct": 89.74,
+              "medianReturnPct": -1.73,
+              "sequentialCompoundedReturnPct": 510.3
+            },
+            "40.0": {
+              "numClosedCycles": 6,
+              "winRatePct": 33.3,
+              "avgReturnPct": 89.36,
+              "medianReturnPct": -1.93,
+              "sequentialCompoundedReturnPct": 503.02
+            },
+            "57.0": {
+              "numClosedCycles": 6,
+              "winRatePct": 33.3,
+              "avgReturnPct": 89.04,
+              "medianReturnPct": -2.09,
+              "sequentialCompoundedReturnPct": 496.9
+            }
+          }
+        }
+      },
+      "combinedAcrossTickers": {
+        "numTickers": 3,
+        "totalClosedCycles": 25,
+        "totalOpenCycles": 0,
+        "byCostBps": {
+          "0.0": {
+            "numClosedCycles": 25,
+            "winRatePct": 32.0,
+            "avgReturnPct": 43.96,
+            "medianReturnPct": -6.94
+          },
+          "20.0": {
+            "numClosedCycles": 25,
+            "winRatePct": 32.0,
+            "avgReturnPct": 43.67,
+            "medianReturnPct": -7.13
+          },
+          "40.0": {
+            "numClosedCycles": 25,
+            "winRatePct": 32.0,
+            "avgReturnPct": 43.38,
+            "medianReturnPct": -7.31
+          },
+          "57.0": {
+            "numClosedCycles": 25,
+            "winRatePct": 32.0,
+            "avgReturnPct": 43.14,
+            "medianReturnPct": -7.47
+          }
+        }
+      },
+      "sensitivityExcludingDominantCycle": {
+        "excludedCycle": {
+          "entryDate": "2025-05-26",
+          "note": "122630/267770 동일 진입일, 데이터 경계 최근 종료 사이클"
+        },
+        "122630": {
+          "n": 11,
+          "winRatePct": 18.2,
+          "avgReturnPct_0bp": 2.31,
+          "sequentialCompoundedReturnPct_0bp": -26.64
+        },
+        "267770": {
+          "n": 5,
+          "winRatePct": 20.0,
+          "avgReturnPct_0bp": 8.48,
+          "sequentialCompoundedReturnPct_0bp": 3.24
+        },
+        "combinedAcrossTickers": {
+          "n": 23,
+          "winRatePct_0bp": 26.1,
+          "avgReturnPct_0bp": 4.69,
+          "medianReturnPct_0bp": -9.11
+        }
+      }
+    },
+    "report_path": "research/reports/track-a-kr-leverage-etf-rule-validation.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance - 122630.KS Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/122630.KS/history/",
+        "accessed": "2026-09-17"
+      },
+      {
+        "title": "Yahoo Finance - 233740.KS Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/233740.KS/history/",
+        "accessed": "2026-09-17"
+      },
+      {
+        "title": "Yahoo Finance - 267770.KS Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/267770.KS/history/",
+        "accessed": "2026-09-17"
+      }
+    ],
+    "confidence": "low",
+    "caveats": "종목당 사이클 6~12건뿐, 워크포워드 분할 미실시. 122630/267770 결과는 2025-05-26 시작 단일 사이클에 크게 의존(SOXL 백테스트의 '세 번째 거래 의존' caveat과 동일 패턴, 이번엔 두 종목 동시 발생). 국내 레버리지 ETF 실제 매매비용을 조사하지 않고 미국 시장 기준 bps를 그대로 사용. 배수 차이(국내 x2 vs 미국 x3)의 영향은 통제하지 않음. 민감도 분석(단일 사이클 제외) 결과 겉보기 우위가 데이터 경계 최근 사이클 하나에 전부 의존함을 확인했고, 이는 표본 끝단 편향일 수 있어 결론을 '기각에 가까움'으로 하향 조정했다.",
+    "last_updated": "2026-09-17"
+  },
+  {
+    "id": "track-a-vix-entry-filter-2012-2026",
+    "type": "backtest",
+    "ticker": "SOXL,TQQQ,TNA,FAS",
+    "strategy_id": "track-a-vix-entry-level-filter-candidate",
+    "data_range": {
+      "start": "2012-01-01",
+      "end": "2026-09-17",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-17",
+    "summary": "Track A 매크로 오버레이 첫 가설: 진입(CROSS_UP delay=0) 시점 VIX 레벨이 높을수록 이후 사이클 수익률이 나쁘다는 사전등록 가설을 SOXL/TQQQ/TNA/FAS 42개 유효 사이클로 검증. 진입 VIX와 사이클 수익률의 피어슨 상관계수는 -0.006으로 사실상 무상관. 임계값(VIX>=25, VIX>=30) 비교에서도 방향이 가설과 반대(고VIX 진입 소수 사례가 오히려 우수)였으나 표본이 각 3건, 1건뿐이라 신뢰 불가. 가설 기각.",
+    "metrics": {
+      "preRegisteredThresholds": [25.0, 30.0],
+      "totalValidCycles": 42,
+      "perTickerCycleCounts": {
+        "SOXL": { "numClosedCycles": 7, "numOpenCycles": 1 },
+        "TQQQ": { "numClosedCycles": 8, "numOpenCycles": 1 },
+        "TNA": { "numClosedCycles": 14, "numOpenCycles": 1 },
+        "FAS": { "numClosedCycles": 13, "numOpenCycles": 1 }
+      },
+      "correlation": {
+        "pearson_entryVix_vs_returnPct": -0.006
+      },
+      "byThreshold": {
+        "25.0": {
+          "belowThreshold": { "n": 39, "winRatePct": 43.6, "avgReturnPct": 42.05, "medianReturnPct": -6.97 },
+          "atOrAboveThreshold": { "n": 3, "winRatePct": 66.7, "avgReturnPct": 70.6, "medianReturnPct": 114.82 }
+        },
+        "30.0": {
+          "belowThreshold": { "n": 41, "winRatePct": 43.9, "avgReturnPct": 42.36, "medianReturnPct": -6.97 },
+          "atOrAboveThreshold": { "n": 1, "winRatePct": 100.0, "avgReturnPct": 114.82, "medianReturnPct": 114.82 }
+        }
+      }
+    },
+    "report_path": "research/reports/track-a-vix-entry-filter-hypothesis.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance - SOXL/TQQQ/TNA/FAS Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/SOXL/history/",
+        "accessed": "2026-09-17"
+      },
+      {
+        "title": "Yahoo Finance - ^VIX Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/%5EVIX/history/",
+        "accessed": "2026-09-17"
+      }
+    ],
+    "confidence": "low-medium",
+    "caveats": "유효 사이클 42건 중 VIX>=25는 3건, VIX>=30은 1건뿐이라 임계값 비교의 통계적 힘이 매우 약함 - 42건 전체 기반 상관계수가 더 신뢰할 수 있는 근거. 진입 시점 '당일' VIX가 아니라 해당 주 또는 직전 최근 주 종가를 사용한 주봉 근사치라 주중 스파이크를 놓쳤을 수 있음. 기존 49사이클 시장국면필터 리포트의 캐시를 재사용하지 못해 이번에 재수집한 데이터로, 사이클 수·경계값이 정확히 일치하지 않을 수 있음. 진입 시점 VIX 절대 레벨만 검증했고 변화율·지속 기간·청산 시점 VIX 등 다른 축은 검증하지 않아, 이번 결과는 VIX 관련 모든 가설이 아니라 이 특정 가설 하나의 기각임.",
+    "last_updated": "2026-09-17"
+  },
+  {
+    "id": "track-c-kospi200-rsi-bollinger-mean-reversion-2015-2026",
+    "type": "backtest",
+    "ticker": "KOSPI200_157_CLEAN_TICKERS_SEE_MANIFEST",
+    "strategy_id": "track-c-rsi-bollinger-mean-reversion-candidate",
+    "data_range": {
+      "start": "2015-01-01",
+      "end": "2026-09-10",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-17",
+    "summary": "Track C 두 번째 가설: 코스피 개별주는 단기 과매도(RSI<30 또는 볼린저 하단 이탈) 이후 평균회귀한다는 가설을 RSI(14주, 진입<30/청산>50/8주 강제청산)와 볼린저밴드(20주 2표준편차, 하단이탈 진입/중단상향 청산/8주 강제청산) 두 독립 규칙으로 검증. 두 규칙 모두 월환산 회전율 148~216%(채택 기준 50%의 3~4배)로 채택 기준을 크게 초과. 57bp 비용 반영 시 볼린저 규칙은 6구간 전부, RSI 규칙도 6구간 중 3구간이 벤치마크 대비 음(-)으로 전환. 두 규칙 모두 명확히 기각.",
+    "metrics": {
+      "parameters": {
+        "rsiPeriod": 14,
+        "rsiEntryThreshold": 30.0,
+        "rsiExitThreshold": 50.0,
+        "bollingerPeriod": 20,
+        "bollingerStdMult": 2.0,
+        "maxHoldingWeeks": 8,
+        "costScenariosRoundTripBps": [0, 20, 40, 57]
+      },
+      "partitions": {
+        "2way": {
+          "2way-A": {
+            "label": "2015-01-01 ~ 2019-12-31",
+            "ruleA_rsi": {
+              "0.0": { "strategyReturnPct": 94.03, "benchmarkReturnPct": 0.74, "excessReturnPctPoints": 93.28, "strategyMaxDrawdownPct": -59.82, "benchmarkMaxDrawdownPct": -29.14, "strategyMonthlyTurnoverPct": 172.01 },
+              "57.0": { "strategyReturnPct": 44.58, "benchmarkReturnPct": 0.46, "excessReturnPctPoints": 44.13, "strategyMaxDrawdownPct": -59.84, "benchmarkMaxDrawdownPct": -29.14, "strategyMonthlyTurnoverPct": 172.10 }
+            },
+            "ruleB_bollinger": {
+              "0.0": { "strategyReturnPct": 25.46, "benchmarkReturnPct": 0.38, "excessReturnPctPoints": 25.09, "strategyMaxDrawdownPct": -41.00, "benchmarkMaxDrawdownPct": -29.06, "strategyMonthlyTurnoverPct": 180.38 },
+              "57.0": { "strategyReturnPct": -7.88, "benchmarkReturnPct": 0.09, "excessReturnPctPoints": -7.97, "strategyMaxDrawdownPct": -41.02, "benchmarkMaxDrawdownPct": -29.06, "strategyMonthlyTurnoverPct": 180.48 }
+            }
+          },
+          "2way-B": {
+            "label": "2020-01-01 ~ 2026-09-10",
+            "ruleA_rsi": {
+              "0.0": { "strategyReturnPct": 121.00, "benchmarkReturnPct": 264.49, "excessReturnPctPoints": -143.50, "strategyMaxDrawdownPct": 0.00, "benchmarkMaxDrawdownPct": -39.78, "strategyMonthlyTurnoverPct": 154.39 },
+              "57.0": { "strategyReturnPct": 54.97, "benchmarkReturnPct": 263.45, "excessReturnPctPoints": -208.49, "strategyMaxDrawdownPct": 0.00, "benchmarkMaxDrawdownPct": -39.78, "strategyMonthlyTurnoverPct": 154.46 }
+            },
+            "ruleB_bollinger": {
+              "0.0": { "strategyReturnPct": 104.44, "benchmarkReturnPct": 264.49, "excessReturnPctPoints": -160.06, "strategyMaxDrawdownPct": -38.48, "benchmarkMaxDrawdownPct": -39.78, "strategyMonthlyTurnoverPct": 209.00 },
+              "57.0": { "strategyReturnPct": 26.53, "benchmarkReturnPct": 263.45, "excessReturnPctPoints": -236.93, "strategyMaxDrawdownPct": -38.48, "benchmarkMaxDrawdownPct": -39.78, "strategyMonthlyTurnoverPct": 209.11 }
+            }
+          }
+        },
+        "4way": {
+          "4way-A": {
+            "label": "2015-01-01 ~ 2017-12-31",
+            "ruleA_rsi": { "0.0": { "excessReturnPctPoints": 26.13 }, "57.0": { "excessReturnPctPoints": 4.91 } },
+            "ruleB_bollinger": { "0.0": { "excessReturnPctPoints": 7.03 }, "57.0": { "excessReturnPctPoints": -12.86 } }
+          },
+          "4way-B": {
+            "label": "2018-01-01 ~ 2020-12-31",
+            "ruleA_rsi": { "0.0": { "excessReturnPctPoints": 56.39 }, "57.0": { "excessReturnPctPoints": 26.43 } },
+            "ruleB_bollinger": { "0.0": { "excessReturnPctPoints": 5.38 }, "57.0": { "excessReturnPctPoints": -16.32 } }
+          },
+          "4way-C": {
+            "label": "2021-01-01 ~ 2023-12-31",
+            "ruleA_rsi": { "0.0": { "excessReturnPctPoints": -16.70 }, "57.0": { "excessReturnPctPoints": -31.30 } },
+            "ruleB_bollinger": { "0.0": { "excessReturnPctPoints": 6.95 }, "57.0": { "excessReturnPctPoints": -18.62 } }
+          },
+          "4way-D": {
+            "label": "2024-01-01 ~ 2026-09-10",
+            "ruleA_rsi": { "0.0": { "excessReturnPctPoints": -73.85 }, "57.0": { "excessReturnPctPoints": -92.71 } },
+            "ruleB_bollinger": { "0.0": { "excessReturnPctPoints": -96.19 }, "57.0": { "excessReturnPctPoints": -116.03 } }
+          }
+        }
+      }
+    },
+    "report_path": "research/reports/track-c-kospi200-rsi-bollinger-mean-reversion.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance - KOSPI200 199 tickers Historical Data (Weekly, KRW)",
+        "url": "https://finance.yahoo.com/quote/005930.KS/history/",
+        "accessed": "2026-09-16"
+      }
+    ],
+    "confidence": "high",
+    "caveats": "RSI 30/50, 볼린저 20주/2표준편차, 8주 강제청산 임계값은 문헌 표준값을 그대로 사용했고 한국 시장에 맞춰 튜닝하지 않았다. 비용 시나리오(0/20/40/57bp)는 미국 시장 기준(Novy-Marx & Velikov)을 차용해 한국 시장 고유 실측치가 아니다. 두 규칙을 결합(동시 충족시만 진입)하면 회전율이 낮아질 가능성이 있으나 사전 등록하지 않은 별도 가설이라 이번 범위 밖이다. 손절 규칙을 포함하지 않아 RSI 규칙 일부 구간에서 전략 MDD가 벤치마크보다 크게 나빴다(평균회귀 실패 시 손실 무제한 노출).",
+    "last_updated": "2026-09-17"
   }
 ]

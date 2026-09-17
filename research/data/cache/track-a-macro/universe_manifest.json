@@ -1,0 +1,38 @@
+{
+  "generatedBy": "research/scripts/track-a-macro/fetch_macro_universe.py",
+  "startDate": "2008-01-01",
+  "tickers": {
+    "SOXL": {
+      "name": "Direxion Daily Semiconductor Bull 3X",
+      "weeklyCandleCount": 864,
+      "firstDate": "2010-03-08",
+      "lastDate": "2026-09-16"
+    },
+    "TQQQ": {
+      "name": "ProShares UltraPro QQQ",
+      "weeklyCandleCount": 868,
+      "firstDate": "2010-02-08",
+      "lastDate": "2026-09-16"
+    },
+    "TNA": {
+      "name": "Direxion Daily Small Cap Bull 3X",
+      "weeklyCandleCount": 932,
+      "firstDate": "2008-11-17",
+      "lastDate": "2026-09-16"
+    },
+    "FAS": {
+      "name": "Direxion Daily Financial Bull 3X",
+      "weeklyCandleCount": 932,
+      "firstDate": "2008-11-17",
+      "lastDate": "2026-09-16"
+    }
+  },
+  "macro": {
+    "VIX": {
+      "symbol": "^VIX",
+      "weeklyCandleCount": 978,
+      "firstDate": "2008-01-01",
+      "lastDate": "2026-09-16"
+    }
+  }
+}

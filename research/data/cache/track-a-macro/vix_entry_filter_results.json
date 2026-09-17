@@ -1,0 +1,362 @@
+{
+  "generatedBy": "research/scripts/track-a-macro/vix_entry_filter_backtest.py",
+  "hypothesis": "Track A 진입(CROSS_UP delay=0) 시점 VIX 레벨이 높을수록 이후 사이클 수익률이 나쁘다.",
+  "preRegisteredThresholds": [
+    25.0,
+    30.0
+  ],
+  "tickers": [
+    "SOXL",
+    "TQQQ",
+    "TNA",
+    "FAS"
+  ],
+  "perTickerCycleCounts": {
+    "SOXL": {
+      "numClosedCycles": 7,
+      "numOpenCycles": 1
+    },
+    "TQQQ": {
+      "numClosedCycles": 8,
+      "numOpenCycles": 1
+    },
+    "TNA": {
+      "numClosedCycles": 14,
+      "numOpenCycles": 1
+    },
+    "FAS": {
+      "numClosedCycles": 13,
+      "numOpenCycles": 1
+    }
+  },
+  "totalValidCycles": 42,
+  "cycles": [
+    {
+      "ticker": "SOXL",
+      "entryDate": "2012-02-20",
+      "exitDate": "2012-06-04",
+      "entryVix": 17.780000686645508,
+      "returnPct": -35.04
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2013-01-21",
+      "exitDate": "2015-07-27",
+      "entryVix": 12.460000038146973,
+      "returnPct": 215.39
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2016-04-18",
+      "exitDate": "2018-08-13",
+      "entryVix": 13.350000381469727,
+      "returnPct": 475.64
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2019-03-25",
+      "exitDate": "2020-03-30",
+      "entryVix": 16.329999923706055,
+      "returnPct": -40.4
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2020-08-10",
+      "exitDate": "2022-02-28",
+      "entryVix": 22.1299991607666,
+      "returnPct": 111.49
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2023-02-27",
+      "exitDate": "2023-10-30",
+      "entryVix": 20.950000762939453,
+      "returnPct": 17.77
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2023-12-04",
+      "exitDate": "2024-09-09",
+      "entryVix": 13.079999923706055,
+      "returnPct": 41.89
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2012-01-30",
+      "exitDate": "2012-11-26",
+      "entryVix": 19.399999618530273,
+      "returnPct": 13.73
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2013-01-28",
+      "exitDate": "2015-09-21",
+      "entryVix": 13.569999694824219,
+      "returnPct": 215.77
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2015-11-23",
+      "exitDate": "2016-01-18",
+      "entryVix": 15.619999885559082,
+      "returnPct": -26.63
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2016-07-25",
+      "exitDate": "2018-11-19",
+      "entryVix": 12.869999885559082,
+      "returnPct": 115.52
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2019-04-15",
+      "exitDate": "2020-04-06",
+      "entryVix": 12.319999694824219,
+      "returnPct": -14.49
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2020-06-15",
+      "exitDate": "2022-02-14",
+      "entryVix": 34.400001525878906,
+      "returnPct": 114.82
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2023-03-27",
+      "exitDate": "2025-03-31",
+      "entryVix": 20.600000381469727,
+      "returnPct": 49.52
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2025-07-07",
+      "exitDate": "2026-03-23",
+      "entryVix": 17.790000915527344,
+      "returnPct": -6.97
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2010-11-01",
+      "exitDate": "2011-08-01",
+      "entryVix": 21.829999923706055,
+      "returnPct": -15.65
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2012-02-27",
+      "exitDate": "2012-06-25",
+      "entryVix": 18.190000534057617,
+      "returnPct": -5.04
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2012-08-13",
+      "exitDate": "2014-05-26",
+      "entryVix": 13.699999809265137,
+      "returnPct": 147.27
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2014-06-30",
+      "exitDate": "2014-09-01",
+      "entryVix": 11.569999694824219,
+      "returnPct": -9.42
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2014-12-15",
+      "exitDate": "2015-08-24",
+      "entryVix": 20.420000076293945,
+      "returnPct": -10.73
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2016-05-30",
+      "exitDate": "2018-11-05",
+      "entryVix": 13.119999885559082,
+      "returnPct": 102.33
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2019-06-24",
+      "exitDate": "2019-07-15",
+      "entryVix": 15.260000228881836,
+      "returnPct": -3.58
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2019-07-22",
+      "exitDate": "2019-09-02",
+      "entryVix": 13.529999732971191,
+      "returnPct": -15.47
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2019-12-02",
+      "exitDate": "2020-03-16",
+      "entryVix": 14.90999984741211,
+      "returnPct": -82.48
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2020-10-19",
+      "exitDate": "2021-09-06",
+      "entryVix": 29.18000030517578,
+      "returnPct": 120.38
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2021-11-08",
+      "exitDate": "2021-12-27",
+      "entryVix": 17.219999313354492,
+      "returnPct": -21.04
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2023-02-20",
+      "exitDate": "2023-03-27",
+      "entryVix": 20.020000457763672,
+      "returnPct": -15.35
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2023-07-24",
+      "exitDate": "2023-09-25",
+      "entryVix": 13.90999984741211,
+      "returnPct": -28.56
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2024-01-01",
+      "exitDate": "2025-02-17",
+      "entryVix": 12.449999809265137,
+      "returnPct": 12.26
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2009-08-31",
+      "exitDate": "2010-06-28",
+      "entryVix": 26.010000228881836,
+      "returnPct": -23.39
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2010-12-27",
+      "exitDate": "2011-06-20",
+      "entryVix": 17.670000076293945,
+      "returnPct": -18.14
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2012-02-27",
+      "exitDate": "2012-07-16",
+      "entryVix": 18.190000534057617,
+      "returnPct": -8.59
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2012-07-23",
+      "exitDate": "2015-09-14",
+      "entryVix": 18.6200008392334,
+      "returnPct": 237.38
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2016-05-30",
+      "exitDate": "2018-07-02",
+      "entryVix": 13.119999885559082,
+      "returnPct": 133.11
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2018-07-09",
+      "exitDate": "2018-07-16",
+      "entryVix": 12.6899995803833,
+      "returnPct": 3.86
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2018-07-30",
+      "exitDate": "2018-10-29",
+      "entryVix": 14.260000228881836,
+      "returnPct": -17.23
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2019-04-08",
+      "exitDate": "2020-03-16",
+      "entryVix": 13.180000305175781,
+      "returnPct": -74.16
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2020-11-16",
+      "exitDate": "2022-03-21",
+      "entryVix": 22.450000762939453,
+      "returnPct": 167.27
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2022-12-26",
+      "exitDate": "2023-04-03",
+      "entryVix": 20.8700008392334,
+      "returnPct": -22.82
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2023-09-11",
+      "exitDate": "2023-09-25",
+      "entryVix": 13.800000190734863,
+      "returnPct": -12.84
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2023-12-04",
+      "exitDate": "2025-04-21",
+      "entryVix": 13.079999923706055,
+      "returnPct": 85.94
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2025-06-30",
+      "exitDate": "2026-03-02",
+      "entryVix": 16.729999542236328,
+      "returnPct": -21.73
+    }
+  ],
+  "byThreshold": {
+    "25.0": {
+      "belowThreshold": {
+        "n": 39,
+        "winRatePct": 43.6,
+        "avgReturnPct": 42.05,
+        "medianReturnPct": -6.97
+      },
+      "atOrAboveThreshold": {
+        "n": 3,
+        "winRatePct": 66.7,
+        "avgReturnPct": 70.6,
+        "medianReturnPct": 114.82
+      }
+    },
+    "30.0": {
+      "belowThreshold": {
+        "n": 41,
+        "winRatePct": 43.9,
+        "avgReturnPct": 42.36,
+        "medianReturnPct": -6.97
+      },
+      "atOrAboveThreshold": {
+        "n": 1,
+        "winRatePct": 100.0,
+        "avgReturnPct": 114.82,
+        "medianReturnPct": 114.82
+      }
+    }
+  },
+  "correlation": {
+    "pearson_entryVix_vs_returnPct": -0.006
+  }
+}
