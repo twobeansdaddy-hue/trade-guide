@@ -4351,5 +4351,75 @@
     "confidence": "high",
     "caveats": "RSI 30/50, 볼린저 20주/2표준편차, 8주 강제청산 임계값은 문헌 표준값을 그대로 사용했고 한국 시장에 맞춰 튜닝하지 않았다. 비용 시나리오(0/20/40/57bp)는 미국 시장 기준(Novy-Marx & Velikov)을 차용해 한국 시장 고유 실측치가 아니다. 두 규칙을 결합(동시 충족시만 진입)하면 회전율이 낮아질 가능성이 있으나 사전 등록하지 않은 별도 가설이라 이번 범위 밖이다. 손절 규칙을 포함하지 않아 RSI 규칙 일부 구간에서 전략 MDD가 벤치마크보다 크게 나빴다(평균회귀 실패 시 손실 무제한 노출).",
     "last_updated": "2026-09-17"
+  },
+  {
+    "id": "track-c-kospi200-cross-sectional-momentum-2015-2026",
+    "type": "backtest",
+    "ticker": "KOSPI200_157_CLEAN_TICKERS_SEE_MANIFEST",
+    "strategy_id": "track-c-cross-sectional-momentum-final-candidate",
+    "data_range": {
+      "start": "2015-01-01",
+      "end": "2026-09-10",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-17",
+    "summary": "Track C 세 번째(마지막) 후보: Track B 횡단면 모멘텀 설계(48주 형성기간, 분기 리밸런싱, 상위20%/유지40%)를 momentum_engine.py 그대로 재사용해 KOSPI200에 적용. 월환산 회전율 19.1~22.1%로 채택 기준(50%) 충족(Track C 앞선 두 후보의 148~216%와 대조) - 회전율 문제가 리밸런싱 빈도 문제였음을 확인. 그러나 6구간 중 2구간(2015-2019/2015-2017)은 음(-), 나머지 4구간은 큰 폭 양(+)(+8.7~+364%p)으로 부호 불일치, 전략 MDD도 다수 구간(4way-B/C/D)에서 벤치마크보다 뚜렷이 나쁨 - Track B가 이미 진단한 '메가캡/소수종목 집중 강세장 의존' 패턴 재현. 5개 게이트 중 3개(1·2·4) 불충족으로 기각. 사전 등록한 종료 조건에 따라 Track C 조사 종료, 국내 주식은 스크리닝 수준으로만 지원.",
+    "metrics": {
+      "parameters": {
+        "formationWeeks": 52,
+        "excludeRecentWeeks": 4,
+        "rebalancePeriodWeeks": 13,
+        "topTierFraction": 0.20,
+        "holdTierFraction": 0.40,
+        "costScenariosRoundTripBps": [0, 20, 40, 57]
+      },
+      "partitions": {
+        "2way": {
+          "2way-A": {
+            "label": "2015-01-01 ~ 2019-12-31",
+            "0.0": { "strategyReturnPct": 5.02, "benchmarkReturnPct": 14.54, "excessReturnPctPoints": -9.53, "strategyMaxDrawdownPct": -24.79, "benchmarkMaxDrawdownPct": -26.76, "strategyMonthlyTurnoverPct": 21.14 },
+            "57.0": { "strategyReturnPct": 5.00, "benchmarkReturnPct": 14.22, "excessReturnPctPoints": -9.22, "strategyMaxDrawdownPct": -24.76, "benchmarkMaxDrawdownPct": -26.76, "strategyMonthlyTurnoverPct": 21.13 }
+          },
+          "2way-B": {
+            "label": "2020-01-01 ~ 2026-09-10",
+            "0.0": { "strategyReturnPct": 838.78, "benchmarkReturnPct": 474.64, "excessReturnPctPoints": 364.14, "strategyMaxDrawdownPct": -40.89, "benchmarkMaxDrawdownPct": -39.09, "strategyMonthlyTurnoverPct": 19.10 },
+            "57.0": { "strategyReturnPct": 836.97, "benchmarkReturnPct": 473.00, "excessReturnPctPoints": 363.97, "strategyMaxDrawdownPct": -40.85, "benchmarkMaxDrawdownPct": -39.09, "strategyMonthlyTurnoverPct": 19.09 }
+          }
+        },
+        "4way": {
+          "4way-A": {
+            "label": "2015-01-01 ~ 2017-12-31",
+            "0.0": { "excessReturnPctPoints": -12.12, "strategyMaxDrawdownPct": -8.69, "benchmarkMaxDrawdownPct": -6.62 },
+            "57.0": { "excessReturnPctPoints": -11.77 }
+          },
+          "4way-B": {
+            "label": "2018-01-01 ~ 2020-12-31",
+            "0.0": { "excessReturnPctPoints": 23.62, "strategyMaxDrawdownPct": -53.38, "benchmarkMaxDrawdownPct": -42.13 },
+            "57.0": { "excessReturnPctPoints": 23.97 }
+          },
+          "4way-C": {
+            "label": "2021-01-01 ~ 2023-12-31",
+            "0.0": { "excessReturnPctPoints": 8.67, "strategyMaxDrawdownPct": -27.22, "benchmarkMaxDrawdownPct": -21.09 },
+            "57.0": { "excessReturnPctPoints": 8.96 }
+          },
+          "4way-D": {
+            "label": "2024-01-01 ~ 2026-09-10",
+            "0.0": { "excessReturnPctPoints": 73.95, "strategyMaxDrawdownPct": -40.89, "benchmarkMaxDrawdownPct": -31.04 },
+            "57.0": { "excessReturnPctPoints": 74.31 }
+          }
+        }
+      }
+    },
+    "report_path": "research/reports/track-c-kospi200-cross-sectional-momentum-final-candidate.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance - KOSPI200 199 tickers Historical Data (Weekly, KRW)",
+        "url": "https://finance.yahoo.com/quote/005930.KS/history/",
+        "accessed": "2026-09-16"
+      }
+    ],
+    "confidence": "medium-high",
+    "caveats": "2015-2019 구간만 유독 음(-)인 것이 모멘텀의 구조적 약점인지 이 5년 구간의 우연인지 이번 검증만으로는 구분 불가. 비용 시나리오는 미국 시장 기준(Novy-Marx & Velikov)을 차용해 한국 시장 고유 실측치가 아니다. 유니버스는 여전히 point-in-time이 아니다(오늘 시점 KOSPI200 구성을 과거에 소급 적용). Track B의 반사실 벤치마크(상위5 기여종목 제외) 방식을 이번 검증에서는 재현하지 않아, '국면 의존성' 해석은 정성적 유사성 관찰이지 이 리포트 자체의 정량적 증거는 아니다.",
+    "last_updated": "2026-09-17"
   }
 ]
