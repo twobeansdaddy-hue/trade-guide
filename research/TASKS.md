@@ -210,6 +210,12 @@
 - [ ] (다음 우선순위) VIX 레벨 필터 기각 이후 다른 매크로 축 — 진입 후 VIX 급등 시
       조기 청산(엑싯 규칙/리스크관리 레이어) 또는 금리(FRED DGS10) 변화율과 사이클
       수익률의 관계, 사전 고정 가설 필요.
+- [x] LLM 기반 매크로 분석·동적 매매 가이드 엔진 구현 작업 계약 작성 — Codex 격리
+      작업(`feature/llm-macro-engine`)으로 스코프 지정. 수학(지지/저항선 계산)과
+      LLM 추론을 엄격히 분리하고, target_price가 현재가 ±15% 밖이면 TradePlan을
+      폐기하는 검증 로직을 승인 기준에 포함
+      (`docs/agent-tasks/claude-llm-macro-engine-implementation-20260917.md`).
+      **아직 구현 전 — Acceptance Checks 미체크, 다음 단계는 Codex 실행 및 검증.**
 
 ### (C) 가격 사다리 실행 가이드 — 착수 전 (A, B 이후)
 - [ ] `research/STRATEGY_ENGINE_POLICY.md`의 v2 보류 항목(전략 자동 손절, `quantityRatio`
