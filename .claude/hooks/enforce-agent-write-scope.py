@@ -64,12 +64,16 @@ def resolve_relative_path(payload: dict) -> Path:
         block("writes outside this worktree are not allowed.")
 
 
-def is_protected(relative_path: Path) -> bool:
+def is_protected(relative_path: Path, scope: dict) -> bool:
     path = relative_path.as_posix()
     if relative_path.name in SECRET_FILENAMES or relative_path.name.startswith(".env."):
         return True
+    if path == ".claude" or path.startswith(".claude/"):
+        return True  # .claude/ itself is never editable by Claude, no exception.
+    approved = scope.get("governanceEditApproved", [])
+    if isinstance(approved, list) and path in approved:
+        return False
     return any(path == protected or path.startswith(protected + "/") for protected in PROTECTED_PATHS)
-
 
 def is_allowed(relative_path: Path, allowed_paths: list) -> bool:
     path = relative_path.as_posix()
@@ -93,7 +97,7 @@ def main() -> None:
     mode = scope.get("mode", "read-only")
     allowed_paths = scope.get("allowedPaths", [])
 
-    if is_protected(relative_path):
+    if is_protected(relative_path, scope):
         block(f"'{relative_path.as_posix()}' is protected and must be changed by Codex or the user.")
 
     if mode == "read-only":

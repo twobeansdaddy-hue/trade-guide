@@ -98,6 +98,18 @@ decisions, integration, final browser/API verification, and Git delivery.
 Claude Code uses the write-scope harness under `.claude/`. Its default is
 research-only, which preserves the original research workflow.
 
+### Governance file edit exception
+
+Claude may edit a file in the hook's protected list (`CLAUDE.md`, `AGENTS.md`,
+`SETUP.md`, `docs/AI_COLLABORATION_POLICY.md`, `docs/AGENT_WORKFLOW.md`) only
+when the user has explicitly listed that exact path in
+`.claude/agent-scope.json`'s `governanceEditApproved` array for the current
+session. The user sets this array themselves (or asks Codex to); Claude never
+adds a path to it. Each entry authorizes one edit turn, not standing
+permission — the coordinator clears the array after the edit lands. `.claude/`
+itself (including hooks and `agent-scope.json`) remains protected from Claude
+writes under all circumstances; only the user or Codex may change it.
+
 ### Research mode
 
 - Allowed path: `research/**`
@@ -180,8 +192,13 @@ separate commit for every stylistic suggestion.
   verified vertical slice in agent-development mode. It reports the commit and
   remote result. The user can request review-only or pause Git changes at any
   time.
-- Claude and Antigravity CLI never commit, push, merge, force-push, reset, revert, or
-  alter another agent's work.
+- Claude and Antigravity CLI never push, merge, force-push, reset, revert, or alter
+  another agent's work. Claude may run `git commit` only when the user's current chat
+  message explicitly asks for that specific commit (not standing permission, and not
+  inferred from an earlier "go ahead") and Claude has shown the exact commit message
+  and file list in the same turn before running it. Push, merge, and branch changes
+  remain fully prohibited for Claude regardless of user request — those stay
+  Codex/user-only.
 - `.env`, `application-local.yml`, API keys, OAuth secrets, local scope files,
   and IDE-local state are never committed, copied into prompts, or used as
   fixture data.

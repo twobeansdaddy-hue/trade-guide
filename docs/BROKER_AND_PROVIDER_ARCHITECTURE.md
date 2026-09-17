@@ -11,7 +11,7 @@ different concerns and must not share one provider setting.
 - A **broker connection** represents one member's credentials for one securities
   provider and may expose accounts, holdings, and transaction history.
 
-The product never sends orders, conditional orders, or reservation orders to a broker.
+The product does not send orders to a broker by default. Order execution is an explicit, per-member opt-in capability, gated behind its own consent flow, strategy-rule whitelist, and safeguards to be designed under a dedicated Codex task contract (see `research/reports/track-a-auto-trading-3rd-stage-policy-and-architecture-proposal.md` for the initial proposal). A member who has not opted in is served exactly as today — read-only guidance only.
 
 ## Product Decisions
 
@@ -286,7 +286,9 @@ features should not require the browser to carry a member identifier.
    are confirmed.
 
 No order creation, conditional order registration, or automated trade action belongs to
-any step above.
+any step above. Opt-in order execution (see Purpose) is a separate, not-yet-scheduled
+step gated behind its own Codex task contract, consent flow, and safeguards — it does
+not retroactively apply to steps 1-7, which remain read-only.
 
 ## Local Configuration
 
