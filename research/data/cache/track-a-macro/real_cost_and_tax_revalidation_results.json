@@ -1,0 +1,484 @@
+{
+  "generatedBy": "research/scripts/track-a-macro/real_cost_and_tax_revalidation.py",
+  "purpose": "Track A 오토매매 검토를 위해 거래마찰비용(슬리피지)과 해외주식 양도소득세(22%)를 반영한 사이클 수익률 재계산.",
+  "assumptions": {
+    "roundTripFrictionPctPoints": 0.3,
+    "capitalGainsTaxRate": 0.22,
+    "annualExemptionApplied": false,
+    "lossOffsetApplied": false
+  },
+  "totalCycles": 42,
+  "scenarioA_gross": {
+    "n": 42,
+    "winRatePct": 45.2,
+    "avgReturnPct": 44.09,
+    "medianReturnPct": -6.0,
+    "sumReturnPct": 1851.59
+  },
+  "scenarioB_afterFriction": {
+    "n": 42,
+    "winRatePct": 45.2,
+    "avgReturnPct": 43.79,
+    "medianReturnPct": -6.3,
+    "sumReturnPct": 1838.99
+  },
+  "scenarioC_afterFrictionAndTax": {
+    "n": 42,
+    "winRatePct": 45.2,
+    "avgReturnPct": 31.34,
+    "medianReturnPct": -6.3,
+    "sumReturnPct": 1316.37
+  },
+  "top10WinnersImpact": [
+    {
+      "ticker": "SOXL",
+      "entryDate": "2016-04-18",
+      "grossReturnPct": 475.64,
+      "taxPctPoints": 104.57,
+      "afterFrictionAndTaxReturnPct": 370.77
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2012-07-23",
+      "grossReturnPct": 237.38,
+      "taxPctPoints": 52.16,
+      "afterFrictionAndTaxReturnPct": 184.92
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2013-01-28",
+      "grossReturnPct": 215.77,
+      "taxPctPoints": 47.4,
+      "afterFrictionAndTaxReturnPct": 168.07
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2013-01-21",
+      "grossReturnPct": 215.39,
+      "taxPctPoints": 47.32,
+      "afterFrictionAndTaxReturnPct": 167.77
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2020-11-16",
+      "grossReturnPct": 167.27,
+      "taxPctPoints": 36.73,
+      "afterFrictionAndTaxReturnPct": 130.24
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2012-08-13",
+      "grossReturnPct": 147.27,
+      "taxPctPoints": 32.33,
+      "afterFrictionAndTaxReturnPct": 114.64
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2016-05-30",
+      "grossReturnPct": 133.11,
+      "taxPctPoints": 29.22,
+      "afterFrictionAndTaxReturnPct": 103.59
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2020-10-19",
+      "grossReturnPct": 120.38,
+      "taxPctPoints": 26.42,
+      "afterFrictionAndTaxReturnPct": 93.66
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2016-07-25",
+      "grossReturnPct": 115.52,
+      "taxPctPoints": 25.35,
+      "afterFrictionAndTaxReturnPct": 89.87
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2020-06-15",
+      "grossReturnPct": 114.82,
+      "taxPctPoints": 25.19,
+      "afterFrictionAndTaxReturnPct": 89.33
+    }
+  ],
+  "cycles": [
+    {
+      "ticker": "SOXL",
+      "entryDate": "2012-02-20",
+      "exitDate": "2012-06-04",
+      "grossReturnPct": -35.04,
+      "afterFrictionReturnPct": -35.34,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -35.34
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2013-01-21",
+      "exitDate": "2015-07-27",
+      "grossReturnPct": 215.39,
+      "afterFrictionReturnPct": 215.09,
+      "taxPctPoints": 47.32,
+      "afterFrictionAndTaxReturnPct": 167.77
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2016-04-18",
+      "exitDate": "2018-08-13",
+      "grossReturnPct": 475.64,
+      "afterFrictionReturnPct": 475.34,
+      "taxPctPoints": 104.57,
+      "afterFrictionAndTaxReturnPct": 370.77
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2019-03-25",
+      "exitDate": "2020-03-30",
+      "grossReturnPct": -40.4,
+      "afterFrictionReturnPct": -40.7,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -40.7
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2020-08-10",
+      "exitDate": "2022-02-28",
+      "grossReturnPct": 111.49,
+      "afterFrictionReturnPct": 111.19,
+      "taxPctPoints": 24.46,
+      "afterFrictionAndTaxReturnPct": 86.73
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2023-02-27",
+      "exitDate": "2023-10-30",
+      "grossReturnPct": 17.77,
+      "afterFrictionReturnPct": 17.47,
+      "taxPctPoints": 3.84,
+      "afterFrictionAndTaxReturnPct": 13.63
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2023-12-04",
+      "exitDate": "2024-09-09",
+      "grossReturnPct": 41.89,
+      "afterFrictionReturnPct": 41.59,
+      "taxPctPoints": 9.15,
+      "afterFrictionAndTaxReturnPct": 32.44
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2012-01-30",
+      "exitDate": "2012-11-26",
+      "grossReturnPct": 13.73,
+      "afterFrictionReturnPct": 13.43,
+      "taxPctPoints": 2.95,
+      "afterFrictionAndTaxReturnPct": 10.48
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2013-01-28",
+      "exitDate": "2015-09-21",
+      "grossReturnPct": 215.77,
+      "afterFrictionReturnPct": 215.47,
+      "taxPctPoints": 47.4,
+      "afterFrictionAndTaxReturnPct": 168.07
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2015-11-23",
+      "exitDate": "2016-01-18",
+      "grossReturnPct": -26.63,
+      "afterFrictionReturnPct": -26.93,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -26.93
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2016-07-25",
+      "exitDate": "2018-11-19",
+      "grossReturnPct": 115.52,
+      "afterFrictionReturnPct": 115.22,
+      "taxPctPoints": 25.35,
+      "afterFrictionAndTaxReturnPct": 89.87
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2019-04-15",
+      "exitDate": "2020-04-06",
+      "grossReturnPct": -14.49,
+      "afterFrictionReturnPct": -14.79,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -14.79
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2020-06-15",
+      "exitDate": "2022-02-14",
+      "grossReturnPct": 114.82,
+      "afterFrictionReturnPct": 114.52,
+      "taxPctPoints": 25.19,
+      "afterFrictionAndTaxReturnPct": 89.33
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2023-03-27",
+      "exitDate": "2025-03-31",
+      "grossReturnPct": 49.52,
+      "afterFrictionReturnPct": 49.22,
+      "taxPctPoints": 10.83,
+      "afterFrictionAndTaxReturnPct": 38.39
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2025-07-07",
+      "exitDate": "2026-03-23",
+      "grossReturnPct": -6.97,
+      "afterFrictionReturnPct": -7.27,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -7.27
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2010-11-01",
+      "exitDate": "2011-08-01",
+      "grossReturnPct": -15.65,
+      "afterFrictionReturnPct": -15.95,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -15.95
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2012-02-27",
+      "exitDate": "2012-06-25",
+      "grossReturnPct": -5.04,
+      "afterFrictionReturnPct": -5.34,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -5.34
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2012-08-13",
+      "exitDate": "2014-05-26",
+      "grossReturnPct": 147.27,
+      "afterFrictionReturnPct": 146.97,
+      "taxPctPoints": 32.33,
+      "afterFrictionAndTaxReturnPct": 114.64
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2014-06-30",
+      "exitDate": "2014-09-01",
+      "grossReturnPct": -9.42,
+      "afterFrictionReturnPct": -9.72,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -9.72
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2014-12-15",
+      "exitDate": "2015-08-24",
+      "grossReturnPct": -10.73,
+      "afterFrictionReturnPct": -11.03,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -11.03
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2016-05-30",
+      "exitDate": "2018-11-05",
+      "grossReturnPct": 102.33,
+      "afterFrictionReturnPct": 102.03,
+      "taxPctPoints": 22.45,
+      "afterFrictionAndTaxReturnPct": 79.58
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2019-06-24",
+      "exitDate": "2019-07-15",
+      "grossReturnPct": -3.58,
+      "afterFrictionReturnPct": -3.88,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -3.88
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2019-07-22",
+      "exitDate": "2019-09-02",
+      "grossReturnPct": -15.47,
+      "afterFrictionReturnPct": -15.77,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -15.77
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2019-12-02",
+      "exitDate": "2020-03-16",
+      "grossReturnPct": -82.48,
+      "afterFrictionReturnPct": -82.78,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -82.78
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2020-10-19",
+      "exitDate": "2021-09-06",
+      "grossReturnPct": 120.38,
+      "afterFrictionReturnPct": 120.08,
+      "taxPctPoints": 26.42,
+      "afterFrictionAndTaxReturnPct": 93.66
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2021-11-08",
+      "exitDate": "2021-12-27",
+      "grossReturnPct": -21.04,
+      "afterFrictionReturnPct": -21.34,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -21.34
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2023-02-20",
+      "exitDate": "2023-03-27",
+      "grossReturnPct": -15.35,
+      "afterFrictionReturnPct": -15.65,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -15.65
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2023-07-24",
+      "exitDate": "2023-09-25",
+      "grossReturnPct": -28.56,
+      "afterFrictionReturnPct": -28.86,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -28.86
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2024-01-01",
+      "exitDate": "2025-02-17",
+      "grossReturnPct": 12.26,
+      "afterFrictionReturnPct": 11.96,
+      "taxPctPoints": 2.63,
+      "afterFrictionAndTaxReturnPct": 9.33
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2009-08-31",
+      "exitDate": "2010-06-28",
+      "grossReturnPct": -23.39,
+      "afterFrictionReturnPct": -23.69,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -23.69
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2010-12-27",
+      "exitDate": "2011-06-20",
+      "grossReturnPct": -18.14,
+      "afterFrictionReturnPct": -18.44,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -18.44
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2012-02-27",
+      "exitDate": "2012-07-16",
+      "grossReturnPct": -8.59,
+      "afterFrictionReturnPct": -8.89,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -8.89
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2012-07-23",
+      "exitDate": "2015-09-14",
+      "grossReturnPct": 237.38,
+      "afterFrictionReturnPct": 237.08,
+      "taxPctPoints": 52.16,
+      "afterFrictionAndTaxReturnPct": 184.92
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2016-05-30",
+      "exitDate": "2018-07-02",
+      "grossReturnPct": 133.11,
+      "afterFrictionReturnPct": 132.81,
+      "taxPctPoints": 29.22,
+      "afterFrictionAndTaxReturnPct": 103.59
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2018-07-09",
+      "exitDate": "2018-07-16",
+      "grossReturnPct": 3.86,
+      "afterFrictionReturnPct": 3.56,
+      "taxPctPoints": 0.78,
+      "afterFrictionAndTaxReturnPct": 2.78
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2018-07-30",
+      "exitDate": "2018-10-29",
+      "grossReturnPct": -17.23,
+      "afterFrictionReturnPct": -17.53,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -17.53
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2019-04-08",
+      "exitDate": "2020-03-16",
+      "grossReturnPct": -74.16,
+      "afterFrictionReturnPct": -74.46,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -74.46
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2020-11-16",
+      "exitDate": "2022-03-21",
+      "grossReturnPct": 167.27,
+      "afterFrictionReturnPct": 166.97,
+      "taxPctPoints": 36.73,
+      "afterFrictionAndTaxReturnPct": 130.24
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2022-12-26",
+      "exitDate": "2023-04-03",
+      "grossReturnPct": -22.82,
+      "afterFrictionReturnPct": -23.12,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -23.12
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2023-09-11",
+      "exitDate": "2023-09-25",
+      "grossReturnPct": -12.84,
+      "afterFrictionReturnPct": -13.14,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -13.14
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2023-12-04",
+      "exitDate": "2025-04-21",
+      "grossReturnPct": 85.94,
+      "afterFrictionReturnPct": 85.64,
+      "taxPctPoints": 18.84,
+      "afterFrictionAndTaxReturnPct": 66.8
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2025-06-30",
+      "exitDate": "2026-03-02",
+      "grossReturnPct": -21.73,
+      "afterFrictionReturnPct": -22.03,
+      "taxPctPoints": 0.0,
+      "afterFrictionAndTaxReturnPct": -22.03
+    }
+  ]
+}
