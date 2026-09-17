@@ -1,0 +1,1812 @@
+{
+  "provider": "Yahoo Finance (query2.finance.yahoo.com v8 chart API)",
+  "interval": "1wk",
+  "requestedStart": "2015-01-01",
+  "downloadedAt": "2026-09-16T09:07:43Z",
+  "pointInTimeUniverse": false,
+  "universeSelectionCriteria": "KOSPI200 오늘 시점 구성종목 199개(원 200개 중 표준 KRX 6자리 숫자 코드가 아닌 1종목 제외). 한국거래소(KRX)가 관리하는 공개 지수의 구성종목을 그대로 사용 (연구자 임의 선택 없음). 오늘 시점 구성이며 과거 구성과 다를 수 있음(생존편향).",
+  "universeSource": {
+    "title": "KOSPI 200 (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/KOSPI_200",
+    "accessed": "2026-09-16"
+  },
+  "tickers": {
+    "090430": {
+      "name": "Amorepacific",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/090430.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/090430.json"
+    },
+    "002790": {
+      "name": "Amorepacific Holdings",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/002790.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/002790.json"
+    },
+    "278470": {
+      "name": "APR",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/278470.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 135,
+      "startDate": "2024-02-26",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/278470.json"
+    },
+    "002030": {
+      "name": "Asia Holdings",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/002030.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/002030.json"
+    },
+    "282330": {
+      "name": "BGF Retail",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/282330.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 459,
+      "startDate": "2017-12-11",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/282330.json"
+    },
+    "138930": {
+      "name": "BNK Financial",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/138930.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/138930.json"
+    },
+    "068270": {
+      "name": "Celltrion",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/068270.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/068270.json"
+    },
+    "030000": {
+      "name": "Cheil Worldwide",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/030000.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/030000.json"
+    },
+    "185750": {
+      "name": "Chong Kun Dang",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/185750.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/185750.json"
+    },
+    "001040": {
+      "name": "CJ",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/001040.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/001040.json"
+    },
+    "097950": {
+      "name": "CJ CheilJedang",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/097950.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/097950.json"
+    },
+    "000120": {
+      "name": "CJ Logistics",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/000120.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/000120.json"
+    },
+    "192820": {
+      "name": "Cosmax",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/192820.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/192820.json"
+    },
+    "005420": {
+      "name": "Cosmo Chemical",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/005420.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/005420.json"
+    },
+    "021240": {
+      "name": "Coway",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/021240.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/021240.json"
+    },
+    "112610": {
+      "name": "CS Wind",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/112610.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/112610.json"
+    },
+    "483650": {
+      "name": "d'Alba Global",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/483650.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 71,
+      "startDate": "2025-05-19",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/483650.json"
+    },
+    "001680": {
+      "name": "Daesang",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/001680.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/001680.json"
+    },
+    "047040": {
+      "name": "Daewoo E&C",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/047040.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/047040.json"
+    },
+    "003090": {
+      "name": "Daewoong",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/003090.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/003090.json"
+    },
+    "069620": {
+      "name": "Daewoong Pharmaceutical",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/069620.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/069620.json"
+    },
+    "000990": {
+      "name": "DB HiTek",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/000990.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/000990.json"
+    },
+    "005830": {
+      "name": "DB Insurance",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/005830.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/005830.json"
+    },
+    "000210": {
+      "name": "DL",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/000210.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/000210.json"
+    },
+    "375500": {
+      "name": "DL E&C",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/375500.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 296,
+      "startDate": "2021-01-25",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/375500.json"
+    },
+    "007340": {
+      "name": "DN Automotive",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/007340.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/007340.json"
+    },
+    "026960": {
+      "name": "Dongsuh",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/026960.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/026960.json"
+    },
+    "006040": {
+      "name": "Dongwon Industries",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/006040.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/006040.json"
+    },
+    "014820": {
+      "name": "Dongwon Systems",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/014820.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/014820.json"
+    },
+    "000150": {
+      "name": "Doosan",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/000150.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/000150.json"
+    },
+    "241560": {
+      "name": "Doosan Bobcat",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/241560.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 514,
+      "startDate": "2016-11-21",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/241560.json"
+    },
+    "034020": {
+      "name": "Doosan Enerbility",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/034020.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/034020.json"
+    },
+    "454910": {
+      "name": "Doosan Robotics",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/454910.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 156,
+      "startDate": "2023-10-02",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/454910.json"
+    },
+    "192080": {
+      "name": "DoubleU Games",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/192080.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 569,
+      "startDate": "2015-11-02",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/192080.json"
+    },
+    "450080": {
+      "name": "Ecopro Materials",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/450080.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 150,
+      "startDate": "2023-11-13",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/450080.json"
+    },
+    "139480": {
+      "name": "Emart",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/139480.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/139480.json"
+    },
+    "383220": {
+      "name": "F&F",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/383220.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 280,
+      "startDate": "2021-05-17",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/383220.json"
+    },
+    "093370": {
+      "name": "Foosung",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/093370.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/093370.json"
+    },
+    "006280": {
+      "name": "Green Cross",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/006280.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/006280.json"
+    },
+    "078930": {
+      "name": "GS",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/078930.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/078930.json"
+    },
+    "007070": {
+      "name": "GS Retail",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/007070.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/007070.json"
+    },
+    "086790": {
+      "name": "Hana Financial",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/086790.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/086790.json"
+    },
+    "009420": {
+      "name": "Hanall Biopharma",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/009420.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/009420.json"
+    },
+    "300720": {
+      "name": "Hanil Cement",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/300720.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 425,
+      "startDate": "2018-08-06",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/300720.json"
+    },
+    "180640": {
+      "name": "Hanjin KAL",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/180640.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/180640.json"
+    },
+    "161390": {
+      "name": "Hankook",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/161390.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/161390.json"
+    },
+    "000240": {
+      "name": "Hankook & Company",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/000240.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/000240.json"
+    },
+    "128940": {
+      "name": "Hanmi Pharm",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/128940.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/128940.json"
+    },
+    "008930": {
+      "name": "Hanmi Science",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/008930.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/008930.json"
+    },
+    "042700": {
+      "name": "Hanmi Semiconductor",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/042700.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/042700.json"
+    },
+    "018880": {
+      "name": "Hanon Systems",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/018880.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/018880.json"
+    },
+    "014680": {
+      "name": "Hansol Chemical",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/014680.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/014680.json"
+    },
+    "009240": {
+      "name": "Hanssem",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/009240.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/009240.json"
+    },
+    "000880": {
+      "name": "Hanwha",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/000880.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/000880.json"
+    },
+    "012450": {
+      "name": "Hanwha Aerospace",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/012450.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/012450.json"
+    },
+    "082740": {
+      "name": "Hanwha Engine",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/082740.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/082740.json"
+    },
+    "088350": {
+      "name": "Hanwha Life",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/088350.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/088350.json"
+    },
+    "042660": {
+      "name": "Hanwha Ocean",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/042660.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/042660.json"
+    },
+    "009830": {
+      "name": "Hanwha Solutions",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/009830.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/009830.json"
+    },
+    "272210": {
+      "name": "Hanwha Systems",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/272210.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 359,
+      "startDate": "2019-11-11",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/272210.json"
+    },
+    "267270": {
+      "name": "HD Construction Equipment",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/267270.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 490,
+      "startDate": "2017-05-08",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/267270.json"
+    },
+    "267250": {
+      "name": "HD Hyundai",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/267250.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 490,
+      "startDate": "2017-05-08",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/267250.json"
+    },
+    "267260": {
+      "name": "HD Hyundai Electric",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/267260.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 490,
+      "startDate": "2017-05-08",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/267260.json"
+    },
+    "329180": {
+      "name": "HD Hyundai Heavy Industries",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/329180.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 263,
+      "startDate": "2021-09-13",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/329180.json"
+    },
+    "071970": {
+      "name": "HD Hyundai Marine Engine",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/071970.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/071970.json"
+    },
+    "443060": {
+      "name": "HD Hyundai Marine Solution",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/443060.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 125,
+      "startDate": "2024-05-06",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/443060.json"
+    },
+    "009540": {
+      "name": "HD KSOE",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/009540.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/009540.json"
+    },
+    "017960": {
+      "name": "Hankuk Carbon",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/017960.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/017960.json"
+    },
+    "000080": {
+      "name": "HiteJinro",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/000080.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/000080.json"
+    },
+    "204320": {
+      "name": "HL Mando",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/204320.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/204320.json"
+    },
+    "011200": {
+      "name": "HMM",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/011200.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/011200.json"
+    },
+    "008770": {
+      "name": "Hotel Shilla",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/008770.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/008770.json"
+    },
+    "298050": {
+      "name": "HS Hyosung Advanced Materials",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/298050.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 429,
+      "startDate": "2018-07-09",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/298050.json"
+    },
+    "352820": {
+      "name": "Hybe",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/352820.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 311,
+      "startDate": "2020-10-12",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/352820.json"
+    },
+    "298040": {
+      "name": "Hyosung Heavy Industries",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/298040.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 429,
+      "startDate": "2018-07-09",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/298040.json"
+    },
+    "298020": {
+      "name": "Hyosung TNC",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/298020.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 429,
+      "startDate": "2018-07-09",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/298020.json"
+    },
+    "307950": {
+      "name": "Hyundai AutoEver",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/307950.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 392,
+      "startDate": "2019-03-25",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/307950.json"
+    },
+    "069960": {
+      "name": "Hyundai Department Store",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/069960.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/069960.json"
+    },
+    "000720": {
+      "name": "Hyundai E&C",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/000720.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/000720.json"
+    },
+    "017800": {
+      "name": "Hyundai Elevator",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/017800.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/017800.json"
+    },
+    "086280": {
+      "name": "Hyundai Glovis",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/086280.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/086280.json"
+    },
+    "001450": {
+      "name": "Hyundai Marine & Fire",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/001450.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/001450.json"
+    },
+    "012330": {
+      "name": "Hyundai Mobis",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/012330.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/012330.json"
+    },
+    "005380": {
+      "name": "Hyundai Motor",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/005380.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/005380.json"
+    },
+    "064350": {
+      "name": "Hyundai Rotem",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/064350.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/064350.json"
+    },
+    "004020": {
+      "name": "Hyundai Steel",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/004020.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/004020.json"
+    },
+    "011210": {
+      "name": "Hyundai WIA",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/011210.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/011210.json"
+    },
+    "139130": {
+      "name": "IM Financial",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/139130.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/139130.json"
+    },
+    "024110": {
+      "name": "Industrial Bank of Korea",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/024110.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/024110.json"
+    },
+    "007660": {
+      "name": "Isu Petasys",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/007660.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/007660.json"
+    },
+    "457190": {
+      "name": "Isu Specialty Chemical",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/457190.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 174,
+      "startDate": "2023-05-29",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/457190.json"
+    },
+    "175330": {
+      "name": "JB Financial",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/175330.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/175330.json"
+    },
+    "035720": {
+      "name": "Kakao",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/035720.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/035720.json"
+    },
+    "323410": {
+      "name": "KakaoBank",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/323410.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 269,
+      "startDate": "2021-08-02",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/323410.json"
+    },
+    "377300": {
+      "name": "KakaoPay",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/377300.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 256,
+      "startDate": "2021-11-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/377300.json"
+    },
+    "035250": {
+      "name": "Kangwon Land",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/035250.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/035250.json"
+    },
+    "105560": {
+      "name": "KB Financial",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/105560.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/105560.json"
+    },
+    "002380": {
+      "name": "KCC",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/002380.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/002380.json"
+    },
+    "015760": {
+      "name": "KEPCO",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/015760.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/015760.json"
+    },
+    "052690": {
+      "name": "KEPCO E&C",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/052690.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/052690.json"
+    },
+    "051600": {
+      "name": "KEPCO KPS",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/051600.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/051600.json"
+    },
+    "000270": {
+      "name": "Kia",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/000270.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/000270.json"
+    },
+    "039490": {
+      "name": "Kiwoom Securities",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/039490.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/039490.json"
+    },
+    "161890": {
+      "name": "Kolmar Korea",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/161890.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/161890.json"
+    },
+    "120110": {
+      "name": "Kolon Industries",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/120110.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/120110.json"
+    },
+    "047810": {
+      "name": "Korea Aerospace",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/047810.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/047810.json"
+    },
+    "071320": {
+      "name": "Korea District Heating",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/071320.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/071320.json"
+    },
+    "036460": {
+      "name": "Korea Gas",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/036460.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/036460.json"
+    },
+    "071050": {
+      "name": "Korea Investment",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/071050.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/071050.json"
+    },
+    "006650": {
+      "name": "Korea Petrochemical",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/006650.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/006650.json"
+    },
+    "010130": {
+      "name": "Korea Zinc",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/010130.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/010130.json"
+    },
+    "003490": {
+      "name": "Korean Air",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/003490.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/003490.json"
+    },
+    "259960": {
+      "name": "Krafton",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/259960.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 268,
+      "startDate": "2021-08-09",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/259960.json"
+    },
+    "030200": {
+      "name": "KT",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/030200.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/030200.json"
+    },
+    "033780": {
+      "name": "KT&G",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/033780.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/033780.json"
+    },
+    "011780": {
+      "name": "Kumho Petrochemical",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/011780.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/011780.json"
+    },
+    "073240": {
+      "name": "Kumho Tire",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/073240.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/073240.json"
+    },
+    "066970": {
+      "name": "L&F",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/066970.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/066970.json"
+    },
+    "003550": {
+      "name": "LG",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/003550.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/003550.json"
+    },
+    "051910": {
+      "name": "LG Chem",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/051910.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/051910.json"
+    },
+    "064400": {
+      "name": "LG CNS",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/064400.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 86,
+      "startDate": "2025-02-03",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/064400.json"
+    },
+    "034220": {
+      "name": "LG Display",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/034220.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/034220.json"
+    },
+    "066570": {
+      "name": "LG Electronics",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/066570.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/066570.json"
+    },
+    "373220": {
+      "name": "LG Energy Solution",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/373220.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 244,
+      "startDate": "2022-01-24",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/373220.json"
+    },
+    "051900": {
+      "name": "LG H&H",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/051900.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/051900.json"
+    },
+    "011070": {
+      "name": "LG Innotek",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/011070.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/011070.json"
+    },
+    "032640": {
+      "name": "LG Uplus",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/032640.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/032640.json"
+    },
+    "079550": {
+      "name": "LIG Nex1",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/079550.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 574,
+      "startDate": "2015-09-28",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/079550.json"
+    },
+    "004990": {
+      "name": "Lotte",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/004990.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/004990.json"
+    },
+    "011170": {
+      "name": "Lotte Chemical",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/011170.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/011170.json"
+    },
+    "005300": {
+      "name": "Lotte Chilsung",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/005300.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/005300.json"
+    },
+    "004000": {
+      "name": "Lotte Fine Chemical",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/004000.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/004000.json"
+    },
+    "023530": {
+      "name": "Lotte Shopping",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/023530.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/023530.json"
+    },
+    "280360": {
+      "name": "Lotte Wellfood",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/280360.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 465,
+      "startDate": "2017-10-30",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/280360.json"
+    },
+    "006260": {
+      "name": "LS",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/006260.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/006260.json"
+    },
+    "010120": {
+      "name": "LS Electric",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/010120.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/010120.json"
+    },
+    "138040": {
+      "name": "Meritz Financial",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/138040.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/138040.json"
+    },
+    "006800": {
+      "name": "Mirae Asset Securities",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/006800.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/006800.json"
+    },
+    "081660": {
+      "name": "Misto",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/081660.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/081660.json"
+    },
+    "002840": {
+      "name": "Miwon Commercial",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/002840.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/002840.json"
+    },
+    "268280": {
+      "name": "Miwon Specialty Chemical",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/268280.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 488,
+      "startDate": "2017-05-22",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/268280.json"
+    },
+    "035420": {
+      "name": "Naver",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/035420.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/035420.json"
+    },
+    "036570": {
+      "name": "NC",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/036570.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/036570.json"
+    },
+    "251270": {
+      "name": "Netmarble",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/251270.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 489,
+      "startDate": "2017-05-15",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/251270.json"
+    },
+    "005940": {
+      "name": "NH Investment & Securities",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/005940.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/005940.json"
+    },
+    "004370": {
+      "name": "Nongshim",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/004370.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/004370.json"
+    },
+    "456040": {
+      "name": "OCI",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/456040.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 174,
+      "startDate": "2023-05-29",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/456040.json"
+    },
+    "010060": {
+      "name": "OCI Holdings",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/010060.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/010060.json"
+    },
+    "271560": {
+      "name": "Orion",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/271560.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 482,
+      "startDate": "2017-07-03",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/271560.json"
+    },
+    "001800": {
+      "name": "Orion Holdings",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/001800.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/001800.json"
+    },
+    "007310": {
+      "name": "Ottogi",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/007310.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/007310.json"
+    },
+    "028670": {
+      "name": "Pan Ocean",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/028670.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/028670.json"
+    },
+    "034230": {
+      "name": "Paradise",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/034230.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/034230.json"
+    },
+    "103140": {
+      "name": "Poongsan",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/103140.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/103140.json"
+    },
+    "005490": {
+      "name": "POSCO",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/005490.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/005490.json"
+    },
+    "022100": {
+      "name": "POSCO DX",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/022100.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/022100.json"
+    },
+    "003670": {
+      "name": "POSCO Future M",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/003670.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/003670.json"
+    },
+    "047050": {
+      "name": "POSCO International",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/047050.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/047050.json"
+    },
+    "012750": {
+      "name": "S-1",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/012750.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/012750.json"
+    },
+    "062040": {
+      "name": "Sanil Electric",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/062040.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 113,
+      "startDate": "2024-07-29",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/062040.json"
+    },
+    "207940": {
+      "name": "Samsung Biologics",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/207940.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 516,
+      "startDate": "2016-11-07",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/207940.json"
+    },
+    "028260": {
+      "name": "Samsung C&T",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/028260.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/028260.json"
+    },
+    "029780": {
+      "name": "Samsung Card",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/029780.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/029780.json"
+    },
+    "028050": {
+      "name": "Samsung E&A",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/028050.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/028050.json"
+    },
+    "009150": {
+      "name": "Samsung Electro-Mechanics",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/009150.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/009150.json"
+    },
+    "005930": {
+      "name": "Samsung Electronics",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/005930.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/005930.json"
+    },
+    "000810": {
+      "name": "Samsung Fire & Marine",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/000810.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/000810.json"
+    },
+    "010140": {
+      "name": "Samsung Heavy Industries",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/010140.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/010140.json"
+    },
+    "032830": {
+      "name": "Samsung Life",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/032830.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/032830.json"
+    },
+    "006400": {
+      "name": "Samsung SDI",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/006400.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/006400.json"
+    },
+    "018260": {
+      "name": "Samsung SDS",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/018260.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/018260.json"
+    },
+    "016360": {
+      "name": "Samsung Securities",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/016360.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/016360.json"
+    },
+    "003230": {
+      "name": "Samyang Foods",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/003230.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/003230.json"
+    },
+    "137310": {
+      "name": "SD Biosensor",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/137310.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 272,
+      "startDate": "2021-07-12",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/137310.json"
+    },
+    "001430": {
+      "name": "Seah Besteel",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/001430.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/001430.json"
+    },
+    "003030": {
+      "name": "Seah Steel Holdings",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/003030.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/003030.json"
+    },
+    "055550": {
+      "name": "Shinhan Financial",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/055550.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/055550.json"
+    },
+    "004170": {
+      "name": "Shinsegae",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/004170.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/004170.json"
+    },
+    "034730": {
+      "name": "SK",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/034730.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/034730.json"
+    },
+    "326030": {
+      "name": "SK Biopharm",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/326030.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 326,
+      "startDate": "2020-06-29",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/326030.json"
+    },
+    "302440": {
+      "name": "SK Bioscience",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/302440.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 289,
+      "startDate": "2021-03-15",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/302440.json"
+    },
+    "285130": {
+      "name": "SK Chemicals",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/285130.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 455,
+      "startDate": "2018-01-08",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/285130.json"
+    },
+    "000660": {
+      "name": "SK Hynix",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/000660.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/000660.json"
+    },
+    "361610": {
+      "name": "SK IE Technology",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/361610.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 281,
+      "startDate": "2021-05-10",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/361610.json"
+    },
+    "096770": {
+      "name": "SK Innovation",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/096770.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/096770.json"
+    },
+    "402340": {
+      "name": "SK Square",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/402340.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 252,
+      "startDate": "2021-11-29",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/402340.json"
+    },
+    "017670": {
+      "name": "SK Telecom",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/017670.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/017670.json"
+    },
+    "011790": {
+      "name": "SKC",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/011790.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/011790.json"
+    },
+    "005850": {
+      "name": "SL",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/005850.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/005850.json"
+    },
+    "010950": {
+      "name": "S-Oil",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/010950.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/010950.json"
+    },
+    "003240": {
+      "name": "Taekwang Industrial",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/003240.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/003240.json"
+    },
+    "001440": {
+      "name": "Taihan Cable & Solution",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/001440.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/001440.json"
+    },
+    "069260": {
+      "name": "TKG Huchems",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/069260.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/069260.json"
+    },
+    "316140": {
+      "name": "Woori Financial",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/316140.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 397,
+      "startDate": "2019-02-18",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/316140.json"
+    },
+    "008730": {
+      "name": "Youlchon Chemical",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/008730.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/008730.json"
+    },
+    "000670": {
+      "name": "Young Poong",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/000670.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/000670.json"
+    },
+    "111770": {
+      "name": "Youngone",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/111770.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/111770.json"
+    },
+    "009970": {
+      "name": "Youngone Holdings",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/009970.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/009970.json"
+    },
+    "000100": {
+      "name": "Yuhan",
+      "requestUrl": "https://query2.finance.yahoo.com/v8/finance/chart/000100.KS?period1=1420070400&period2=1789549663&interval=1wk&events=div,splits",
+      "status": "OK",
+      "rowCount": 612,
+      "startDate": "2015-01-01",
+      "endDate": "2026-09-16",
+      "rawFile": "raw/000100.json"
+    }
+  },
+  "summary": {
+    "universeSize": 199,
+    "succeeded": 199,
+    "failed": [],
+    "failedCount": 0
+  }
+}

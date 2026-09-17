@@ -1,0 +1,30 @@
+{
+  "generatedBy": "research/scripts/track-a-kr-leverage/fetch_kr_leverage_universe.py",
+  "startDate": "2010-01-01",
+  "tickers": {
+    "122630": {
+      "name": "KODEX 레버리지",
+      "symbol": "122630.KS",
+      "status": "OK",
+      "weeklyCandleCount": 865,
+      "firstDate": "2010-02-22",
+      "lastDate": "2026-09-17"
+    },
+    "233740": {
+      "name": "KODEX 코스닥150레버리지",
+      "symbol": "233740.KS",
+      "status": "OK",
+      "weeklyCandleCount": 562,
+      "firstDate": "2015-12-14",
+      "lastDate": "2026-09-17"
+    },
+    "267770": {
+      "name": "TIGER 200선물레버리지",
+      "symbol": "267770.KS",
+      "status": "OK",
+      "weeklyCandleCount": 491,
+      "firstDate": "2017-04-24",
+      "lastDate": "2026-09-17"
+    }
+  }
+}

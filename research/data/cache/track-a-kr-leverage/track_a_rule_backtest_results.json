@@ -1,0 +1,430 @@
+{
+  "generatedBy": "research/scripts/track-a-kr-leverage/track_a_rule_kr_leverage_backtest.py",
+  "hypothesis": "Track A 프로덕션 규칙(10주/40주 SMA 골든크로스, 진입 0-4주=delay 0, 청산 CROSS_DOWN 당주)을 국내 레버리지 ETF 3종에 개별 종목·사이클 단위로 적용.",
+  "tickers": [
+    "122630",
+    "233740",
+    "267770"
+  ],
+  "costScenariosRoundTripBps": [
+    0.0,
+    20.0,
+    40.0,
+    57.0
+  ],
+  "perTicker": {
+    "122630": {
+      "name": "KODEX 레버리지",
+      "dataRange": {
+        "start": "2010-02-22",
+        "end": "2026-09-17",
+        "weeklyCandleCount": 865
+      },
+      "numClosedCycles": 12,
+      "numOpenCycles": 0,
+      "cycles": [
+        {
+          "entryDate": "2012-02-27",
+          "entryPrice": 13905.0,
+          "exitDate": "2012-06-11",
+          "exitPrice": 11605.0,
+          "holdWeeks": 15,
+          "open": false,
+          "rawReturnPct": -16.54,
+          "cycleMaxDrawdownPct": -24.32
+        },
+        {
+          "entryDate": "2012-12-31",
+          "entryPrice": 13195.0,
+          "exitDate": "2013-04-29",
+          "exitPrice": 11900.0,
+          "holdWeeks": 17,
+          "open": false,
+          "rawReturnPct": -9.81,
+          "cycleMaxDrawdownPct": -15.01
+        },
+        {
+          "entryDate": "2013-10-14",
+          "entryPrice": 13040.0,
+          "exitDate": "2014-02-03",
+          "exitPrice": 11070.0,
+          "holdWeeks": 16,
+          "open": false,
+          "rawReturnPct": -15.11,
+          "cycleMaxDrawdownPct": -15.11
+        },
+        {
+          "entryDate": "2014-07-21",
+          "entryPrice": 12035.0,
+          "exitDate": "2014-10-13",
+          "exitPrice": 9895.0,
+          "holdWeeks": 12,
+          "open": false,
+          "rawReturnPct": -17.78,
+          "cycleMaxDrawdownPct": -21.09
+        },
+        {
+          "entryDate": "2015-04-06",
+          "entryPrice": 11730.0,
+          "exitDate": "2015-07-20",
+          "exitPrice": 10120.0,
+          "holdWeeks": 15,
+          "open": false,
+          "rawReturnPct": -13.73,
+          "cycleMaxDrawdownPct": -19.36
+        },
+        {
+          "entryDate": "2016-04-11",
+          "entryPrice": 10410.0,
+          "exitDate": "2018-03-19",
+          "exitPrice": 16150.0,
+          "holdWeeks": 100,
+          "open": false,
+          "rawReturnPct": 55.14,
+          "cycleMaxDrawdownPct": -18.04
+        },
+        {
+          "entryDate": "2019-03-25",
+          "entryPrice": 12680.0,
+          "exitDate": "2019-05-20",
+          "exitPrice": 11525.0,
+          "holdWeeks": 8,
+          "open": false,
+          "rawReturnPct": -9.11,
+          "cycleMaxDrawdownPct": -16.35
+        },
+        {
+          "entryDate": "2019-11-11",
+          "entryPrice": 13480.0,
+          "exitDate": "2020-03-23",
+          "exitPrice": 8490.0,
+          "holdWeeks": 19,
+          "open": false,
+          "rawReturnPct": -37.02,
+          "cycleMaxDrawdownPct": -51.98
+        },
+        {
+          "entryDate": "2020-07-20",
+          "entryPrice": 13010.0,
+          "exitDate": "2021-09-13",
+          "exitPrice": 25625.0,
+          "holdWeeks": 60,
+          "open": false,
+          "rawReturnPct": 96.96,
+          "cycleMaxDrawdownPct": -16.73
+        },
+        {
+          "entryDate": "2023-02-27",
+          "entryPrice": 14880.0,
+          "exitDate": "2023-10-16",
+          "exitPrice": 14710.0,
+          "holdWeeks": 33,
+          "open": false,
+          "rawReturnPct": -1.14,
+          "cycleMaxDrawdownPct": -16.99
+        },
+        {
+          "entryDate": "2024-01-01",
+          "entryPrice": 17490.0,
+          "exitDate": "2024-09-09",
+          "exitPrice": 16370.0,
+          "holdWeeks": 36,
+          "open": false,
+          "rawReturnPct": -6.4,
+          "cycleMaxDrawdownPct": -26.77
+        },
+        {
+          "entryDate": "2025-05-26",
+          "entryPrice": 17475.0,
+          "exitDate": "2026-09-14",
+          "exitPrice": 103580.0,
+          "holdWeeks": 68,
+          "open": false,
+          "rawReturnPct": 492.73,
+          "cycleMaxDrawdownPct": -61.43
+        }
+      ],
+      "byCostBps": {
+        "0.0": {
+          "numClosedCycles": 12,
+          "winRatePct": 25.0,
+          "avgReturnPct": 43.18,
+          "medianReturnPct": -9.11,
+          "sequentialCompoundedReturnPct": 334.82
+        },
+        "20.0": {
+          "numClosedCycles": 12,
+          "winRatePct": 25.0,
+          "avgReturnPct": 42.9,
+          "medianReturnPct": -9.29,
+          "sequentialCompoundedReturnPct": 324.51
+        },
+        "40.0": {
+          "numClosedCycles": 12,
+          "winRatePct": 25.0,
+          "avgReturnPct": 42.61,
+          "medianReturnPct": -9.47,
+          "sequentialCompoundedReturnPct": 314.44
+        },
+        "57.0": {
+          "numClosedCycles": 12,
+          "winRatePct": 25.0,
+          "avgReturnPct": 42.37,
+          "medianReturnPct": -9.63,
+          "sequentialCompoundedReturnPct": 306.07
+        }
+      },
+      "buyAndHoldReturnPct": 975.97,
+      "buyAndHoldMaxDrawdownPct": -61.43
+    },
+    "233740": {
+      "name": "KODEX 코스닥150레버리지",
+      "dataRange": {
+        "start": "2015-12-14",
+        "end": "2026-09-17",
+        "weeklyCandleCount": 562
+      },
+      "numClosedCycles": 7,
+      "numOpenCycles": 0,
+      "cycles": [
+        {
+          "entryDate": "2017-05-15",
+          "entryPrice": 9290.0,
+          "exitDate": "2018-06-25",
+          "exitPrice": 17810.0,
+          "holdWeeks": 57,
+          "open": false,
+          "rawReturnPct": 91.71,
+          "cycleMaxDrawdownPct": -34.04
+        },
+        {
+          "entryDate": "2020-02-10",
+          "entryPrice": 8740.0,
+          "exitDate": "2020-03-16",
+          "exitPrice": 4640.0,
+          "holdWeeks": 5,
+          "open": false,
+          "rawReturnPct": -46.91,
+          "cycleMaxDrawdownPct": -46.91
+        },
+        {
+          "entryDate": "2020-06-01",
+          "entryPrice": 10380.0,
+          "exitDate": "2021-06-28",
+          "exitPrice": 15680.0,
+          "holdWeeks": 56,
+          "open": false,
+          "rawReturnPct": 51.06,
+          "cycleMaxDrawdownPct": -26.04
+        },
+        {
+          "entryDate": "2021-07-05",
+          "entryPrice": 15335.0,
+          "exitDate": "2022-01-24",
+          "exitPrice": 11025.0,
+          "holdWeeks": 29,
+          "open": false,
+          "rawReturnPct": -28.11,
+          "cycleMaxDrawdownPct": -34.74
+        },
+        {
+          "entryDate": "2023-03-13",
+          "entryPrice": 8780.0,
+          "exitDate": "2023-10-30",
+          "exitPrice": 8900.0,
+          "holdWeeks": 33,
+          "open": false,
+          "rawReturnPct": 1.37,
+          "cycleMaxDrawdownPct": -40.11
+        },
+        {
+          "entryDate": "2024-03-25",
+          "entryPrice": 13325.0,
+          "exitDate": "2024-07-22",
+          "exitPrice": 9910.0,
+          "holdWeeks": 17,
+          "open": false,
+          "rawReturnPct": -25.63,
+          "cycleMaxDrawdownPct": -25.63
+        },
+        {
+          "entryDate": "2025-07-14",
+          "entryPrice": 9380.0,
+          "exitDate": "2026-06-29",
+          "exitPrice": 9050.0,
+          "holdWeeks": 50,
+          "open": false,
+          "rawReturnPct": -3.52,
+          "cycleMaxDrawdownPct": -55.76
+        }
+      ],
+      "byCostBps": {
+        "0.0": {
+          "numClosedCycles": 7,
+          "winRatePct": 42.9,
+          "avgReturnPct": 5.71,
+          "medianReturnPct": -3.52,
+          "sequentialCompoundedReturnPct": -19.6
+        },
+        "20.0": {
+          "numClosedCycles": 7,
+          "winRatePct": 42.9,
+          "avgReturnPct": 5.5,
+          "medianReturnPct": -3.71,
+          "sequentialCompoundedReturnPct": -20.72
+        },
+        "40.0": {
+          "numClosedCycles": 7,
+          "winRatePct": 42.9,
+          "avgReturnPct": 5.29,
+          "medianReturnPct": -3.9,
+          "sequentialCompoundedReturnPct": -21.82
+        },
+        "57.0": {
+          "numClosedCycles": 7,
+          "winRatePct": 42.9,
+          "avgReturnPct": 5.11,
+          "medianReturnPct": -4.07,
+          "sequentialCompoundedReturnPct": -22.75
+        }
+      },
+      "buyAndHoldReturnPct": -38.19,
+      "buyAndHoldMaxDrawdownPct": -82.81
+    },
+    "267770": {
+      "name": "TIGER 200선물레버리지",
+      "dataRange": {
+        "start": "2017-04-24",
+        "end": "2026-09-17",
+        "weeklyCandleCount": 491
+      },
+      "numClosedCycles": 6,
+      "numOpenCycles": 0,
+      "cycles": [
+        {
+          "entryDate": "2019-03-25",
+          "entryPrice": 9478.46,
+          "exitDate": "2019-05-20",
+          "exitPrice": 8605.96,
+          "holdWeeks": 8,
+          "open": false,
+          "rawReturnPct": -9.21,
+          "cycleMaxDrawdownPct": -16.26
+        },
+        {
+          "entryDate": "2019-11-11",
+          "entryPrice": 10073.34,
+          "exitDate": "2020-03-23",
+          "exitPrice": 6340.45,
+          "holdWeeks": 19,
+          "open": false,
+          "rawReturnPct": -37.06,
+          "cycleMaxDrawdownPct": -52.11
+        },
+        {
+          "entryDate": "2020-07-20",
+          "entryPrice": 9706.49,
+          "exitDate": "2021-09-13",
+          "exitPrice": 19135.38,
+          "holdWeeks": 60,
+          "open": false,
+          "rawReturnPct": 97.14,
+          "cycleMaxDrawdownPct": -16.93
+        },
+        {
+          "entryDate": "2023-02-20",
+          "entryPrice": 11317.63,
+          "exitDate": "2023-10-16",
+          "exitPrice": 11144.13,
+          "holdWeeks": 34,
+          "open": false,
+          "rawReturnPct": -1.53,
+          "cycleMaxDrawdownPct": -17.14
+        },
+        {
+          "entryDate": "2024-01-01",
+          "entryPrice": 13355.1,
+          "exitDate": "2024-09-09",
+          "exitPrice": 12428.08,
+          "holdWeeks": 36,
+          "open": false,
+          "rawReturnPct": -6.94,
+          "cycleMaxDrawdownPct": -26.59
+        },
+        {
+          "entryDate": "2025-05-26",
+          "entryPrice": 13270.83,
+          "exitDate": "2026-09-14",
+          "exitPrice": 79400.0,
+          "holdWeeks": 68,
+          "open": false,
+          "rawReturnPct": 498.3,
+          "cycleMaxDrawdownPct": -60.98
+        }
+      ],
+      "byCostBps": {
+        "0.0": {
+          "numClosedCycles": 6,
+          "winRatePct": 33.3,
+          "avgReturnPct": 90.12,
+          "medianReturnPct": -1.53,
+          "sequentialCompoundedReturnPct": 517.66
+        },
+        "20.0": {
+          "numClosedCycles": 6,
+          "winRatePct": 33.3,
+          "avgReturnPct": 89.74,
+          "medianReturnPct": -1.73,
+          "sequentialCompoundedReturnPct": 510.3
+        },
+        "40.0": {
+          "numClosedCycles": 6,
+          "winRatePct": 33.3,
+          "avgReturnPct": 89.36,
+          "medianReturnPct": -1.93,
+          "sequentialCompoundedReturnPct": 503.02
+        },
+        "57.0": {
+          "numClosedCycles": 6,
+          "winRatePct": 33.3,
+          "avgReturnPct": 89.04,
+          "medianReturnPct": -2.09,
+          "sequentialCompoundedReturnPct": 496.9
+        }
+      },
+      "buyAndHoldReturnPct": 675.03,
+      "buyAndHoldMaxDrawdownPct": -61.32
+    }
+  },
+  "combinedAcrossTickers": {
+    "numTickers": 3,
+    "totalClosedCycles": 25,
+    "totalOpenCycles": 0,
+    "byCostBps": {
+      "0.0": {
+        "numClosedCycles": 25,
+        "winRatePct": 32.0,
+        "avgReturnPct": 43.96,
+        "medianReturnPct": -6.94
+      },
+      "20.0": {
+        "numClosedCycles": 25,
+        "winRatePct": 32.0,
+        "avgReturnPct": 43.67,
+        "medianReturnPct": -7.13
+      },
+      "40.0": {
+        "numClosedCycles": 25,
+        "winRatePct": 32.0,
+        "avgReturnPct": 43.38,
+        "medianReturnPct": -7.31
+      },
+      "57.0": {
+        "numClosedCycles": 25,
+        "winRatePct": 32.0,
+        "avgReturnPct": 43.14,
+        "medianReturnPct": -7.47
+      }
+    }
+  }
+}
