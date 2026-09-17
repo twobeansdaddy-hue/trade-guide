@@ -1,0 +1,822 @@
+{
+  "generatedBy": "research/scripts/track-a-macro/sector_relative_strength_entry_filter_backtest.py",
+  "hypothesis": "진입 시점 직전 N주간 기초지수의 SPY 대비 상대강도가 강할수록(모멘텀 확인) 이후 사이클 수익률이 좋다.",
+  "underlyingMap": {
+    "SOXL": "SOXX",
+    "TQQQ": "QQQ",
+    "TNA": "IWM",
+    "FAS": "XLF"
+  },
+  "benchmark": "SPY",
+  "preRegisteredThresholdPct": 5.0,
+  "byLookback": {
+    "13": {
+      "lookbackWeeks": 13,
+      "totalValidCycles": 42,
+      "skippedCycles": [],
+      "correlation": {
+        "pearson_relativeStrengthPct_vs_returnPct": 0.112
+      },
+      "byThreshold": {
+        "5.0": {
+          "belowThreshold": {
+            "n": 30,
+            "winRatePct": 43.3,
+            "avgReturnPct": 33.19,
+            "medianReturnPct": -7.23
+          },
+          "atOrAboveThreshold": {
+            "n": 12,
+            "winRatePct": 50.0,
+            "avgReturnPct": 71.32,
+            "medianReturnPct": 5.4
+          }
+        }
+      },
+      "cycles": [
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2012-02-20",
+          "underlyingLookbackReturnPct": 18.79,
+          "benchmarkLookbackReturnPct": 14.72,
+          "relativeStrengthPct": 4.067,
+          "returnPct": -35.04
+        },
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2013-01-21",
+          "underlyingLookbackReturnPct": 12.72,
+          "benchmarkLookbackReturnPct": 4.16,
+          "relativeStrengthPct": 8.554,
+          "returnPct": 215.39
+        },
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2016-04-18",
+          "underlyingLookbackReturnPct": 17.79,
+          "benchmarkLookbackReturnPct": 11.99,
+          "relativeStrengthPct": 5.804,
+          "returnPct": 475.64
+        },
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2019-03-25",
+          "underlyingLookbackReturnPct": 29.97,
+          "benchmarkLookbackReturnPct": 19.6,
+          "relativeStrengthPct": 10.367,
+          "returnPct": -40.4
+        },
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2020-08-10",
+          "underlyingLookbackReturnPct": 23.27,
+          "benchmarkLookbackReturnPct": 15.23,
+          "relativeStrengthPct": 8.036,
+          "returnPct": 111.49
+        },
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2023-02-27",
+          "underlyingLookbackReturnPct": 11.45,
+          "benchmarkLookbackReturnPct": 0.92,
+          "relativeStrengthPct": 10.53,
+          "returnPct": 17.77
+        },
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2023-12-04",
+          "underlyingLookbackReturnPct": 0.02,
+          "benchmarkLookbackReturnPct": 1.58,
+          "relativeStrengthPct": -1.557,
+          "returnPct": 41.89
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2012-01-30",
+          "underlyingLookbackReturnPct": 4.71,
+          "benchmarkLookbackReturnPct": 5.34,
+          "relativeStrengthPct": -0.628,
+          "returnPct": 13.73
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2013-01-28",
+          "underlyingLookbackReturnPct": 3.33,
+          "benchmarkLookbackReturnPct": 6.92,
+          "relativeStrengthPct": -3.595,
+          "returnPct": 215.77
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2015-11-23",
+          "underlyingLookbackReturnPct": 16.22,
+          "benchmarkLookbackReturnPct": 10.9,
+          "relativeStrengthPct": 5.317,
+          "returnPct": -26.63
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2016-07-25",
+          "underlyingLookbackReturnPct": 4.57,
+          "benchmarkLookbackReturnPct": 4.39,
+          "relativeStrengthPct": 0.178,
+          "returnPct": 115.52
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2019-04-15",
+          "underlyingLookbackReturnPct": 16.91,
+          "benchmarkLookbackReturnPct": 13.15,
+          "relativeStrengthPct": 3.758,
+          "returnPct": -14.49
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2020-06-15",
+          "underlyingLookbackReturnPct": 41.32,
+          "benchmarkLookbackReturnPct": 28.77,
+          "relativeStrengthPct": 12.552,
+          "returnPct": 114.82
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2023-03-27",
+          "underlyingLookbackReturnPct": 15.66,
+          "benchmarkLookbackReturnPct": 3.94,
+          "relativeStrengthPct": 11.722,
+          "returnPct": 49.52
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2025-07-07",
+          "underlyingLookbackReturnPct": 30.44,
+          "benchmarkLookbackReturnPct": 23.42,
+          "relativeStrengthPct": 7.016,
+          "returnPct": -6.97
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2010-11-01",
+          "underlyingLookbackReturnPct": 5.81,
+          "benchmarkLookbackReturnPct": 5.68,
+          "relativeStrengthPct": 0.133,
+          "returnPct": -15.65
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2012-02-27",
+          "underlyingLookbackReturnPct": 18.79,
+          "benchmarkLookbackReturnPct": 15.3,
+          "relativeStrengthPct": 3.485,
+          "returnPct": -5.04
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2012-08-13",
+          "underlyingLookbackReturnPct": 3.0,
+          "benchmarkLookbackReturnPct": 5.51,
+          "relativeStrengthPct": -2.509,
+          "returnPct": 147.27
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2014-06-30",
+          "underlyingLookbackReturnPct": 2.12,
+          "benchmarkLookbackReturnPct": 5.16,
+          "relativeStrengthPct": -3.036,
+          "returnPct": -9.42
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2014-12-15",
+          "underlyingLookbackReturnPct": -0.22,
+          "benchmarkLookbackReturnPct": 0.74,
+          "relativeStrengthPct": -0.952,
+          "returnPct": -10.73
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2016-05-30",
+          "underlyingLookbackReturnPct": 11.89,
+          "benchmarkLookbackReturnPct": 9.18,
+          "relativeStrengthPct": 2.712,
+          "returnPct": 102.33
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2019-06-24",
+          "underlyingLookbackReturnPct": 1.55,
+          "benchmarkLookbackReturnPct": 5.74,
+          "relativeStrengthPct": -4.19,
+          "returnPct": -3.58
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2019-07-22",
+          "underlyingLookbackReturnPct": -0.65,
+          "benchmarkLookbackReturnPct": 3.13,
+          "relativeStrengthPct": -3.777,
+          "returnPct": -15.47
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2019-12-02",
+          "underlyingLookbackReturnPct": 8.0,
+          "benchmarkLookbackReturnPct": 7.05,
+          "relativeStrengthPct": 0.95,
+          "returnPct": -82.48
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2020-10-19",
+          "underlyingLookbackReturnPct": 10.32,
+          "benchmarkLookbackReturnPct": 5.88,
+          "relativeStrengthPct": 4.442,
+          "returnPct": 120.38
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2021-11-08",
+          "underlyingLookbackReturnPct": 9.51,
+          "benchmarkLookbackReturnPct": 6.4,
+          "relativeStrengthPct": 3.112,
+          "returnPct": -21.04
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2023-02-20",
+          "underlyingLookbackReturnPct": 6.16,
+          "benchmarkLookbackReturnPct": 3.68,
+          "relativeStrengthPct": 2.477,
+          "returnPct": -15.35
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2023-07-24",
+          "underlyingLookbackReturnPct": 10.17,
+          "benchmarkLookbackReturnPct": 10.48,
+          "relativeStrengthPct": -0.317,
+          "returnPct": -28.56
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2024-01-01",
+          "underlyingLookbackReturnPct": 15.73,
+          "benchmarkLookbackReturnPct": 11.68,
+          "relativeStrengthPct": 4.043,
+          "returnPct": 12.26
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2009-08-31",
+          "underlyingLookbackReturnPct": 19.55,
+          "benchmarkLookbackReturnPct": 8.73,
+          "relativeStrengthPct": 10.82,
+          "returnPct": -23.39
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2010-12-27",
+          "underlyingLookbackReturnPct": 11.2,
+          "benchmarkLookbackReturnPct": 10.54,
+          "relativeStrengthPct": 0.66,
+          "returnPct": -18.14
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2012-02-27",
+          "underlyingLookbackReturnPct": 22.63,
+          "benchmarkLookbackReturnPct": 15.3,
+          "relativeStrengthPct": 7.324,
+          "returnPct": -8.59
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2012-07-23",
+          "underlyingLookbackReturnPct": -4.98,
+          "benchmarkLookbackReturnPct": -0.73,
+          "relativeStrengthPct": -4.252,
+          "returnPct": 237.38
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2016-05-30",
+          "underlyingLookbackReturnPct": 13.4,
+          "benchmarkLookbackReturnPct": 9.18,
+          "relativeStrengthPct": 4.22,
+          "returnPct": 133.11
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2018-07-09",
+          "underlyingLookbackReturnPct": 0.29,
+          "benchmarkLookbackReturnPct": 6.95,
+          "relativeStrengthPct": -6.667,
+          "returnPct": 3.86
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2018-07-30",
+          "underlyingLookbackReturnPct": 2.99,
+          "benchmarkLookbackReturnPct": 6.31,
+          "relativeStrengthPct": -3.318,
+          "returnPct": -17.23
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2019-04-08",
+          "underlyingLookbackReturnPct": 10.19,
+          "benchmarkLookbackReturnPct": 14.03,
+          "relativeStrengthPct": -3.834,
+          "returnPct": -74.16
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2020-11-16",
+          "underlyingLookbackReturnPct": 12.21,
+          "benchmarkLookbackReturnPct": 7.73,
+          "relativeStrengthPct": 4.478,
+          "returnPct": 167.27
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2022-12-26",
+          "underlyingLookbackReturnPct": 11.79,
+          "benchmarkLookbackReturnPct": 5.59,
+          "relativeStrengthPct": 6.201,
+          "returnPct": -22.82
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2023-09-11",
+          "underlyingLookbackReturnPct": 4.45,
+          "benchmarkLookbackReturnPct": 3.76,
+          "relativeStrengthPct": 0.689,
+          "returnPct": -12.84
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2023-12-04",
+          "underlyingLookbackReturnPct": 4.62,
+          "benchmarkLookbackReturnPct": 1.58,
+          "relativeStrengthPct": 3.041,
+          "returnPct": 85.94
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2025-06-30",
+          "underlyingLookbackReturnPct": 5.5,
+          "benchmarkLookbackReturnPct": 10.78,
+          "relativeStrengthPct": -5.277,
+          "returnPct": -21.73
+        }
+      ]
+    },
+    "26": {
+      "lookbackWeeks": 26,
+      "totalValidCycles": 42,
+      "skippedCycles": [],
+      "correlation": {
+        "pearson_relativeStrengthPct_vs_returnPct": -0.021
+      },
+      "byThreshold": {
+        "5.0": {
+          "belowThreshold": {
+            "n": 35,
+            "winRatePct": 42.9,
+            "avgReturnPct": 44.81,
+            "medianReturnPct": -6.97
+          },
+          "atOrAboveThreshold": {
+            "n": 7,
+            "winRatePct": 57.1,
+            "avgReturnPct": 40.46,
+            "medianReturnPct": 17.77
+          }
+        }
+      },
+      "cycles": [
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2012-02-20",
+          "underlyingLookbackReturnPct": 32.13,
+          "benchmarkLookbackReturnPct": 22.4,
+          "relativeStrengthPct": 9.726,
+          "returnPct": -35.04
+        },
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2013-01-21",
+          "underlyingLookbackReturnPct": 14.19,
+          "benchmarkLookbackReturnPct": 11.17,
+          "relativeStrengthPct": 3.016,
+          "returnPct": 215.39
+        },
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2016-04-18",
+          "underlyingLookbackReturnPct": 3.96,
+          "benchmarkLookbackReturnPct": 4.03,
+          "relativeStrengthPct": -0.075,
+          "returnPct": 475.64
+        },
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2019-03-25",
+          "underlyingLookbackReturnPct": 0.39,
+          "benchmarkLookbackReturnPct": -3.13,
+          "relativeStrengthPct": 3.526,
+          "returnPct": -40.4
+        },
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2020-08-10",
+          "underlyingLookbackReturnPct": 15.95,
+          "benchmarkLookbackReturnPct": 1.3,
+          "relativeStrengthPct": 14.653,
+          "returnPct": 111.49
+        },
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2023-02-27",
+          "underlyingLookbackReturnPct": 8.94,
+          "benchmarkLookbackReturnPct": -0.36,
+          "relativeStrengthPct": 9.296,
+          "returnPct": 17.77
+        },
+        {
+          "ticker": "SOXL",
+          "underlying": "SOXX",
+          "entryDate": "2023-12-04",
+          "underlyingLookbackReturnPct": 7.67,
+          "benchmarkLookbackReturnPct": 7.7,
+          "relativeStrengthPct": -0.036,
+          "returnPct": 41.89
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2012-01-30",
+          "underlyingLookbackReturnPct": 5.31,
+          "benchmarkLookbackReturnPct": 3.19,
+          "relativeStrengthPct": 2.118,
+          "returnPct": 13.73
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2013-01-28",
+          "underlyingLookbackReturnPct": 4.47,
+          "benchmarkLookbackReturnPct": 9.56,
+          "relativeStrengthPct": -5.094,
+          "returnPct": 215.77
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2015-11-23",
+          "underlyingLookbackReturnPct": 3.82,
+          "benchmarkLookbackReturnPct": -0.85,
+          "relativeStrengthPct": 4.671,
+          "returnPct": -26.63
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2016-07-25",
+          "underlyingLookbackReturnPct": 11.81,
+          "benchmarkLookbackReturnPct": 16.66,
+          "relativeStrengthPct": -4.852,
+          "returnPct": 115.52
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2019-04-15",
+          "underlyingLookbackReturnPct": 8.43,
+          "benchmarkLookbackReturnPct": 6.76,
+          "relativeStrengthPct": 1.673,
+          "returnPct": -14.49
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2020-06-15",
+          "underlyingLookbackReturnPct": 14.58,
+          "benchmarkLookbackReturnPct": -2.86,
+          "relativeStrengthPct": 17.434,
+          "returnPct": 114.82
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2023-03-27",
+          "underlyingLookbackReturnPct": 12.98,
+          "benchmarkLookbackReturnPct": 9.75,
+          "relativeStrengthPct": 3.228,
+          "returnPct": 49.52
+        },
+        {
+          "ticker": "TQQQ",
+          "underlying": "QQQ",
+          "entryDate": "2025-07-07",
+          "underlyingLookbackReturnPct": 5.52,
+          "benchmarkLookbackReturnPct": 4.88,
+          "relativeStrengthPct": 0.64,
+          "returnPct": -6.97
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2010-11-01",
+          "underlyingLookbackReturnPct": -4.14,
+          "benchmarkLookbackReturnPct": -0.51,
+          "relativeStrengthPct": -3.628,
+          "returnPct": -15.65
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2012-02-27",
+          "underlyingLookbackReturnPct": 14.98,
+          "benchmarkLookbackReturnPct": 14.32,
+          "relativeStrengthPct": 0.658,
+          "returnPct": -5.04
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2012-08-13",
+          "underlyingLookbackReturnPct": -2.29,
+          "benchmarkLookbackReturnPct": 4.99,
+          "relativeStrengthPct": -7.287,
+          "returnPct": 147.27
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2014-06-30",
+          "underlyingLookbackReturnPct": 3.5,
+          "benchmarkLookbackReturnPct": 7.46,
+          "relativeStrengthPct": -3.957,
+          "returnPct": -9.42
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2014-12-15",
+          "underlyingLookbackReturnPct": -1.59,
+          "benchmarkLookbackReturnPct": 3.66,
+          "relativeStrengthPct": -5.255,
+          "returnPct": -10.73
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2016-05-30",
+          "underlyingLookbackReturnPct": -3.07,
+          "benchmarkLookbackReturnPct": 1.87,
+          "relativeStrengthPct": -4.936,
+          "returnPct": 102.33
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2019-06-24",
+          "underlyingLookbackReturnPct": 21.56,
+          "benchmarkLookbackReturnPct": 26.47,
+          "relativeStrengthPct": -4.907,
+          "returnPct": -3.58
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2019-07-22",
+          "underlyingLookbackReturnPct": 4.96,
+          "benchmarkLookbackReturnPct": 12.84,
+          "relativeStrengthPct": -7.881,
+          "returnPct": -15.47
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2019-12-02",
+          "underlyingLookbackReturnPct": 10.21,
+          "benchmarkLookbackReturnPct": 14.58,
+          "relativeStrengthPct": -4.366,
+          "returnPct": -82.48
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2020-10-19",
+          "underlyingLookbackReturnPct": 33.95,
+          "benchmarkLookbackReturnPct": 22.48,
+          "relativeStrengthPct": 11.467,
+          "returnPct": 120.38
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2021-11-08",
+          "underlyingLookbackReturnPct": 10.93,
+          "benchmarkLookbackReturnPct": 12.93,
+          "relativeStrengthPct": -2.002,
+          "returnPct": -21.04
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2023-02-20",
+          "underlyingLookbackReturnPct": 2.3,
+          "benchmarkLookbackReturnPct": -0.61,
+          "relativeStrengthPct": 2.914,
+          "returnPct": -15.35
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2023-07-24",
+          "underlyingLookbackReturnPct": 4.74,
+          "benchmarkLookbackReturnPct": 14.23,
+          "relativeStrengthPct": -9.491,
+          "returnPct": -28.56
+        },
+        {
+          "ticker": "TNA",
+          "underlying": "IWM",
+          "entryDate": "2024-01-01",
+          "underlyingLookbackReturnPct": 7.86,
+          "benchmarkLookbackReturnPct": 7.92,
+          "relativeStrengthPct": -0.06,
+          "returnPct": 12.26
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2009-08-31",
+          "underlyingLookbackReturnPct": 109.61,
+          "benchmarkLookbackReturnPct": 46.99,
+          "relativeStrengthPct": 62.615,
+          "returnPct": -23.39
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2010-12-27",
+          "underlyingLookbackReturnPct": 11.06,
+          "benchmarkLookbackReturnPct": 18.09,
+          "relativeStrengthPct": -7.031,
+          "returnPct": -18.14
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2012-02-27",
+          "underlyingLookbackReturnPct": 12.27,
+          "benchmarkLookbackReturnPct": 14.32,
+          "relativeStrengthPct": -2.05,
+          "returnPct": -8.59
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2012-07-23",
+          "underlyingLookbackReturnPct": 1.3,
+          "benchmarkLookbackReturnPct": 3.63,
+          "relativeStrengthPct": -2.329,
+          "returnPct": 237.38
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2016-05-30",
+          "underlyingLookbackReturnPct": -2.01,
+          "benchmarkLookbackReturnPct": 1.87,
+          "relativeStrengthPct": -3.878,
+          "returnPct": 133.11
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2018-07-09",
+          "underlyingLookbackReturnPct": -3.07,
+          "benchmarkLookbackReturnPct": 2.32,
+          "relativeStrengthPct": -5.391,
+          "returnPct": 3.86
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2018-07-30",
+          "underlyingLookbackReturnPct": -5.57,
+          "benchmarkLookbackReturnPct": -0.82,
+          "relativeStrengthPct": -4.75,
+          "returnPct": -17.23
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2019-04-08",
+          "underlyingLookbackReturnPct": -4.46,
+          "benchmarkLookbackReturnPct": 1.37,
+          "relativeStrengthPct": -5.827,
+          "returnPct": -74.16
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2020-11-16",
+          "underlyingLookbackReturnPct": 26.34,
+          "benchmarkLookbackReturnPct": 23.94,
+          "relativeStrengthPct": 2.401,
+          "returnPct": 167.27
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2022-12-26",
+          "underlyingLookbackReturnPct": 6.55,
+          "benchmarkLookbackReturnPct": -0.6,
+          "relativeStrengthPct": 7.157,
+          "returnPct": -22.82
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2023-09-11",
+          "underlyingLookbackReturnPct": 9.98,
+          "benchmarkLookbackReturnPct": 17.25,
+          "relativeStrengthPct": -7.271,
+          "returnPct": -12.84
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2023-12-04",
+          "underlyingLookbackReturnPct": 11.72,
+          "benchmarkLookbackReturnPct": 7.7,
+          "relativeStrengthPct": 4.016,
+          "returnPct": 85.94
+        },
+        {
+          "ticker": "FAS",
+          "underlying": "XLF",
+          "entryDate": "2025-06-30",
+          "underlyingLookbackReturnPct": 9.24,
+          "benchmarkLookbackReturnPct": 5.66,
+          "relativeStrengthPct": 3.574,
+          "returnPct": -21.73
+        }
+      ]
+    }
+  }
+}

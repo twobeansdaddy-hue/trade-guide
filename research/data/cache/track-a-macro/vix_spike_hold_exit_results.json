@@ -1,0 +1,623 @@
+{
+  "generatedBy": "research/scripts/track-a-macro/vix_spike_hold_exit_backtest.py",
+  "hypothesis": "보유 중 VIX가 임계값 이상으로 급등하면 원래 청산 신호(CROSS_DOWN)를 기다리지 않고 조기 청산하는 것이 평균적으로 낫다.",
+  "preRegisteredThresholds": [
+    30.0,
+    35.0
+  ],
+  "totalValidCycles": 42,
+  "byThreshold": {
+    "30.0": {
+      "totalCycles": 42,
+      "triggeredCount": 19,
+      "triggeredCycles": [
+        {
+          "ticker": "SOXL",
+          "entryDate": "2016-04-18",
+          "exitDate": "2018-08-13",
+          "originalReturnPct": 475.64,
+          "vixSpikeTriggerDate": "2018-02-05",
+          "earlyExitReturnPct": 439.62,
+          "improvement": -36.02
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2019-03-25",
+          "exitDate": "2020-03-30",
+          "originalReturnPct": -40.4,
+          "vixSpikeTriggerDate": "2020-03-02",
+          "earlyExitReturnPct": 45.01,
+          "improvement": 85.41
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2020-08-10",
+          "exitDate": "2022-02-28",
+          "originalReturnPct": 111.49,
+          "vixSpikeTriggerDate": "2020-09-07",
+          "earlyExitReturnPct": -10.92,
+          "improvement": -122.41
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2023-12-04",
+          "exitDate": "2024-09-09",
+          "originalReturnPct": 41.89,
+          "vixSpikeTriggerDate": "2024-08-05",
+          "earlyExitReturnPct": 31.61,
+          "improvement": -10.28
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2013-01-28",
+          "exitDate": "2015-09-21",
+          "originalReturnPct": 215.77,
+          "vixSpikeTriggerDate": "2015-08-24",
+          "earlyExitReturnPct": 242.64,
+          "improvement": 26.87
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2016-07-25",
+          "exitDate": "2018-11-19",
+          "originalReturnPct": 115.52,
+          "vixSpikeTriggerDate": "2018-02-05",
+          "earlyExitReturnPct": 130.71,
+          "improvement": 15.19
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2019-04-15",
+          "exitDate": "2020-04-06",
+          "originalReturnPct": -14.49,
+          "vixSpikeTriggerDate": "2020-03-02",
+          "earlyExitReturnPct": 20.18,
+          "improvement": 34.67
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2020-06-15",
+          "exitDate": "2022-02-14",
+          "originalReturnPct": 114.82,
+          "vixSpikeTriggerDate": "2020-06-22",
+          "earlyExitReturnPct": -4.73,
+          "improvement": -119.55
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2023-03-27",
+          "exitDate": "2025-03-31",
+          "originalReturnPct": 49.52,
+          "vixSpikeTriggerDate": "2024-08-05",
+          "earlyExitReturnPct": 112.13,
+          "improvement": 62.61
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2016-05-30",
+          "exitDate": "2018-11-05",
+          "originalReturnPct": 102.33,
+          "vixSpikeTriggerDate": "2018-02-05",
+          "earlyExitReturnPct": 87.27,
+          "improvement": -15.06
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2019-12-02",
+          "exitDate": "2020-03-16",
+          "originalReturnPct": -82.48,
+          "vixSpikeTriggerDate": "2020-03-02",
+          "earlyExitReturnPct": -32.54,
+          "improvement": 49.94
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2020-10-19",
+          "exitDate": "2021-09-06",
+          "originalReturnPct": 120.38,
+          "vixSpikeTriggerDate": "2020-10-26",
+          "earlyExitReturnPct": -17.63,
+          "improvement": -138.01
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2024-01-01",
+          "exitDate": "2025-02-17",
+          "originalReturnPct": 12.26,
+          "vixSpikeTriggerDate": "2024-08-05",
+          "earlyExitReturnPct": 6.35,
+          "improvement": -5.91
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2009-08-31",
+          "exitDate": "2010-06-28",
+          "originalReturnPct": -23.39,
+          "vixSpikeTriggerDate": "2010-05-17",
+          "earlyExitReturnPct": 3.04,
+          "improvement": 26.43
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2012-07-23",
+          "exitDate": "2015-09-14",
+          "originalReturnPct": 237.38,
+          "vixSpikeTriggerDate": "2015-08-24",
+          "earlyExitReturnPct": 274.53,
+          "improvement": 37.15
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2016-05-30",
+          "exitDate": "2018-07-02",
+          "originalReturnPct": 133.11,
+          "vixSpikeTriggerDate": "2018-02-05",
+          "earlyExitReturnPct": 126.62,
+          "improvement": -6.49
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2019-04-08",
+          "exitDate": "2020-03-16",
+          "originalReturnPct": -74.16,
+          "vixSpikeTriggerDate": "2020-03-02",
+          "earlyExitReturnPct": -9.06,
+          "improvement": 65.1
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2020-11-16",
+          "exitDate": "2022-03-21",
+          "originalReturnPct": 167.27,
+          "vixSpikeTriggerDate": "2021-02-01",
+          "earlyExitReturnPct": 43.27,
+          "improvement": -124.0
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2023-12-04",
+          "exitDate": "2025-04-21",
+          "originalReturnPct": 85.94,
+          "vixSpikeTriggerDate": "2024-08-05",
+          "earlyExitReturnPct": 49.36,
+          "improvement": -36.58
+        }
+      ],
+      "original": {
+        "n": 42,
+        "winRatePct": 45.2,
+        "avgReturnPct": 44.09,
+        "medianReturnPct": -6.0
+      },
+      "withEarlyExit": {
+        "n": 42,
+        "winRatePct": 45.2,
+        "avgReturnPct": 39.06,
+        "medianReturnPct": -4.88
+      },
+      "avgImprovementPctPoints": -5.02,
+      "largeLossCyclesOriginal": [
+        {
+          "ticker": "SOXL",
+          "entryDate": "2012-02-20",
+          "originalReturnPct": -35.04,
+          "earlyExitReturnPct": -35.04,
+          "improvement": 0.0
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2019-03-25",
+          "originalReturnPct": -40.4,
+          "earlyExitReturnPct": 45.01,
+          "improvement": 85.41
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2019-12-02",
+          "originalReturnPct": -82.48,
+          "earlyExitReturnPct": -32.54,
+          "improvement": 49.94
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2019-04-08",
+          "originalReturnPct": -74.16,
+          "earlyExitReturnPct": -9.06,
+          "improvement": 65.1
+        }
+      ],
+      "largeGainCyclesOriginal": [
+        {
+          "ticker": "SOXL",
+          "entryDate": "2013-01-21",
+          "originalReturnPct": 215.39,
+          "earlyExitReturnPct": 215.39,
+          "improvement": 0.0
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2016-04-18",
+          "originalReturnPct": 475.64,
+          "earlyExitReturnPct": 439.62,
+          "improvement": -36.02
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2020-08-10",
+          "originalReturnPct": 111.49,
+          "earlyExitReturnPct": -10.92,
+          "improvement": -122.41
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2013-01-28",
+          "originalReturnPct": 215.77,
+          "earlyExitReturnPct": 242.64,
+          "improvement": 26.87
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2016-07-25",
+          "originalReturnPct": 115.52,
+          "earlyExitReturnPct": 130.71,
+          "improvement": 15.19
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2020-06-15",
+          "originalReturnPct": 114.82,
+          "earlyExitReturnPct": -4.73,
+          "improvement": -119.55
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2012-08-13",
+          "originalReturnPct": 147.27,
+          "earlyExitReturnPct": 147.27,
+          "improvement": 0.0
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2016-05-30",
+          "originalReturnPct": 102.33,
+          "earlyExitReturnPct": 87.27,
+          "improvement": -15.06
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2020-10-19",
+          "originalReturnPct": 120.38,
+          "earlyExitReturnPct": -17.63,
+          "improvement": -138.01
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2012-07-23",
+          "originalReturnPct": 237.38,
+          "earlyExitReturnPct": 274.53,
+          "improvement": 37.15
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2016-05-30",
+          "originalReturnPct": 133.11,
+          "earlyExitReturnPct": 126.62,
+          "improvement": -6.49
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2020-11-16",
+          "originalReturnPct": 167.27,
+          "earlyExitReturnPct": 43.27,
+          "improvement": -124.0
+        }
+      ]
+    },
+    "35.0": {
+      "totalCycles": 42,
+      "triggeredCount": 19,
+      "triggeredCycles": [
+        {
+          "ticker": "SOXL",
+          "entryDate": "2016-04-18",
+          "exitDate": "2018-08-13",
+          "originalReturnPct": 475.64,
+          "vixSpikeTriggerDate": "2018-02-05",
+          "earlyExitReturnPct": 439.62,
+          "improvement": -36.02
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2019-03-25",
+          "exitDate": "2020-03-30",
+          "originalReturnPct": -40.4,
+          "vixSpikeTriggerDate": "2020-03-09",
+          "earlyExitReturnPct": -5.14,
+          "improvement": 35.26
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2020-08-10",
+          "exitDate": "2022-02-28",
+          "originalReturnPct": 111.49,
+          "vixSpikeTriggerDate": "2020-11-02",
+          "earlyExitReturnPct": 42.78,
+          "improvement": -68.71
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2023-12-04",
+          "exitDate": "2024-09-09",
+          "originalReturnPct": 41.89,
+          "vixSpikeTriggerDate": "2024-08-05",
+          "earlyExitReturnPct": 31.61,
+          "improvement": -10.28
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2013-01-28",
+          "exitDate": "2015-09-21",
+          "originalReturnPct": 215.77,
+          "vixSpikeTriggerDate": "2015-08-24",
+          "earlyExitReturnPct": 242.64,
+          "improvement": 26.87
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2016-07-25",
+          "exitDate": "2018-11-19",
+          "originalReturnPct": 115.52,
+          "vixSpikeTriggerDate": "2018-02-05",
+          "earlyExitReturnPct": 130.71,
+          "improvement": 15.19
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2019-04-15",
+          "exitDate": "2020-04-06",
+          "originalReturnPct": -14.49,
+          "vixSpikeTriggerDate": "2020-03-09",
+          "earlyExitReturnPct": -11.1,
+          "improvement": 3.39
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2020-06-15",
+          "exitDate": "2022-02-14",
+          "originalReturnPct": 114.82,
+          "vixSpikeTriggerDate": "2020-11-02",
+          "earlyExitReturnPct": 61.2,
+          "improvement": -53.62
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2023-03-27",
+          "exitDate": "2025-03-31",
+          "originalReturnPct": 49.52,
+          "vixSpikeTriggerDate": "2024-08-05",
+          "earlyExitReturnPct": 112.13,
+          "improvement": 62.61
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2016-05-30",
+          "exitDate": "2018-11-05",
+          "originalReturnPct": 102.33,
+          "vixSpikeTriggerDate": "2018-02-05",
+          "earlyExitReturnPct": 87.27,
+          "improvement": -15.06
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2019-12-02",
+          "exitDate": "2020-03-16",
+          "originalReturnPct": -82.48,
+          "vixSpikeTriggerDate": "2020-03-09",
+          "earlyExitReturnPct": -66.1,
+          "improvement": 16.38
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2020-10-19",
+          "exitDate": "2021-09-06",
+          "originalReturnPct": 120.38,
+          "vixSpikeTriggerDate": "2020-11-02",
+          "earlyExitReturnPct": -0.38,
+          "improvement": -120.76
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2024-01-01",
+          "exitDate": "2025-02-17",
+          "originalReturnPct": 12.26,
+          "vixSpikeTriggerDate": "2024-08-05",
+          "earlyExitReturnPct": 6.35,
+          "improvement": -5.91
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2009-08-31",
+          "exitDate": "2010-06-28",
+          "originalReturnPct": -23.39,
+          "vixSpikeTriggerDate": "2010-05-24",
+          "earlyExitReturnPct": 1.73,
+          "improvement": 25.12
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2012-07-23",
+          "exitDate": "2015-09-14",
+          "originalReturnPct": 237.38,
+          "vixSpikeTriggerDate": "2015-08-24",
+          "earlyExitReturnPct": 274.53,
+          "improvement": 37.15
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2016-05-30",
+          "exitDate": "2018-07-02",
+          "originalReturnPct": 133.11,
+          "vixSpikeTriggerDate": "2018-02-05",
+          "earlyExitReturnPct": 126.62,
+          "improvement": -6.49
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2019-04-08",
+          "exitDate": "2020-03-16",
+          "originalReturnPct": -74.16,
+          "vixSpikeTriggerDate": "2020-03-09",
+          "earlyExitReturnPct": -41.09,
+          "improvement": 33.07
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2020-11-16",
+          "exitDate": "2022-03-21",
+          "originalReturnPct": 167.27,
+          "vixSpikeTriggerDate": "2022-03-07",
+          "earlyExitReturnPct": 110.61,
+          "improvement": -56.66
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2023-12-04",
+          "exitDate": "2025-04-21",
+          "originalReturnPct": 85.94,
+          "vixSpikeTriggerDate": "2024-08-05",
+          "earlyExitReturnPct": 49.36,
+          "improvement": -36.58
+        }
+      ],
+      "original": {
+        "n": 42,
+        "winRatePct": 45.2,
+        "avgReturnPct": 44.09,
+        "medianReturnPct": -6.0
+      },
+      "withEarlyExit": {
+        "n": 42,
+        "winRatePct": 45.2,
+        "avgReturnPct": 40.39,
+        "medianReturnPct": -4.31
+      },
+      "avgImprovementPctPoints": -3.69,
+      "largeLossCyclesOriginal": [
+        {
+          "ticker": "SOXL",
+          "entryDate": "2012-02-20",
+          "originalReturnPct": -35.04,
+          "earlyExitReturnPct": -35.04,
+          "improvement": 0.0
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2019-03-25",
+          "originalReturnPct": -40.4,
+          "earlyExitReturnPct": -5.14,
+          "improvement": 35.26
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2019-12-02",
+          "originalReturnPct": -82.48,
+          "earlyExitReturnPct": -66.1,
+          "improvement": 16.38
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2019-04-08",
+          "originalReturnPct": -74.16,
+          "earlyExitReturnPct": -41.09,
+          "improvement": 33.07
+        }
+      ],
+      "largeGainCyclesOriginal": [
+        {
+          "ticker": "SOXL",
+          "entryDate": "2013-01-21",
+          "originalReturnPct": 215.39,
+          "earlyExitReturnPct": 215.39,
+          "improvement": 0.0
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2016-04-18",
+          "originalReturnPct": 475.64,
+          "earlyExitReturnPct": 439.62,
+          "improvement": -36.02
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2020-08-10",
+          "originalReturnPct": 111.49,
+          "earlyExitReturnPct": 42.78,
+          "improvement": -68.71
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2013-01-28",
+          "originalReturnPct": 215.77,
+          "earlyExitReturnPct": 242.64,
+          "improvement": 26.87
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2016-07-25",
+          "originalReturnPct": 115.52,
+          "earlyExitReturnPct": 130.71,
+          "improvement": 15.19
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2020-06-15",
+          "originalReturnPct": 114.82,
+          "earlyExitReturnPct": 61.2,
+          "improvement": -53.62
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2012-08-13",
+          "originalReturnPct": 147.27,
+          "earlyExitReturnPct": 147.27,
+          "improvement": 0.0
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2016-05-30",
+          "originalReturnPct": 102.33,
+          "earlyExitReturnPct": 87.27,
+          "improvement": -15.06
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2020-10-19",
+          "originalReturnPct": 120.38,
+          "earlyExitReturnPct": -0.38,
+          "improvement": -120.76
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2012-07-23",
+          "originalReturnPct": 237.38,
+          "earlyExitReturnPct": 274.53,
+          "improvement": 37.15
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2016-05-30",
+          "originalReturnPct": 133.11,
+          "earlyExitReturnPct": 126.62,
+          "improvement": -6.49
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2020-11-16",
+          "originalReturnPct": 167.27,
+          "earlyExitReturnPct": 110.61,
+          "improvement": -56.66
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "generatedBy": "research/scripts/track-a-macro/vix_spike_delayed_confirmation_exit_backtest.py",
+  "hypothesis": "보유 중 VIX 급등 시 즉시 청산이 아니라 K주 지연 확인(여전히 하락 중일 때만 청산) 후 청산하면 즉시청산의 V자 반등 오탐 문제를 피하면서 대형손실 방어 효과는 유지한다.",
+  "totalValidCycles": 42,
+  "byLag": {
+    "3": {
+      "vixThreshold": 30.0,
+      "confirmationLagWeeks": 3,
+      "triggeredCount": 19,
+      "confirmedExitCount": 7,
+      "avoidedExitCount": 12,
+      "original": {
+        "n": 42,
+        "winRatePct": 45.2,
+        "avgReturnPct": 44.09,
+        "medianReturnPct": -6.0
+      },
+      "immediateExit": {
+        "n": 42,
+        "winRatePct": 45.2,
+        "avgReturnPct": 39.06,
+        "medianReturnPct": -4.88
+      },
+      "delayedConfirmationExit": {
+        "n": 42,
+        "winRatePct": 45.2,
+        "avgReturnPct": 44.89,
+        "medianReturnPct": -4.44
+      },
+      "avgImprovementVsOriginalPctPoints": 0.81,
+      "avgImprovementVsImmediatePctPoints": 5.83,
+      "previouslyWorsenedGainCycles": [
+        {
+          "ticker": "SOXL",
+          "entryDate": "2020-08-10",
+          "originalReturnPct": 111.49,
+          "immediateExitReturnPct": -10.92,
+          "delayedExitReturnPct": 111.49,
+          "confirmed": false
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2020-06-15",
+          "originalReturnPct": 114.82,
+          "immediateExitReturnPct": -4.73,
+          "delayedExitReturnPct": 114.82,
+          "confirmed": false
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2020-10-19",
+          "originalReturnPct": 120.38,
+          "immediateExitReturnPct": -17.63,
+          "delayedExitReturnPct": 120.38,
+          "confirmed": false
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2020-11-16",
+          "originalReturnPct": 167.27,
+          "immediateExitReturnPct": 43.27,
+          "delayedExitReturnPct": 167.27,
+          "confirmed": false
+        }
+      ],
+      "largeLossCycles": [
+        {
+          "ticker": "SOXL",
+          "entryDate": "2012-02-20",
+          "originalReturnPct": -35.04,
+          "immediateExitReturnPct": -35.04,
+          "delayedExitReturnPct": -35.04,
+          "confirmed": null
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2019-03-25",
+          "originalReturnPct": -40.4,
+          "immediateExitReturnPct": 45.01,
+          "delayedExitReturnPct": -33.16,
+          "confirmed": true
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2019-12-02",
+          "originalReturnPct": -82.48,
+          "immediateExitReturnPct": -32.54,
+          "delayedExitReturnPct": -82.48,
+          "confirmed": true
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2019-04-08",
+          "originalReturnPct": -74.16,
+          "immediateExitReturnPct": -9.06,
+          "delayedExitReturnPct": -74.16,
+          "confirmed": true
+        }
+      ]
+    },
+    "6": {
+      "vixThreshold": 30.0,
+      "confirmationLagWeeks": 6,
+      "triggeredCount": 19,
+      "confirmedExitCount": 8,
+      "avoidedExitCount": 11,
+      "original": {
+        "n": 42,
+        "winRatePct": 45.2,
+        "avgReturnPct": 44.09,
+        "medianReturnPct": -6.0
+      },
+      "immediateExit": {
+        "n": 42,
+        "winRatePct": 45.2,
+        "avgReturnPct": 39.06,
+        "medianReturnPct": -4.88
+      },
+      "delayedConfirmationExit": {
+        "n": 42,
+        "winRatePct": 45.2,
+        "avgReturnPct": 43.66,
+        "medianReturnPct": -6.0
+      },
+      "avgImprovementVsOriginalPctPoints": -0.43,
+      "avgImprovementVsImmediatePctPoints": 4.59,
+      "previouslyWorsenedGainCycles": [
+        {
+          "ticker": "SOXL",
+          "entryDate": "2020-08-10",
+          "originalReturnPct": 111.49,
+          "immediateExitReturnPct": -10.92,
+          "delayedExitReturnPct": 111.49,
+          "confirmed": false
+        },
+        {
+          "ticker": "TQQQ",
+          "entryDate": "2020-06-15",
+          "originalReturnPct": 114.82,
+          "immediateExitReturnPct": -4.73,
+          "delayedExitReturnPct": 114.82,
+          "confirmed": false
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2020-10-19",
+          "originalReturnPct": 120.38,
+          "immediateExitReturnPct": -17.63,
+          "delayedExitReturnPct": 120.38,
+          "confirmed": false
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2020-11-16",
+          "originalReturnPct": 167.27,
+          "immediateExitReturnPct": 43.27,
+          "delayedExitReturnPct": 167.27,
+          "confirmed": false
+        }
+      ],
+      "largeLossCycles": [
+        {
+          "ticker": "SOXL",
+          "entryDate": "2012-02-20",
+          "originalReturnPct": -35.04,
+          "immediateExitReturnPct": -35.04,
+          "delayedExitReturnPct": -35.04,
+          "confirmed": null
+        },
+        {
+          "ticker": "SOXL",
+          "entryDate": "2019-03-25",
+          "originalReturnPct": -40.4,
+          "immediateExitReturnPct": 45.01,
+          "delayedExitReturnPct": -40.4,
+          "confirmed": true
+        },
+        {
+          "ticker": "TNA",
+          "entryDate": "2019-12-02",
+          "originalReturnPct": -82.48,
+          "immediateExitReturnPct": -32.54,
+          "delayedExitReturnPct": -82.48,
+          "confirmed": true
+        },
+        {
+          "ticker": "FAS",
+          "entryDate": "2019-04-08",
+          "originalReturnPct": -74.16,
+          "immediateExitReturnPct": -9.06,
+          "delayedExitReturnPct": -74.16,
+          "confirmed": true
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "generatedBy": "research/scripts/track-a-macro/fetch_sector_benchmark_universe.py",
+  "startDate": "2008-01-01",
+  "tickers": {
+    "SOXX": {
+      "name": "iShares Semiconductor ETF (SOXL 기초)",
+      "weeklyCandleCount": 978,
+      "firstDate": "2008-01-01",
+      "lastDate": "2026-09-16"
+    },
+    "QQQ": {
+      "name": "Invesco QQQ Trust (TQQQ 기초)",
+      "weeklyCandleCount": 978,
+      "firstDate": "2008-01-01",
+      "lastDate": "2026-09-16"
+    },
+    "IWM": {
+      "name": "iShares Russell 2000 ETF (TNA 기초)",
+      "weeklyCandleCount": 978,
+      "firstDate": "2008-01-01",
+      "lastDate": "2026-09-16"
+    },
+    "XLF": {
+      "name": "Financial Select Sector SPDR (FAS 기초)",
+      "weeklyCandleCount": 978,
+      "firstDate": "2008-01-01",
+      "lastDate": "2026-09-16"
+    },
+    "SPY": {
+      "name": "SPDR S&P 500 ETF (시장 벤치마크)",
+      "weeklyCandleCount": 978,
+      "firstDate": "2008-01-01",
+      "lastDate": "2026-09-16"
+    }
+  }
+}

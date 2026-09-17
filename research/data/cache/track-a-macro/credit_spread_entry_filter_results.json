@@ -1,0 +1,346 @@
+{
+  "generatedBy": "research/scripts/track-a-macro/credit_spread_entry_filter_backtest.py",
+  "hypothesis": "Track A 진입(CROSS_UP delay=0) 시점 신용스프레드(BAA10Y)가 높을수록(신용경색) 이후 사이클 수익률이 나쁘다.",
+  "dataSourceNote": "BAMLH0A0HYM2(ICE BofA HY OAS)는 FRED 재배포 제약으로 2023-09-18 이후만 제공되어 이번 검증(2012-2026)에 쓸 수 없었음 - BAA10Y(Moody's Baa-10Y Treasury spread, 1986~)로 대체.",
+  "preRegisteredThresholds": [
+    3.0,
+    4.0
+  ],
+  "tickers": [
+    "FAS",
+    "SOXL",
+    "TNA",
+    "TQQQ"
+  ],
+  "totalValidCycles": 42,
+  "skippedCycles": [],
+  "correlation": {
+    "pearson_entryCreditSpread_vs_returnPct": 0.385
+  },
+  "byThreshold": {
+    "3.0": {
+      "belowThreshold": {
+        "n": 34,
+        "winRatePct": 47.1,
+        "avgReturnPct": 45.42,
+        "medianReturnPct": -5.28
+      },
+      "atOrAboveThreshold": {
+        "n": 8,
+        "winRatePct": 37.5,
+        "avgReturnPct": 38.43,
+        "medianReturnPct": -6.81
+      }
+    },
+    "4.0": {
+      "belowThreshold": {
+        "n": 42,
+        "winRatePct": 45.2,
+        "avgReturnPct": 44.09,
+        "medianReturnPct": -6.0
+      },
+      "atOrAboveThreshold": {
+        "n": 0,
+        "winRatePct": null,
+        "avgReturnPct": null,
+        "medianReturnPct": null
+      }
+    }
+  },
+  "cycles": [
+    {
+      "ticker": "SOXL",
+      "entryDate": "2012-02-20",
+      "exitDate": "2012-06-04",
+      "entryCreditSpread": 3.17,
+      "returnPct": -35.04
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2013-01-21",
+      "exitDate": "2015-07-27",
+      "entryCreditSpread": 2.82,
+      "returnPct": 215.39
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2016-04-18",
+      "exitDate": "2018-08-13",
+      "entryCreditSpread": 2.99,
+      "returnPct": 475.64
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2019-03-25",
+      "exitDate": "2020-03-30",
+      "entryCreditSpread": 2.28,
+      "returnPct": -40.4
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2020-08-10",
+      "exitDate": "2022-02-28",
+      "entryCreditSpread": 2.56,
+      "returnPct": 111.49
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2023-02-27",
+      "exitDate": "2023-10-30",
+      "entryCreditSpread": 1.87,
+      "returnPct": 17.77
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2023-12-04",
+      "exitDate": "2024-09-09",
+      "entryCreditSpread": 1.67,
+      "returnPct": 41.89
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2012-01-30",
+      "exitDate": "2012-11-26",
+      "entryCreditSpread": 3.25,
+      "returnPct": 13.73
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2013-01-28",
+      "exitDate": "2015-09-21",
+      "entryCreditSpread": 2.82,
+      "returnPct": 215.77
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2015-11-23",
+      "exitDate": "2016-01-18",
+      "entryCreditSpread": 3.19,
+      "returnPct": -26.63
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2016-07-25",
+      "exitDate": "2018-11-19",
+      "entryCreditSpread": 2.65,
+      "returnPct": 115.52
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2019-04-15",
+      "exitDate": "2020-04-06",
+      "entryCreditSpread": 2.15,
+      "returnPct": -14.49
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2020-06-15",
+      "exitDate": "2022-02-14",
+      "entryCreditSpread": 2.93,
+      "returnPct": 114.82
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2023-03-27",
+      "exitDate": "2025-03-31",
+      "entryCreditSpread": 2.19,
+      "returnPct": 49.52
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2025-07-07",
+      "exitDate": "2026-03-23",
+      "entryCreditSpread": 1.71,
+      "returnPct": -6.97
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2010-11-01",
+      "exitDate": "2011-08-01",
+      "entryCreditSpread": 3.13,
+      "returnPct": -15.65
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2012-02-27",
+      "exitDate": "2012-06-25",
+      "entryCreditSpread": 3.12,
+      "returnPct": -5.04
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2012-08-13",
+      "exitDate": "2014-05-26",
+      "entryCreditSpread": 3.24,
+      "returnPct": 147.27
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2014-06-30",
+      "exitDate": "2014-09-01",
+      "entryCreditSpread": 2.18,
+      "returnPct": -9.42
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2014-12-15",
+      "exitDate": "2015-08-24",
+      "entryCreditSpread": 2.56,
+      "returnPct": -10.73
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2016-05-30",
+      "exitDate": "2018-11-05",
+      "entryCreditSpread": 2.85,
+      "returnPct": 102.33
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2019-06-24",
+      "exitDate": "2019-07-15",
+      "entryCreditSpread": 2.33,
+      "returnPct": -3.58
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2019-07-22",
+      "exitDate": "2019-09-02",
+      "entryCreditSpread": 2.24,
+      "returnPct": -15.47
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2019-12-02",
+      "exitDate": "2020-03-16",
+      "entryCreditSpread": 2.11,
+      "returnPct": -82.48
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2020-10-19",
+      "exitDate": "2021-09-06",
+      "entryCreditSpread": 2.61,
+      "returnPct": 120.38
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2021-11-08",
+      "exitDate": "2021-12-27",
+      "entryCreditSpread": 1.67,
+      "returnPct": -21.04
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2023-02-20",
+      "exitDate": "2023-03-27",
+      "entryCreditSpread": 1.89,
+      "returnPct": -15.35
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2023-07-24",
+      "exitDate": "2023-09-25",
+      "entryCreditSpread": 1.84,
+      "returnPct": -28.56
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2024-01-01",
+      "exitDate": "2025-02-17",
+      "entryCreditSpread": 1.61,
+      "returnPct": 12.26
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2009-08-31",
+      "exitDate": "2010-06-28",
+      "entryCreditSpread": 2.98,
+      "returnPct": -23.39
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2010-12-27",
+      "exitDate": "2011-06-20",
+      "entryCreditSpread": 2.7,
+      "returnPct": -18.14
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2012-02-27",
+      "exitDate": "2012-07-16",
+      "entryCreditSpread": 3.12,
+      "returnPct": -8.59
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2012-07-23",
+      "exitDate": "2015-09-14",
+      "entryCreditSpread": 3.31,
+      "returnPct": 237.38
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2016-05-30",
+      "exitDate": "2018-07-02",
+      "entryCreditSpread": 2.85,
+      "returnPct": 133.11
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2018-07-09",
+      "exitDate": "2018-07-16",
+      "entryCreditSpread": 1.93,
+      "returnPct": 3.86
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2018-07-30",
+      "exitDate": "2018-10-29",
+      "entryCreditSpread": 1.84,
+      "returnPct": -17.23
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2019-04-08",
+      "exitDate": "2020-03-16",
+      "entryCreditSpread": 2.21,
+      "returnPct": -74.16
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2020-11-16",
+      "exitDate": "2022-03-21",
+      "entryCreditSpread": 2.42,
+      "returnPct": 167.27
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2022-12-26",
+      "exitDate": "2023-04-03",
+      "entryCreditSpread": 2.0,
+      "returnPct": -22.82
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2023-09-11",
+      "exitDate": "2023-09-25",
+      "entryCreditSpread": 1.8,
+      "returnPct": -12.84
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2023-12-04",
+      "exitDate": "2025-04-21",
+      "entryCreditSpread": 1.67,
+      "returnPct": 85.94
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2025-06-30",
+      "exitDate": "2026-03-02",
+      "entryCreditSpread": 1.75,
+      "returnPct": -21.73
+    }
+  ]
+}

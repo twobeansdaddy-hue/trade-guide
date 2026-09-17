@@ -1,0 +1,115 @@
+{
+  "generatedBy": "research/scripts/track-a-macro/sector_relative_strength_robustness_check.py",
+  "sensitivityByLookback": {
+    "8": {
+      "n": 42,
+      "correlation": -0.054,
+      "belowThreshold": {
+        "n": 36,
+        "winRatePct": 41.7,
+        "avgReturnPct": 46.2,
+        "medianReturnPct": -7.78
+      },
+      "atOrAboveThreshold": {
+        "n": 6,
+        "winRatePct": 66.7,
+        "avgReturnPct": 31.4,
+        "medianReturnPct": 15.02
+      }
+    },
+    "13": {
+      "n": 42,
+      "correlation": 0.112,
+      "belowThreshold": {
+        "n": 30,
+        "winRatePct": 43.3,
+        "avgReturnPct": 33.19,
+        "medianReturnPct": -7.23
+      },
+      "atOrAboveThreshold": {
+        "n": 12,
+        "winRatePct": 50.0,
+        "avgReturnPct": 71.32,
+        "medianReturnPct": 5.4
+      }
+    },
+    "17": {
+      "n": 42,
+      "correlation": -0.066,
+      "belowThreshold": {
+        "n": 34,
+        "winRatePct": 44.1,
+        "avgReturnPct": 48.58,
+        "medianReturnPct": -6.81
+      },
+      "atOrAboveThreshold": {
+        "n": 8,
+        "winRatePct": 50.0,
+        "avgReturnPct": 25.0,
+        "medianReturnPct": 5.4
+      }
+    },
+    "26": {
+      "n": 42,
+      "correlation": -0.021,
+      "belowThreshold": {
+        "n": 35,
+        "winRatePct": 42.9,
+        "avgReturnPct": 44.81,
+        "medianReturnPct": -6.97
+      },
+      "atOrAboveThreshold": {
+        "n": 7,
+        "winRatePct": 57.1,
+        "avgReturnPct": 40.46,
+        "medianReturnPct": 17.77
+      }
+    }
+  },
+  "temporalSplit": {
+    "splitLookbackWeeks": 13,
+    "firstHalf": {
+      "n": 21,
+      "dateRange": [
+        "2009-08-31",
+        "2019-03-25"
+      ],
+      "correlation": -0.027,
+      "belowThreshold": {
+        "n": 15,
+        "winRatePct": 53.3,
+        "avgReturnPct": 57.18,
+        "medianReturnPct": 3.86
+      },
+      "atOrAboveThreshold": {
+        "n": 6,
+        "winRatePct": 33.3,
+        "avgReturnPct": 98.67,
+        "medianReturnPct": -15.99
+      }
+    },
+    "secondHalf": {
+      "n": 21,
+      "dateRange": [
+        "2019-04-08",
+        "2025-07-07"
+      ],
+      "correlation": 0.503,
+      "belowThreshold": {
+        "n": 15,
+        "winRatePct": 33.3,
+        "avgReturnPct": 9.2,
+        "medianReturnPct": -14.49
+      },
+      "atOrAboveThreshold": {
+        "n": 6,
+        "winRatePct": 66.7,
+        "avgReturnPct": 43.97,
+        "medianReturnPct": 33.65
+      }
+    },
+    "firstHalfDirectionPositive": false,
+    "secondHalfDirectionPositive": true,
+    "verdict": "국면 의존적 - 추가 채택 보류"
+  }
+}

@@ -4421,5 +4421,258 @@
     "confidence": "medium-high",
     "caveats": "2015-2019 구간만 유독 음(-)인 것이 모멘텀의 구조적 약점인지 이 5년 구간의 우연인지 이번 검증만으로는 구분 불가. 비용 시나리오는 미국 시장 기준(Novy-Marx & Velikov)을 차용해 한국 시장 고유 실측치가 아니다. 유니버스는 여전히 point-in-time이 아니다(오늘 시점 KOSPI200 구성을 과거에 소급 적용). Track B의 반사실 벤치마크(상위5 기여종목 제외) 방식을 이번 검증에서는 재현하지 않아, '국면 의존성' 해석은 정성적 유사성 관찰이지 이 리포트 자체의 정량적 증거는 아니다.",
     "last_updated": "2026-09-17"
+  },
+  {
+    "id": "track-a-rate-change-entry-filter-2012-2026",
+    "type": "backtest",
+    "ticker": "SOXL,TQQQ,TNA,FAS",
+    "strategy_id": "track-a-rate-change-entry-level-filter-candidate",
+    "data_range": {
+      "start": "2012-01-01",
+      "end": "2026-09-17",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-17",
+    "summary": "Track A 매크로 오버레이 두 번째 가설: 진입(CROSS_UP delay=0) 직전 8주간 10년물 금리(DGS10) 변화가 클수록(급등) 이후 사이클 수익률이 나쁘다는 사전등록 가설을 VIX 리포트와 동일한 42개 유효 사이클로 검증. 피어슨 상관계수 +0.087로 사실상 무상관(방향도 가설과 반대). 42건 중 8주간 +50bps 이상 급등 사례가 1건, +100bps 이상은 0건이라 임계값 비교는 통계적으로 무의미. VIX 레벨 필터에 이어 두 번째로 기각된 매크로 진입 필터 가설.",
+    "metrics": {
+      "lookbackWeeks": 8,
+      "preRegisteredThresholdsBps": [50.0, 100.0],
+      "totalValidCycles": 42,
+      "correlation": {
+        "pearson_rateChangeBps_vs_returnPct": 0.087
+      },
+      "byThreshold": {
+        "50.0": {
+          "belowThreshold": { "n": 41, "winRatePct": 46.3, "avgReturnPct": 45.6, "medianReturnPct": -5.04 },
+          "atOrAboveThreshold": { "n": 1, "winRatePct": 0.0, "avgReturnPct": -18.14, "medianReturnPct": -18.14 }
+        },
+        "100.0": {
+          "belowThreshold": { "n": 42, "winRatePct": 45.2, "avgReturnPct": 44.09, "medianReturnPct": -6.0 },
+          "atOrAboveThreshold": { "n": 0, "winRatePct": null, "avgReturnPct": null, "medianReturnPct": null }
+        }
+      }
+    },
+    "report_path": "research/reports/track-a-rate-change-entry-filter-hypothesis.md",
+    "sources": [
+      {
+        "title": "FRED - 10-Year Treasury Constant Maturity Rate (DGS10)",
+        "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
+        "accessed": "2026-09-17"
+      }
+    ],
+    "confidence": "low-medium",
+    "caveats": "8주 lookback, +50/+100bps 임계값은 문헌 표준값이 아니라 연구자가 임의로 고정한 값이다. 42개 사이클 중 8주간 +50bps 이상 급등 사례가 1건뿐이라 임계값 기반 비교의 통계적 힘이 사실상 없다 - 42건 전체 기반 상관계수가 유일하게 신뢰할 수 있는 근거. 금리의 레벨(절대 수준)이나 VIX와의 결합 신호, 청산 시점의 금리 변화는 검증하지 않았다. 진입 시점 '당일' 값이 아니라 그 주 또는 직전 최근 거래일 값을 근사로 사용했다.",
+    "last_updated": "2026-09-17"
+  },
+  {
+    "id": "track-a-vix-spike-hold-exit-2012-2026",
+    "type": "backtest",
+    "ticker": "SOXL,TQQQ,TNA,FAS",
+    "strategy_id": "track-a-vix-spike-hold-exit-risk-layer-candidate",
+    "data_range": {
+      "start": "2012-01-01",
+      "end": "2026-09-17",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-17",
+    "summary": "Track A 매크로 오버레이 세 번째 가설: 보유 중 VIX가 임계값 이상 급등하면 원래 CROSS_DOWN 청산 신호를 기다리지 않고 즉시 조기청산하는 리스크관리 레이어. VIX>=30/35 두 임계값 모두 42사이클 중 19건(45%) 발동. 전체 평균수익률은 악화(+44.09%->+39.06%, -5.02%p @VIX30), 승률은 불변, 중앙값은 소폭 개선. 대형손실(-30%이하) 4건 중 3건은 손실 크게 축소됐으나, 대형이익(+100%이상) 12건 중 4건(전부 2020년 코로나 급락-급반등 사이클)에서 반등분을 통째로 놓쳐 -119~-138%p 악화. 단순 형태로는 기각 - 이 전략의 핵심 수익원(대형 반등 포착)과 직접 충돌.",
+    "metrics": {
+      "preRegisteredThresholds": [30.0, 35.0],
+      "totalValidCycles": 42,
+      "byThreshold": {
+        "30.0": {
+          "triggeredCount": 19,
+          "original": { "winRatePct": 45.2, "avgReturnPct": 44.09, "medianReturnPct": -6.0 },
+          "withEarlyExit": { "winRatePct": 45.2, "avgReturnPct": 39.06, "medianReturnPct": -4.88 },
+          "avgImprovementPctPoints": -5.02,
+          "largeLossCyclesImproved": 3,
+          "largeLossCyclesTotal": 4,
+          "largeGainCyclesWorsened": 4,
+          "largeGainCyclesTotal": 12
+        },
+        "35.0": {
+          "triggeredCount": 19,
+          "original": { "winRatePct": 45.2, "avgReturnPct": 44.09, "medianReturnPct": -6.0 },
+          "withEarlyExit": { "winRatePct": 45.2, "avgReturnPct": 40.39, "medianReturnPct": -4.31 },
+          "avgImprovementPctPoints": -3.69
+        }
+      }
+    },
+    "report_path": "research/reports/track-a-vix-spike-hold-exit-hypothesis.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance - SOXL/TQQQ/TNA/FAS/^VIX Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/%5EVIX/history/",
+        "accessed": "2026-09-17"
+      }
+    ],
+    "confidence": "high",
+    "caveats": "42사이클 중 19건(45%)이나 발동해 진입시점 필터보다 훨씬 자주 개입한다. 대형손실 회피(3/4건)와 대형이익 훼손(4/12건)의 순효과가 이번 검증 기간(2012-2026)에서 음(-)이었던 것은 이 기간에 '패닉 후 급반등' 사례(2020년)가 유독 극적이었기 때문일 수 있어 다른 기간에는 순효과가 다를 수 있다. 조기청산 시점을 VIX가 임계값을 넘는 첫 주 종가로 단순화했다 - 분할청산·재진입 규칙 등을 결합하면 결과가 달라질 수 있으나 이번 범위 밖이다. VIX>=30/35 임계값은 문헌상 관용적 기준을 썼을 뿐 이 전략에 최적화된 값이 아니다.",
+    "last_updated": "2026-09-17"
+  },
+  {
+    "id": "track-a-vix-spike-delayed-confirmation-exit-2012-2026",
+    "type": "backtest",
+    "ticker": "SOXL,TQQQ,TNA,FAS",
+    "strategy_id": "track-a-vix-spike-delayed-confirmation-exit-risk-layer-candidate",
+    "data_range": {
+      "start": "2012-01-01",
+      "end": "2026-09-17",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-17",
+    "summary": "Track A 매크로 오버레이 네 번째 가설: 보유 중 VIX 급등 시 즉시 청산 대신 K주 지연 확인(여전히 하락 중일 때만 청산) 후 청산. K=3주에서 평균수익률 +44.89%(원래 +44.09%, 즉시청산 +39.06% 대비 개선), K=6주에서는 오히려 -0.43%p 악화. 2020년 코로나 V자반등 4개 사이클은 전부 청산 회피로 원래 수익률 보존(즉시청산의 -119~-138%p 훼손 제거)됐으나, 2019년 대형손실 3개 중 2개(TNA/FAS)는 확인지연이 원래 청산일을 넘겨 규칙이 무력화되며 즉시청산의 손실회피 효과도 함께 사라짐. 개선분 대부분이 '하락지속 판별'이 아니라 '규칙 무력화'에서 옴 - 표면적 개선(+0.81%p)은 42건 표본 분산 대비 작아 명확한 채택 근거 아님.",
+    "metrics": {
+      "vixThreshold": 30.0,
+      "confirmationLagWeeksTested": [3, 6],
+      "totalValidCycles": 42,
+      "byLag": {
+        "3": {
+          "triggeredCount": 19, "confirmedExitCount": 7, "avoidedExitCount": 12,
+          "original": { "winRatePct": 45.2, "avgReturnPct": 44.09, "medianReturnPct": -6.0 },
+          "immediateExit": { "winRatePct": 45.2, "avgReturnPct": 39.06, "medianReturnPct": -4.88 },
+          "delayedConfirmationExit": { "winRatePct": 45.2, "avgReturnPct": 44.89, "medianReturnPct": -4.44 },
+          "avgImprovementVsOriginalPctPoints": 0.81,
+          "avgImprovementVsImmediatePctPoints": 5.83
+        },
+        "6": {
+          "triggeredCount": 19, "confirmedExitCount": 8, "avoidedExitCount": 11,
+          "delayedConfirmationExit": { "winRatePct": 45.2, "avgReturnPct": 43.66, "medianReturnPct": -6.0 },
+          "avgImprovementVsOriginalPctPoints": -0.43,
+          "avgImprovementVsImmediatePctPoints": 4.59
+        }
+      }
+    },
+    "report_path": "research/reports/track-a-vix-spike-delayed-confirmation-exit-hypothesis.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance - SOXL/TQQQ/TNA/FAS/^VIX Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/%5EVIX/history/",
+        "accessed": "2026-09-17"
+      }
+    ],
+    "confidence": "medium",
+    "caveats": "K=3주 개선폭(+0.81%p)은 42개 사이클 수익률 분산(-82%~+475%)에 비해 작아 표본 노이즈일 가능성을 배제할 수 없다. 확인 지연이 원래 청산일을 넘기면 규칙이 무력화되는 설계라, 짧고 격렬한 급락(2019년형)에서는 구조적으로 작동하기 어렵다. VIX 임계값 30, K=3/6주 모두 임의 고정값으로 이 전략에 최적화되지 않았다. 사이클당 첫 트리거 1회만 판단(재트리거·복수 확인 시도 미검증).",
+    "last_updated": "2026-09-17"
+  },
+  {
+    "id": "track-a-credit-spread-entry-filter-2012-2026",
+    "type": "backtest",
+    "ticker": "SOXL,TQQQ,TNA,FAS",
+    "strategy_id": "track-a-credit-spread-entry-level-filter-candidate",
+    "data_range": {
+      "start": "2012-01-01",
+      "end": "2026-09-17",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-17",
+    "summary": "Track A 매크로 오버레이 다섯 번째 가설: 진입(CROSS_UP delay=0) 시점 신용스프레드(BAA10Y, Moody's Baa 회사채-10년물 국채)가 높을수록 사이클 수익률이 나쁘다는 사전등록 가설을 42개 유효 사이클로 검증. 피어슨 상관계수 +0.385(가설과 반대 방향)이나 3.0%p 임계값 비교에서는 스프레드 높을수록 승률·평균 낮음(가설과 일치) - 두 검증 결과가 서로 모순돼 신뢰할 수 없는 신호로 판정, 기각. 극단적 승자 사이클(SOXL 2016 +475.64% 등)이 2012-2013/2016년 위기후 회복기 스프레드 구간에 몰려있어 상관계수가 교란됐을 가능성. 애초 계획한 BAMLH0A0HYM2(하이일드 OAS)는 FRED 재배포 제약으로 2023-09-18 이후만 제공돼 대체 지표(BAA10Y) 사용.",
+    "metrics": {
+      "preRegisteredThresholds": [3.0, 4.0],
+      "totalValidCycles": 42,
+      "correlation": {
+        "pearson_entryCreditSpread_vs_returnPct": 0.385
+      },
+      "byThreshold": {
+        "3.0": {
+          "belowThreshold": { "n": 34, "winRatePct": 47.1, "avgReturnPct": 45.42, "medianReturnPct": -5.28 },
+          "atOrAboveThreshold": { "n": 8, "winRatePct": 37.5, "avgReturnPct": 38.43, "medianReturnPct": -6.81 }
+        },
+        "4.0": {
+          "belowThreshold": { "n": 42, "winRatePct": 45.2, "avgReturnPct": 44.09, "medianReturnPct": -6.0 },
+          "atOrAboveThreshold": { "n": 0, "winRatePct": null, "avgReturnPct": null, "medianReturnPct": null }
+        }
+      }
+    },
+    "report_path": "research/reports/track-a-credit-spread-entry-filter-hypothesis.md",
+    "sources": [
+      {
+        "title": "FRED - Moody's Seasoned Baa Corporate Bond Yield Relative to 10-Year Treasury (BAA10Y)",
+        "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAA10Y",
+        "accessed": "2026-09-17"
+      }
+    ],
+    "confidence": "low",
+    "caveats": "상관계수(+0.385)와 3.0 임계값 비교(가설 방향과 일치) 결과가 서로 모순돼 그 자체로 신뢰할 수 없는 신호라는 가장 강한 근거다. 42건 중 소수의 극단적 수익률 사이클이 상관계수를 주도(강건성 분석 미실시). BAA10Y는 원래 계획한 하이일드 OAS(BAMLH0A0HYM2)의 대체 지표로 투자등급(Baa) 채권 기반이라 신용위험 민감도가 다를 수 있다. 4.0%p 임계값은 42개 사이클 기간 동안 한 번도 도달하지 않아 2차 검증이 사실상 이루어지지 못했다. 진입 시점 값은 직전 최근 거래일 값을 근사로 사용했다.",
+    "last_updated": "2026-09-17"
+  },
+  {
+    "id": "track-a-sector-relative-strength-entry-filter-2010-2026",
+    "type": "backtest",
+    "ticker": "SOXL,TQQQ,TNA,FAS",
+    "strategy_id": "track-a-sector-relative-strength-entry-filter-candidate",
+    "data_range": {
+      "start": "2010-01-01",
+      "end": "2026-09-17",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-17",
+    "summary": "Track A 매크로 오버레이 여섯 번째 가설(첫 모멘텀/섹터로테이션 신호): 진입 시점 직전 N주간 기초지수(SOXX/QQQ/IWM/XLF)의 SPY 대비 상대강도가 강할수록 이후 사이클 수익률이 좋다는 가설. 13주 lookback에서 상관계수 +0.112(약하지만 가설 방향과 일치), 5%p 임계값 비교에서 승률(43.3%->50.0%)·평균(+33.19%->+71.32%)·중앙값(-7.23%->+5.4%) 전부 개선 - 이번 세션 6개 매크로 가설 중 최초로 상관계수와 임계값 비교가 모순 없이 일치. 그러나 26주 lookback에서는 상관계수가 -0.021로 거의 사라져 lookback 민감도가 높음. '추가 검증 필요'로 분류, 아직 채택하지 않음.",
+    "metrics": {
+      "underlyingMap": { "SOXL": "SOXX", "TQQQ": "QQQ", "TNA": "IWM", "FAS": "XLF" },
+      "benchmark": "SPY",
+      "preRegisteredThresholdPct": 5.0,
+      "totalValidCycles": 42,
+      "byLookback": {
+        "13": {
+          "correlation": { "pearson_relativeStrengthPct_vs_returnPct": 0.112 },
+          "belowThreshold": { "n": 30, "winRatePct": 43.3, "avgReturnPct": 33.19, "medianReturnPct": -7.23 },
+          "atOrAboveThreshold": { "n": 12, "winRatePct": 50.0, "avgReturnPct": 71.32, "medianReturnPct": 5.4 }
+        },
+        "26": {
+          "correlation": { "pearson_relativeStrengthPct_vs_returnPct": -0.021 },
+          "belowThreshold": { "n": 35, "winRatePct": 42.9, "avgReturnPct": 44.81, "medianReturnPct": -6.97 },
+          "atOrAboveThreshold": { "n": 7, "winRatePct": 57.1, "avgReturnPct": 40.46, "medianReturnPct": 17.77 }
+        }
+      }
+    },
+    "report_path": "research/reports/track-a-sector-relative-strength-entry-filter-hypothesis.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance - SOXX/QQQ/IWM/XLF/SPY Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/SPY/history/",
+        "accessed": "2026-09-17"
+      }
+    ],
+    "confidence": "low-medium",
+    "caveats": "상관계수 자체는 두 lookback 모두 약함(0.3 미만) - 관계가 비선형이거나 소표본 효과가 섞여 있을 수 있다. 단일 표본(SOXL/TQQQ/TNA/FAS 42사이클, 2010-2026)에서 나온 결과로 진짜 아웃오브샘플 검증을 거치지 않았다. 진입 사이클 캘린더와 기초지수/SPY 캘린더의 요일 앵커가 달라 최근접 과거 거래일로 근사했다. +5%p 임계값은 임의로 고정한 값이며 이 신호에 최적화되지 않았다. 26주 lookback에서 상관계수가 거의 사라져 lookback 민감도가 높다.",
+    "last_updated": "2026-09-17"
+  },
+  {
+    "id": "track-a-sector-relative-strength-robustness-check-2026",
+    "type": "backtest",
+    "ticker": "SOXL,TQQQ,TNA,FAS",
+    "strategy_id": "track-a-sector-relative-strength-entry-filter-candidate",
+    "data_range": {
+      "start": "2009-08-31",
+      "end": "2025-07-07",
+      "frequency": "weekly"
+    },
+    "created_date": "2026-09-17",
+    "summary": "track-a-sector-relative-strength-entry-filter-2010-2026(13주 lookback 상관계수 +0.112)의 강건성 후속 검증. (a) lookback 민감도: 8/17/26주에서는 상관계수가 근처 0이거나 반대 부호(-0.054/-0.066/-0.021)이며 임계값 비교 방향도 13주와 반대 - 13주만의 우연으로 보임. (b) 시간분할(42건을 21/21로 정확히 절반): 앞 절반 상관계수 -0.027, 뒤 절반 +0.503으로 이질적 - 전체 +0.112는 두 이질적 국면의 평균. 사전등록한 판정기준(양 절반 모두 방향 일치)을 충족하지 못해 '국면 의존적'으로 최종 기각. 여섯 가지 매크로 가설(VIX 레벨/금리 변화율/VIX 급등 즉시·지연확인청산/신용스프레드/섹터 상대강도) 전부 최종적으로 채택 근거 없음 - Track A 매크로 오버레이 조사 마무리 권고.",
+    "metrics": {
+      "sensitivityByLookback": {
+        "8": { "correlation": -0.054, "belowThresholdAvgReturnPct": 46.2, "atOrAboveThresholdAvgReturnPct": 31.4 },
+        "13": { "correlation": 0.112, "belowThresholdAvgReturnPct": 33.19, "atOrAboveThresholdAvgReturnPct": 71.32 },
+        "17": { "correlation": -0.066, "belowThresholdAvgReturnPct": 48.58, "atOrAboveThresholdAvgReturnPct": 25.0 },
+        "26": { "correlation": -0.021, "belowThresholdAvgReturnPct": 44.81, "atOrAboveThresholdAvgReturnPct": 40.46 }
+      },
+      "temporalSplit13Weeks": {
+        "firstHalf": { "dateRange": ["2009-08-31", "2019-03-25"], "n": 21, "correlation": -0.027, "belowThresholdAvgReturnPct": 57.18, "atOrAboveThresholdAvgReturnPct": 98.67 },
+        "secondHalf": { "dateRange": ["2019-04-08", "2025-07-07"], "n": 21, "correlation": 0.503, "belowThresholdAvgReturnPct": 9.2, "atOrAboveThresholdAvgReturnPct": 43.97 },
+        "verdict": "국면 의존적 - 추가 채택 보류"
+      }
+    },
+    "report_path": "research/reports/track-a-sector-relative-strength-robustness-check.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance - SOXX/QQQ/IWM/XLF/SPY Historical Data (Weekly)",
+        "url": "https://finance.yahoo.com/quote/SPY/history/",
+        "accessed": "2026-09-17"
+      }
+    ],
+    "confidence": "high",
+    "caveats": "시간분할은 정확히 절반(21/21)으로만 나눴다 - 3분할/5분할 등 다른 방식은 검증하지 않았다. lookback 민감도는 4개 값(8/13/17/26)만 확인했다 - 더 촘촘한 격자에서 13주 근방 국소 효과 존재 여부는 미검증이나, 그 정도로 좁은 구간에서만 유효하다면 실전 가치가 낮다. 42건이라는 표본 크기가 시간분할 시 21건씩으로 더 작아져 근본적 한계가 재확인됐다.",
+    "last_updated": "2026-09-17"
   }
 ]

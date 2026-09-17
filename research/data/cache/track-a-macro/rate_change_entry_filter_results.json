@@ -1,0 +1,430 @@
+{
+  "generatedBy": "research/scripts/track-a-macro/rate_change_entry_filter_backtest.py",
+  "hypothesis": "Track A 진입(CROSS_UP delay=0) 직전 8주간 10년물 금리(DGS10) 변화가 클수록(급등) 이후 사이클 수익률이 나쁘다.",
+  "lookbackWeeks": 8,
+  "preRegisteredThresholdsBps": [
+    50.0,
+    100.0
+  ],
+  "tickers": [
+    "FAS",
+    "SOXL",
+    "TNA",
+    "TQQQ"
+  ],
+  "totalValidCycles": 42,
+  "skippedCycles": [],
+  "correlation": {
+    "pearson_rateChangeBps_vs_returnPct": 0.087
+  },
+  "byThreshold": {
+    "50.0": {
+      "belowThreshold": {
+        "n": 41,
+        "winRatePct": 46.3,
+        "avgReturnPct": 45.6,
+        "medianReturnPct": -5.04
+      },
+      "atOrAboveThreshold": {
+        "n": 1,
+        "winRatePct": 0.0,
+        "avgReturnPct": -18.14,
+        "medianReturnPct": -18.14
+      }
+    },
+    "100.0": {
+      "belowThreshold": {
+        "n": 42,
+        "winRatePct": 45.2,
+        "avgReturnPct": 44.09,
+        "medianReturnPct": -6.0
+      },
+      "atOrAboveThreshold": {
+        "n": 0,
+        "winRatePct": null,
+        "avgReturnPct": null,
+        "medianReturnPct": null
+      }
+    }
+  },
+  "cycles": [
+    {
+      "ticker": "SOXL",
+      "entryDate": "2012-02-20",
+      "exitDate": "2012-06-04",
+      "rateAtEntry": 2.01,
+      "rateAt8WeeksBefore": 2.03,
+      "rateChangeBps": -2.0,
+      "returnPct": -35.04
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2013-01-21",
+      "exitDate": "2015-07-27",
+      "rateAtEntry": 1.87,
+      "rateAt8WeeksBefore": 1.66,
+      "rateChangeBps": 21.0,
+      "returnPct": 215.39
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2016-04-18",
+      "exitDate": "2018-08-13",
+      "rateAtEntry": 1.78,
+      "rateAt8WeeksBefore": 1.77,
+      "rateChangeBps": 1.0,
+      "returnPct": 475.64
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2019-03-25",
+      "exitDate": "2020-03-30",
+      "rateAtEntry": 2.43,
+      "rateAt8WeeksBefore": 2.75,
+      "rateChangeBps": -32.0,
+      "returnPct": -40.4
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2020-08-10",
+      "exitDate": "2022-02-28",
+      "rateAtEntry": 0.59,
+      "rateAt8WeeksBefore": 0.71,
+      "rateChangeBps": -12.0,
+      "returnPct": 111.49
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2023-02-27",
+      "exitDate": "2023-10-30",
+      "rateAtEntry": 3.92,
+      "rateAt8WeeksBefore": 3.88,
+      "rateChangeBps": 4.0,
+      "returnPct": 17.77
+    },
+    {
+      "ticker": "SOXL",
+      "entryDate": "2023-12-04",
+      "exitDate": "2024-09-09",
+      "rateAtEntry": 4.28,
+      "rateAt8WeeksBefore": 4.78,
+      "rateChangeBps": -50.0,
+      "returnPct": 41.89
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2012-01-30",
+      "exitDate": "2012-11-26",
+      "rateAtEntry": 1.87,
+      "rateAt8WeeksBefore": 2.04,
+      "rateChangeBps": -17.0,
+      "returnPct": 13.73
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2013-01-28",
+      "exitDate": "2015-09-21",
+      "rateAtEntry": 2.0,
+      "rateAt8WeeksBefore": 1.63,
+      "rateChangeBps": 37.0,
+      "returnPct": 215.77
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2015-11-23",
+      "exitDate": "2016-01-18",
+      "rateAtEntry": 2.25,
+      "rateAt8WeeksBefore": 2.1,
+      "rateChangeBps": 15.0,
+      "returnPct": -26.63
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2016-07-25",
+      "exitDate": "2018-11-19",
+      "rateAtEntry": 1.58,
+      "rateAt8WeeksBefore": 1.85,
+      "rateChangeBps": -27.0,
+      "returnPct": 115.52
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2019-04-15",
+      "exitDate": "2020-04-06",
+      "rateAtEntry": 2.55,
+      "rateAt8WeeksBefore": 2.66,
+      "rateChangeBps": -11.0,
+      "returnPct": -14.49
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2020-06-15",
+      "exitDate": "2022-02-14",
+      "rateAtEntry": 0.71,
+      "rateAt8WeeksBefore": 0.63,
+      "rateChangeBps": 8.0,
+      "returnPct": 114.82
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2023-03-27",
+      "exitDate": "2025-03-31",
+      "rateAtEntry": 3.53,
+      "rateAt8WeeksBefore": 3.55,
+      "rateChangeBps": -2.0,
+      "returnPct": 49.52
+    },
+    {
+      "ticker": "TQQQ",
+      "entryDate": "2025-07-07",
+      "exitDate": "2026-03-23",
+      "rateAtEntry": 4.4,
+      "rateAt8WeeksBefore": 4.45,
+      "rateChangeBps": -5.0,
+      "returnPct": -6.97
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2010-11-01",
+      "exitDate": "2011-08-01",
+      "rateAtEntry": 2.66,
+      "rateAt8WeeksBefore": 2.72,
+      "rateChangeBps": -6.0,
+      "returnPct": -15.65
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2012-02-27",
+      "exitDate": "2012-06-25",
+      "rateAtEntry": 1.92,
+      "rateAt8WeeksBefore": 1.89,
+      "rateChangeBps": 3.0,
+      "returnPct": -5.04
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2012-08-13",
+      "exitDate": "2014-05-26",
+      "rateAtEntry": 1.65,
+      "rateAt8WeeksBefore": 1.59,
+      "rateChangeBps": 6.0,
+      "returnPct": 147.27
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2014-06-30",
+      "exitDate": "2014-09-01",
+      "rateAtEntry": 2.53,
+      "rateAt8WeeksBefore": 2.63,
+      "rateChangeBps": -10.0,
+      "returnPct": -9.42
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2014-12-15",
+      "exitDate": "2015-08-24",
+      "rateAtEntry": 2.12,
+      "rateAt8WeeksBefore": 2.2,
+      "rateChangeBps": -8.0,
+      "returnPct": -10.73
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2016-05-30",
+      "exitDate": "2018-11-05",
+      "rateAtEntry": 1.85,
+      "rateAt8WeeksBefore": 1.78,
+      "rateChangeBps": 7.0,
+      "returnPct": 102.33
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2019-06-24",
+      "exitDate": "2019-07-15",
+      "rateAtEntry": 2.02,
+      "rateAt8WeeksBefore": 2.54,
+      "rateChangeBps": -52.0,
+      "returnPct": -3.58
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2019-07-22",
+      "exitDate": "2019-09-02",
+      "rateAtEntry": 2.05,
+      "rateAt8WeeksBefore": 2.32,
+      "rateChangeBps": -27.0,
+      "returnPct": -15.47
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2019-12-02",
+      "exitDate": "2020-03-16",
+      "rateAtEntry": 1.83,
+      "rateAt8WeeksBefore": 1.56,
+      "rateChangeBps": 27.0,
+      "returnPct": -82.48
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2020-10-19",
+      "exitDate": "2021-09-06",
+      "rateAtEntry": 0.78,
+      "rateAt8WeeksBefore": 0.65,
+      "rateChangeBps": 13.0,
+      "returnPct": 120.38
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2021-11-08",
+      "exitDate": "2021-12-27",
+      "rateAtEntry": 1.51,
+      "rateAt8WeeksBefore": 1.33,
+      "rateChangeBps": 18.0,
+      "returnPct": -21.04
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2023-02-20",
+      "exitDate": "2023-03-27",
+      "rateAtEntry": 3.82,
+      "rateAt8WeeksBefore": 3.75,
+      "rateChangeBps": 7.0,
+      "returnPct": -15.35
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2023-07-24",
+      "exitDate": "2023-09-25",
+      "rateAtEntry": 3.86,
+      "rateAt8WeeksBefore": 3.8,
+      "rateChangeBps": 6.0,
+      "returnPct": -28.56
+    },
+    {
+      "ticker": "TNA",
+      "entryDate": "2024-01-01",
+      "exitDate": "2025-02-17",
+      "rateAtEntry": 3.88,
+      "rateAt8WeeksBefore": 4.67,
+      "rateChangeBps": -79.0,
+      "returnPct": 12.26
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2009-08-31",
+      "exitDate": "2010-06-28",
+      "rateAtEntry": 3.4,
+      "rateAt8WeeksBefore": 3.52,
+      "rateChangeBps": -12.0,
+      "returnPct": -23.39
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2010-12-27",
+      "exitDate": "2011-06-20",
+      "rateAtEntry": 3.36,
+      "rateAt8WeeksBefore": 2.66,
+      "rateChangeBps": 70.0,
+      "returnPct": -18.14
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2012-02-27",
+      "exitDate": "2012-07-16",
+      "rateAtEntry": 1.92,
+      "rateAt8WeeksBefore": 1.89,
+      "rateChangeBps": 3.0,
+      "returnPct": -8.59
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2012-07-23",
+      "exitDate": "2015-09-14",
+      "rateAtEntry": 1.47,
+      "rateAt8WeeksBefore": 1.75,
+      "rateChangeBps": -28.0,
+      "returnPct": 237.38
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2016-05-30",
+      "exitDate": "2018-07-02",
+      "rateAtEntry": 1.85,
+      "rateAt8WeeksBefore": 1.78,
+      "rateChangeBps": 7.0,
+      "returnPct": 133.11
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2018-07-09",
+      "exitDate": "2018-07-16",
+      "rateAtEntry": 2.86,
+      "rateAt8WeeksBefore": 3.0,
+      "rateChangeBps": -14.0,
+      "returnPct": 3.86
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2018-07-30",
+      "exitDate": "2018-10-29",
+      "rateAtEntry": 2.98,
+      "rateAt8WeeksBefore": 2.94,
+      "rateChangeBps": 4.0,
+      "returnPct": -17.23
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2019-04-08",
+      "exitDate": "2020-03-16",
+      "rateAtEntry": 2.52,
+      "rateAt8WeeksBefore": 2.65,
+      "rateChangeBps": -13.0,
+      "returnPct": -74.16
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2020-11-16",
+      "exitDate": "2022-03-21",
+      "rateAtEntry": 0.91,
+      "rateAt8WeeksBefore": 0.68,
+      "rateChangeBps": 23.0,
+      "returnPct": 167.27
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2022-12-26",
+      "exitDate": "2023-04-03",
+      "rateAtEntry": 3.75,
+      "rateAt8WeeksBefore": 4.1,
+      "rateChangeBps": -35.0,
+      "returnPct": -22.82
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2023-09-11",
+      "exitDate": "2023-09-25",
+      "rateAtEntry": 4.29,
+      "rateAt8WeeksBefore": 3.81,
+      "rateChangeBps": 48.0,
+      "returnPct": -12.84
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2023-12-04",
+      "exitDate": "2025-04-21",
+      "rateAtEntry": 4.28,
+      "rateAt8WeeksBefore": 4.78,
+      "rateChangeBps": -50.0,
+      "returnPct": 85.94
+    },
+    {
+      "ticker": "FAS",
+      "entryDate": "2025-06-30",
+      "exitDate": "2026-03-02",
+      "rateAtEntry": 4.24,
+      "rateAt8WeeksBefore": 4.36,
+      "rateChangeBps": -12.0,
+      "returnPct": -21.73
+    }
+  ]
+}
