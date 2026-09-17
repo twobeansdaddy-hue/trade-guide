@@ -2,6 +2,10 @@ export function formatUsd(amount: number) {
     return Intl.NumberFormat("en-US", {style: "currency", currency: "USD"}).format(amount);
 }
 
+export function formatKrw(amount: number) {
+    return Intl.NumberFormat("ko-KR", {style: "currency", currency: "KRW"}).format(amount);
+}
+
 export function formatPercent(percent: number) {
     return `${percent.toFixed(2)}%`;
 }

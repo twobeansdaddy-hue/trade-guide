@@ -14,7 +14,7 @@ import {getPortfolioRiskAlerts} from "../api/portfolioRiskApi";
 import {getPortfolioValuation} from "../api/portfolioValuationApi";
 import {usePortfolioContext} from "../context/portfolioContext";
 import {usePortfolioResource} from "../hooks/usePortfolioResource";
-import {formatPercent, formatUsd, getProfitLossClassName} from "../utils/format";
+import {formatPercent, formatUsd, formatKrw, getProfitLossClassName} from "../utils/format";
 
 export default function DashboardPage() {
     const {memberId, selectedPortfolioId} = usePortfolioContext();
@@ -67,9 +67,47 @@ function DashboardContent({memberId, portfolioId}: {memberId: number; portfolioI
                 />
             ) : null}
             <section className="summary-grid" aria-label="포트폴리오 평가 요약">
-                <div className="summary-primary"><span>현재 평가금액</span><strong>{formatUsd(valuationResource.data.totalMarketValue)}</strong><small>매입금액 {formatUsd(valuationResource.data.totalPurchaseAmount)}</small></div>
-                <div><span>평가손익</span><strong className={getProfitLossClassName(valuationResource.data.totalUnrealizedProfitLoss)}>{formatUsd(valuationResource.data.totalUnrealizedProfitLoss)}</strong><small>미실현 기준</small></div>
-                <div><span>수익률</span><strong className={getProfitLossClassName(valuationResource.data.totalReturnRate)}>{formatPercent(valuationResource.data.totalReturnRate)}</strong><small>보유 종목 {valuationResource.data.holdingValuations.length}개</small></div>
+                {(() => {
+                    const usd = valuationResource.data.totalsByCurrency.USD ?? {
+                        totalMarketValue: 0,
+                        totalPurchaseAmount: 0,
+                        totalUnrealizedProfitLoss: 0,
+                        totalReturnRate: 0,
+                    };
+                    const krw = valuationResource.data.totalsByCurrency.KRW;
+
+                    return (
+                        <>
+                            <div className="summary-primary">
+                                <span>현재 평가금액</span>
+                                <strong>
+                                    <div>{formatUsd(usd.totalMarketValue)}</div>
+                                    {krw ? <div style={{fontSize: "0.7em", marginTop: "4px", color: "#61717e"}}>+ {formatKrw(krw.totalMarketValue)}</div> : null}
+                                </strong>
+                                <small>
+                                    매입금액 {formatUsd(usd.totalPurchaseAmount)}
+                                    {krw ? ` + ${formatKrw(krw.totalPurchaseAmount)}` : ""}
+                                </small>
+                            </div>
+                            <div>
+                                <span>평가손익</span>
+                                <strong>
+                                    <div className={getProfitLossClassName(usd.totalUnrealizedProfitLoss)}>{formatUsd(usd.totalUnrealizedProfitLoss)}</div>
+                                    {krw ? <div className={getProfitLossClassName(krw.totalUnrealizedProfitLoss)} style={{fontSize: "0.7em", marginTop: "4px"}}>+ {formatKrw(krw.totalUnrealizedProfitLoss)}</div> : null}
+                                </strong>
+                                <small>미실현 기준</small>
+                            </div>
+                            <div>
+                                <span>수익률</span>
+                                <strong>
+                                    <div className={getProfitLossClassName(usd.totalReturnRate)}>{formatPercent(usd.totalReturnRate)}{krw ? " (USD)" : ""}</div>
+                                    {krw ? <div className={getProfitLossClassName(krw.totalReturnRate)} style={{fontSize: "0.7em", marginTop: "4px"}}>{formatPercent(krw.totalReturnRate)} (KRW)</div> : null}
+                                </strong>
+                                <small>보유 종목 {valuationResource.data.holdingValuations.length}개</small>
+                            </div>
+                        </>
+                    );
+                })()}
             </section>
             <section className="content-section">
                 <div className="section-heading">
