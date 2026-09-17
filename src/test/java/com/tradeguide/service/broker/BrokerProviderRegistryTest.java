@@ -159,6 +159,26 @@ class BrokerProviderRegistryTest {
                 .doesNotContain(BrokerProviderCapability.CASH_BALANCE);
     }
 
+    /**
+     * 주문 제출은 아직 어떤 증권사도 어댑터를 등록하지 않았고, TOSS_SECURITIES도 아직
+     * 이 기능을 선언하지 않았다(docs/agent-tasks/claude-broker-order-execution-dry-run-
+     * implementation-20260917.md) - 이중으로 닫혀 있어야 한다.
+     */
+    @Test
+    void keepsOrderSubmissionUnavailableUntilTossAdapterIsRegistered() {
+        BrokerProviderRegistry registry = registryWith(
+                List.of(new StubConnectionVerifier()),
+                List.of(new StubHoldingsProvider()),
+                List.of(new StubOrderHistoryProvider())
+        );
+
+        assertThat(registry.isOrderSubmittable(BrokerProvider.TOSS_SECURITIES)).isFalse();
+        assertThat(registry.availableCapabilities(BrokerProvider.TOSS_SECURITIES))
+                .doesNotContain(BrokerProviderCapability.ORDER_SUBMISSION);
+        assertThatThrownBy(() -> registry.requireOrderSubmissionProvider(BrokerProvider.TOSS_SECURITIES))
+                .isInstanceOf(BrokerConnectionUnavailableException.class);
+    }
+
     /** 기능 관문의 거부는 503이며, 클라이언트는 문구가 아니라 코드로 분기한다. */
     @Test
     void rejectsUnavailableCapabilityWithServiceUnavailableCode() {
@@ -254,7 +274,7 @@ class BrokerProviderRegistryTest {
             List<BrokerHoldingsProvider> holdingsProviders,
             List<BrokerOrderHistoryProvider> orderHistoryProviders
     ) {
-        return new BrokerProviderRegistry(verifiers, holdingsProviders, orderHistoryProviders);
+        return new BrokerProviderRegistry(verifiers, holdingsProviders, orderHistoryProviders, List.of());
     }
 
     private static final class StubConnectionVerifier implements BrokerConnectionVerifier {

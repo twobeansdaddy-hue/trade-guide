@@ -24,5 +24,14 @@ public enum BrokerProviderCapability {
      * 예수금/현금 잔고를 조회한다. 아직 어댑터 계약 자체가 없으므로, 제공자가 이 기능을
      * 선언하더라도 {@code BrokerProviderRegistry.availableCapabilities}에는 나타나지 않는다.
      */
-    CASH_BALANCE
+    CASH_BALANCE,
+    /**
+     * 실제로 매수/매도 주문을 제출한다. opt-in 동의(`BrokerOrderExecutionGrant`)와
+     * 서킷브레이커를 통과한 신호만 이 경로를 탄다 - `tradeguide.broker.order-execution.
+     * live-enabled`가 꺼져 있으면(기본값) 어댑터가 등록돼 있어도 호출되지 않는다.
+     * 아직 어떤 증권사도 어댑터를 등록하지 않았으므로, 제공자가 이 기능을 선언하더라도
+     * {@code BrokerProviderRegistry.availableCapabilities}에는 나타나지 않는다
+     * ({@code CASH_BALANCE}와 동일한 이유).
+     */
+    ORDER_SUBMISSION
 }

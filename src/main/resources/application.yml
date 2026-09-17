@@ -73,3 +73,16 @@ tradeguide:
       # 실행을 이어서 진행하기로 명시적으로 결정했을 때만 이 값을 true로 켠다. 자동
       # 재시작은 하지 않는다(§6.2, §7).
       resume-in-progress: ${BROKER_CREDENTIAL_ROTATION_RESUME_IN_PROGRESS:false}
+    order-execution:
+      # 기본은 항상 비활성(dry-run)이다. 꺼져 있으면 BrokerOrderExecutionService는
+      # 실제 브로커에 주문을 제출하지 않고, 제출했다면 어땠을지만
+      # BrokerOrderExecutionRun에 기록한다(dry_run=true). 이 값을 true로 켜는 것은
+      # 실거래 전환을 뜻하므로 운영 승인 없이 바꾸지 않는다
+      # (docs/agent-tasks/claude-broker-order-execution-dry-run-implementation-20260917.md).
+      live-enabled: ${TRADEGUIDE_BROKER_ORDER_EXECUTION_LIVE_ENABLED:false}
+      trigger-scheduler:
+        # 기본은 항상 비활성이다(PremarketGuideScheduler와 동일 관례). 이 스위치를
+        # 켜는 것과 live-enabled를 켜는 것은 별개다 - 이것만 켜면 dry-run으로
+        # 매일 평가·기록만 하고, live-enabled까지 켜야 실제로 주문이 나간다.
+        enabled: ${TRADEGUIDE_BROKER_ORDER_EXECUTION_TRIGGER_SCHEDULER_ENABLED:false}
+        cron: ${TRADEGUIDE_BROKER_ORDER_EXECUTION_TRIGGER_SCHEDULER_CRON:0 30 9 * * MON-FRI}

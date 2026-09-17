@@ -96,7 +96,7 @@ class BrokerReconciliationServiceTest {
                 brokerOrderImportRunRepository,
                 brokerOrderLedgerLinkRepository,
                 brokerReconciliationRunRepository,
-                new BrokerReconciliationReasonResolver(new BrokerProviderRegistry(List.of(), List.of(), List.of())),
+                new BrokerReconciliationReasonResolver(new BrokerProviderRegistry(List.of(), List.of(), List.of(), List.of())),
                 FIXED_CLOCK
         );
 

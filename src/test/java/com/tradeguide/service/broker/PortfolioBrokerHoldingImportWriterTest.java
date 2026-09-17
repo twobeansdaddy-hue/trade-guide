@@ -64,7 +64,7 @@ class PortfolioBrokerHoldingImportWriterTest {
      * 목으로 대체하면 이 테스트가 카탈로그 선언 변화에 반응하지 못한다.
      */
     private static final BrokerProviderRegistry REGISTRY =
-            new BrokerProviderRegistry(List.of(), List.of(), List.of());
+            new BrokerProviderRegistry(List.of(), List.of(), List.of(), List.of());
 
     @Mock
     private PortfolioRepository portfolioRepository;

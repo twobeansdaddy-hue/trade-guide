@@ -73,7 +73,7 @@ class BrokerConnectionServiceTest {
     private final FakeTossConnectionVerifier connectionVerifier = new FakeTossConnectionVerifier();
 
     private final BrokerProviderRegistry brokerProviderRegistry =
-            new BrokerProviderRegistry(List.of(connectionVerifier), List.of(), List.of());
+            new BrokerProviderRegistry(List.of(connectionVerifier), List.of(), List.of(), List.of());
 
     private BrokerConnectionService brokerConnectionService;
 
@@ -457,7 +457,7 @@ class BrokerConnectionServiceTest {
                 portfolioBrokerHoldingAdjustmentRepository,
                 brokerCredentialCipher,
                 new BrokerCredentialLoader(brokerCredentialCipher),
-                new BrokerProviderRegistry(List.of(), List.of(), List.of())
+                new BrokerProviderRegistry(List.of(), List.of(), List.of(), List.of())
         );
         BrokerConnection connection = new BrokerConnection(
                 new Member("broker@example.com", "broker-user"),

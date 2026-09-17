@@ -82,7 +82,7 @@ class PortfolioBrokerHoldingSnapshotServiceTest {
         holdingsProvider = new RecordingHoldingsProvider(new BrokerHoldingSnapshot(List.of(), 0));
         brokerDuplicateCallGuard = new BrokerDuplicateCallGuard();
         portfolioBrokerHoldingSnapshotService =
-                serviceWith(new BrokerProviderRegistry(List.of(), List.of(holdingsProvider), List.of()));
+                serviceWith(new BrokerProviderRegistry(List.of(), List.of(holdingsProvider), List.of(), List.of()));
 
         member = new Member("broker@example.com", "broker-user");
         ReflectionTestUtils.setField(member, "id", 10L);
@@ -213,7 +213,7 @@ class PortfolioBrokerHoldingSnapshotServiceTest {
     @Test
     void failsRefreshWhenNoHoldingsProviderSupportsTheBroker() {
         PortfolioBrokerHoldingSnapshotService serviceWithoutProviders =
-                serviceWith(new BrokerProviderRegistry(List.of(), List.of(), List.of()));
+                serviceWith(new BrokerProviderRegistry(List.of(), List.of(), List.of(), List.of()));
 
         BrokerConnection connection = verifiedConnection();
         PortfolioBrokerLink link = new PortfolioBrokerLink(

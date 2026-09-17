@@ -78,7 +78,7 @@ class BrokerHoldingPreviewServiceTest {
         brokerDuplicateCallGuard = new BrokerDuplicateCallGuard();
         brokerHoldingPreviewCallTracker = new BrokerHoldingPreviewCallTracker();
         brokerHoldingPreviewService =
-                serviceWith(new BrokerProviderRegistry(List.of(), List.of(holdingsProvider), List.of()));
+                serviceWith(new BrokerProviderRegistry(List.of(), List.of(holdingsProvider), List.of(), List.of()));
 
         member = new Member("broker@example.com", "broker-user");
         ReflectionTestUtils.setField(member, "id", 10L);
@@ -200,7 +200,7 @@ class BrokerHoldingPreviewServiceTest {
     @Test
     void failsWhenNoHoldingsProviderSupportsTheBroker() {
         BrokerHoldingPreviewService serviceWithoutProviders =
-                serviceWith(new BrokerProviderRegistry(List.of(), List.of(), List.of()));
+                serviceWith(new BrokerProviderRegistry(List.of(), List.of(), List.of(), List.of()));
 
         BrokerConnection connection = verifiedConnection();
         PortfolioBrokerLink link = new PortfolioBrokerLink(

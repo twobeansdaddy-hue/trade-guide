@@ -93,7 +93,7 @@ class BrokerConnectionDeletionJpaTest {
                 portfolioBrokerHoldingAdjustmentRepository,
                 new UnusedBrokerCredentialCipher(),
                 new BrokerCredentialLoader(new UnusedBrokerCredentialCipher()),
-                new BrokerProviderRegistry(List.of(), List.of(), List.of())
+                new BrokerProviderRegistry(List.of(), List.of(), List.of(), List.of())
         );
 
         member = memberRepository.save(new Member("broker@example.com", "broker-user"));

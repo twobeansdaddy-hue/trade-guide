@@ -97,7 +97,7 @@ class PortfolioBrokerOpeningBalanceBatchWriterTest {
         writer = new PortfolioBrokerOpeningBalanceBatchWriter(
                 portfolioRepository,
                 portfolioBrokerHoldingSnapshotService,
-                new BrokerProviderRegistry(List.of(), List.of(), List.of()),
+                new BrokerProviderRegistry(List.of(), List.of(), List.of(), List.of()),
                 assetListingService,
                 tradeTransactionRepository,
                 portfolioBrokerHoldingImportRepository,

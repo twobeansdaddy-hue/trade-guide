@@ -41,7 +41,7 @@ class BrokerReconciliationReasonResolverTest {
     private static final Instant BASELINE = Instant.parse("2026-09-01T00:00:00Z");
 
     private final BrokerReconciliationReasonResolver resolver =
-            new BrokerReconciliationReasonResolver(new BrokerProviderRegistry(List.of(), List.of(), List.of()));
+            new BrokerReconciliationReasonResolver(new BrokerProviderRegistry(List.of(), List.of(), List.of(), List.of()));
 
     @Test
     void returnsNoReasonsWhenComparisonIsMatched() {

@@ -105,6 +105,27 @@ git pull --ff-only
 - 증권사 자격 증명 키 버전 로테이션과 의심 항목 사용자 재판정
 - Track A 미보유 후보 가이드와 후보 영역의 검토용 UX 분리
 - `144091d refactor: 시장 신호와 포트폴리오 결정 분리` 커밋 및 전체 테스트 통과
+- 오토매매 opt-in 동의(`BrokerOrderExecutionGrant`)·감사로그(`BrokerOrderExecutionRun`)
+  데이터 모델과 API(`docs/agent-tasks/claude-broker-order-execution-grant-implementation-20260917.md`).
+  전략 화이트리스트(`track-a-weekly-ma-crossover`만 허용)·포지션 한도(20%)·일일 주문
+  한도(10건) 하드 상한을 서비스 계층에서 검증. 킬스위치(PAUSED/REVOKED)를 재개
+  경로보다 먼저 테스트. **실제 브로커 주문 제출 로직은 포함하지 않음** - 다음
+  슬라이스 범위.
+- 오토매매 드라이런 오케스트레이션(`BrokerOrderExecutionService`)
+  (`docs/agent-tasks/claude-broker-order-execution-dry-run-implementation-20260917.md`).
+  안전장치 4단계(동의 ACTIVE→전략 일치→포지션 한도→일일 주문 한도)를 고정 순서로
+  검증 후, `tradeguide.broker.order-execution.live-enabled`(기본값 false)가 꺼져
+  있으면 `BrokerOrderExecutionRun`에 `dry_run=true`로만 기록하고 브로커를 호출하지
+  않는다. `BrokerOrderSubmissionProvider` 인터페이스와 `ORDER_SUBMISSION`
+  capability 관문을 추가했지만 **Toss 구현체는 아직 없어 실거래는 어차피 불가능**
+  (이중 안전장치). 전체 테스트 스위트(1071개) 통과 확인.
+- 오토매매 매도(SELL) 트리거 스케줄러(`BrokerOrderExecutionTriggerScheduler`)
+  (`docs/agent-tasks/claude-broker-order-execution-trigger-scheduler-20260917.md`).
+  ACTIVE grant를 순회해 연결된 포트폴리오의 Track A 보유 종목 중 SELL 신호이고
+  grant의 `strategyId`와 일치하며 USD 통화인 종목만 `BrokerOrderExecutionService`
+  로 넘긴다. 매수(신규 진입)는 포지션 사이징 설계가 필요해 범위 밖으로 명시적
+  분리. 기본값 비활성(`PremarketGuideScheduler`와 동일 관례). 전체 테스트
+  스위트(1077개) 통과 확인.
 
 ### 진행 중
 

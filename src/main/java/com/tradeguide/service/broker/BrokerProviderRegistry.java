@@ -37,11 +37,13 @@ public class BrokerProviderRegistry {
     private final Map<BrokerProvider, BrokerConnectionVerifier> connectionVerifiers;
     private final Map<BrokerProvider, BrokerHoldingsProvider> holdingsProviders;
     private final Map<BrokerProvider, BrokerOrderHistoryProvider> orderHistoryProviders;
+    private final Map<BrokerProvider, BrokerOrderSubmissionProvider> orderSubmissionProviders;
 
     public BrokerProviderRegistry(
             List<BrokerConnectionVerifier> connectionVerifiers,
             List<BrokerHoldingsProvider> holdingsProviders,
-            List<BrokerOrderHistoryProvider> orderHistoryProviders
+            List<BrokerOrderHistoryProvider> orderHistoryProviders,
+            List<BrokerOrderSubmissionProvider> orderSubmissionProviders
     ) {
         this.connectionVerifiers = new EnumMap<>(BrokerProvider.class);
         connectionVerifiers.forEach(verifier -> this.connectionVerifiers.put(verifier.getProvider(), verifier));
@@ -49,6 +51,11 @@ public class BrokerProviderRegistry {
         holdingsProviders.forEach(provider -> this.holdingsProviders.put(provider.getProvider(), provider));
         this.orderHistoryProviders = new EnumMap<>(BrokerProvider.class);
         orderHistoryProviders.forEach(provider -> this.orderHistoryProviders.put(provider.getProvider(), provider));
+        // 아직 어떤 증권사도 어댑터 빈을 등록하지 않아 이 맵은 항상 비어 있다 - 실제
+        // Toss 구현체가 추가되는 다음 슬라이스에서 이 생성자를 다시 고치지 않아도
+        // 자동으로 등록되도록 TRANSACTION_HISTORY_IMPORT와 동일한 패턴을 쓴다.
+        this.orderSubmissionProviders = new EnumMap<>(BrokerProvider.class);
+        orderSubmissionProviders.forEach(provider -> this.orderSubmissionProviders.put(provider.getProvider(), provider));
     }
 
     /**
@@ -107,6 +114,25 @@ public class BrokerProviderRegistry {
     }
 
     /**
+     * 요청된 제공자의 주문 제출 구현체를 반환한다. 어댑터가 등록돼 있어도 제공자가
+     * {@link BrokerProviderCapability#ORDER_SUBMISSION}을 선언하지 않았다면 거부한다.
+     * 아직 등록된 구현체가 없으므로(2026-09-17 기준) 이 메서드는 현재 항상 예외를 던진다.
+     */
+    public BrokerOrderSubmissionProvider requireOrderSubmissionProvider(BrokerProvider provider) {
+        requireCapability(
+                provider,
+                BrokerProviderCapability.ORDER_SUBMISSION,
+                "해당 증권사의 주문 제출을 아직 지원하지 않습니다."
+        );
+        return orderSubmissionProviders.get(provider);
+    }
+
+    /** 주문 제출이 실제로 열려 있는지 여부. 어댑터 등록과 기능 선언이 모두 필요하다. */
+    public boolean isOrderSubmittable(BrokerProvider provider) {
+        return isCapabilityAvailable(provider, BrokerProviderCapability.ORDER_SUBMISSION);
+    }
+
+    /**
      * 이 서비스 인스턴스에서 해당 제공자로 <b>실제로 쓸 수 있는</b> 기능 집합이다.
      * 제공자가 선언한 기능({@link BrokerProvider#getSupportedCapabilities()})과 어댑터가
      * 등록된 기능의 교집합이며, 카탈로그 응답의 {@code availableCapabilities}가 이 값이다.
@@ -162,6 +188,7 @@ public class BrokerProviderRegistry {
             case HOLDING_SNAPSHOT -> holdingsProviders.containsKey(provider);
             case TRANSACTION_HISTORY_IMPORT -> orderHistoryProviders.containsKey(provider);
             case CASH_BALANCE -> false;
+            case ORDER_SUBMISSION -> orderSubmissionProviders.containsKey(provider);
         };
     }
 

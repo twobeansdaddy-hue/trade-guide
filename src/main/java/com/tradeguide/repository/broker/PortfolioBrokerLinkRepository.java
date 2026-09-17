@@ -19,6 +19,10 @@ public interface PortfolioBrokerLinkRepository extends JpaRepository<PortfolioBr
 
     Optional<PortfolioBrokerLink> findByPortfolio_IdAndBrokerConnection_Id(Long portfolioId, Long brokerConnectionId);
 
+    /** 오토매매 트리거가 grant(증권사 연결 기준)에서 대상 포트폴리오를 거꾸로 찾을 때 쓴다. */
+    @EntityGraph(attributePaths = {"portfolio"})
+    List<PortfolioBrokerLink> findAllByBrokerConnection_Id(Long brokerConnectionId);
+
     void deleteAllByBrokerConnection_Id(Long brokerConnectionId);
 
     /**

@@ -88,7 +88,7 @@ class BrokerConnectionVerificationJpaTest {
                 portfolioBrokerHoldingAdjustmentRepository,
                 new ReversibleBrokerCredentialCipher(),
                 new BrokerCredentialLoader(new ReversibleBrokerCredentialCipher()),
-                new BrokerProviderRegistry(List.of(connectionVerifier), List.of(), List.of())
+                new BrokerProviderRegistry(List.of(connectionVerifier), List.of(), List.of(), List.of())
         );
 
         member = memberRepository.save(new Member("broker@example.com", "broker-user"));

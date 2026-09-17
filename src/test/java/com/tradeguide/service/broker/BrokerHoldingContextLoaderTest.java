@@ -61,7 +61,7 @@ class BrokerHoldingContextLoaderTest {
     void setUp() {
         holdingsProvider = new StubHoldingsProvider();
         brokerHoldingContextLoader = loaderWith(
-                new BrokerProviderRegistry(List.of(), List.of(holdingsProvider), List.of()));
+                new BrokerProviderRegistry(List.of(), List.of(holdingsProvider), List.of(), List.of()));
 
         member = new Member("broker@example.com", "broker-user");
         ReflectionTestUtils.setField(member, "id", 10L);
@@ -134,7 +134,7 @@ class BrokerHoldingContextLoaderTest {
     @Test
     void refusesBeforeDecryptingWhenTheHoldingSnapshotCapabilityIsNotAvailable() {
         BrokerHoldingContextLoader loaderWithoutProviders =
-                loaderWith(new BrokerProviderRegistry(List.of(), List.of(), List.of()));
+                loaderWith(new BrokerProviderRegistry(List.of(), List.of(), List.of(), List.of()));
         BrokerConnection connection = verifiedConnection();
         when(portfolioRepository.findByMember_IdAndId(10L, 20L)).thenReturn(Optional.of(portfolio));
         when(portfolioBrokerLinkRepository.findByPortfolio_Id(20L))
