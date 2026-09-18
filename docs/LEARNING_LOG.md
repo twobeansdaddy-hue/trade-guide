@@ -135,6 +135,18 @@ git pull --ff-only
   **하지 않음**(`CASH_BALANCE` 어댑터 미구현) - 자금 부족은 향후 실제 브로커의
   주문 거부(`FAILED`)로 걸러지는 것을 최종 방어선으로 삼기로 사용자 승인
   (2026-09-18). 전체 테스트 스위트(1081개) 통과 확인.
+- 실제 Toss 주문 제출 어댑터(`TossOrderSubmissionProvider`)
+  (`docs/agent-tasks/claude-toss-order-submission-provider-20260918.md`).
+  공식 OpenAPI 스펙(`POST /api/v1/orders`, 2026-09-18 직접 조회로 확정)에
+  맞춰 시장가·수량 기반 주문만 구현. `confirmHighValueOrder`는 항상 기본값
+  (자동 확인 안 함), 실패는 전부 `BrokerOrderSubmissionResult.failed`로
+  수렴(예외로 새지 않음). `BrokerProvider.TOSS_SECURITIES`에 `ORDER_SUBMISSION`
+  capability 선언 추가 - **이걸로 SELL·BUY 트리거가 이론상 실제로 주문을**
+  **낼 수 있는 상태가 됐다.** 다만 실거래는 사용자가 (1) 앱에서 Toss 계정을
+  직접 연결하고 (2) 오토매매 opt-in 동의를 직접 생성하고 (3)
+  `live-enabled=true`를 설정해야만 발생한다 - 이 세션은 셋 중 어느 것도
+  하지 않았고 사용자의 실제 자격증명을 전혀 다루지 않았다. 전체 테스트
+  스위트(1088개) 통과 확인.
 
 ### 진행 중
 

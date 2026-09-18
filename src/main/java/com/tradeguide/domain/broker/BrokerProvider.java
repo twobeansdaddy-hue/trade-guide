@@ -22,7 +22,13 @@ public enum BrokerProvider {
             Set.of(
                     BrokerProviderCapability.CONNECTION_VERIFICATION,
                     BrokerProviderCapability.HOLDING_SNAPSHOT,
-                    BrokerProviderCapability.TRANSACTION_HISTORY_IMPORT
+                    BrokerProviderCapability.TRANSACTION_HISTORY_IMPORT,
+                    // 2026-09-18: 공식 OpenAPI 스펙(POST /api/v1/orders)에 맞춰
+                    // TossOrderSubmissionProvider를 구현하며 선언한다. 이 선언만으로는
+                    // 아무 일도 일어나지 않는다 - 오토매매 opt-in 동의(grant)와
+                    // tradeguide.broker.order-execution.live-enabled(기본값 false)가
+                    // 모두 켜져야 실제로 호출된다.
+                    BrokerProviderCapability.ORDER_SUBMISSION
             ),
             Set.of(Market.US, Market.KR),
             // 원장에 쓸 수 있는 시장은 US 하나다. Trade Guide의 매매 원장에는 통화 필드가 없고

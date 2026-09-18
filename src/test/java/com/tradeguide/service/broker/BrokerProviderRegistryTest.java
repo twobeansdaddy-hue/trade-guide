@@ -133,7 +133,8 @@ class BrokerProviderRegistryTest {
         BrokerProviderRegistry fullRegistry = registryWith(
                 List.of(new StubConnectionVerifier()),
                 List.of(new StubHoldingsProvider()),
-                List.of(new StubOrderHistoryProvider())
+                List.of(new StubOrderHistoryProvider()),
+                List.of(new StubOrderSubmissionProvider())
         );
 
         assertThat(fullRegistry.availableCapabilities(BrokerProvider.TOSS_SECURITIES))
@@ -160,12 +161,13 @@ class BrokerProviderRegistryTest {
     }
 
     /**
-     * 주문 제출은 아직 어떤 증권사도 어댑터를 등록하지 않았고, TOSS_SECURITIES도 아직
-     * 이 기능을 선언하지 않았다(docs/agent-tasks/claude-broker-order-execution-dry-run-
-     * implementation-20260917.md) - 이중으로 닫혀 있어야 한다.
+     * TOSS_SECURITIES는 2026-09-18부터 ORDER_SUBMISSION을 선언하지만
+     * (`docs/agent-tasks/claude-toss-order-submission-provider-20260918.md`),
+     * 이 레지스트리 인스턴스에 어댑터를 등록하지 않으면 여전히 닫혀 있어야 한다 -
+     * 선언과 어댑터 등록 둘 다 필요하다는 이중 관문 원칙은 그대로다.
      */
     @Test
-    void keepsOrderSubmissionUnavailableUntilTossAdapterIsRegistered() {
+    void keepsOrderSubmissionUnavailableWithoutRegisteredAdapter() {
         BrokerProviderRegistry registry = registryWith(
                 List.of(new StubConnectionVerifier()),
                 List.of(new StubHoldingsProvider()),
@@ -177,6 +179,23 @@ class BrokerProviderRegistryTest {
                 .doesNotContain(BrokerProviderCapability.ORDER_SUBMISSION);
         assertThatThrownBy(() -> registry.requireOrderSubmissionProvider(BrokerProvider.TOSS_SECURITIES))
                 .isInstanceOf(BrokerConnectionUnavailableException.class);
+    }
+
+    /** 어댑터가 등록되면(TossOrderSubmissionProvider가 실제로 이 역할) 주문 제출이 열린다. */
+    @Test
+    void opensOrderSubmissionWhenAdapterIsRegistered() {
+        BrokerProviderRegistry registry = registryWith(
+                List.of(new StubConnectionVerifier()),
+                List.of(new StubHoldingsProvider()),
+                List.of(new StubOrderHistoryProvider()),
+                List.of(new StubOrderSubmissionProvider())
+        );
+
+        assertThat(registry.isOrderSubmittable(BrokerProvider.TOSS_SECURITIES)).isTrue();
+        assertThat(registry.availableCapabilities(BrokerProvider.TOSS_SECURITIES))
+                .contains(BrokerProviderCapability.ORDER_SUBMISSION);
+        assertThat(registry.requireOrderSubmissionProvider(BrokerProvider.TOSS_SECURITIES))
+                .isInstanceOf(StubOrderSubmissionProvider.class);
     }
 
     /** 기능 관문의 거부는 503이며, 클라이언트는 문구가 아니라 코드로 분기한다. */
@@ -274,7 +293,16 @@ class BrokerProviderRegistryTest {
             List<BrokerHoldingsProvider> holdingsProviders,
             List<BrokerOrderHistoryProvider> orderHistoryProviders
     ) {
-        return new BrokerProviderRegistry(verifiers, holdingsProviders, orderHistoryProviders, List.of());
+        return registryWith(verifiers, holdingsProviders, orderHistoryProviders, List.of());
+    }
+
+    private BrokerProviderRegistry registryWith(
+            List<BrokerConnectionVerifier> verifiers,
+            List<BrokerHoldingsProvider> holdingsProviders,
+            List<BrokerOrderHistoryProvider> orderHistoryProviders,
+            List<BrokerOrderSubmissionProvider> orderSubmissionProviders
+    ) {
+        return new BrokerProviderRegistry(verifiers, holdingsProviders, orderHistoryProviders, orderSubmissionProviders);
     }
 
     private static final class StubConnectionVerifier implements BrokerConnectionVerifier {
@@ -298,6 +326,18 @@ class BrokerProviderRegistryTest {
         @Override
         public BrokerHoldingSnapshot fetchHoldings(BrokerCredentials credentials, String accountSequence) {
             return new BrokerHoldingSnapshot(List.of(), 0);
+        }
+    }
+
+    private static final class StubOrderSubmissionProvider implements BrokerOrderSubmissionProvider {
+        @Override
+        public BrokerProvider getProvider() {
+            return BrokerProvider.TOSS_SECURITIES;
+        }
+
+        @Override
+        public BrokerOrderSubmissionResult submit(BrokerCredentials credentials, BrokerOrderSubmissionRequest request) {
+            return BrokerOrderSubmissionResult.submitted("stub-order-id");
         }
     }
 

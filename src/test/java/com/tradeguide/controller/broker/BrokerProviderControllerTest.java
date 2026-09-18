@@ -43,7 +43,7 @@ class BrokerProviderControllerTest {
                 .andExpect(jsonPath("$[0].connectable").value(true))
                 .andExpect(jsonPath("$[0].supportedCapabilities")
                         .value(containsInAnyOrder(
-                                "CONNECTION_VERIFICATION", "HOLDING_SNAPSHOT", "TRANSACTION_HISTORY_IMPORT")))
+                                "CONNECTION_VERIFICATION", "HOLDING_SNAPSHOT", "TRANSACTION_HISTORY_IMPORT", "ORDER_SUBMISSION")))
                 .andExpect(jsonPath("$[0].clientId").doesNotExist())
                 .andExpect(jsonPath("$[0].clientSecret").doesNotExist());
     }
@@ -130,7 +130,7 @@ class BrokerProviderControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].supportedCapabilities")
                         .value(containsInAnyOrder(
-                                "CONNECTION_VERIFICATION", "HOLDING_SNAPSHOT", "TRANSACTION_HISTORY_IMPORT")))
+                                "CONNECTION_VERIFICATION", "HOLDING_SNAPSHOT", "TRANSACTION_HISTORY_IMPORT", "ORDER_SUBMISSION")))
                 .andExpect(jsonPath("$[0].availableCapabilities").value(contains("CONNECTION_VERIFICATION")));
     }
 
