@@ -126,6 +126,15 @@ git pull --ff-only
   로 넘긴다. 매수(신규 진입)는 포지션 사이징 설계가 필요해 범위 밖으로 명시적
   분리. 기본값 비활성(`PremarketGuideScheduler`와 동일 관례). 전체 테스트
   스위트(1077개) 통과 확인.
+- 오토매매 매수(BUY, 신규 진입) 트리거 추가(같은
+  `BrokerOrderExecutionTriggerScheduler`,
+  `docs/agent-tasks/claude-broker-order-execution-buy-trigger-20260918.md`).
+  포지션 사이징을 새로 만들지 않고 기존 `TradePlanPreviewService`(위험 한도·
+  손절가 기반 계산)의 후보 매수 수량·금액을 그대로 재사용. `TradePlanPreviewStatus
+  .BUY`이고 전략 일치·USD 통화인 후보만 실행. **가용 현금 잔고 사전 확인은**
+  **하지 않음**(`CASH_BALANCE` 어댑터 미구현) - 자금 부족은 향후 실제 브로커의
+  주문 거부(`FAILED`)로 걸러지는 것을 최종 방어선으로 삼기로 사용자 승인
+  (2026-09-18). 전체 테스트 스위트(1081개) 통과 확인.
 
 ### 진행 중
 

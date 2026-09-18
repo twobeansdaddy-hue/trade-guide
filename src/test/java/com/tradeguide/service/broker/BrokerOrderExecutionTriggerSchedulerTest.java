@@ -5,15 +5,19 @@ import com.tradeguide.domain.broker.BrokerConnection;
 import com.tradeguide.domain.broker.BrokerOrderExecutionGrant;
 import com.tradeguide.domain.broker.BrokerOrderExecutionGrantStatus;
 import com.tradeguide.domain.broker.BrokerOrderExecutionRun;
+import com.tradeguide.domain.broker.BrokerOrderSide;
 import com.tradeguide.domain.member.Member;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.portfolio.PortfolioBrokerLink;
 import com.tradeguide.domain.strategy.AssetStrategyGuide;
+import com.tradeguide.domain.strategy.AssetTradePlanPreview;
 import com.tradeguide.domain.strategy.StrategyAction;
 import com.tradeguide.domain.strategy.StrategyDecision;
 import com.tradeguide.domain.strategy.StrategyGuideBatch;
 import com.tradeguide.domain.strategy.StrategyMetadata;
 import com.tradeguide.domain.strategy.StrategySignal;
+import com.tradeguide.domain.strategy.TradePlanPreviewBatch;
+import com.tradeguide.domain.strategy.TradePlanPreviewStatus;
 import com.tradeguide.domain.trade.Currency;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.domain.valuation.CurrencyValuationTotals;
@@ -22,6 +26,7 @@ import com.tradeguide.domain.valuation.PortfolioValuation;
 import com.tradeguide.repository.broker.BrokerOrderExecutionGrantRepository;
 import com.tradeguide.repository.broker.PortfolioBrokerLinkRepository;
 import com.tradeguide.service.strategy.PortfolioStrategyGuideService;
+import com.tradeguide.service.strategy.TradePlanPreviewService;
 import com.tradeguide.service.valuation.PortfolioValuationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +43,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -58,6 +64,9 @@ class BrokerOrderExecutionTriggerSchedulerTest {
     private PortfolioStrategyGuideService portfolioStrategyGuideService;
 
     @Mock
+    private TradePlanPreviewService tradePlanPreviewService;
+
+    @Mock
     private PortfolioValuationService portfolioValuationService;
 
     @Mock
@@ -76,6 +85,7 @@ class BrokerOrderExecutionTriggerSchedulerTest {
                 brokerOrderExecutionGrantRepository,
                 portfolioBrokerLinkRepository,
                 portfolioStrategyGuideService,
+                tradePlanPreviewService,
                 portfolioValuationService,
                 brokerOrderExecutionService
         );
@@ -150,6 +160,59 @@ class BrokerOrderExecutionTriggerSchedulerTest {
         verify(brokerOrderExecutionService, never()).executeOrder(any(), any(), any(), any(), any(), any(), any());
     }
 
+    // BUY(신규 진입) 평가 - TradePlanPreviewService가 계산한 수량·금액을 그대로 읽어 쓴다.
+
+    @Test
+    void executesBuyOrderWhenPlanStatusIsBuyAndStrategyMatches() {
+        stubOneLinkedPortfolio();
+        stubValuation(new BigDecimal("100000"), sellGuide(Market.US, "IRRELEVANT", "no-match"));
+        stubCandidatePlans(buyPlan(Market.US, "TQQQ", "track-a-weekly-ma-crossover"));
+
+        scheduler.evaluateActiveGrants();
+
+        verify(brokerOrderExecutionService).executeOrder(
+                eq(grant), eq("track-a-weekly-ma-crossover"), eq("TQQQ"), eq(BrokerOrderSide.BUY),
+                any(), any(), any());
+    }
+
+    @Test
+    void skipsCandidatePlanNotInBuyStatus() {
+        stubOneLinkedPortfolio();
+        stubValuation(new BigDecimal("100000"), sellGuide(Market.US, "IRRELEVANT", "no-match"));
+        AssetTradePlanPreview notReadyPlan = new AssetTradePlanPreview(
+                Market.US, "TQQQ", TradePlanPreviewStatus.NOT_READY,
+                com.tradeguide.domain.strategy.TradePlanPreviewNotReadyReason.MISSING_RISK_POLICY,
+                null, null, null, null, null, List.of(),
+                "위험 한도 미설정", metadata("track-a-weekly-ma-crossover"));
+        stubCandidatePlans(notReadyPlan);
+
+        scheduler.evaluateActiveGrants();
+
+        verify(brokerOrderExecutionService, never()).executeOrder(any(), any(), any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void skipsBuyPlanFromDifferentStrategy() {
+        stubOneLinkedPortfolio();
+        stubValuation(new BigDecimal("100000"), sellGuide(Market.US, "IRRELEVANT", "no-match"));
+        stubCandidatePlans(buyPlan(Market.US, "TQQQ", "some-other-strategy"));
+
+        scheduler.evaluateActiveGrants();
+
+        verify(brokerOrderExecutionService, never()).executeOrder(any(), any(), any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void skipsBuyPlanForNonUsdMarket() {
+        stubOneLinkedPortfolio();
+        stubValuation(new BigDecimal("100000"), sellGuide(Market.US, "IRRELEVANT", "no-match"));
+        stubCandidatePlans(buyPlan(Market.KR, "005930", "track-a-weekly-ma-crossover"));
+
+        scheduler.evaluateActiveGrants();
+
+        verify(brokerOrderExecutionService, never()).executeOrder(any(), any(), any(), any(), any(), any(), any());
+    }
+
     @Test
     void oneGrantFailureDoesNotBlockOthers() {
         BrokerOrderExecutionGrant secondGrant = mock(BrokerOrderExecutionGrant.class);
@@ -196,6 +259,8 @@ class BrokerOrderExecutionTriggerSchedulerTest {
                 .thenReturn(valuation);
         when(portfolioStrategyGuideService.getPortfolioStrategyGuides(member.getId(), portfolio.getId()))
                 .thenReturn(new StrategyGuideBatch(List.of(guide), List.of()));
+        lenient().when(tradePlanPreviewService.getTradePlanPreview(member.getId(), portfolio.getId()))
+                .thenReturn(new TradePlanPreviewBatch(List.of(), List.of(), List.of()));
         lenient().when(brokerOrderExecutionService.executeOrder(any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(mock(BrokerOrderExecutionRun.class));
     }
@@ -211,5 +276,22 @@ class BrokerOrderExecutionTriggerSchedulerTest {
                 new BigDecimal("110"), "10주선이 40주선 아래로 교차",
                 new StrategyMetadata(strategyId, "1.0", LocalDateTime.now().toLocalDate()),
                 null, null, null);
+    }
+
+    private void stubCandidatePlans(AssetTradePlanPreview... plans) {
+        when(tradePlanPreviewService.getTradePlanPreview(member.getId(), portfolio.getId()))
+                .thenReturn(new TradePlanPreviewBatch(List.of(plans), List.of(), List.of()));
+    }
+
+    private AssetTradePlanPreview buyPlan(Market market, String ticker, String strategyId) {
+        return new AssetTradePlanPreview(
+                market, ticker, TradePlanPreviewStatus.BUY, null,
+                new BigDecimal("55"), new BigDecimal("50"),
+                new BigDecimal("10"), new BigDecimal("550"), new BigDecimal("50"),
+                List.of(), "검토용 매수 계획", metadata(strategyId));
+    }
+
+    private StrategyMetadata metadata(String strategyId) {
+        return new StrategyMetadata(strategyId, "1.0", LocalDateTime.now().toLocalDate());
     }
 }
