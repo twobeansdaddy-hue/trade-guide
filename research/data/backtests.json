@@ -4230,25 +4230,60 @@
     "created_date": "2026-09-17",
     "summary": "Track A 매크로 오버레이 첫 가설: 진입(CROSS_UP delay=0) 시점 VIX 레벨이 높을수록 이후 사이클 수익률이 나쁘다는 사전등록 가설을 SOXL/TQQQ/TNA/FAS 42개 유효 사이클로 검증. 진입 VIX와 사이클 수익률의 피어슨 상관계수는 -0.006으로 사실상 무상관. 임계값(VIX>=25, VIX>=30) 비교에서도 방향이 가설과 반대(고VIX 진입 소수 사례가 오히려 우수)였으나 표본이 각 3건, 1건뿐이라 신뢰 불가. 가설 기각.",
     "metrics": {
-      "preRegisteredThresholds": [25.0, 30.0],
+      "preRegisteredThresholds": [
+        25.0,
+        30.0
+      ],
       "totalValidCycles": 42,
       "perTickerCycleCounts": {
-        "SOXL": { "numClosedCycles": 7, "numOpenCycles": 1 },
-        "TQQQ": { "numClosedCycles": 8, "numOpenCycles": 1 },
-        "TNA": { "numClosedCycles": 14, "numOpenCycles": 1 },
-        "FAS": { "numClosedCycles": 13, "numOpenCycles": 1 }
+        "SOXL": {
+          "numClosedCycles": 7,
+          "numOpenCycles": 1
+        },
+        "TQQQ": {
+          "numClosedCycles": 8,
+          "numOpenCycles": 1
+        },
+        "TNA": {
+          "numClosedCycles": 14,
+          "numOpenCycles": 1
+        },
+        "FAS": {
+          "numClosedCycles": 13,
+          "numOpenCycles": 1
+        }
       },
       "correlation": {
         "pearson_entryVix_vs_returnPct": -0.006
       },
       "byThreshold": {
         "25.0": {
-          "belowThreshold": { "n": 39, "winRatePct": 43.6, "avgReturnPct": 42.05, "medianReturnPct": -6.97 },
-          "atOrAboveThreshold": { "n": 3, "winRatePct": 66.7, "avgReturnPct": 70.6, "medianReturnPct": 114.82 }
+          "belowThreshold": {
+            "n": 39,
+            "winRatePct": 43.6,
+            "avgReturnPct": 42.05,
+            "medianReturnPct": -6.97
+          },
+          "atOrAboveThreshold": {
+            "n": 3,
+            "winRatePct": 66.7,
+            "avgReturnPct": 70.6,
+            "medianReturnPct": 114.82
+          }
         },
         "30.0": {
-          "belowThreshold": { "n": 41, "winRatePct": 43.9, "avgReturnPct": 42.36, "medianReturnPct": -6.97 },
-          "atOrAboveThreshold": { "n": 1, "winRatePct": 100.0, "avgReturnPct": 114.82, "medianReturnPct": 114.82 }
+          "belowThreshold": {
+            "n": 41,
+            "winRatePct": 43.9,
+            "avgReturnPct": 42.36,
+            "medianReturnPct": -6.97
+          },
+          "atOrAboveThreshold": {
+            "n": 1,
+            "winRatePct": 100.0,
+            "avgReturnPct": 114.82,
+            "medianReturnPct": 114.82
+          }
         }
       }
     },
@@ -4289,53 +4324,170 @@
         "bollingerPeriod": 20,
         "bollingerStdMult": 2.0,
         "maxHoldingWeeks": 8,
-        "costScenariosRoundTripBps": [0, 20, 40, 57]
+        "costScenariosRoundTripBps": [
+          0,
+          20,
+          40,
+          57
+        ]
       },
       "partitions": {
         "2way": {
           "2way-A": {
             "label": "2015-01-01 ~ 2019-12-31",
             "ruleA_rsi": {
-              "0.0": { "strategyReturnPct": 94.03, "benchmarkReturnPct": 0.74, "excessReturnPctPoints": 93.28, "strategyMaxDrawdownPct": -59.82, "benchmarkMaxDrawdownPct": -29.14, "strategyMonthlyTurnoverPct": 172.01 },
-              "57.0": { "strategyReturnPct": 44.58, "benchmarkReturnPct": 0.46, "excessReturnPctPoints": 44.13, "strategyMaxDrawdownPct": -59.84, "benchmarkMaxDrawdownPct": -29.14, "strategyMonthlyTurnoverPct": 172.10 }
+              "0.0": {
+                "strategyReturnPct": 94.03,
+                "benchmarkReturnPct": 0.74,
+                "excessReturnPctPoints": 93.28,
+                "strategyMaxDrawdownPct": -59.82,
+                "benchmarkMaxDrawdownPct": -29.14,
+                "strategyMonthlyTurnoverPct": 172.01
+              },
+              "57.0": {
+                "strategyReturnPct": 44.58,
+                "benchmarkReturnPct": 0.46,
+                "excessReturnPctPoints": 44.13,
+                "strategyMaxDrawdownPct": -59.84,
+                "benchmarkMaxDrawdownPct": -29.14,
+                "strategyMonthlyTurnoverPct": 172.1
+              }
             },
             "ruleB_bollinger": {
-              "0.0": { "strategyReturnPct": 25.46, "benchmarkReturnPct": 0.38, "excessReturnPctPoints": 25.09, "strategyMaxDrawdownPct": -41.00, "benchmarkMaxDrawdownPct": -29.06, "strategyMonthlyTurnoverPct": 180.38 },
-              "57.0": { "strategyReturnPct": -7.88, "benchmarkReturnPct": 0.09, "excessReturnPctPoints": -7.97, "strategyMaxDrawdownPct": -41.02, "benchmarkMaxDrawdownPct": -29.06, "strategyMonthlyTurnoverPct": 180.48 }
+              "0.0": {
+                "strategyReturnPct": 25.46,
+                "benchmarkReturnPct": 0.38,
+                "excessReturnPctPoints": 25.09,
+                "strategyMaxDrawdownPct": -41.0,
+                "benchmarkMaxDrawdownPct": -29.06,
+                "strategyMonthlyTurnoverPct": 180.38
+              },
+              "57.0": {
+                "strategyReturnPct": -7.88,
+                "benchmarkReturnPct": 0.09,
+                "excessReturnPctPoints": -7.97,
+                "strategyMaxDrawdownPct": -41.02,
+                "benchmarkMaxDrawdownPct": -29.06,
+                "strategyMonthlyTurnoverPct": 180.48
+              }
             }
           },
           "2way-B": {
             "label": "2020-01-01 ~ 2026-09-10",
             "ruleA_rsi": {
-              "0.0": { "strategyReturnPct": 121.00, "benchmarkReturnPct": 264.49, "excessReturnPctPoints": -143.50, "strategyMaxDrawdownPct": 0.00, "benchmarkMaxDrawdownPct": -39.78, "strategyMonthlyTurnoverPct": 154.39 },
-              "57.0": { "strategyReturnPct": 54.97, "benchmarkReturnPct": 263.45, "excessReturnPctPoints": -208.49, "strategyMaxDrawdownPct": 0.00, "benchmarkMaxDrawdownPct": -39.78, "strategyMonthlyTurnoverPct": 154.46 }
+              "0.0": {
+                "strategyReturnPct": 121.0,
+                "benchmarkReturnPct": 264.49,
+                "excessReturnPctPoints": -143.5,
+                "strategyMaxDrawdownPct": 0.0,
+                "benchmarkMaxDrawdownPct": -39.78,
+                "strategyMonthlyTurnoverPct": 154.39
+              },
+              "57.0": {
+                "strategyReturnPct": 54.97,
+                "benchmarkReturnPct": 263.45,
+                "excessReturnPctPoints": -208.49,
+                "strategyMaxDrawdownPct": 0.0,
+                "benchmarkMaxDrawdownPct": -39.78,
+                "strategyMonthlyTurnoverPct": 154.46
+              }
             },
             "ruleB_bollinger": {
-              "0.0": { "strategyReturnPct": 104.44, "benchmarkReturnPct": 264.49, "excessReturnPctPoints": -160.06, "strategyMaxDrawdownPct": -38.48, "benchmarkMaxDrawdownPct": -39.78, "strategyMonthlyTurnoverPct": 209.00 },
-              "57.0": { "strategyReturnPct": 26.53, "benchmarkReturnPct": 263.45, "excessReturnPctPoints": -236.93, "strategyMaxDrawdownPct": -38.48, "benchmarkMaxDrawdownPct": -39.78, "strategyMonthlyTurnoverPct": 209.11 }
+              "0.0": {
+                "strategyReturnPct": 104.44,
+                "benchmarkReturnPct": 264.49,
+                "excessReturnPctPoints": -160.06,
+                "strategyMaxDrawdownPct": -38.48,
+                "benchmarkMaxDrawdownPct": -39.78,
+                "strategyMonthlyTurnoverPct": 209.0
+              },
+              "57.0": {
+                "strategyReturnPct": 26.53,
+                "benchmarkReturnPct": 263.45,
+                "excessReturnPctPoints": -236.93,
+                "strategyMaxDrawdownPct": -38.48,
+                "benchmarkMaxDrawdownPct": -39.78,
+                "strategyMonthlyTurnoverPct": 209.11
+              }
             }
           }
         },
         "4way": {
           "4way-A": {
             "label": "2015-01-01 ~ 2017-12-31",
-            "ruleA_rsi": { "0.0": { "excessReturnPctPoints": 26.13 }, "57.0": { "excessReturnPctPoints": 4.91 } },
-            "ruleB_bollinger": { "0.0": { "excessReturnPctPoints": 7.03 }, "57.0": { "excessReturnPctPoints": -12.86 } }
+            "ruleA_rsi": {
+              "0.0": {
+                "excessReturnPctPoints": 26.13
+              },
+              "57.0": {
+                "excessReturnPctPoints": 4.91
+              }
+            },
+            "ruleB_bollinger": {
+              "0.0": {
+                "excessReturnPctPoints": 7.03
+              },
+              "57.0": {
+                "excessReturnPctPoints": -12.86
+              }
+            }
           },
           "4way-B": {
             "label": "2018-01-01 ~ 2020-12-31",
-            "ruleA_rsi": { "0.0": { "excessReturnPctPoints": 56.39 }, "57.0": { "excessReturnPctPoints": 26.43 } },
-            "ruleB_bollinger": { "0.0": { "excessReturnPctPoints": 5.38 }, "57.0": { "excessReturnPctPoints": -16.32 } }
+            "ruleA_rsi": {
+              "0.0": {
+                "excessReturnPctPoints": 56.39
+              },
+              "57.0": {
+                "excessReturnPctPoints": 26.43
+              }
+            },
+            "ruleB_bollinger": {
+              "0.0": {
+                "excessReturnPctPoints": 5.38
+              },
+              "57.0": {
+                "excessReturnPctPoints": -16.32
+              }
+            }
           },
           "4way-C": {
             "label": "2021-01-01 ~ 2023-12-31",
-            "ruleA_rsi": { "0.0": { "excessReturnPctPoints": -16.70 }, "57.0": { "excessReturnPctPoints": -31.30 } },
-            "ruleB_bollinger": { "0.0": { "excessReturnPctPoints": 6.95 }, "57.0": { "excessReturnPctPoints": -18.62 } }
+            "ruleA_rsi": {
+              "0.0": {
+                "excessReturnPctPoints": -16.7
+              },
+              "57.0": {
+                "excessReturnPctPoints": -31.3
+              }
+            },
+            "ruleB_bollinger": {
+              "0.0": {
+                "excessReturnPctPoints": 6.95
+              },
+              "57.0": {
+                "excessReturnPctPoints": -18.62
+              }
+            }
           },
           "4way-D": {
             "label": "2024-01-01 ~ 2026-09-10",
-            "ruleA_rsi": { "0.0": { "excessReturnPctPoints": -73.85 }, "57.0": { "excessReturnPctPoints": -92.71 } },
-            "ruleB_bollinger": { "0.0": { "excessReturnPctPoints": -96.19 }, "57.0": { "excessReturnPctPoints": -116.03 } }
+            "ruleA_rsi": {
+              "0.0": {
+                "excessReturnPctPoints": -73.85
+              },
+              "57.0": {
+                "excessReturnPctPoints": -92.71
+              }
+            },
+            "ruleB_bollinger": {
+              "0.0": {
+                "excessReturnPctPoints": -96.19
+              },
+              "57.0": {
+                "excessReturnPctPoints": -116.03
+              }
+            }
           }
         }
       }
@@ -4369,43 +4521,100 @@
         "formationWeeks": 52,
         "excludeRecentWeeks": 4,
         "rebalancePeriodWeeks": 13,
-        "topTierFraction": 0.20,
-        "holdTierFraction": 0.40,
-        "costScenariosRoundTripBps": [0, 20, 40, 57]
+        "topTierFraction": 0.2,
+        "holdTierFraction": 0.4,
+        "costScenariosRoundTripBps": [
+          0,
+          20,
+          40,
+          57
+        ]
       },
       "partitions": {
         "2way": {
           "2way-A": {
             "label": "2015-01-01 ~ 2019-12-31",
-            "0.0": { "strategyReturnPct": 5.02, "benchmarkReturnPct": 14.54, "excessReturnPctPoints": -9.53, "strategyMaxDrawdownPct": -24.79, "benchmarkMaxDrawdownPct": -26.76, "strategyMonthlyTurnoverPct": 21.14 },
-            "57.0": { "strategyReturnPct": 5.00, "benchmarkReturnPct": 14.22, "excessReturnPctPoints": -9.22, "strategyMaxDrawdownPct": -24.76, "benchmarkMaxDrawdownPct": -26.76, "strategyMonthlyTurnoverPct": 21.13 }
+            "0.0": {
+              "strategyReturnPct": 5.02,
+              "benchmarkReturnPct": 14.54,
+              "excessReturnPctPoints": -9.53,
+              "strategyMaxDrawdownPct": -24.79,
+              "benchmarkMaxDrawdownPct": -26.76,
+              "strategyMonthlyTurnoverPct": 21.14
+            },
+            "57.0": {
+              "strategyReturnPct": 5.0,
+              "benchmarkReturnPct": 14.22,
+              "excessReturnPctPoints": -9.22,
+              "strategyMaxDrawdownPct": -24.76,
+              "benchmarkMaxDrawdownPct": -26.76,
+              "strategyMonthlyTurnoverPct": 21.13
+            }
           },
           "2way-B": {
             "label": "2020-01-01 ~ 2026-09-10",
-            "0.0": { "strategyReturnPct": 838.78, "benchmarkReturnPct": 474.64, "excessReturnPctPoints": 364.14, "strategyMaxDrawdownPct": -40.89, "benchmarkMaxDrawdownPct": -39.09, "strategyMonthlyTurnoverPct": 19.10 },
-            "57.0": { "strategyReturnPct": 836.97, "benchmarkReturnPct": 473.00, "excessReturnPctPoints": 363.97, "strategyMaxDrawdownPct": -40.85, "benchmarkMaxDrawdownPct": -39.09, "strategyMonthlyTurnoverPct": 19.09 }
+            "0.0": {
+              "strategyReturnPct": 838.78,
+              "benchmarkReturnPct": 474.64,
+              "excessReturnPctPoints": 364.14,
+              "strategyMaxDrawdownPct": -40.89,
+              "benchmarkMaxDrawdownPct": -39.09,
+              "strategyMonthlyTurnoverPct": 19.1
+            },
+            "57.0": {
+              "strategyReturnPct": 836.97,
+              "benchmarkReturnPct": 473.0,
+              "excessReturnPctPoints": 363.97,
+              "strategyMaxDrawdownPct": -40.85,
+              "benchmarkMaxDrawdownPct": -39.09,
+              "strategyMonthlyTurnoverPct": 19.09
+            }
           }
         },
         "4way": {
           "4way-A": {
             "label": "2015-01-01 ~ 2017-12-31",
-            "0.0": { "excessReturnPctPoints": -12.12, "strategyMaxDrawdownPct": -8.69, "benchmarkMaxDrawdownPct": -6.62 },
-            "57.0": { "excessReturnPctPoints": -11.77 }
+            "0.0": {
+              "excessReturnPctPoints": -12.12,
+              "strategyMaxDrawdownPct": -8.69,
+              "benchmarkMaxDrawdownPct": -6.62
+            },
+            "57.0": {
+              "excessReturnPctPoints": -11.77
+            }
           },
           "4way-B": {
             "label": "2018-01-01 ~ 2020-12-31",
-            "0.0": { "excessReturnPctPoints": 23.62, "strategyMaxDrawdownPct": -53.38, "benchmarkMaxDrawdownPct": -42.13 },
-            "57.0": { "excessReturnPctPoints": 23.97 }
+            "0.0": {
+              "excessReturnPctPoints": 23.62,
+              "strategyMaxDrawdownPct": -53.38,
+              "benchmarkMaxDrawdownPct": -42.13
+            },
+            "57.0": {
+              "excessReturnPctPoints": 23.97
+            }
           },
           "4way-C": {
             "label": "2021-01-01 ~ 2023-12-31",
-            "0.0": { "excessReturnPctPoints": 8.67, "strategyMaxDrawdownPct": -27.22, "benchmarkMaxDrawdownPct": -21.09 },
-            "57.0": { "excessReturnPctPoints": 8.96 }
+            "0.0": {
+              "excessReturnPctPoints": 8.67,
+              "strategyMaxDrawdownPct": -27.22,
+              "benchmarkMaxDrawdownPct": -21.09
+            },
+            "57.0": {
+              "excessReturnPctPoints": 8.96
+            }
           },
           "4way-D": {
             "label": "2024-01-01 ~ 2026-09-10",
-            "0.0": { "excessReturnPctPoints": 73.95, "strategyMaxDrawdownPct": -40.89, "benchmarkMaxDrawdownPct": -31.04 },
-            "57.0": { "excessReturnPctPoints": 74.31 }
+            "0.0": {
+              "excessReturnPctPoints": 73.95,
+              "strategyMaxDrawdownPct": -40.89,
+              "benchmarkMaxDrawdownPct": -31.04
+            },
+            "57.0": {
+              "excessReturnPctPoints": 74.31
+            }
           }
         }
       }
@@ -4436,19 +4645,42 @@
     "summary": "Track A 매크로 오버레이 두 번째 가설: 진입(CROSS_UP delay=0) 직전 8주간 10년물 금리(DGS10) 변화가 클수록(급등) 이후 사이클 수익률이 나쁘다는 사전등록 가설을 VIX 리포트와 동일한 42개 유효 사이클로 검증. 피어슨 상관계수 +0.087로 사실상 무상관(방향도 가설과 반대). 42건 중 8주간 +50bps 이상 급등 사례가 1건, +100bps 이상은 0건이라 임계값 비교는 통계적으로 무의미. VIX 레벨 필터에 이어 두 번째로 기각된 매크로 진입 필터 가설.",
     "metrics": {
       "lookbackWeeks": 8,
-      "preRegisteredThresholdsBps": [50.0, 100.0],
+      "preRegisteredThresholdsBps": [
+        50.0,
+        100.0
+      ],
       "totalValidCycles": 42,
       "correlation": {
         "pearson_rateChangeBps_vs_returnPct": 0.087
       },
       "byThreshold": {
         "50.0": {
-          "belowThreshold": { "n": 41, "winRatePct": 46.3, "avgReturnPct": 45.6, "medianReturnPct": -5.04 },
-          "atOrAboveThreshold": { "n": 1, "winRatePct": 0.0, "avgReturnPct": -18.14, "medianReturnPct": -18.14 }
+          "belowThreshold": {
+            "n": 41,
+            "winRatePct": 46.3,
+            "avgReturnPct": 45.6,
+            "medianReturnPct": -5.04
+          },
+          "atOrAboveThreshold": {
+            "n": 1,
+            "winRatePct": 0.0,
+            "avgReturnPct": -18.14,
+            "medianReturnPct": -18.14
+          }
         },
         "100.0": {
-          "belowThreshold": { "n": 42, "winRatePct": 45.2, "avgReturnPct": 44.09, "medianReturnPct": -6.0 },
-          "atOrAboveThreshold": { "n": 0, "winRatePct": null, "avgReturnPct": null, "medianReturnPct": null }
+          "belowThreshold": {
+            "n": 42,
+            "winRatePct": 45.2,
+            "avgReturnPct": 44.09,
+            "medianReturnPct": -6.0
+          },
+          "atOrAboveThreshold": {
+            "n": 0,
+            "winRatePct": null,
+            "avgReturnPct": null,
+            "medianReturnPct": null
+          }
         }
       }
     },
@@ -4477,13 +4709,24 @@
     "created_date": "2026-09-17",
     "summary": "Track A 매크로 오버레이 세 번째 가설: 보유 중 VIX가 임계값 이상 급등하면 원래 CROSS_DOWN 청산 신호를 기다리지 않고 즉시 조기청산하는 리스크관리 레이어. VIX>=30/35 두 임계값 모두 42사이클 중 19건(45%) 발동. 전체 평균수익률은 악화(+44.09%->+39.06%, -5.02%p @VIX30), 승률은 불변, 중앙값은 소폭 개선. 대형손실(-30%이하) 4건 중 3건은 손실 크게 축소됐으나, 대형이익(+100%이상) 12건 중 4건(전부 2020년 코로나 급락-급반등 사이클)에서 반등분을 통째로 놓쳐 -119~-138%p 악화. 단순 형태로는 기각 - 이 전략의 핵심 수익원(대형 반등 포착)과 직접 충돌.",
     "metrics": {
-      "preRegisteredThresholds": [30.0, 35.0],
+      "preRegisteredThresholds": [
+        30.0,
+        35.0
+      ],
       "totalValidCycles": 42,
       "byThreshold": {
         "30.0": {
           "triggeredCount": 19,
-          "original": { "winRatePct": 45.2, "avgReturnPct": 44.09, "medianReturnPct": -6.0 },
-          "withEarlyExit": { "winRatePct": 45.2, "avgReturnPct": 39.06, "medianReturnPct": -4.88 },
+          "original": {
+            "winRatePct": 45.2,
+            "avgReturnPct": 44.09,
+            "medianReturnPct": -6.0
+          },
+          "withEarlyExit": {
+            "winRatePct": 45.2,
+            "avgReturnPct": 39.06,
+            "medianReturnPct": -4.88
+          },
           "avgImprovementPctPoints": -5.02,
           "largeLossCyclesImproved": 3,
           "largeLossCyclesTotal": 4,
@@ -4492,8 +4735,16 @@
         },
         "35.0": {
           "triggeredCount": 19,
-          "original": { "winRatePct": 45.2, "avgReturnPct": 44.09, "medianReturnPct": -6.0 },
-          "withEarlyExit": { "winRatePct": 45.2, "avgReturnPct": 40.39, "medianReturnPct": -4.31 },
+          "original": {
+            "winRatePct": 45.2,
+            "avgReturnPct": 44.09,
+            "medianReturnPct": -6.0
+          },
+          "withEarlyExit": {
+            "winRatePct": 45.2,
+            "avgReturnPct": 40.39,
+            "medianReturnPct": -4.31
+          },
           "avgImprovementPctPoints": -3.69
         }
       }
@@ -4524,20 +4775,43 @@
     "summary": "Track A 매크로 오버레이 네 번째 가설: 보유 중 VIX 급등 시 즉시 청산 대신 K주 지연 확인(여전히 하락 중일 때만 청산) 후 청산. K=3주에서 평균수익률 +44.89%(원래 +44.09%, 즉시청산 +39.06% 대비 개선), K=6주에서는 오히려 -0.43%p 악화. 2020년 코로나 V자반등 4개 사이클은 전부 청산 회피로 원래 수익률 보존(즉시청산의 -119~-138%p 훼손 제거)됐으나, 2019년 대형손실 3개 중 2개(TNA/FAS)는 확인지연이 원래 청산일을 넘겨 규칙이 무력화되며 즉시청산의 손실회피 효과도 함께 사라짐. 개선분 대부분이 '하락지속 판별'이 아니라 '규칙 무력화'에서 옴 - 표면적 개선(+0.81%p)은 42건 표본 분산 대비 작아 명확한 채택 근거 아님.",
     "metrics": {
       "vixThreshold": 30.0,
-      "confirmationLagWeeksTested": [3, 6],
+      "confirmationLagWeeksTested": [
+        3,
+        6
+      ],
       "totalValidCycles": 42,
       "byLag": {
         "3": {
-          "triggeredCount": 19, "confirmedExitCount": 7, "avoidedExitCount": 12,
-          "original": { "winRatePct": 45.2, "avgReturnPct": 44.09, "medianReturnPct": -6.0 },
-          "immediateExit": { "winRatePct": 45.2, "avgReturnPct": 39.06, "medianReturnPct": -4.88 },
-          "delayedConfirmationExit": { "winRatePct": 45.2, "avgReturnPct": 44.89, "medianReturnPct": -4.44 },
+          "triggeredCount": 19,
+          "confirmedExitCount": 7,
+          "avoidedExitCount": 12,
+          "original": {
+            "winRatePct": 45.2,
+            "avgReturnPct": 44.09,
+            "medianReturnPct": -6.0
+          },
+          "immediateExit": {
+            "winRatePct": 45.2,
+            "avgReturnPct": 39.06,
+            "medianReturnPct": -4.88
+          },
+          "delayedConfirmationExit": {
+            "winRatePct": 45.2,
+            "avgReturnPct": 44.89,
+            "medianReturnPct": -4.44
+          },
           "avgImprovementVsOriginalPctPoints": 0.81,
           "avgImprovementVsImmediatePctPoints": 5.83
         },
         "6": {
-          "triggeredCount": 19, "confirmedExitCount": 8, "avoidedExitCount": 11,
-          "delayedConfirmationExit": { "winRatePct": 45.2, "avgReturnPct": 43.66, "medianReturnPct": -6.0 },
+          "triggeredCount": 19,
+          "confirmedExitCount": 8,
+          "avoidedExitCount": 11,
+          "delayedConfirmationExit": {
+            "winRatePct": 45.2,
+            "avgReturnPct": 43.66,
+            "medianReturnPct": -6.0
+          },
           "avgImprovementVsOriginalPctPoints": -0.43,
           "avgImprovementVsImmediatePctPoints": 4.59
         }
@@ -4568,19 +4842,42 @@
     "created_date": "2026-09-17",
     "summary": "Track A 매크로 오버레이 다섯 번째 가설: 진입(CROSS_UP delay=0) 시점 신용스프레드(BAA10Y, Moody's Baa 회사채-10년물 국채)가 높을수록 사이클 수익률이 나쁘다는 사전등록 가설을 42개 유효 사이클로 검증. 피어슨 상관계수 +0.385(가설과 반대 방향)이나 3.0%p 임계값 비교에서는 스프레드 높을수록 승률·평균 낮음(가설과 일치) - 두 검증 결과가 서로 모순돼 신뢰할 수 없는 신호로 판정, 기각. 극단적 승자 사이클(SOXL 2016 +475.64% 등)이 2012-2013/2016년 위기후 회복기 스프레드 구간에 몰려있어 상관계수가 교란됐을 가능성. 애초 계획한 BAMLH0A0HYM2(하이일드 OAS)는 FRED 재배포 제약으로 2023-09-18 이후만 제공돼 대체 지표(BAA10Y) 사용.",
     "metrics": {
-      "preRegisteredThresholds": [3.0, 4.0],
+      "preRegisteredThresholds": [
+        3.0,
+        4.0
+      ],
       "totalValidCycles": 42,
       "correlation": {
         "pearson_entryCreditSpread_vs_returnPct": 0.385
       },
       "byThreshold": {
         "3.0": {
-          "belowThreshold": { "n": 34, "winRatePct": 47.1, "avgReturnPct": 45.42, "medianReturnPct": -5.28 },
-          "atOrAboveThreshold": { "n": 8, "winRatePct": 37.5, "avgReturnPct": 38.43, "medianReturnPct": -6.81 }
+          "belowThreshold": {
+            "n": 34,
+            "winRatePct": 47.1,
+            "avgReturnPct": 45.42,
+            "medianReturnPct": -5.28
+          },
+          "atOrAboveThreshold": {
+            "n": 8,
+            "winRatePct": 37.5,
+            "avgReturnPct": 38.43,
+            "medianReturnPct": -6.81
+          }
         },
         "4.0": {
-          "belowThreshold": { "n": 42, "winRatePct": 45.2, "avgReturnPct": 44.09, "medianReturnPct": -6.0 },
-          "atOrAboveThreshold": { "n": 0, "winRatePct": null, "avgReturnPct": null, "medianReturnPct": null }
+          "belowThreshold": {
+            "n": 42,
+            "winRatePct": 45.2,
+            "avgReturnPct": 44.09,
+            "medianReturnPct": -6.0
+          },
+          "atOrAboveThreshold": {
+            "n": 0,
+            "winRatePct": null,
+            "avgReturnPct": null,
+            "medianReturnPct": null
+          }
         }
       }
     },
@@ -4609,20 +4906,49 @@
     "created_date": "2026-09-17",
     "summary": "Track A 매크로 오버레이 여섯 번째 가설(첫 모멘텀/섹터로테이션 신호): 진입 시점 직전 N주간 기초지수(SOXX/QQQ/IWM/XLF)의 SPY 대비 상대강도가 강할수록 이후 사이클 수익률이 좋다는 가설. 13주 lookback에서 상관계수 +0.112(약하지만 가설 방향과 일치), 5%p 임계값 비교에서 승률(43.3%->50.0%)·평균(+33.19%->+71.32%)·중앙값(-7.23%->+5.4%) 전부 개선 - 이번 세션 6개 매크로 가설 중 최초로 상관계수와 임계값 비교가 모순 없이 일치. 그러나 26주 lookback에서는 상관계수가 -0.021로 거의 사라져 lookback 민감도가 높음. '추가 검증 필요'로 분류, 아직 채택하지 않음.",
     "metrics": {
-      "underlyingMap": { "SOXL": "SOXX", "TQQQ": "QQQ", "TNA": "IWM", "FAS": "XLF" },
+      "underlyingMap": {
+        "SOXL": "SOXX",
+        "TQQQ": "QQQ",
+        "TNA": "IWM",
+        "FAS": "XLF"
+      },
       "benchmark": "SPY",
       "preRegisteredThresholdPct": 5.0,
       "totalValidCycles": 42,
       "byLookback": {
         "13": {
-          "correlation": { "pearson_relativeStrengthPct_vs_returnPct": 0.112 },
-          "belowThreshold": { "n": 30, "winRatePct": 43.3, "avgReturnPct": 33.19, "medianReturnPct": -7.23 },
-          "atOrAboveThreshold": { "n": 12, "winRatePct": 50.0, "avgReturnPct": 71.32, "medianReturnPct": 5.4 }
+          "correlation": {
+            "pearson_relativeStrengthPct_vs_returnPct": 0.112
+          },
+          "belowThreshold": {
+            "n": 30,
+            "winRatePct": 43.3,
+            "avgReturnPct": 33.19,
+            "medianReturnPct": -7.23
+          },
+          "atOrAboveThreshold": {
+            "n": 12,
+            "winRatePct": 50.0,
+            "avgReturnPct": 71.32,
+            "medianReturnPct": 5.4
+          }
         },
         "26": {
-          "correlation": { "pearson_relativeStrengthPct_vs_returnPct": -0.021 },
-          "belowThreshold": { "n": 35, "winRatePct": 42.9, "avgReturnPct": 44.81, "medianReturnPct": -6.97 },
-          "atOrAboveThreshold": { "n": 7, "winRatePct": 57.1, "avgReturnPct": 40.46, "medianReturnPct": 17.77 }
+          "correlation": {
+            "pearson_relativeStrengthPct_vs_returnPct": -0.021
+          },
+          "belowThreshold": {
+            "n": 35,
+            "winRatePct": 42.9,
+            "avgReturnPct": 44.81,
+            "medianReturnPct": -6.97
+          },
+          "atOrAboveThreshold": {
+            "n": 7,
+            "winRatePct": 57.1,
+            "avgReturnPct": 40.46,
+            "medianReturnPct": 17.77
+          }
         }
       }
     },
@@ -4652,14 +4978,48 @@
     "summary": "track-a-sector-relative-strength-entry-filter-2010-2026(13주 lookback 상관계수 +0.112)의 강건성 후속 검증. (a) lookback 민감도: 8/17/26주에서는 상관계수가 근처 0이거나 반대 부호(-0.054/-0.066/-0.021)이며 임계값 비교 방향도 13주와 반대 - 13주만의 우연으로 보임. (b) 시간분할(42건을 21/21로 정확히 절반): 앞 절반 상관계수 -0.027, 뒤 절반 +0.503으로 이질적 - 전체 +0.112는 두 이질적 국면의 평균. 사전등록한 판정기준(양 절반 모두 방향 일치)을 충족하지 못해 '국면 의존적'으로 최종 기각. 여섯 가지 매크로 가설(VIX 레벨/금리 변화율/VIX 급등 즉시·지연확인청산/신용스프레드/섹터 상대강도) 전부 최종적으로 채택 근거 없음 - Track A 매크로 오버레이 조사 마무리 권고.",
     "metrics": {
       "sensitivityByLookback": {
-        "8": { "correlation": -0.054, "belowThresholdAvgReturnPct": 46.2, "atOrAboveThresholdAvgReturnPct": 31.4 },
-        "13": { "correlation": 0.112, "belowThresholdAvgReturnPct": 33.19, "atOrAboveThresholdAvgReturnPct": 71.32 },
-        "17": { "correlation": -0.066, "belowThresholdAvgReturnPct": 48.58, "atOrAboveThresholdAvgReturnPct": 25.0 },
-        "26": { "correlation": -0.021, "belowThresholdAvgReturnPct": 44.81, "atOrAboveThresholdAvgReturnPct": 40.46 }
+        "8": {
+          "correlation": -0.054,
+          "belowThresholdAvgReturnPct": 46.2,
+          "atOrAboveThresholdAvgReturnPct": 31.4
+        },
+        "13": {
+          "correlation": 0.112,
+          "belowThresholdAvgReturnPct": 33.19,
+          "atOrAboveThresholdAvgReturnPct": 71.32
+        },
+        "17": {
+          "correlation": -0.066,
+          "belowThresholdAvgReturnPct": 48.58,
+          "atOrAboveThresholdAvgReturnPct": 25.0
+        },
+        "26": {
+          "correlation": -0.021,
+          "belowThresholdAvgReturnPct": 44.81,
+          "atOrAboveThresholdAvgReturnPct": 40.46
+        }
       },
       "temporalSplit13Weeks": {
-        "firstHalf": { "dateRange": ["2009-08-31", "2019-03-25"], "n": 21, "correlation": -0.027, "belowThresholdAvgReturnPct": 57.18, "atOrAboveThresholdAvgReturnPct": 98.67 },
-        "secondHalf": { "dateRange": ["2019-04-08", "2025-07-07"], "n": 21, "correlation": 0.503, "belowThresholdAvgReturnPct": 9.2, "atOrAboveThresholdAvgReturnPct": 43.97 },
+        "firstHalf": {
+          "dateRange": [
+            "2009-08-31",
+            "2019-03-25"
+          ],
+          "n": 21,
+          "correlation": -0.027,
+          "belowThresholdAvgReturnPct": 57.18,
+          "atOrAboveThresholdAvgReturnPct": 98.67
+        },
+        "secondHalf": {
+          "dateRange": [
+            "2019-04-08",
+            "2025-07-07"
+          ],
+          "n": 21,
+          "correlation": 0.503,
+          "belowThresholdAvgReturnPct": 9.2,
+          "atOrAboveThresholdAvgReturnPct": 43.97
+        },
         "verdict": "국면 의존적 - 추가 채택 보류"
       }
     },
@@ -4689,15 +5049,30 @@
     "summary": "오토매매 전환 검토를 위해 Track A 프로덕션 규칙 42사이클에 거래마찰비용(왕복 0.30%p, 기존 가정 재사용)과 해외주식 양도소득세(22%, 이 프로젝트 최초 반영)를 적용해 재계산. 친션비용 영향은 미미(평균 -0.30%p, 사이클당 진입/청산 각 1회뿐이므로)하지만 세금 영향은 큼(평균 -12.45%p, 상대 약 28% 감소) - 세후 평균 +31.34%로 여전히 강하게 양(+)이나, 중앙값은 세전과 동일하게 음(-6.3%)으로 '전형적 사이클은 손실, 소수 대형승자가 평균 견인'이라는 성격은 세후에도 불변. 대형 승자(SOXL 2016 +475.64%)는 세금만 104.57%p 부담. 오토매매 수익성 자체는 세후로도 유지되나, 브로커 주문실행 API 존재 여부가 여전히 별도 확인 필요한 기술적 블로커.",
     "metrics": {
       "assumptions": {
-        "roundTripFrictionPctPoints": 0.30,
+        "roundTripFrictionPctPoints": 0.3,
         "capitalGainsTaxRate": 0.22,
         "annualExemptionApplied": false,
         "lossOffsetApplied": false
       },
       "totalCycles": 42,
-      "scenarioA_gross": { "winRatePct": 45.2, "avgReturnPct": 44.09, "medianReturnPct": -6.0, "sumReturnPct": 1851.59 },
-      "scenarioB_afterFriction": { "winRatePct": 45.2, "avgReturnPct": 43.79, "medianReturnPct": -6.3, "sumReturnPct": 1838.99 },
-      "scenarioC_afterFrictionAndTax": { "winRatePct": 45.2, "avgReturnPct": 31.34, "medianReturnPct": -6.3, "sumReturnPct": 1316.37 }
+      "scenarioA_gross": {
+        "winRatePct": 45.2,
+        "avgReturnPct": 44.09,
+        "medianReturnPct": -6.0,
+        "sumReturnPct": 1851.59
+      },
+      "scenarioB_afterFriction": {
+        "winRatePct": 45.2,
+        "avgReturnPct": 43.79,
+        "medianReturnPct": -6.3,
+        "sumReturnPct": 1838.99
+      },
+      "scenarioC_afterFrictionAndTax": {
+        "winRatePct": 45.2,
+        "avgReturnPct": 31.34,
+        "medianReturnPct": -6.3,
+        "sumReturnPct": 1316.37
+      }
     },
     "report_path": "research/reports/track-a-real-cost-and-tax-revalidation.md",
     "sources": [
@@ -4715,5 +5090,140 @@
     "confidence": "medium",
     "caveats": "연 250만원 기본공제와 동일연도 손익상계를 반영하지 않아 실제 세후 수익률은 이번 추정치보다 다소 높을 가능성이 큼(보수적 근사). 거래마찰비용(편도 슬리피지 0.15%p)은 실제 브로커로 검증된 값이 아니라 기존 리포트의 보수적 중간값 가정을 재사용한 것. 이 검증은 '세후 수익성이 충분한가'만 답하며 '브로커가 개인용 주문실행 API를 제공하는가'라는 오토매매의 더 근본적인 기술적 전제는 검증하지 않았다. 42사이클 표본에서 세후 평균도 여전히 소수 대형승자 사이클에 크게 의존한다.",
     "last_updated": "2026-09-17"
+  },
+  {
+    "id": "track-a-infinite-buy-averaging-cycle-validation-2010-2026",
+    "type": "backtest",
+    "ticker": "SOXL,TQQQ,FAS,TNA",
+    "strategy_id": "track-a-averaging-cycle-candidate",
+    "data_range": {
+      "start": "2008-11-19",
+      "end": "2026-08-17",
+      "frequency": "daily"
+    },
+    "created_date": "2026-09-21",
+    "summary": "외부 '무한매수법 V4.0' 방법론을 일반 원리(예산 N분할, 평단 기준 동적 기준선, 1/4 부분 매도+목표가, 소진 시 리버스)로 재정의해 SOXL/TQQQ 일봉 3년·5년 롤링 윈도우(학습 ≤2018 / 검증 ≥2019)와 FAS/TNA(2008 위기 포함)에서 검증. 상승장에서 단순 보유에 크게 뒤처지고(SOXL 3년 중앙 세후 2.78→1.73~1.85배, TQQQ 2.60→1.47~1.50배), 종목 간 결과 불일치(검증 구간 SOXL 승, TQQQ 패). 평균 노출이 30~40%라 동일 노출 벤치마크와 비교하면 N=40에서만 4종목 3년 중앙 +8~15% 소폭 우위이나 MDD는 전체 윈도우 기준 4종목 모두 더 깊음. 학습 p25 상위 설정은 손실 미실현형(정적 기준선+리버스 off)이라 검증에서 붕괴(SOXL 중앙 0.86배). H1 추가 검증 필요, H2 채택 후보(예산 상한 구조만), H3 기각, H4 기각. 전략 채택 비추천.",
+    "metrics": {
+      "windows": {
+        "step_days": 21,
+        "horizons": {
+          "3y": 756,
+          "5y": 1260
+        },
+        "train_end": "2018-12-31",
+        "valid_start": "2019-01-01",
+        "grid_configs": 96
+      },
+      "median_after_tax_final_3y": {
+        "SOXL": {
+          "all": {
+            "buy_hold": 2.78,
+            "track_a": 1.83,
+            "n20": 1.85,
+            "n40": 1.73
+          },
+          "valid": {
+            "buy_hold": 1.32,
+            "track_a": 1.83,
+            "n20": 2.02,
+            "n40": 1.77
+          }
+        },
+        "TQQQ": {
+          "all": {
+            "buy_hold": 2.6,
+            "track_a": 1.75,
+            "n20": 1.47,
+            "n40": 1.5
+          },
+          "valid": {
+            "buy_hold": 1.42,
+            "track_a": 1.78,
+            "n20": 0.88,
+            "n40": 0.99
+          }
+        }
+      },
+      "exposure_matched_relative_median_pct_3y_all": {
+        "SOXL": {
+          "n20": 10.4,
+          "n40": 15.3
+        },
+        "TQQQ": {
+          "n20": -0.4,
+          "n40": 8.4
+        },
+        "FAS": {
+          "n20": -1.0,
+          "n40": 10.4
+        },
+        "TNA": {
+          "n20": -1.7,
+          "n40": 10.8
+        }
+      },
+      "median_mdd_pct_n40_strategy_vs_matched": {
+        "SOXL": [
+          -39,
+          -30
+        ],
+        "TQQQ": [
+          -32,
+          -20
+        ],
+        "FAS": [
+          -32,
+          -23
+        ],
+        "TNA": [
+          -45,
+          -29
+        ]
+      },
+      "median_exposure_pct": "30-40 (FAS/TNA 33-47)",
+      "walk_forward_selected": {
+        "SOXL": {
+          "config": "n20|s0=0.25|statichalf|rev=0",
+          "train_p25": 2.44,
+          "valid_median": 0.86,
+          "valid_loss_share_pct": 60
+        },
+        "TQQQ": {
+          "config": "n20|s0=0.20|statichalf|rev=0",
+          "train_p25": 2.23,
+          "valid_median": 1.1,
+          "valid_loss_share_pct": 42
+        }
+      },
+      "hypotheses": {
+        "H1": "추가 검증 필요",
+        "H2": "채택 후보(예산 상한 구조만)",
+        "H3": "기각",
+        "H4": "기각"
+      },
+      "assumptions": {
+        "slippage_one_way_pct": 0.15,
+        "fee": 0,
+        "capital_gains_tax": 0.22,
+        "fill": "LOC at close; limit target cons(close>=target)/opt(high>=target) sensitivity",
+        "fractional_shares": true
+      }
+    },
+    "report_path": "research/reports/track-a-infinite-buy-averaging-cycle-validation.md",
+    "sources": [
+      {
+        "title": "Yahoo Finance v8 chart API - SOXL/TQQQ/FAS/TNA daily (기존 캐시 재사용)",
+        "url": "https://finance.yahoo.com/",
+        "accessed": "2026-09-21"
+      },
+      {
+        "title": "외부 방법론 게시글 2건(카페, 2026-03-14) - 아이디어 출처로만 참조, 원문 미수록",
+        "url": "",
+        "accessed": "2026-09-21"
+      }
+    ],
+    "confidence": "low-medium",
+    "caveats": "3년 윈도우는 21일 간격 중복이라 독립 표본이 약 5개 수준이며 p-value 미계산. 2010년 이후 강세 표본(FAS/TNA만 2008 포함). LOC 종가 체결·소수 주식·슬리피지 고정 가정, 낙관 체결 시 우위가 커짐. 동일 노출 벤치마크는 단일 대안이며 비용·세금 무시. 기본공제·손실 이월 미반영. 배당 미반영, Yahoo 단일 출처. 파라미터 격자 제한(N 2종, s0 4종). 실제 LOC/MOC 주문 지원 미검증.",
+    "last_updated": "2026-09-21"
   }
 ]
