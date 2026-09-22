@@ -1,0 +1,48 @@
+{
+  "_comment": "Hard Policy Layer (V0.1). These rules always override a Jev decision. Keyword matching is intentionally simple and case-insensitive substring matching against the goal and task description; extend with more precise rules before relying on this for anything security-critical.",
+  "hardRules": [
+    {
+      "id": "destructive-db",
+      "keywords": ["drop table", "drop database", "truncate table", "delete from", "destructive migration"],
+      "reason": "Production DB destructive operation"
+    },
+    {
+      "id": "force-push",
+      "keywords": ["force push", "push --force", "push -f "],
+      "reason": "Force push (can overwrite remote history)"
+    },
+    {
+      "id": "production-deploy",
+      "keywords": ["production deploy", "deploy to production", "프로덕션 배포", "운영 배포"],
+      "reason": "Production deployment"
+    },
+    {
+      "id": "secret-change",
+      "keywords": ["rotate secret", "change api key", "change secret", "update credential", ".env credential", "시크릿 변경", "자격 증명 변경"],
+      "reason": "Secret or credential change"
+    },
+    {
+      "id": "payment",
+      "keywords": ["payment", "send money", "transfer funds", "결제", "송금", "출금"],
+      "reason": "Payment or other irreversible external action"
+    },
+    {
+      "id": "dependency-major-upgrade",
+      "keywords": ["major upgrade", "breaking dependency upgrade", "major version bump"],
+      "reason": "Dependency major upgrade"
+    },
+    {
+      "id": "security-config",
+      "keywords": ["security setting", "authentication config", "authorization config", "보안 설정 변경", "인증 설정 변경"],
+      "reason": "Security-sensitive configuration change"
+    },
+    {
+      "id": "investment-rule-adoption",
+      "keywords": ["adopt strategy policy", "change stop-loss", "change position ratio", "전략 정책 채택", "손절 기준 변경"],
+      "reason": "Investment-rule adoption requires user approval per docs/AI_COLLABORATION_POLICY.md"
+    }
+  ],
+  "riskThresholds": {
+    "requireApprovalAtOrAbove": "high"
+  }
+}

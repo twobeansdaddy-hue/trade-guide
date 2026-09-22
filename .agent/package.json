@@ -1,0 +1,19 @@
+{
+  "name": "trade-guide-agent-orchestrator",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Jev decision layer + multi-agent orchestrator (V0.1) for Trade Guide. Independent dev-tooling package, not part of the Spring Boot or Vite runtime.",
+  "scripts": {
+    "cli": "tsx src/cli.ts",
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  }
+}

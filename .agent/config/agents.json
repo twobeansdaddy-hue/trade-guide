@@ -1,0 +1,31 @@
+{
+  "_comment": "Agent Registry (V0.1). Role -> provider mapping is data, not a binding contract: it documents which AI candidate a role is expected to route to, mirroring docs/AI_COLLABORATION_POLICY.md. Actually dispatching a provider still requires a task contract under docs/agent-tasks/ per that policy. Do not hardcode this mapping into orchestrator logic; always read it from here.",
+  "research": {
+    "provider": "gemini",
+    "capabilities": ["research", "web", "documentation"]
+  },
+  "architecture": {
+    "provider": "claude",
+    "capabilities": ["architecture", "planning", "dependency-analysis"]
+  },
+  "backend": {
+    "provider": "codex",
+    "capabilities": ["backend", "api", "database", "test"]
+  },
+  "frontend": {
+    "provider": "codex",
+    "capabilities": ["frontend", "api-integration"]
+  },
+  "ui": {
+    "provider": "claude",
+    "capabilities": ["ui", "ux", "accessibility"]
+  },
+  "test": {
+    "provider": "codex",
+    "capabilities": ["test", "verification"]
+  },
+  "review": {
+    "provider": "claude",
+    "capabilities": ["review", "security", "maintainability"]
+  }
+}

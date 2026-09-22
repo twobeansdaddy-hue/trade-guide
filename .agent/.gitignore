@@ -1,0 +1,7 @@
+node_modules/
+dist/
+state/project.json
+state/decisions.jsonl
+approvals/*.json
+!approvals/.gitkeep
+!state/.gitkeep
