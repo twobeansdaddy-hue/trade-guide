@@ -25,6 +25,34 @@ export default function StrategyGuidesPage() {
     return <StrategyGuidesContent key={`${memberId}-${selectedPortfolioId}`} memberId={memberId} portfolioId={selectedPortfolioId}/>;
 }
 
+function CandidateGuideNotice({ candidateCount }: { candidateCount: number | null }) {
+    const [expanded, setExpanded] = useState(false);
+    
+    if (!expanded) {
+        return (
+            <div className="candidate-notice-collapsed" role="note">
+                <span style={{fontSize: "13px", color: "var(--ink)"}}>Track A 후보 가이드 운영 원칙 및 검토 기준</span>
+                <button type="button" onClick={() => setExpanded(true)}>펼치기</button>
+            </div>
+        );
+    }
+    
+    return (
+        <div className="candidate-notice-expanded" role="note">
+            <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px"}}>
+                <h4>Track A 후보 가이드 운영 원칙 및 검토 기준</h4>
+                <button type="button" onClick={() => setExpanded(false)}>접기</button>
+            </div>
+            <ul>
+                <li><strong>관리자 선별 Track A 검토 유니버스:</strong> 미국 주식 전 종목 대상 자동 스크리너가 아니며, {candidateCount !== null && candidateCount > 0 ? `현재 이 포트폴리오에 직접 등록한 Track A 후보(${candidateCount}개)를 우선 조회합니다.` : "관리자가 선별·관리하는 전역 Track A 검토 유니버스(기본 대상군)를 기준으로 조회합니다."}</li>
+                <li><strong>미보유 종목 한정:</strong> 이미 포트폴리오 매매 원장에 등록된 보유 종목은 대상에서 제외되며, 미보유 관심 종목의 사전 기술적 분석만 제공합니다.</li>
+                <li><strong>완료 주봉 기준:</strong> 주간 거래가 마감된 완료 주봉 기준 10주/40주 단순이동평균선의 추세와 교차 상태를 바탕으로 산출됩니다.</li>
+                <li><strong>정보 제공 목적:</strong> 단순 검토용 정보이며 투자 자문이나 자동 주문 기능이 아닙니다. 실제 매매 판단은 전적으로 사용자의 자기 책임하에 진행되어야 합니다.</li>
+            </ul>
+        </div>
+    );
+}
+
 function StrategyGuidesContent({memberId, portfolioId}: {memberId: number; portfolioId: number}) {
     const holdingsResource = usePortfolioResource(memberId, portfolioId, getPortfolioStrategyGuides);
     const candidatesResource = usePortfolioResource(memberId, portfolioId, getCandidateStrategyGuides);
@@ -175,13 +203,8 @@ function StrategyGuidesContent({memberId, portfolioId}: {memberId: number; portf
             <AccordionSection
                 id="candidate-guides"
                 className="candidate-guides-section"
-                sectionLabel="TRACK A CANDIDATES (NON-HELD ASSETS)"
-                title={
-                    <span className="section-title-row">
-                        <span>Track A 후보 가이드</span>
-                        <span className="candidate-scope-badge">미보유 종목 전용 · 검토용</span>
-                    </span>
-                }
+                sectionLabel="TRACK A CANDIDATES"
+                title={`Track A 후보 — 미보유 ${candidateCount ?? 0}건`}
                 defaultOpen={false}
                 summary={
                     candidatesResource.data
@@ -190,42 +213,9 @@ function StrategyGuidesContent({memberId, portfolioId}: {memberId: number; portf
                 }
             >
                 <p className="section-description">
-                    {candidateCount !== null && candidateCount > 0
-                        ? `이 포트폴리오에 직접 등록한 Track A 후보(${candidateCount}개) 중 현재 미보유 종목을 대상으로 완료 주봉 10주/40주 이동평균(SMA) 신호를 계산한 기술적 검토 가이드입니다.`
-                        : candidateCount === 0
-                            ? "포트폴리오 직접 등록 후보가 없어, 관리자가 선별한 전역 Track A 검토 유니버스(기본 대상군) 중 현재 미보유 종목을 대상으로 완료 주봉 10주/40주 이동평균(SMA) 신호를 계산한 기술적 검토 가이드입니다."
-                            : "포트폴리오에 설정한 Track A 후보(후보 미설정 시 관리자 선별 전역 검토 유니버스) 중 현재 미보유 종목을 대상으로 완료 주봉 10주/40주 이동평균(SMA) 신호를 계산한 기술적 검토 가이드입니다."}
+                    이 포트폴리오에 설정한 Track A 후보 중 미보유 종목을 대상으로 한 기술적 검토 가이드입니다.
                 </p>
-                <div className="candidate-guide-notice" role="note" aria-label="Track A 후보 가이드 기준 및 유의사항">
-                    <p className="candidate-guide-notice-title">Track A 후보 가이드 운영 원칙 및 검토 기준</p>
-                    <ul className="candidate-guide-notice-list">
-                        <li>
-                            <strong>관리자 선별 Track A 검토 유니버스:</strong> 미국 주식 전 종목 대상의 자동 스크리너가 아니며,{" "}
-                            {candidateCount !== null && candidateCount > 0 ? (
-                                <>
-                                    현재 <strong>이 포트폴리오에 직접 등록한 Track A 후보({candidateCount}개)</strong>를 우선 조회하고 있습니다. (후보를 모두 삭제하면 관리자가 사전 선별·관리하는 전역 Track A 검토 유니버스로 자동 전환됩니다.)
-                                </>
-                            ) : candidateCount === 0 ? (
-                                <>
-                                    현재 등록된 포트폴리오 후보가 없어 <strong>관리자가 선별·관리하는 전역 Track A 검토 유니버스(기본 대상군)</strong>를 기준으로 조회하고 있습니다. (아래 후보 종목 관리에서 종목을 추가하면 해당 포트폴리오 후보가 우선 적용됩니다.)
-                                </>
-                            ) : (
-                                <>
-                                    <strong>포트폴리오 직접 설정 후보</strong>가 있으면 해당 종목을 우선 조회하고, 미설정 시 <strong>관리자가 선별·관리하는 전역 Track A 검토 유니버스(기본 대상군)</strong>를 기준으로 자동 조회합니다.
-                                </>
-                            )}
-                        </li>
-                        <li>
-                            <strong>미보유 종목 한정 (보유 종목과 분리):</strong> 이미 포트폴리오 매매 원장에 등록된 보유 종목은 상단의 <strong>&apos;보유 종목 가이드&apos;</strong>에서 관리되므로 후보 대상에서 자동으로 제외됩니다. 본 섹션은 아직 매수하지 않은 미보유 관심 종목의 사전 기술적 분석만을 제공합니다.
-                        </li>
-                        <li>
-                            <strong>완료 주봉 10주/40주 이동평균 신호:</strong> 주간 거래가 마감된 <strong>완료 주봉(Completed Weekly Candles)</strong> 기준 10주/40주 단순이동평균선(SMA)의 추세(상승/하락)와 골든크로스·데드크로스 교차 상태를 바탕으로 산출됩니다. 실시간 호가나 주중 미완료 봉에 의한 일시적 가격 왜곡·노이즈를 배제하고 확정된 주간 추세만을 확인합니다.
-                        </li>
-                        <li>
-                            <strong>정보 제공 목적 (투자 권유·자동 주문 아님):</strong> 본 가이드는 기술적 지표에 기반한 단순 검토용 정보이며, 특정 종목 추천이나 투자 자문, 포트폴리오 적합성 판정 또는 자동 주문 실행 기능이 아닙니다. 실제 매매 판단 및 증권사 주문 등록은 전적으로 사용자의 자기 책임과 직접 결정하에 진행되어야 합니다.
-                        </li>
-                    </ul>
-                </div>
+                <CandidateGuideNotice candidateCount={candidateCount} />
                 <PortfolioCandidateAssetManager
                     memberId={memberId}
                     portfolioId={portfolioId}

@@ -1,30 +1,73 @@
 import type {HoldingValuation} from "../../types/portfolioValuation";
 import {formatPercent, formatUsd, getProfitLossClassName} from "../../utils/format";
+import "../../styles/pages/holdings.css";
 
 type Props = { holdings: HoldingValuation[] };
 
 export default function HoldingValuationList({holdings}: Props) {
     if (holdings.length === 0) {
-        return <p className="empty-state">현재 평가할 보유 종목이 없습니다.</p>;
+        return <div className="status-box status-empty"><p className="status-text">현재 평가할 보유 종목이 없습니다.</p></div>;
     }
 
+    const totalMarketValue = holdings.reduce((sum, h) => sum + h.marketValue, 0);
+    const totalPurchaseAmount = holdings.reduce((sum, h) => sum + h.purchaseAmount, 0);
+    const totalReturnRate = totalPurchaseAmount > 0 ? (totalMarketValue - totalPurchaseAmount) / totalPurchaseAmount : 0;
+
     return (
-        <>
-            <div className="holding-table-wrap">
-                <table className="holding-table">
-                    <thead><tr><th scope="col">종목</th><th scope="col">수량</th><th scope="col">평단가</th><th scope="col">현재가</th><th scope="col">매입금액</th><th scope="col">평가금액</th><th scope="col">평가손익</th><th scope="col">수익률</th></tr></thead>
-                    <tbody>{holdings.map((holding) => <tr key={`${holding.market}-${holding.ticker}`}>
-                        <th scope="row"><div className="asset-cell"><span className="market-badge">{holding.market}</span><strong>{holding.ticker}</strong></div></th>
-                        <td>{holding.quantity}</td><td>{formatUsd(holding.averagePurchasePrice)}</td><td>{formatUsd(holding.currentPrice)}</td><td>{formatUsd(holding.purchaseAmount)}</td><td>{formatUsd(holding.marketValue)}</td>
-                        <td className={getProfitLossClassName(holding.unrealizedProfitLoss)}>{formatUsd(holding.unrealizedProfitLoss)}</td>
-                        <td className={getProfitLossClassName(holding.returnRate)}>{formatPercent(holding.returnRate)}</td>
-                    </tr>)}</tbody>
-                </table>
+        <div className="holding-list">
+            {holdings.map((holding) => (
+                <div key={`${holding.market}-${holding.ticker}`} className="holding-row">
+                    <div className="holding-row-top">
+                        <div className="holding-ticker-group">
+                            <span className="holding-ticker">{holding.ticker}</span>
+                            <span className="holding-name">{holding.market}</span>
+                        </div>
+                        <div className="holding-top-right">
+                            <span className="holding-main-value">{formatUsd(holding.marketValue)}</span>
+                            <span className={`holding-main-rate ${getProfitLossClassName(holding.returnRate)}`}>
+                                {holding.returnRate > 0 ? "▲ " : holding.returnRate < 0 ? "▼ " : ""}{formatPercent(holding.returnRate)}
+                            </span>
+                        </div>
+                    </div>
+                    <div className="holding-row-bottom">
+                        <div className="holding-stat">
+                            <span className="stat-label">수량</span>
+                            <span className="stat-value">{holding.quantity}</span>
+                        </div>
+                        <div className="holding-stat">
+                            <span className="stat-label">평단가</span>
+                            <span className="stat-value">{formatUsd(holding.averagePurchasePrice)}</span>
+                        </div>
+                        <div className="holding-stat">
+                            <span className="stat-label">현재가</span>
+                            <span className="stat-value">{formatUsd(holding.currentPrice)}</span>
+                        </div>
+                        <div className="holding-stat">
+                            <span className="stat-label">매입금액</span>
+                            <span className="stat-value">{formatUsd(holding.purchaseAmount)}</span>
+                        </div>
+                        <div className="holding-stat">
+                            <span className="stat-label">평가손익</span>
+                            <span className={`stat-value ${getProfitLossClassName(holding.unrealizedProfitLoss)}`}>
+                                {holding.unrealizedProfitLoss > 0 ? "+" : ""}{formatUsd(holding.unrealizedProfitLoss)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            ))}
+            <div className="holding-row holding-total">
+                <div className="holding-row-top">
+                    <div className="holding-ticker-group">
+                        <span className="holding-ticker">합계</span>
+                    </div>
+                    <div className="holding-top-right">
+                        <span className="holding-main-value">{formatUsd(totalMarketValue)}</span>
+                        <span className={`holding-main-rate ${getProfitLossClassName(totalReturnRate)}`}>
+                            {totalReturnRate > 0 ? "▲ " : totalReturnRate < 0 ? "▼ " : ""}{formatPercent(totalReturnRate)}
+                        </span>
+                    </div>
+                </div>
             </div>
-            <ul className="holding-cards">{holdings.map((holding) => <li key={`${holding.market}-${holding.ticker}`}>
-                <div className="holding-card-heading"><div className="asset-cell"><span className="market-badge">{holding.market}</span><strong>{holding.ticker}</strong></div><strong className={getProfitLossClassName(holding.returnRate)}>{formatPercent(holding.returnRate)}</strong></div>
-                <dl><div><dt>평가금액</dt><dd>{formatUsd(holding.marketValue)}</dd></div><div><dt>평가손익</dt><dd className={getProfitLossClassName(holding.unrealizedProfitLoss)}>{formatUsd(holding.unrealizedProfitLoss)}</dd></div><div><dt>수량</dt><dd>{holding.quantity}</dd></div><div><dt>평단가 / 현재가</dt><dd>{formatUsd(holding.averagePurchasePrice)} / {formatUsd(holding.currentPrice)}</dd></div></dl>
-            </li>)}</ul>
-        </>
+        </div>
     );
 }

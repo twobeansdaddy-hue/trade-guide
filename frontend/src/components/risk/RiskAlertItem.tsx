@@ -7,23 +7,14 @@ type RiskAlertItemProps = {
 function RiskAlertItem({ alert }: RiskAlertItemProps) {
     return (
         <li className="risk-alert-item">
-            <div className="risk-asset">
-                <div className="ticker-group"><span className="market-badge">{alert.market}</span><strong>{alert.ticker}</strong></div>
-                <span className="risk-state">비중 초과</span>
+            <div className="risk-alert-info">
+                <span className="risk-alert-ticker">{alert.ticker}</span>
+                <span className="risk-count">비중 초과</span>
+                <span className="risk-alert-msg">{alert.message}</span>
             </div>
-
-            <dl className="risk-details">
-                <div>
-                    <dt>현재 비중</dt>
-                    <dd>{formatRate(alert.exposureRate)}</dd>
-                </div>
-                <div>
-                    <dt>최대 비중</dt>
-                    <dd>{formatRate(alert.maxExposureRate)}</dd>
-                </div>
-            </dl>
-
-            <p className="risk-message">{alert.message} 설정에서 최대 노출 비중을 조정할 수 있습니다.</p>
+            <div className="risk-alert-stats">
+                현재 {formatRate(alert.exposureRate)} / 한도 {formatRate(alert.maxExposureRate)}
+            </div>
         </li>
     );
 }

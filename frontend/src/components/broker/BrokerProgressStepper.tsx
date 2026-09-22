@@ -11,103 +11,44 @@ export type BrokerStepItem = {
 
 type BrokerProgressStepperProps = {
     steps: BrokerStepItem[];
-    currentStep: number;
     onSelectStep: (step: number) => void;
 };
 
 export default function BrokerProgressStepper({
     steps,
-    currentStep,
-    onSelectStep,
+        onSelectStep,
 }: BrokerProgressStepperProps) {
-    const currentStepItem = steps.find((s) => s.step === currentStep) ?? steps[0];
-    const progressPercent = Math.round((currentStep / steps.length) * 100);
-
     return (
         <nav className="broker-stepper" aria-label="증권사 연동 절차 단계">
-            {/* Mobile compact progress summary */}
-            <div className="broker-stepper-mobile-header" aria-hidden="true">
-                <div className="broker-stepper-mobile-info">
-                    <span className="broker-stepper-mobile-step">
-                        {currentStep} / {steps.length} 단계
-                    </span>
-                    <strong className="broker-stepper-mobile-title">
-                        {currentStepItem.label}
-                    </strong>
-                    <span
-                        className={`stepper-status-pill ${
-                            currentStepItem.isCompleted
-                                ? "pill-done"
-                                : currentStepItem.isActionable
-                                  ? "pill-action"
-                                  : "pill-wait"
-                        }`}
-                    >
-                        {currentStepItem.statusText}
-                    </span>
-                </div>
-                <div className="broker-stepper-progress-bar">
-                    <div
-                        className="broker-stepper-progress-fill"
-                        style={{width: `${progressPercent}%`}}
-                    />
-                </div>
-            </div>
-
-            {/* Step list for desktop and scrollable on small screens */}
-            <ol className="broker-stepper-list">
-                {steps.map((item, index) => {
-                    const isPassed = item.isCompleted && !item.isCurrent;
-                    const statusClass = item.isCompleted
-                        ? "pill-done"
-                        : item.isActionable
-                          ? "pill-action"
-                          : "pill-wait";
+            <div className="broker-stepper-grid">
+                {steps.map((item) => {
+                    const isCompleted = item.isCompleted;
+                    const isCurrent = item.isCurrent;
+                    const isActionable = item.isActionable;
+                    
+                    let statusClass = "status-wait";
+                    let accentClass = "";
+                    if (isCompleted) statusClass = "status-done";
+                    else if (isActionable) statusClass = "status-action";
+                    
+                    if (isCurrent) accentClass = "current-step";
 
                     return (
-                        <li
+                        <button
                             key={item.step}
-                            className={`broker-stepper-item ${item.isCurrent ? "is-current" : ""} ${
-                                item.isCompleted ? "is-completed" : ""
-                            }`}
-                            aria-current={item.isCurrent ? "step" : undefined}
+                            type="button"
+                            className={`broker-step-card ${accentClass}`}
+                            onClick={() => onSelectStep(item.step)}
+                            aria-current={isCurrent ? "step" : undefined}
+                            aria-label={`${item.step}단계: ${item.label} (${item.statusText})`}
                         >
-                            <button
-                                type="button"
-                                className={`broker-stepper-btn ${item.isCurrent ? "active" : ""}`}
-                                onClick={() => onSelectStep(item.step)}
-                                aria-label={`${item.step}단계: ${item.label} (${item.statusText})`}
-                            >
-                                <span
-                                    className={`stepper-circle ${
-                                        item.isCurrent
-                                            ? "circle-current"
-                                            : isPassed
-                                              ? "circle-completed"
-                                              : "circle-pending"
-                                    }`}
-                                >
-                                    {isPassed ? "✓" : item.step}
-                                </span>
-                                <div className="stepper-text">
-                                    <span className="stepper-label">{item.label}</span>
-                                    <span className={`stepper-status-pill ${statusClass}`}>
-                                        {item.statusText}
-                                    </span>
-                                </div>
-                            </button>
-                            {index < steps.length - 1 ? (
-                                <div
-                                    className={`stepper-connector ${
-                                        item.isCompleted ? "connector-completed" : ""
-                                    }`}
-                                    aria-hidden="true"
-                                />
-                            ) : null}
-                        </li>
+                            <div className="step-card-number">{item.step}</div>
+                            <div className="step-card-label">{item.label}</div>
+                            <div className={`step-card-status ${statusClass}`}>{item.statusText}</div>
+                        </button>
                     );
                 })}
-            </ol>
+            </div>
         </nav>
     );
 }

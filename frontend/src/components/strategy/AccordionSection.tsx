@@ -89,21 +89,9 @@ export default function AccordionSection({
         };
         window.addEventListener("expand-accordion", handleCustomExpand as EventListener);
 
-        const handleDocumentClick = (e: MouseEvent) => {
-            const target = (e.target as HTMLElement).closest("a");
-            if (!target) return;
-            const href = target.getAttribute("href");
-            if (href && href.startsWith("#")) {
-                const anchor = href.slice(1);
-                scrollToTarget(anchor);
-            }
-        };
-        document.addEventListener("click", handleDocumentClick);
-
         return () => {
             window.removeEventListener("hashchange", handleAnchorCheck);
             window.removeEventListener("expand-accordion", handleCustomExpand as EventListener);
-            document.removeEventListener("click", handleDocumentClick);
         };
     }, [id, anchorIds, onToggle]);
 

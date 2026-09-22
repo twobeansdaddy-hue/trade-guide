@@ -8,7 +8,6 @@ import {
 import {getPortfolioExposures, getPortfolioRiskPolicy, updatePortfolioRiskPolicy} from "../api/portfolioRiskApi";
 import RequestError from "../components/common/RequestError";
 import AccordionSection from "../components/strategy/AccordionSection";
-import BrokerConnectionSection from "../components/broker/BrokerConnectionSection";
 import PortfolioExposureList from "../components/risk/PortfolioExposureList";
 import {usePortfolioContext} from "../context/portfolioContext";
 import {usePortfolioResource} from "../hooks/usePortfolioResource";
@@ -173,60 +172,74 @@ function SettingsContent({memberId, portfolioId}: {memberId: number; portfolioId
                 }
             >
                 <form className="risk-policy-editor" onSubmit={submit}>
-                    <label>
-                        <span>주문당 최대 손실 (포트폴리오 대비 %)</span>
-                        <span className="form-field-hint">포트폴리오 총 평가액 대비 1회 주문에서 감수할 최대 손실 비율</span>
-                        <input
-                            type="number"
-                            value={maxLoss}
-                            onChange={(event) => {
-                                setMaxLoss(event.target.value);
-                                setSuccess(null);
-                            }}
-                            min="0"
-                            max="100"
-                            step="0.01"
-                            placeholder="예: 2.0"
-                        />
-                    </label>
-                    <label>
-                        <span>종목당 최대 노출 (포트폴리오 대비 %)</span>
-                        <span className="form-field-hint">포트폴리오 총 평가액 대비 단일 종목의 최대 보유 비중</span>
-                        <input
-                            type="number"
-                            value={maxExposure}
-                            onChange={(event) => {
-                                setMaxExposure(event.target.value);
-                                setSuccess(null);
-                            }}
-                            min="0"
-                            max="100"
-                            step="0.01"
-                            placeholder="예: 20.0"
-                        />
-                    </label>
-                    <label>
-                        <span>손절 기준 (매입·기준 가격 대비 %)</span>
-                        <span className="form-field-hint">입력한 비율을 기준 가격에서 차감해 검토용 손절가를 계산합니다. 비워 두면 손절가를 계산하지 않습니다.</span>
-                        <input
-                            type="number"
-                            value={stopLoss}
-                            onChange={(event) => {
-                                setStopLoss(event.target.value);
-                                setSuccess(null);
-                            }}
-                            min="0"
-                            max="99.99"
-                            step="0.01"
-                            placeholder="예: 25.0 (선택)"
-                        />
-                    </label>
-                    <div className="form-feedback-area" aria-live="polite">
+                    <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: "24px"}}>
+                        <label className="form-field-group">
+                            <span className="form-field-label">주문당 최대 손실</span>
+                            <span className="form-field-hint">포트폴리오 총 평가액 대비 1회 주문 최대 손실</span>
+                            <div className="input-with-unit">
+                                <input
+                                    className="form-input"
+                                    type="number"
+                                    value={maxLoss}
+                                    onChange={(event) => {
+                                        setMaxLoss(event.target.value);
+                                        setSuccess(null);
+                                    }}
+                                    min="0"
+                                    max="100"
+                                    step="0.01"
+                                    placeholder="2.0"
+                                />
+                                <span className="input-unit">%</span>
+                            </div>
+                        </label>
+                        <label className="form-field-group">
+                            <span className="form-field-label">종목당 최대 노출</span>
+                            <span className="form-field-hint">포트폴리오 총 평가액 대비 단일 종목 최대 비중</span>
+                            <div className="input-with-unit">
+                                <input
+                                    className="form-input"
+                                    type="number"
+                                    value={maxExposure}
+                                    onChange={(event) => {
+                                        setMaxExposure(event.target.value);
+                                        setSuccess(null);
+                                    }}
+                                    min="0"
+                                    max="100"
+                                    step="0.01"
+                                    placeholder="20.0"
+                                />
+                                <span className="input-unit">%</span>
+                            </div>
+                        </label>
+                        <label className="form-field-group">
+                            <span className="form-field-label">손절 기준 (선택)</span>
+                            <span className="form-field-hint">기준가에서 차감해 검토용 손절가 계산</span>
+                            <div className="input-with-unit">
+                                <input
+                                    className="form-input"
+                                    type="number"
+                                    value={stopLoss}
+                                    onChange={(event) => {
+                                        setStopLoss(event.target.value);
+                                        setSuccess(null);
+                                    }}
+                                    min="0"
+                                    max="99.99"
+                                    step="0.01"
+                                    placeholder="25.0"
+                                />
+                                <span className="input-unit">%</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div className="form-feedback-area" aria-live="polite" style={{marginTop: "16px"}}>
                         {error ? <p className="form-error-message" role="alert">{error}</p> : null}
                         {success ? <p className="form-success-message" role="status">{success}</p> : null}
                     </div>
-                    <div className="form-actions">
-                        <button type="submit" className="primary-button" disabled={isSaving}>
+                    <div className="form-actions-inline" style={{marginTop: "16px"}}>
+                        <button type="submit" className="btn-submit" disabled={isSaving}>
                             {isSaving ? "저장 중..." : "위험 한도 저장"}
                         </button>
                     </div>
@@ -252,37 +265,33 @@ function SettingsContent({memberId, portfolioId}: {memberId: number; portfolioId
                 ) : marketDataPreferenceResource.error ? (
                     <RequestError message={marketDataPreferenceResource.error.message} onRetry={marketDataPreferenceResource.refresh} retryLabel="제공자 설정 다시 시도"/>
                 ) : (
-                    <form className="market-data-provider-editor" onSubmit={submitMarketDataPreference}>
-                        <label>
-                            시장 데이터 제공자
-                            <select value={selectedMarketDataProvider} onChange={(event) => setSelectedMarketDataProvider(event.target.value as MarketDataProvider)}>
-                                {marketDataProvidersResource.data?.map((capability) => (
-                                    <option key={capability.provider} value={capability.provider} disabled={!capability.selectable}>
-                                        {capability.displayName}{capability.selectable ? "" : " (준비 중)"}
-                                    </option>
-                                ))}
-                            </select>
-                        </label>
-                        {selectedProviderCapability ? (
-                            <p className="provider-description">
-                                지원 시장: {selectedProviderCapability.supportedMarkets.join(", ")}
-                                {selectedProviderCapability.requiresBrokerConnection ? " · 증권 계좌 연결 필요" : " · 서비스 제공 데이터"}
-                                {!selectedProviderCapability.selectable ? " · 현재 선택할 수 없습니다." : ""}
-                            </p>
-                        ) : null}
-                        <div className="form-feedback-area" aria-live="polite">
-                            {marketDataError ? <p className="form-error-message" role="alert">{marketDataError}</p> : null}
-                            {marketDataSuccess ? <p className="form-success-message" role="status">{marketDataSuccess}</p> : null}
-                        </div>
-                        <div className="form-actions">
-                            <button type="submit" className="primary-button" disabled={isSavingMarketDataPreference || !selectedProviderCapability?.selectable}>
-                                {isSavingMarketDataPreference ? "저장 중..." : "시장 데이터 제공자 저장"}
+                    <>
+                        <form className="market-data-provider-editor" onSubmit={submitMarketDataPreference} style={{display: "flex", alignItems: "center", gap: "16px"}}>
+                            <div style={{flex: 1}}>
+                                <select className="form-input" value={selectedMarketDataProvider} onChange={(event) => setSelectedMarketDataProvider(event.target.value as MarketDataProvider)} style={{width: "250px"}}>
+                                    {marketDataProvidersResource.data?.map((capability) => (
+                                        <option key={capability.provider} value={capability.provider} disabled={!capability.selectable}>
+                                            {capability.displayName}{capability.selectable ? "" : " (준비 중)"}
+                                        </option>
+                                    ))}
+                                </select>
+                                <span style={{marginLeft: "12px", fontSize: "13px", color: "var(--muted)"}}>
+                                    {selectedProviderCapability ? `지원 시장: ${selectedProviderCapability.supportedMarkets.join(", ")}` : ""}
+                                </span>
+                            </div>
+                            <button type="submit" className="btn-submit" disabled={isSavingMarketDataPreference || !selectedProviderCapability?.selectable}>
+                                {isSavingMarketDataPreference ? "변경 중..." : "변경"}
                             </button>
-                        </div>
-                    </form>
+                        </form>
+                        {(marketDataError || marketDataSuccess) && (
+                            <div className="form-feedback-area" aria-live="polite" style={{marginTop: "8px"}}>
+                                {marketDataError ? <p className="form-error-message" role="alert" style={{color: "var(--loss)"}}>{marketDataError}</p> : null}
+                                {marketDataSuccess ? <p className="form-success-message" role="status" style={{color: "var(--gain)"}}>{marketDataSuccess}</p> : null}
+                            </div>
+                        )}
+                    </>
                 )}
             </AccordionSection>
-            <BrokerConnectionSection memberId={memberId}/>
             <AccordionSection
                 id="portfolio-exposures"
                 className="exposure-section"

@@ -5,7 +5,7 @@ import HoldingsPage from "./pages/HoldingsPage";
 import BrokerAccountsPage from "./pages/BrokerAccountsPage";
 import SettingsPage from "./pages/SettingsPage";
 import StrategyGuidesPage from "./pages/StrategyGuidesPage";
-import TradeTransactionEntryPage from "./pages/TradeTransactionEntryPage";
+import TransactionsPage from "./pages/TransactionsPage";
 import PortfolioOnboardingPage from "./pages/PortfolioOnboardingPage";
 import {PortfolioProvider} from "./context/PortfolioProvider";
 import "./App.css";
@@ -18,7 +18,7 @@ export default function App() {
                     <Route index element={<DashboardPage/>}/>
                     <Route path="holdings" element={<HoldingsPage/>}/>
                     <Route path="portfolios/new" element={<PortfolioOnboardingPage/>}/>
-                    <Route path="transactions/new" element={<TradeTransactionEntryPage/>}/>
+                    <Route path="transactions" element={<TransactionsPage/>}/>
                     <Route path="strategy-guides" element={<StrategyGuidesPage/>}/>
                     <Route path="broker-accounts" element={<BrokerAccountsPage/>}/>
                     <Route path="settings" element={<SettingsPage/>}/>
