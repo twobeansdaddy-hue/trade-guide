@@ -483,31 +483,6 @@
     align-items: center;
 }
 
-.brand {
-    gap: 10px;
-    color: var(--ink);
-    font-size: 16px;
-    font-weight: 800;
-    letter-spacing: 0.01em;
-    text-decoration: none;
-}
-
-.brand-mark {
-    display: grid;
-    width: 30px;
-    height: 30px;
-    place-items: center;
-    border-radius: 7px;
-    color: var(--bg);
-    background: var(--accent);
-    font-size: 11px;
-    letter-spacing: 0.06em;
-}
-
-.topbar-actions {
-    gap: 22px;
-}
-
 .topbar-link {
     color: var(--accent);
     font-size: 13px;
@@ -529,19 +504,6 @@
     color: var(--ink);
     font-size: 12px;
     font-weight: 700;
-}
-
-.portfolio-selector select {
-    min-width: 174px;
-    height: 38px;
-    box-sizing: border-box;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0 30px 0 10px;
-    color: var(--ink);
-    background: var(--bg);
-    font: inherit;
-    font-size: 13px;
 }
 
 .workspace {
@@ -668,8 +630,7 @@
     font-weight: 700;
 }
 
-.quiet-action,
-.section-link {
+.quiet-action {
     color: var(--accent);
     font-size: 13px;
     font-weight: 800;
@@ -2389,21 +2350,6 @@
 
 .market-data-provider-section:target {
     scroll-margin-top: 24px;
-}
-
-.risk-alert-list,
-.guide-list,
-
-
-.risk-alert-item {
-    display: grid;
-    grid-template-columns: minmax(190px, 1fr) minmax(260px, auto);
-    gap: 18px 30px;
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--border);
-    border-radius: 8px;
-    padding: 18px 20px;
-    background: var(--surface);
 }
 
 .risk-asset {

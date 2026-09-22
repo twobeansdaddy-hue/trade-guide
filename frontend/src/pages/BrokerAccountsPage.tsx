@@ -15,6 +15,7 @@ import BrokerHoldingSnapshotSection from "../components/broker/BrokerHoldingSnap
 import BrokerOrderImportSection from "../components/broker/BrokerOrderImportSection";
 import type {BrokerConnection, BrokerProviderCatalogItem} from "../types/brokerConnection";
 import type {PortfolioBrokerLink} from "../types/portfolioBroker";
+import "../styles/pages/broker.css";
 
 export default function BrokerAccountsPage() {
     const {memberId, selectedPortfolioId} = usePortfolioContext();

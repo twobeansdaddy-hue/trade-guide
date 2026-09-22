@@ -147,6 +147,9 @@
   color: var(--bg);
   border-radius: 12px;
   font-weight: 600;
+  align-self: flex-start;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .risk-alert-list {
@@ -161,6 +164,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
   background: var(--alert-bg);
   border: 1px solid var(--alert-border);
   border-radius: var(--radius);
@@ -170,6 +175,7 @@
 .risk-alert-info {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
@@ -191,6 +197,7 @@
   font-size: 13px;
   color: var(--ink);
   text-align: right;
+  white-space: nowrap;
 }
 
 .holding-summary-wrapper {

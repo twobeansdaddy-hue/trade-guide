@@ -3,6 +3,7 @@ import type { AssetStrategyGuide, EmptyHoldingsGuidance, StrategyAction, Unavail
 import { formatUsd } from "../../utils/format";
 import StrategyBacktestSection from "./StrategyBacktestSection";
 import StrategyGuideEmptyHoldingsNotice from "./StrategyGuideEmptyHoldingsNotice";
+import "../../styles/pages/strategy-guides.css";
 
 const actionLabels: Record<StrategyAction, string> = {
     BUY: "매수 검토",
@@ -63,16 +64,16 @@ function GuideCard({ guide, memberId, portfolioId }: { guide: AssetStrategyGuide
     const { decision } = guide;
     
     return (
-        <li className="guide-card">
+        <li className="strategy-guide-card">
             <div className="guide-card-main">
                 <div className="guide-card-header">
-                    <div className="guide-asset">
+                    <div className="strategy-guide-asset">
                         <span className="guide-ticker">{guide.ticker}</span>
                         <span className="guide-market">{guide.market}</span>
                     </div>
-                    <span className={`action-badge ${actionBadgeClass[decision.action]}`}>{actionLabels[decision.action]}</span>
+                    <span className={`strategy-action-badge ${actionBadgeClass[decision.action]}`}>{actionLabels[decision.action]}</span>
                 </div>
-                <p className="guide-reason">{decision.reason}</p>
+                <p className="strategy-guide-reason">{decision.reason}</p>
                 <div className="guide-metrics">
                     <div className="guide-metric-item">
                         <span className="guide-metric-label">기준 가격</span>

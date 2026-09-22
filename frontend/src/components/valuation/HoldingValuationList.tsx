@@ -31,24 +31,24 @@ export default function HoldingValuationList({holdings}: Props) {
                     </div>
                     <div className="holding-row-bottom">
                         <div className="holding-stat">
-                            <span className="stat-label">수량</span>
-                            <span className="stat-value">{holding.quantity}</span>
+                            <span className="holding-stat-label">수량</span>
+                            <span className="holding-stat-value">{holding.quantity}</span>
                         </div>
                         <div className="holding-stat">
-                            <span className="stat-label">평단가</span>
-                            <span className="stat-value">{formatUsd(holding.averagePurchasePrice)}</span>
+                            <span className="holding-stat-label">평단가</span>
+                            <span className="holding-stat-value">{formatUsd(holding.averagePurchasePrice)}</span>
                         </div>
                         <div className="holding-stat">
-                            <span className="stat-label">현재가</span>
-                            <span className="stat-value">{formatUsd(holding.currentPrice)}</span>
+                            <span className="holding-stat-label">현재가</span>
+                            <span className="holding-stat-value">{formatUsd(holding.currentPrice)}</span>
                         </div>
                         <div className="holding-stat">
-                            <span className="stat-label">매입금액</span>
-                            <span className="stat-value">{formatUsd(holding.purchaseAmount)}</span>
+                            <span className="holding-stat-label">매입금액</span>
+                            <span className="holding-stat-value">{formatUsd(holding.purchaseAmount)}</span>
                         </div>
                         <div className="holding-stat">
-                            <span className="stat-label">평가손익</span>
-                            <span className={`stat-value ${getProfitLossClassName(holding.unrealizedProfitLoss)}`}>
+                            <span className="holding-stat-label">평가손익</span>
+                            <span className={`holding-stat-value ${getProfitLossClassName(holding.unrealizedProfitLoss)}`}>
                                 {holding.unrealizedProfitLoss > 0 ? "+" : ""}{formatUsd(holding.unrealizedProfitLoss)}
                             </span>
                         </div>

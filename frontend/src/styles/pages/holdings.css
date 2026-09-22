@@ -73,13 +73,13 @@
   gap: 4px;
 }
 
-.stat-label {
+.holding-stat-label {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 12px;
   color: var(--muted);
 }
 
-.stat-value {
+.holding-stat-value {
   font-family: 'IBM Plex Mono', monospace;
   font-variant-numeric: tabular-nums;
   font-size: 13px;

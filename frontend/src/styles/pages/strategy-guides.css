@@ -7,7 +7,7 @@
   gap: 16px;
 }
 
-.guide-card {
+.strategy-guide-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -27,7 +27,7 @@
   margin-bottom: 16px;
 }
 
-.guide-asset {
+.strategy-guide-asset {
   display: flex;
   align-items: baseline;
   gap: 8px;
@@ -45,7 +45,7 @@
   color: var(--muted);
 }
 
-.action-badge {
+.strategy-action-badge {
   font-family: var(--head-font);
   font-size: 13px;
   font-weight: 600;
@@ -69,7 +69,7 @@
   border: 1px solid var(--border);
 }
 
-.guide-reason {
+.strategy-guide-reason {
   font-family: var(--head-font);
   font-size: 17px;
   font-weight: 500;
