@@ -43,36 +43,28 @@ function BrokerAccountsContent({
     const [hasSnapshot, setHasSnapshot] = useState<boolean | null>(null);
     const [connectionRevision, setConnectionRevision] = useState(0);
 
-    const [activeStep, setActiveStep] = useState<number>(1);
-    const [step5Tab, setStep5Tab] = useState<"opening-balance" | "order-history">("opening-balance");
+    const [hash, setHash] = useState(window.location.hash);
     const [hasAutoNavigated, setHasAutoNavigated] = useState(false);
     const initialScrolledRef = useRef(false);
 
-    // Sync URL hash on mount & hashchange
     useEffect(() => {
-        const evaluateHash = () => {
-            const hash = window.location.hash;
-            if (hash === "#broker-holding-imports" || hash === "#broker-opening-balance") {
-                setActiveStep(5);
-                setStep5Tab("opening-balance");
-                setHasAutoNavigated(true);
-            } else if (hash === "#broker-order-imports") {
-                setActiveStep(5);
-                setStep5Tab("order-history");
-                setHasAutoNavigated(true);
-            } else {
-                const match = hash.match(/^#step-([1-5])$/);
-                if (match) {
-                    setActiveStep(parseInt(match[1], 10));
-                    setHasAutoNavigated(true);
-                }
-            }
-        };
-
-        evaluateHash();
-        window.addEventListener("hashchange", evaluateHash);
-        return () => window.removeEventListener("hashchange", evaluateHash);
+        const handleHashChange = () => setHash(window.location.hash);
+        window.addEventListener("hashchange", handleHashChange);
+        return () => window.removeEventListener("hashchange", handleHashChange);
     }, []);
+
+    let activeStep = 1;
+    let step5Tab: "opening-balance" | "order-history" = "opening-balance";
+    if (hash === "#broker-holding-imports" || hash === "#broker-opening-balance") {
+        activeStep = 5;
+        step5Tab = "opening-balance";
+    } else if (hash === "#broker-order-imports") {
+        activeStep = 5;
+        step5Tab = "order-history";
+    } else {
+        const match = hash.match(/^#step-([1-5])$/);
+        if (match) activeStep = parseInt(match[1], 10);
+    }
 
     // Load initial states to determine next actionable step
     useEffect(() => {
@@ -95,32 +87,20 @@ function BrokerAccountsContent({
 
             // If user did not specify a deep-link hash, default to next actionable step
             if (!hasAutoNavigated && !window.location.hash) {
-                const hasVerified = conns.some(
-                    (c) => c.status === "CONNECTED" && c.accounts.length > 0,
-                );
-                const nextStep =
-                    conns.length === 0
-                        ? 1
-                        : !hasVerified
-                          ? 2
-                          : links.length === 0
-                            ? 3
-                            : 4;
-                setActiveStep(nextStep);
+                const hasVerified = conns.some((c) => c.status === "CONNECTED" && c.accounts.length > 0);
+                const nextStep = conns.length === 0 ? 1 : !hasVerified ? 2 : links.length === 0 ? 3 : 4;
                 setHasAutoNavigated(true);
                 window.history.replaceState(null, "", `#step-${nextStep}`);
+                setHash(`#step-${nextStep}`);
             }
         });
 
-        return () => {
-            isCurrent = false;
-        };
+        return () => { isCurrent = false; };
     }, [memberId, portfolioId, connectionRevision, hasAutoNavigated]);
 
     // Handle initial scrolling for deep links
     useEffect(() => {
         if (initialScrolledRef.current) return;
-        const hash = window.location.hash;
         if (hash === "#broker-holding-imports" && activeStep === 5 && step5Tab === "opening-balance") {
             const el = document.getElementById("broker-holding-imports");
             if (el) {
@@ -134,26 +114,23 @@ function BrokerAccountsContent({
                 el.scrollIntoView({behavior: "smooth", block: "start"});
             }
         }
-    }, [activeStep, step5Tab]);
+    }, [activeStep, step5Tab, hash]);
 
     const goToStep = (step: number, initialStep5Tab?: "opening-balance" | "order-history") => {
-        setActiveStep(step);
         let targetHash = `#step-${step}`;
         if (step === 5) {
             const targetTab = initialStep5Tab ?? step5Tab;
-            if (initialStep5Tab) {
-                setStep5Tab(initialStep5Tab);
-            }
             targetHash = targetTab === "order-history" ? "#broker-order-imports" : "#broker-opening-balance";
         }
-        window.history.replaceState(null, "", targetHash);
+        window.history.pushState(null, "", targetHash);
+        setHash(targetHash);
         window.scrollTo({top: 0, behavior: "smooth"});
     };
 
     const handleStep5TabChange = (tab: "opening-balance" | "order-history") => {
-        setStep5Tab(tab);
         const targetHash = tab === "order-history" ? "#broker-order-imports" : "#broker-opening-balance";
         window.history.replaceState(null, "", targetHash);
+        setHash(targetHash);
     };
 
     // Step statuses
@@ -236,11 +213,16 @@ function BrokerAccountsContent({
     return (
         <>
             <header className="page-header">
-                <p className="eyebrow">PORTFOLIO {portfolioId}</p>
-                <h1>연동 계좌</h1>
-                <p className="page-description">
-                    증권사 계좌 연결, 보유 종목 비교, 개시 잔고 반영 및 주문 이력 검토를 순서대로 지원합니다.
-                </p>
+                <div className="page-header-top">
+                    <div>
+                        <p className="eyebrow">PORTFOLIO {portfolioId}</p>
+                        <h1>연동 계좌</h1>
+                        <p className="page-description">
+                            증권사 계좌 연결, 보유 종목 비교, 개시 잔고 반영 및 주문 이력 검토를 순서대로 지원합니다.
+                        </p>
+                    </div>
+                    <span className="page-header-meta">STEP {activeStep} / 5</span>
+                </div>
                 <div className="broker-accounts-safety-banner" role="note">
                     <span className="safety-badge">안전 가이드</span>
                     <p>
@@ -252,7 +234,6 @@ function BrokerAccountsContent({
             {/* Stepper Navigation */}
             <BrokerProgressStepper
                 steps={stepsData}
-                currentStep={activeStep}
                 onSelectStep={(step) => goToStep(step)}
             />
 
