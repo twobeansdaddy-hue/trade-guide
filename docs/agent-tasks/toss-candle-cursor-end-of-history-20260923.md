@@ -95,4 +95,5 @@
 - API / data-model / policy impact: 없음. 프로덕션 코드 변경 없음.
 - 2단계 결과(2026-09-23, Claude 구현): 판정 표 첫 행에 따라 프로덕션 코드는 바꾸지 않고, 실제 응답 형태(꽉 찬 200개 페이지 뒤 요청 100개에 40개 + `nextBefore=null`)를 재현하는 `historyEndReturnsShortPageWithNullCursorAndStopsWithoutExtraRequest`를 `TossSecuritiesMarketHistoryProviderTest`에 추가했다. 두 번째 요청의 `count`·`before`, 240개 오름차순·중복 없음, 페이지 수신 기록 2건, 추가 요청 없음을 검증한다.
 - 2단계 검증: `./gradlew test --tests '*TossSecuritiesMarketHistoryProviderTest'` 7개 통과, 전체 `./gradlew test` 1,111개 통과(실패 0, 건너뜀 3). 교차 검증·최종 승인은 사용자(정책상 Claude 구현분).
-- Open decision or risk: 국내 종목의 이력 끝 동작은 미관측이다.
+- 국내 종목 관측(2026-09-23 12:18 KST): 005930(대조군), 462870, 278470 모두 US와 같은 형태(요청보다 적은 캔들 + `nextBefore=null`)로 정상 종료했다. 상세는 `docs/design/GUIDE_INPUT_OBSERVATION.md`의 "국내 종목".
+- Open decision or risk: 없음. 한 시점의 관측이므로 제공자 동작이 바뀌면 추가된 회귀 테스트와 관측 도구로 다시 확인한다.
