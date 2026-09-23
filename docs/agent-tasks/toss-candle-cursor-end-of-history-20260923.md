@@ -5,7 +5,7 @@
 ## Identity
 
 - Task ID: `toss-candle-cursor-20260923`
-- Owner: 1단계 관측은 사용자 또는 Codex(실제 Toss 자격 증명 필요). 2단계 코드 조정은 Claude 또는 Codex이며, 새 허용 범위를 설정한 뒤에만 진행한다.
+- Owner: 1단계 관측은 Claude가 관측 도구(`build/toss-cursor-probe/probe.py`, git 제외 경로) 작성과 결과 정리를 맡고, 자격 증명 입력과 실행은 사용자가 맡는다. 2단계 코드 조정은 Claude 또는 Codex이며, 새 허용 범위를 설정한 뒤에만 진행한다. Claude가 구현하면 교차 검증과 최종 승인은 Codex 또는 사용자가 한다.
 - Work mode: 1단계 `review`(읽기 전용 관측), 2단계 `scoped-implementation`
 - Branch / worktree: `main` 기준 작업 트리
 
@@ -89,7 +89,8 @@
 
 ## Handoff
 
-- Files changed:
-- Verification run:
-- API / data-model / policy impact: 없음이 기대값이다. 조회 불가로 분류되던 종목이 정상 조회되는 동작 변화만 있을 수 있다.
-- Open decision or risk: 이력 끝에서 4xx가 오거나 종목마다 동작이 다를 경우의 분류 기준
+- 1단계 결과(2026-09-23): 판정 표 첫 행. 이력 끝에서 Toss는 요청보다 적은 캔들과 `nextBefore=null`을 반환했다(IBIT, CRCL). 커서 반복·새 날짜 없는 페이지는 관측되지 않았다. 상세는 `docs/design/GUIDE_INPUT_OBSERVATION.md`의 "관측: Toss 캔들 커서의 이력 끝 동작".
+- Files changed: `docs/design/GUIDE_INPUT_OBSERVATION.md`(관측 요약). 관측 도구는 `build/`(git 제외)에만 있다.
+- Verification run: 관측 도구를 모의 서버로 두 시나리오(null 종료, 커서 반복) 확인한 뒤 사용자가 실제 Toss API로 실행했다.
+- API / data-model / policy impact: 없음. 프로덕션 코드 변경 없음.
+- Open decision or risk: 2단계는 실제 응답 형태(부분 페이지 + `nextBefore=null`)를 재현하는 회귀 테스트 1개 추가만 남았다(`TossSecuritiesMarketHistoryProviderTest`, 별도 범위 필요). 국내 종목 동작은 미관측이다.
