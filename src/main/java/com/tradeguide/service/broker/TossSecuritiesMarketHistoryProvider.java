@@ -24,13 +24,14 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -78,10 +79,7 @@ public class TossSecuritiesMarketHistoryProvider {
         );
 
         if (interval == CandleInterval.DAILY) {
-            return dailyCandles.stream()
-                    .sorted(Comparator.comparing(MarketCandle::getTradingDate))
-                    .limit(outputSize)
-                    .toList();
+            return dailyCandles.subList(Math.max(0, dailyCandles.size() - outputSize), dailyCandles.size());
         }
 
         return aggregateWeekly(dailyCandles, market, ticker, outputSize);
@@ -95,11 +93,12 @@ public class TossSecuritiesMarketHistoryProvider {
     ) {
         String accessToken = accessTokenIssuer.issueAccessToken(credentials);
         String normalizedTicker = ticker.toUpperCase(Locale.ROOT);
-        List<MarketCandle> candles = new ArrayList<>();
+        Map<LocalDate, MarketCandle> candlesByDate = new LinkedHashMap<>();
+        Set<String> seenCursors = new HashSet<>();
         String before = null;
 
-        while (candles.size() < outputSize) {
-            int count = Math.min(MAX_CANDLES_PER_REQUEST, outputSize - candles.size());
+        while (candlesByDate.size() < outputSize) {
+            int count = Math.min(MAX_CANDLES_PER_REQUEST, outputSize - candlesByDate.size());
             CandlesResponse response = callCandlesEndpoint(
                     credentials,
                     accessToken,
@@ -118,23 +117,46 @@ public class TossSecuritiesMarketHistoryProvider {
                     .map(item -> toMarketCandle(item, market, normalizedTicker))
                     .filter(Objects::nonNull)
                     .toList();
-            candles.addAll(page);
+            int uniqueCountBeforePage = candlesByDate.size();
+            for (MarketCandle candle : page) {
+                MarketCandle existing = candlesByDate.putIfAbsent(candle.getTradingDate(), candle);
+                if (existing != null && !sameValues(existing, candle)) {
+                    throw new MarketDataUnavailableException("토스증권의 동일 날짜 캔들 값이 서로 다릅니다.");
+                }
+            }
+
+            if (candlesByDate.size() >= outputSize) {
+                break;
+            }
 
             String nextBefore = response.result().nextBefore();
-            if (page.isEmpty() || nextBefore == null || nextBefore.isBlank() || nextBefore.equals(before)) {
+            if (page.isEmpty() || nextBefore == null || nextBefore.isBlank()) {
                 break;
+            }
+            if (candlesByDate.size() == uniqueCountBeforePage) {
+                throw new MarketDataUnavailableException("토스증권 캔들 페이지에서 새 날짜를 찾지 못했습니다.");
+            }
+            if (!seenCursors.add(nextBefore)) {
+                throw new MarketDataUnavailableException("토스증권 캔들 페이지 커서가 반복되었습니다.");
             }
             before = nextBefore;
         }
 
-        if (candles.isEmpty()) {
+        if (candlesByDate.isEmpty()) {
             throw new MarketDataUnavailableException("토스증권 캔들 데이터를 찾을 수 없습니다.");
         }
 
-        return candles.stream()
+        return candlesByDate.values().stream()
                 .sorted(Comparator.comparing(MarketCandle::getTradingDate))
-                .distinct()
                 .toList();
+    }
+
+    private boolean sameValues(MarketCandle first, MarketCandle second) {
+        return first.getOpen().compareTo(second.getOpen()) == 0
+                && first.getHigh().compareTo(second.getHigh()) == 0
+                && first.getLow().compareTo(second.getLow()) == 0
+                && first.getClose().compareTo(second.getClose()) == 0
+                && first.getVolume() == second.getVolume();
     }
 
     private CandlesResponse callCandlesEndpoint(
