@@ -353,7 +353,8 @@
       확장 설계(전략 화이트리스트, 서킷브레이커, 킬스위치 우선순위), 규제 확인
       필요 항목(자본시장법·Toss 약관·양도세 신고는 사용자 책임) 정리
       (`research/reports/track-a-auto-trading-3rd-stage-policy-and-architecture-proposal.md`).
-      **아직 CLAUDE.md/BROKER_AND_PROVIDER_ARCHITECTURE.md 실제 수정은 안 함**
-      **— 사용자 승인 후 Codex 작업 계약으로 이어가는 것을 제안.**
+      **이후 반영됨: 사용자 승인으로 `CLAUDE.md`와 `BROKER_AND_PROVIDER_ARCHITECTURE.md`가**
+      **개정됐고(`229e482`, 2026-09-17), 2026-09-18 opt-in 동의·킬스위치·드라이런·Toss 주문**
+      **어댑터가 구현됐다. 실거래는 `live-enabled` 기본값 false로 비활성.**
 
 > 새 조사 주제가 필요하면 이 목록에 항목을 추가하고, 왜 필요한지 한 줄로 메모해두세요.

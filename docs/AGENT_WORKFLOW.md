@@ -33,7 +33,7 @@ acceptance checks.
 
 ## Product and Architecture Guardrails
 
-- Trade Guide is a US-stock decision-support service. It never executes orders or guarantees returns.
+- Trade Guide is a US and Korean stock decision-support service. Order execution is available only to members who explicitly opt in, and only for validated strategy rules; it never applies to members who have not opted in, and it never guarantees returns.
 - Keep strategy signals, user-context decisions, and future order drafts separate.
 - Keep React web UI and future Flutter UI behind stable HTTP API contracts and domain rules. Do not add web-only behavior to backend APIs without a product reason.
 - Do not invent stop-loss prices, target prices, position ratios, or new investment rules. Only implement policies explicitly adopted in `research/STRATEGY_ENGINE_POLICY.md`.
