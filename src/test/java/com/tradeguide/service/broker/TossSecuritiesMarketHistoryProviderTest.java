@@ -9,19 +9,26 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.tradeguide.domain.broker.BrokerCredentialsFixture.tossCredentials;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.queryParam;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -144,6 +151,34 @@ class TossSecuritiesMarketHistoryProviderTest {
         server.verify();
     }
 
+    /** 2026-09-23 실제 관측(IBIT, CRCL): 이력 끝은 요청보다 적은 캔들과 nextBefore=null을 함께 준다. */
+    @Test
+    void historyEndReturnsShortPageWithNullCursorAndStopsWithoutExtraRequest() {
+        givenToken();
+        List<String> weekdays = weekdaysBackwardFrom(LocalDate.of(2026, 9, 22), 240);
+        server.expect(requestTo(allOf(startsWith(BASE_URL + "/api/v1/candles?"), not(containsString("before=")))))
+                .andExpect(queryParam("count", "200"))
+                .andRespond(withSuccess(page("page2", candles(weekdays.subList(0, 200))),
+                        MediaType.APPLICATION_JSON));
+        server.expect(requestTo(startsWith(BASE_URL + "/api/v1/candles?")))
+                .andExpect(queryParam("count", "100"))
+                .andExpect(queryParam("before", "page2"))
+                .andRespond(withSuccess(page(null, candles(weekdays.subList(200, 240))),
+                        MediaType.APPLICATION_JSON));
+
+        var result = provider.getCandlesWithReceipt(tossCredentials("id", "secret"),
+                Market.US, "IBIT", CandleInterval.DAILY, 300);
+
+        assertThat(result.candles()).hasSize(240);
+        assertThat(result.candles()).extracting(MarketCandle::getTradingDate)
+                .isSortedAccordingTo(Comparator.naturalOrder())
+                .doesNotHaveDuplicates()
+                .startsWith(LocalDate.parse(weekdays.get(239)))
+                .endsWith(LocalDate.of(2026, 9, 22));
+        assertThat(result.pageReceivedAt()).hasSize(2);
+        server.verify();
+    }
+
     private void givenToken() {
         when(tokenIssuer.issueAccessToken(any())).thenReturn("test-access-token");
     }
@@ -157,5 +192,19 @@ class TossSecuritiesMarketHistoryProviderTest {
         return "{\"timestamp\":\"" + date + "\",\"openPrice\":\"100\","
                 + "\"highPrice\":\"110\",\"lowPrice\":\"90\",\"closePrice\":\""
                 + close + "\",\"volume\":\"100\",\"currency\":\"USD\"}";
+    }
+
+    private String[] candles(List<String> dates) {
+        return dates.stream().map(date -> candle(date, "100")).toArray(String[]::new);
+    }
+
+    private List<String> weekdaysBackwardFrom(LocalDate latest, int count) {
+        List<String> dates = new ArrayList<>();
+        for (LocalDate date = latest; dates.size() < count; date = date.minusDays(1)) {
+            if (date.getDayOfWeek() != DayOfWeek.SATURDAY && date.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                dates.add(date.toString());
+            }
+        }
+        return dates;
     }
 }
