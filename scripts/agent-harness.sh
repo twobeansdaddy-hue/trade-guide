@@ -44,8 +44,6 @@ Usage:
   ./scripts/agent-harness.sh claude-frontend <task-id>
   ./scripts/agent-harness.sh claude-backend <task-id>
   ./scripts/agent-harness.sh claude-implementation <task-id> <allowed-path> [allowed-path...]
-  ./scripts/agent-harness.sh antigravity-review <task-id>
-  ./scripts/agent-harness.sh antigravity-ui <task-id>
   ./scripts/agent-harness.sh read-only
 
 The command writes only an ignored local agent scope file.
@@ -82,16 +80,6 @@ case "${1:-}" in
     [[ $# -ge 3 ]] || { usage; exit 1; }
     scope_file=".claude/agent-scope.json"
     write_scope "scoped-implementation" "$2" "${@:3}"
-    ;;
-  antigravity-review)
-    [[ $# -eq 2 ]] || { usage; exit 1; }
-    scope_file=".antigravity/agent-scope.json"
-    write_scope "review" "$2" ".antigravity/no-write-marker"
-    ;;
-  antigravity-ui)
-    [[ $# -eq 2 ]] || { usage; exit 1; }
-    scope_file=".antigravity/agent-scope.json"
-    write_scope "scoped-ui-implementation" "$2" "frontend/src/"
     ;;
   read-only)
     [[ $# -eq 1 ]] || { usage; exit 1; }

@@ -3,7 +3,8 @@
 ## Identity
 
 - Task ID: `TASK-ID`
-- Owner: `Codex | Claude | Antigravity CLI`
+- Owner: `Codex | Claude`
+- Cross verifier: `Codex | Claude` (the agent that does not own the write scope)
 - Work mode: `research | design | scoped-implementation | review`
 - Branch / worktree:
 

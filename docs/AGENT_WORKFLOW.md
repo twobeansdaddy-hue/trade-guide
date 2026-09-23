@@ -49,9 +49,9 @@ acceptance checks.
 6. Report changed files, verification performed, remaining limitations, and a suggested commit boundary.
 
 UI 레이아웃 변경의 수동 확인 기준(데스크톱·360px, 가로 스크롤/겹침/잘림/레이아웃
-이동 금지), 세로 슬라이스 딜리버리 루프(Codex 계획·통합 -> Claude 구현 ->
-Antigravity 독립 검증 -> Codex 확정), Git 경계(Claude/Antigravity는 commit 외
-Git 변경 금지)는 `docs/AI_COLLABORATION_POLICY.md`의 "Required Verification",
+이동 금지), 세로 슬라이스 딜리버리 루프(Codex 계획·통합 -> Codex 또는 Claude 구현 ->
+구현하지 않은 쪽의 교차 검증 -> 확정, Codex 부재 시 사용자가 조정·확정),
+Git 경계(Claude는 사용자가 그 턴에 요청한 commit 외 Git 변경 금지)는 `docs/AI_COLLABORATION_POLICY.md`의 "Required Verification",
 "Efficient Delivery Model", "Git And Security Boundaries"를 따른다(여기서
 반복하지 않는다).
 

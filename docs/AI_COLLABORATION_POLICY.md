@@ -19,9 +19,10 @@ summarize the rules that each agent needs at session start.
 - **Claude** owns evidence-based research, design exploration, architecture
   review, and explicitly scoped implementation work as Codex's coding
   collaborator.
-- **Antigravity CLI** owns independent test design, regression and defect
-  discovery, visual/UX critique, and narrowly scoped UI implementation. It is
-  read-only by default unless Codex assigns a frontend-only write scope.
+
+Codex and Claude are the only delivery agents. Antigravity CLI was removed from
+the delivery path on 2026-09-23; task contracts that name it are historical
+records.
 
 No agent may treat a research conclusion, a design mockup, or a review comment
 as an adopted product rule without the user decision recorded in the relevant
@@ -33,18 +34,18 @@ policy or project-context document.
 | --- | --- | --- | --- |
 | Codex | Integration and implementation | Feature-owned backend, frontend, tests, and factual documentation | Invent investment rules or expose secrets |
 | Claude | Research, design, and review | `research/**` in research mode; `docs/design/**` in design mode; an explicit implementation allowlist in implementation mode | Modify unassigned files, Git history, or local secrets |
-| Antigravity CLI | Independent verification, UX review, and scoped UI implementation | Read-only by default; `frontend/src/**` only when Codex creates an explicit UI task and local scope record | Modify backend, documents, dependencies, secrets, Git state, or approve its own visual result |
 | User | Product owner | Any file and final decisions | Share API keys or production credentials in prompts |
 
 Only one active agent owns a file set. A task contract must state the owner,
 work mode, allowed paths, expected output, and verification command before an
 agent begins writing.
 
-Antigravity CLI is the preferred implementation runner for contained visual
-and layout work when a second coding agent is useful. It is not an independent
-approval authority: Codex performs the final browser check. Prepare its local
-scope record with `./scripts/agent-harness.sh antigravity-ui <task-id>` and
-include the visual acceptance checks in the dispatched task.
+Frontend work is shared by Codex and Claude. For each frontend task, one agent
+owns the write scope and the other performs cross verification (see "Cross
+verification"). When both work on one feature at the same time, split it into
+disjoint file sets, for example Claude owns `frontend/src/components/<feature>/**`
+while Codex owns shared types, the API client, and integration. No agent approves
+its own visual result.
 
 ## Efficient Delivery Model
 
@@ -61,14 +62,19 @@ vertical slice.
    active worker. Claude and Codex are coding collaborators: Claude may own an
    isolated implementation slice, while Codex owns its integration, contract
    decisions, and final acceptance.
-3. **Antigravity verifies independently.** Give Antigravity the completed feature or a
-   proposed change and ask for reproducible test scenarios, API edge cases,
-   regression risks, visual/accessibility defects, and concrete evidence. It
-   may run the task contract's read-only checks but does not edit or approve
-   code.
-4. **Codex accepts or rejects findings.** An Antigravity or Claude finding is not a
-   defect until Codex reproduces it against the current branch. Codex either
-   fixes the confirmed issue or records why it is not applicable.
+3. **The other agent verifies independently.** The agent that did not
+   implement the slice reviews it read-only: reproducible test scenarios, API
+   edge cases, regression risks, visual/accessibility defects, and concrete
+   evidence. It does not edit the reviewed files during the review.
+4. **The implementer accepts or rejects findings.** A finding is not a defect
+   until the implementing agent (or Codex as integrator) reproduces it against
+   the current branch, then either fixes it or records why it is not
+   applicable.
+
+When Codex is unavailable (for example, a usage limit), the user takes over
+coordination: preparing the local scope with `./scripts/agent-harness.sh`,
+accepting findings, and final acceptance. Claude may then implement or verify,
+but never both for the same slice. Claude's Git boundary does not change.
 
 Do not delegate a trivial rename, a one-line question, or a change that needs
 an immediate user product decision. Delegate when independent review reduces
@@ -89,9 +95,9 @@ decisions, integration, final browser/API verification, and Git delivery.
   investment-policy decisions with Codex and the user before assigning the
   implementation. A Claude backend task may implement an already-approved
   decision, but must not choose it.
-- Use Antigravity CLI for narrow visual fixes, read-only regression review, or
-  a second UI pass. Direct Gemini CLI is not part of the delivery path.
-  Antigravity never replaces Codex's final gate.
+- Narrow visual fixes, read-only regression review, and second UI passes go to
+  whichever of Codex or Claude did not implement the slice. Antigravity CLI and
+  direct Gemini CLI are not part of the delivery path.
 
 ## Claude Work Modes
 
@@ -162,7 +168,8 @@ integration gate.
   content, mismatched text/select/date control height in one form row, or
   message-driven layout shift. Header and navigation destinations must remain
   usable at the narrow width. If the assigned worker cannot operate a browser,
-  it must say so; Codex performs this final visual gate before acceptance.
+  it must say so; the cross-verifying agent performs this final visual gate
+  before acceptance.
 - API changes: controller/API tests plus frontend type and error handling
   review when the web client consumes the endpoint.
 - Final integration: `./scripts/verify-feature.sh` and `git diff --check`.
@@ -170,11 +177,12 @@ integration gate.
 The verification result must distinguish checks that passed, checks that were
 not run, and manual flows that were confirmed.
 
-### Independent Antigravity verification
+### Cross verification
 
-For a feature with meaningful UI, API, state, or validation behavior, schedule
-an Antigravity review before final delivery when practical. Its task contract must
-include the branch or commit to inspect and request:
+For a feature with meaningful UI, API, state, or validation behavior, the agent
+that did not implement it (Codex or Claude) reviews it before final delivery
+when practical. The review request must include the branch or commit to inspect
+and ask for:
 
 - happy-path, empty, loading, validation, authorization, and provider-failure
   scenarios that apply to the feature;
@@ -183,7 +191,8 @@ include the branch or commit to inspect and request:
 - file and line references, screenshots, or command output when available;
 - a clear separation between confirmed defects, risks, and suggestions.
 
-Codex should batch Antigravity findings into one corrective slice. Do not create a
+The implementer should batch cross-verification findings into one corrective
+slice. Do not create a
 separate commit for every stylistic suggestion.
 
 ## Git And Security Boundaries
@@ -192,7 +201,7 @@ separate commit for every stylistic suggestion.
   verified vertical slice in agent-development mode. It reports the commit and
   remote result. The user can request review-only or pause Git changes at any
   time.
-- Claude and Antigravity CLI never push, merge, force-push, reset, revert, or alter
+- Claude never pushes, merges, force-pushes, resets, reverts, or alters
   another agent's work. Claude may run `git commit` only when the user's current chat
   message explicitly asks for that specific commit (not standing permission, and not
   inferred from an earlier "go ahead") and Claude has shown the exact commit message
