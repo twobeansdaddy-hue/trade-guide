@@ -1,6 +1,6 @@
 # 장전 가이드 포트폴리오 상태 스냅샷(C-2) 제안
 
-상태: **제안 (사용자 수락 전)**. 2026-09-23 Claude가 `fe98f2e` 기준 코드를 읽기 전용으로 대조해 작성했다. 수락 전에는 정책이나 구현으로 취급하지 않는다. 테스트를 새로 실행하지 않았고, 아래 동시성 위험은 코드 구조로 추론한 것이며 재현하지 않았다.
+상태: **2026-09-23 사용자 결정 후 구현됨**. D1 다이제스트만 저장, D2 `REPEATABLE READ` 읽기 + 저장 직전 재대조, D3 전역 카탈로그 포함, D4 V34 승인. 3절 2번 위험은 PostgreSQL 통합 테스트로 **재현한 뒤** 해소했다(`PostgresPremarketGuidePortfolioStateConsistencyIntegrationTest`). 작업 계약: `docs/agent-tasks/c2-portfolio-state-snapshot-20260923.md`. 부록 A·B는 여전히 미결정이다. 아래 본문은 제안 당시(`fe98f2e` 기준) 분석이며, 구현과 다른 점은 8절에 적는다.
 
 관련 문서: `docs/design/GUIDE_INPUT_OBSERVATION.md`(자산별 캔들 근거 1단계, 현재 상태).
 
@@ -79,6 +79,16 @@
 - 다이제스트 정규화 단위 테스트(재저장 무변화, 금액 표기 무관, 삭제·재등록 감지).
 - 서비스 테스트: 두 배치가 같은 상태 객체를 받는지, 변경 주입 시 사유 기록, 강제 재생성, 회원·포트폴리오 격리.
 - PostgreSQL 통합 테스트: V34 왕복, 두 커넥션으로 생성 중 원장 커밋을 일으켜 3절 2번 위험을 먼저 재현하고 `REPEATABLE READ`로 해소되는지 확인. H2는 격리 동작이 달라 대체할 수 없다.
+
+## 8. 구현 결과 (2026-09-23)
+
+- `PortfolioDecisionInputsReader`가 읽기 전용 `REQUIRES_NEW` + `REPEATABLE READ` 트랜잭션에서 2절 입력을 읽고 `PortfolioStateDigest`(형식 v1)로 구성요소별 SHA-256을 만든다. `PremarketGuideService`는 이 값을 보유·후보 배치에 넘기고, 저장 직전 한 번 더 읽어 `state_sha256`을 대조한다.
+- 두 배치 서비스에는 `PortfolioDecisionInputs`를 받는 오버로드만 추가했다. 기존 `(memberId, portfolioId)` 메서드는 동작을 바꾸지 않았다(자동 주문 스케줄러·매매 계획·포트폴리오 API 사용 경로).
+- V34 `premarket_guide_portfolio_states`는 4절 표와 같다. `broker_snapshot_id`는 증권사 연결 삭제 시 스냅샷이 함께 지워지므로 외래키를 두지 않는다.
+- 생성 중 변경이 감지돼도 상태 행은 저장한다. 가이드가 실제로 사용한 시작 시점 상태이기 때문이다. 감사 참조만 비우고 `PORTFOLIO_STATE_CHANGED_DURING_GENERATION`을 남긴다.
+- 전역 `AssetProfile` 카탈로그는 신호 계산 시 기존처럼 다시 조회한다. 스냅샷에는 다이제스트만 기록하고, 재대조로 변경을 감지만 한다(방지는 하지 않음).
+- 검증: 백엔드 전체 1,122개 통과·3개 건너뜀, PostgreSQL 통합 39개 통과. 재현 테스트는 변경 전 코드에서 실패(`Expected size: 1 but was: 0`), 변경 후 통과했다.
+- 한계: `REPEATABLE READ`가 한 읽기 안의 여러 쿼리 사이 경합을 막는지는 별도 테스트로 재현하지 않았다. 재현 테스트가 확인한 것은 두 배치가 같은 상태를 공유하는 효과와 변경 감지다. 전체 입력 해시와 감사 상태 상향은 하지 않았다.
 
 ## 부록 A. 복구본(`outputs/recovered-research`) 반영 방식 (미결정)
 

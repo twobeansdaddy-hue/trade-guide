@@ -18,8 +18,8 @@ import java.time.Instant;
 @Table(name = "premarket_guide_input_audits")
 public class PremarketGuideInputAudit {
 
-    private static final String MISSING_INPUT_REASONS =
-            "INPUT_DIGEST_NOT_CAPTURED,PORTFOLIO_STATE_NOT_CAPTURED";
+    private static final String INPUT_DIGEST_NOT_CAPTURED = "INPUT_DIGEST_NOT_CAPTURED";
+    private static final String PORTFOLIO_STATE_REF_PREFIX = "portfolio-state:v1:";
 
     @Id
     @Column(name = "guide_snapshot_id")
@@ -61,15 +61,23 @@ public class PremarketGuideInputAudit {
 
     PremarketGuideInputAudit(PremarketGuideSnapshot snapshot, Instant recordedAt,
                             MarketDataProvider candleProvider, boolean candleEvidenceIncomplete,
-                            boolean candleReceiptIncomplete) {
+                            boolean candleReceiptIncomplete, PortfolioStateCapture stateCapture,
+                            String stateSha256) {
         this.snapshot = snapshot;
-        markUnverified(recordedAt, candleProvider, candleEvidenceIncomplete, candleReceiptIncomplete);
+        markUnverified(recordedAt, candleProvider, candleEvidenceIncomplete, candleReceiptIncomplete,
+                stateCapture, stateSha256);
     }
 
+    /**
+     * 전체 입력이 검증되기 전까지는 항상 미검증으로 기록한다. 포트폴리오 상태가 일관되게 캡처돼도
+     * 전체 입력 해시와 가격 조정 계보가 없으므로 상태를 올리지 않는다.
+     */
     void markUnverified(Instant recordedAt, MarketDataProvider candleProvider,
-                        boolean candleEvidenceIncomplete, boolean candleReceiptIncomplete) {
-        if (recordedAt == null) {
-            throw new IllegalArgumentException("감사 기록 시각이 필요합니다.");
+                        boolean candleEvidenceIncomplete, boolean candleReceiptIncomplete,
+                        PortfolioStateCapture stateCapture, String stateSha256) {
+        if (recordedAt == null || stateCapture == null
+                || (stateCapture != PortfolioStateCapture.NOT_CAPTURED && stateSha256 == null)) {
+            throw new IllegalArgumentException("감사 기록 시각과 포트폴리오 상태 캡처 정보가 필요합니다.");
         }
         this.recordedAt = recordedAt;
         this.candleProvider = candleProvider;
@@ -77,10 +85,21 @@ public class PremarketGuideInputAudit {
         this.responseReceivedAt = null;
         this.adjustmentMode = null;
         this.inputSha256 = null;
-        this.portfolioStateRef = null;
+        this.portfolioStateRef = stateCapture == PortfolioStateCapture.CAPTURED
+                ? PORTFOLIO_STATE_REF_PREFIX + stateSha256
+                : null;
         this.missingReasons = (candleReceiptIncomplete ? "CANDLE_RECEIPT_NOT_CAPTURED," : "")
-                + MISSING_INPUT_REASONS
+                + INPUT_DIGEST_NOT_CAPTURED
+                + switch (stateCapture) {
+                    case NOT_CAPTURED -> ",PORTFOLIO_STATE_NOT_CAPTURED";
+                    case CHANGED_DURING_GENERATION -> ",PORTFOLIO_STATE_CHANGED_DURING_GENERATION";
+                    case CAPTURED -> "";
+                }
                 + (candleEvidenceIncomplete ? ",CANDLE_EVIDENCE_INCOMPLETE" : "");
+    }
+
+    public String getPortfolioStateRef() {
+        return portfolioStateRef;
     }
 
     public GuideInputEvidenceStatus getEvidenceStatus() {

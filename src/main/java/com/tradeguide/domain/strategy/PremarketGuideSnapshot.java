@@ -91,6 +91,10 @@ public class PremarketGuideSnapshot {
             fetch = FetchType.LAZY)
     private PremarketGuideInputAudit inputAudit;
 
+    @OneToOne(mappedBy = "snapshot", cascade = CascadeType.ALL, orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private PremarketGuidePortfolioState portfolioState;
+
     protected PremarketGuideSnapshot() {
     }
 
@@ -141,7 +145,36 @@ public class PremarketGuideSnapshot {
                 : emptyHoldingsGuidance.getMessage();
     }
 
+    /** 포트폴리오 상태 스냅샷 없이 입력 근거를 미검증으로 기록한다. 이전 상태 기록이 있으면 제거한다. */
     public void recordUnverifiedInputs(Instant recordedAt, MarketDataProvider candleProvider) {
+        portfolioState = null;
+        recordAudit(recordedAt, candleProvider, PortfolioStateCapture.NOT_CAPTURED, null);
+    }
+
+    /**
+     * 가이드 계산에 사용한 포트폴리오 상태 다이제스트를 함께 기록한다. {@code changedDuringGeneration}이면
+     * 가이드는 시작 시 상태로 일관되게 계산됐지만 저장 시점 상태와 다르므로 감사 참조를 비운다.
+     */
+    public void recordUnverifiedInputs(Instant recordedAt, MarketDataProvider candleProvider,
+                                       PremarketGuidePortfolioStateDigests stateDigests,
+                                       boolean changedDuringGeneration) {
+        if (stateDigests == null) {
+            throw new IllegalArgumentException("포트폴리오 상태 다이제스트가 필요합니다.");
+        }
+        if (portfolioState == null) {
+            portfolioState = new PremarketGuidePortfolioState(this, stateDigests);
+        } else {
+            portfolioState.refreshFrom(stateDigests);
+        }
+        recordAudit(recordedAt, candleProvider,
+                changedDuringGeneration
+                        ? PortfolioStateCapture.CHANGED_DURING_GENERATION
+                        : PortfolioStateCapture.CAPTURED,
+                stateDigests.stateSha256());
+    }
+
+    private void recordAudit(Instant recordedAt, MarketDataProvider candleProvider,
+                             PortfolioStateCapture stateCapture, String stateSha256) {
         List<PremarketGuideItem> availableItems = items.stream()
                 .filter(item -> item.getStatus() == PremarketGuideItemStatus.AVAILABLE)
                 .toList();
@@ -153,11 +186,11 @@ public class PremarketGuideSnapshot {
                         .noneMatch(evidence -> evidence.matches(item, candleProvider)
                                 && !evidence.getPageReceivedAt().isEmpty()));
         if (inputAudit == null) {
-            inputAudit = new PremarketGuideInputAudit(
-                    this, recordedAt, candleProvider, candleEvidenceIncomplete, candleReceiptIncomplete);
+            inputAudit = new PremarketGuideInputAudit(this, recordedAt, candleProvider,
+                    candleEvidenceIncomplete, candleReceiptIncomplete, stateCapture, stateSha256);
         } else {
-            inputAudit.markUnverified(
-                    recordedAt, candleProvider, candleEvidenceIncomplete, candleReceiptIncomplete);
+            inputAudit.markUnverified(recordedAt, candleProvider,
+                    candleEvidenceIncomplete, candleReceiptIncomplete, stateCapture, stateSha256);
         }
     }
 
@@ -230,6 +263,10 @@ public class PremarketGuideSnapshot {
 
     public PremarketGuideInputAudit getInputAudit() {
         return inputAudit;
+    }
+
+    public PremarketGuidePortfolioState getPortfolioState() {
+        return portfolioState;
     }
 
     public List<PremarketGuideCandleEvidence> getCandleEvidence() {

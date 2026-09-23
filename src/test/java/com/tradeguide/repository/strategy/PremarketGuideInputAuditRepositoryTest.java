@@ -4,7 +4,9 @@ import com.tradeguide.domain.market.MarketDataProvider;
 import com.tradeguide.domain.member.Member;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.strategy.GuideInputEvidenceStatus;
+import com.tradeguide.domain.strategy.PremarketGuideCandidateSource;
 import com.tradeguide.domain.strategy.PremarketGuideCandleEvidence;
+import com.tradeguide.domain.strategy.PremarketGuidePortfolioStateDigests;
 import com.tradeguide.domain.strategy.PremarketGuideScope;
 import com.tradeguide.domain.strategy.PremarketGuideSnapshot;
 import com.tradeguide.domain.trade.Market;
@@ -150,6 +152,55 @@ class PremarketGuideInputAuditRepositoryTest {
                 .getCandleEvidence().getFirst();
         assertThat(restored.getPageReceivedAt()).containsExactly(receivedAt);
         assertThat(restored.getAdjustedRequested()).isNull();
+    }
+
+    @Test
+    void persistsPortfolioStateDigestsAndRefreshesThemInPlace() {
+        Member member = memberRepository.save(new Member("state-audit@example.com", "state-user"));
+        Portfolio portfolio = portfolioRepository.save(new Portfolio(member, "포트폴리오 상태"));
+        PremarketGuideSnapshot snapshot = new PremarketGuideSnapshot(
+                portfolio, LocalDate.of(2026, 9, 14), LocalDateTime.of(2026, 9, 14, 13, 0));
+        snapshot.recordUnverifiedInputs(Instant.parse("2026-09-14T13:00:00Z"), MarketDataProvider.TWELVE_DATA,
+                stateDigests("a", 42L), false);
+        snapshotRepository.saveAndFlush(snapshot);
+        Long id = snapshot.getId();
+        entityManager.clear();
+
+        PremarketGuideSnapshot restored = snapshotRepository.findById(id).orElseThrow();
+        assertThat(restored.getPortfolioState().getStateSha256()).isEqualTo("a".repeat(64));
+        assertThat(restored.getPortfolioState().getCandidateSource())
+                .isEqualTo(PremarketGuideCandidateSource.PORTFOLIO);
+        assertThat(restored.getPortfolioState().getBrokerSnapshotId()).isEqualTo(42L);
+        assertThat(restored.getInputAudit().getPortfolioStateRef())
+                .isEqualTo("portfolio-state:v1:" + "a".repeat(64));
+        assertThat(restored.getInputAudit().getMissingReasons()).doesNotContain("PORTFOLIO_STATE");
+
+        restored.recordUnverifiedInputs(Instant.parse("2026-09-14T13:05:00Z"), MarketDataProvider.TWELVE_DATA,
+                stateDigests("b", null), true);
+        snapshotRepository.saveAndFlush(restored);
+        entityManager.clear();
+
+        PremarketGuideSnapshot refreshed = snapshotRepository.findById(id).orElseThrow();
+        assertThat(refreshed.getPortfolioState().getStateSha256()).isEqualTo("b".repeat(64));
+        assertThat(refreshed.getPortfolioState().getBrokerSnapshotId()).isNull();
+        assertThat(refreshed.getInputAudit().getPortfolioStateRef()).isNull();
+        assertThat(refreshed.getInputAudit().getMissingReasons())
+                .contains("PORTFOLIO_STATE_CHANGED_DURING_GENERATION");
+
+        refreshed.recordUnverifiedInputs(Instant.parse("2026-09-14T13:10:00Z"), MarketDataProvider.TWELVE_DATA);
+        snapshotRepository.saveAndFlush(refreshed);
+        entityManager.clear();
+
+        PremarketGuideSnapshot withoutState = snapshotRepository.findById(id).orElseThrow();
+        assertThat(withoutState.getPortfolioState()).isNull();
+        assertThat(withoutState.getInputAudit().getMissingReasons()).contains("PORTFOLIO_STATE_NOT_CAPTURED");
+    }
+
+    private PremarketGuidePortfolioStateDigests stateDigests(String hashChar, Long brokerSnapshotId) {
+        String hash = hashChar.repeat(64);
+        return new PremarketGuidePortfolioStateDigests(1, Instant.parse("2026-09-14T12:59:00Z"),
+                hash, 3, hash, hash, hash, PremarketGuideCandidateSource.PORTFOLIO, hash, hash,
+                brokerSnapshotId, hash);
     }
 
     private PremarketGuideCandleEvidence candleEvidence(String sha256) {

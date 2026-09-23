@@ -52,6 +52,8 @@ class PremarketGuideServiceTest {
     private CompletedWeeklyCandleCache completedWeeklyCandleCache;
     private CompletedWeeklyCandleFilter completedWeeklyCandleFilter;
     private MarketCandleDigest marketCandleDigest;
+    private PortfolioDecisionInputsReader decisionInputsReader;
+    private final PortfolioDecisionInputs inputs = inputs("a");
     private PremarketGuideService service;
 
     @BeforeEach
@@ -63,6 +65,8 @@ class PremarketGuideServiceTest {
         completedWeeklyCandleCache = mock(CompletedWeeklyCandleCache.class);
         completedWeeklyCandleFilter = mock(CompletedWeeklyCandleFilter.class);
         marketCandleDigest = mock(MarketCandleDigest.class);
+        decisionInputsReader = mock(PortfolioDecisionInputsReader.class);
+        when(decisionInputsReader.read(1L, 10L)).thenReturn(inputs);
         service = new PremarketGuideService(
                 clock,
                 portfolioRepository,
@@ -73,7 +77,8 @@ class PremarketGuideServiceTest {
                 mock(AssetDisplayNameResolver.class),
                 completedWeeklyCandleCache,
                 completedWeeklyCandleFilter,
-                marketCandleDigest
+                marketCandleDigest,
+                decisionInputsReader
         );
     }
 
@@ -86,9 +91,9 @@ class PremarketGuideServiceTest {
         when(snapshotRepository.findByPortfolio_IdAndGuideDate(10L, LocalDate.of(2026, 9, 14)))
                 .thenReturn(Optional.empty());
         when(snapshotRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(1L, 10L))
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(inputs))
                 .thenReturn(new StrategyGuideBatch(List.of(guide("SOXL")), List.of()));
-        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(1L, 10L))
+        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(inputs))
                 .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
 
         PremarketGuideResponse result = service.generateToday(1L, 10L, false);
@@ -120,9 +125,9 @@ class PremarketGuideServiceTest {
         when(snapshotRepository.findByPortfolio_IdAndGuideDate(10L, LocalDate.of(2026, 9, 14)))
                 .thenReturn(Optional.empty());
         when(snapshotRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(1L, 10L))
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(inputs))
                 .thenReturn(new StrategyGuideBatch(List.of(guide("SOXL")), List.of()));
-        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(1L, 10L))
+        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(inputs))
                 .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
         Instant loadedAt = Instant.parse("2026-09-11T21:00:00Z");
         MarketCandle candle = new MarketCandle(Market.US, "SOXL", LocalDate.of(2026, 9, 11),
@@ -158,9 +163,9 @@ class PremarketGuideServiceTest {
         when(snapshotRepository.findByPortfolio_IdAndGuideDate(10L, LocalDate.of(2026, 9, 14)))
                 .thenReturn(Optional.empty());
         when(snapshotRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(1L, 10L))
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(inputs))
                 .thenReturn(new StrategyGuideBatch(List.of(guide("SOXL")), List.of()));
-        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(1L, 10L))
+        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(inputs))
                 .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
         Instant receivedAt = Instant.parse("2026-09-11T20:00:00Z");
         MarketCandle candle = new MarketCandle(Market.US, "SOXL", LocalDate.of(2026, 9, 11),
@@ -184,8 +189,8 @@ class PremarketGuideServiceTest {
         assertThat(saved.getValue().getInputAudit().getEvidenceStatus())
                 .isEqualTo(GuideInputEvidenceStatus.UNVERIFIED);
         assertThat(saved.getValue().getInputAudit().getMissingReasons())
-                .doesNotContain("CANDLE_RECEIPT_NOT_CAPTURED")
-                .contains("INPUT_DIGEST_NOT_CAPTURED", "PORTFOLIO_STATE_NOT_CAPTURED");
+                .doesNotContain("CANDLE_RECEIPT_NOT_CAPTURED", "PORTFOLIO_STATE_NOT_CAPTURED")
+                .contains("INPUT_DIGEST_NOT_CAPTURED");
     }
 
     @Test
@@ -197,9 +202,9 @@ class PremarketGuideServiceTest {
         when(snapshotRepository.findByPortfolio_IdAndGuideDate(10L, LocalDate.of(2026, 9, 14)))
                 .thenReturn(Optional.empty());
         when(snapshotRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(1L, 10L))
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(inputs))
                 .thenReturn(new StrategyGuideBatch(List.of(guide("SOXL")), List.of()));
-        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(1L, 10L))
+        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(inputs))
                 .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
         MarketCandle staleCandle = new MarketCandle(Market.US, "SOXL", LocalDate.of(2026, 9, 4),
                 BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, 100L);
@@ -234,9 +239,9 @@ class PremarketGuideServiceTest {
         when(snapshotRepository.findByPortfolio_IdAndGuideDate(10L, LocalDate.of(2026, 9, 14)))
                 .thenReturn(Optional.of(snapshot));
         when(snapshotRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(1L, 10L))
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(inputs))
                 .thenReturn(new StrategyGuideBatch(List.of(guide("SOXL")), List.of()));
-        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(1L, 10L))
+        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(inputs))
                 .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
         when(completedWeeklyCandleCache.findObservation("TWELVE_DATA", Market.US, "SOXL", 101))
                 .thenReturn(Optional.empty());
@@ -290,9 +295,9 @@ class PremarketGuideServiceTest {
                         java.time.LocalDateTime.of(2026, 9, 14, 12, 0)
                 )));
         when(snapshotRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(1L, 10L))
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(inputs))
                 .thenReturn(new StrategyGuideBatch(List.of(guide("SOXL")), List.of()));
-        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(1L, 10L))
+        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(inputs))
                 .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
 
         PremarketGuideResponse result = service.generateToday(1L, 10L, true);
@@ -300,8 +305,8 @@ class PremarketGuideServiceTest {
         assertThat(result.status()).isEqualTo(PremarketGuideStatus.COMPLETED);
         assertThat(result.heldGuides()).extracting(response -> response.getTicker())
                 .containsExactly("SOXL");
-        verify(portfolioStrategyGuideService).getPortfolioStrategyGuides(1L, 10L);
-        verify(portfolioCandidateStrategyGuideService).getCandidateStrategyGuides(1L, 10L);
+        verify(portfolioStrategyGuideService).getPortfolioStrategyGuides(inputs);
+        verify(portfolioCandidateStrategyGuideService).getCandidateStrategyGuides(inputs);
         verify(snapshotRepository).save(any());
         assertThat(result.marketDataProvider()).isEqualTo("YAHOO_FINANCE");
         assertThat(result.inputEvidenceStatus()).isEqualTo("UNVERIFIED");
@@ -330,6 +335,75 @@ class PremarketGuideServiceTest {
 
         assertThat(result.marketDataProvider()).isEqualTo("TWELVE_DATA");
         verify(existingSnapshot, never()).replaceResults(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void recordsConsistentPortfolioStateWithoutVerifyingWholeGuide() {
+        Portfolio portfolio = mock(Portfolio.class);
+        when(portfolioRepository.findByMember_IdAndId(1L, 10L)).thenReturn(Optional.of(portfolio));
+        when(portfolio.getMarketDataPreference())
+                .thenReturn(PortfolioMarketDataPreference.unified(MarketDataProvider.TWELVE_DATA));
+        when(snapshotRepository.findByPortfolio_IdAndGuideDate(10L, LocalDate.of(2026, 9, 14)))
+                .thenReturn(Optional.empty());
+        when(snapshotRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(inputs))
+                .thenReturn(new StrategyGuideBatch(List.of(guide("SOXL")), List.of()));
+        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(inputs))
+                .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
+
+        service.generateToday(1L, 10L, false);
+
+        var saved = org.mockito.ArgumentCaptor.forClass(
+                com.tradeguide.domain.strategy.PremarketGuideSnapshot.class);
+        verify(snapshotRepository).save(saved.capture());
+        var audit = saved.getValue().getInputAudit();
+        assertThat(saved.getValue().getPortfolioState().getStateSha256()).isEqualTo("a".repeat(64));
+        assertThat(audit.getPortfolioStateRef()).isEqualTo("portfolio-state:v1:" + "a".repeat(64));
+        assertThat(audit.getMissingReasons())
+                .contains("INPUT_DIGEST_NOT_CAPTURED")
+                .doesNotContain("PORTFOLIO_STATE_NOT_CAPTURED", "PORTFOLIO_STATE_CHANGED_DURING_GENERATION");
+        assertThat(audit.getEvidenceStatus()).isEqualTo(GuideInputEvidenceStatus.UNVERIFIED);
+        assertThat(audit.getInputSha256()).isNull();
+        // 시작 시 한 번, 저장 직전 재대조 한 번만 읽는다.
+        verify(decisionInputsReader, times(2)).read(1L, 10L);
+    }
+
+    @Test
+    void recordsPortfolioStateChangedDuringGenerationWithoutReference() {
+        Portfolio portfolio = mock(Portfolio.class);
+        when(portfolioRepository.findByMember_IdAndId(1L, 10L)).thenReturn(Optional.of(portfolio));
+        when(portfolio.getMarketDataPreference())
+                .thenReturn(PortfolioMarketDataPreference.unified(MarketDataProvider.TWELVE_DATA));
+        when(snapshotRepository.findByPortfolio_IdAndGuideDate(10L, LocalDate.of(2026, 9, 14)))
+                .thenReturn(Optional.empty());
+        when(snapshotRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(decisionInputsReader.read(1L, 10L)).thenReturn(inputs, inputs("b"));
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(inputs))
+                .thenReturn(new StrategyGuideBatch(List.of(guide("SOXL")), List.of()));
+        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(inputs))
+                .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
+
+        service.generateToday(1L, 10L, false);
+
+        var saved = org.mockito.ArgumentCaptor.forClass(
+                com.tradeguide.domain.strategy.PremarketGuideSnapshot.class);
+        verify(snapshotRepository).save(saved.capture());
+        // 가이드는 시작 시 상태로 계산됐으므로 그 상태를 기록하되, 저장 시점과 달라 감사 참조는 비운다.
+        assertThat(saved.getValue().getPortfolioState().getStateSha256()).isEqualTo("a".repeat(64));
+        assertThat(saved.getValue().getInputAudit().getPortfolioStateRef()).isNull();
+        assertThat(saved.getValue().getInputAudit().getMissingReasons())
+                .contains("PORTFOLIO_STATE_CHANGED_DURING_GENERATION")
+                .doesNotContain("PORTFOLIO_STATE_NOT_CAPTURED");
+    }
+
+    private static PortfolioDecisionInputs inputs(String hashChar) {
+        String hash = hashChar.repeat(64);
+        return new PortfolioDecisionInputs(10L, List.of(), java.util.Map.of(), null, java.util.Map.of(),
+                com.tradeguide.domain.strategy.PremarketGuideCandidateSource.GLOBAL_CATALOG, List.of(), false,
+                new com.tradeguide.domain.strategy.PremarketGuidePortfolioStateDigests(1,
+                        Instant.parse("2026-09-14T12:59:00Z"), hash, 0, hash, hash, hash,
+                        com.tradeguide.domain.strategy.PremarketGuideCandidateSource.GLOBAL_CATALOG,
+                        hash, hash, null, hash));
     }
 
     private AssetStrategyGuide guide(String ticker) {

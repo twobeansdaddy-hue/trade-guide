@@ -46,6 +46,7 @@ public class PremarketGuideService {
     private final CompletedWeeklyCandleCache completedWeeklyCandleCache;
     private final CompletedWeeklyCandleFilter completedWeeklyCandleFilter;
     private final MarketCandleDigest marketCandleDigest;
+    private final PortfolioDecisionInputsReader decisionInputsReader;
 
     public PremarketGuideService(
             Clock clock,
@@ -57,8 +58,10 @@ public class PremarketGuideService {
             AssetDisplayNameResolver displayNameResolver,
             CompletedWeeklyCandleCache completedWeeklyCandleCache,
             CompletedWeeklyCandleFilter completedWeeklyCandleFilter,
-            MarketCandleDigest marketCandleDigest
+            MarketCandleDigest marketCandleDigest,
+            PortfolioDecisionInputsReader decisionInputsReader
     ) {
+        this.decisionInputsReader = decisionInputsReader;
         this.clock = clock;
         this.portfolioRepository = portfolioRepository;
         this.snapshotRepository = snapshotRepository;
@@ -90,10 +93,10 @@ public class PremarketGuideService {
             return PremarketGuideResponse.from(snapshot, displayNameResolver);
         }
 
-        StrategyGuideBatch heldBatch = portfolioStrategyGuideService
-                .getPortfolioStrategyGuides(memberId, portfolioId);
-        StrategyGuideBatch candidateBatch = portfolioCandidateStrategyGuideService
-                .getCandidateStrategyGuides(memberId, portfolioId);
+        // 보유·후보 배치가 같은 시점의 포트폴리오 상태를 보도록 한 번만 읽어 공유한다.
+        PortfolioDecisionInputs inputs = decisionInputsReader.read(memberId, portfolioId);
+        StrategyGuideBatch heldBatch = portfolioStrategyGuideService.getPortfolioStrategyGuides(inputs);
+        StrategyGuideBatch candidateBatch = portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(inputs);
 
         List<PremarketGuideItem> items = new ArrayList<>();
         heldBatch.getGuides().forEach(guide -> items.add(
@@ -113,7 +116,10 @@ public class PremarketGuideService {
         MarketDataProvider marketDataProvider = portfolio.getMarketDataPreference().getCandleProvider();
         snapshot.replaceResults(status, items, emptyGuidance, generatedAt, marketDataProvider);
         snapshot.replaceCandleEvidence(captureCandleEvidence(items, marketDataProvider, portfolioId));
-        snapshot.recordUnverifiedInputs(clock.instant(), marketDataProvider);
+        // 외부 시세 조회 동안 포트폴리오가 바뀌었는지 저장 직전에 다시 읽어 대조한다. 재시도는 외부 재호출 비용 때문에 하지 않는다.
+        boolean changedDuringGeneration = !decisionInputsReader.read(memberId, portfolioId)
+                .digests().stateSha256().equals(inputs.digests().stateSha256());
+        snapshot.recordUnverifiedInputs(clock.instant(), marketDataProvider, inputs.digests(), changedDuringGeneration);
 
         return PremarketGuideResponse.from(snapshotRepository.save(snapshot), displayNameResolver);
     }

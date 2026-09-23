@@ -5,6 +5,7 @@ import com.tradeguide.domain.holding.Holding;
 import com.tradeguide.domain.strategy.AssetStrategyGuide;
 import com.tradeguide.domain.strategy.EmptyHoldingsGuidance;
 import com.tradeguide.domain.strategy.EmptyHoldingsReason;
+import com.tradeguide.domain.strategy.InvestmentTrack;
 import com.tradeguide.domain.strategy.PortfolioAssetStrategyProfile;
 import com.tradeguide.domain.strategy.StrategyGuideBatch;
 import com.tradeguide.domain.strategy.StrategyGuideUnavailableReason;
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 public class PortfolioStrategyGuideService {
@@ -72,20 +74,49 @@ public class PortfolioStrategyGuideService {
             );
         }
 
+        BigDecimal portfolioDefaultStopLossRatio = resolveStopLossRatio(memberId, portfolioId);
+
+        return buildGuides(
+                portfolioId,
+                holdings,
+                holding -> portfolioAssetStrategyProfileRepository
+                        .findByPortfolio_IdAndMarketAndTicker(portfolioId, holding.getMarket(), holding.getTicker())
+                        .map(PortfolioAssetStrategyProfile::getInvestmentTrack),
+                holding -> resolveHoldingStopLossRatio(portfolioId, holding, portfolioDefaultStopLossRatio)
+        );
+    }
+
+    /**
+     * 장전 가이드용. 원장·재정의·손절 설정을 다시 조회하지 않고 한 시점에 읽은 {@code inputs}만 사용해,
+     * 같은 가이드의 후보 배치와 같은 포트폴리오 상태를 보게 한다.
+     */
+    public StrategyGuideBatch getPortfolioStrategyGuides(PortfolioDecisionInputs inputs) {
+        if (inputs.holdings().isEmpty()) {
+            return new StrategyGuideBatch(
+                    List.of(),
+                    List.of(),
+                    emptyHoldingsGuidance(inputs.brokerSnapshotHasItems())
+            );
+        }
+
+        return buildGuides(inputs.portfolioId(), inputs.holdings(), inputs::strategyOverride, inputs::stopLossRatio);
+    }
+
+    private StrategyGuideBatch buildGuides(
+            Long portfolioId,
+            List<Holding> holdings,
+            Function<Holding, Optional<InvestmentTrack>> strategyOverride,
+            Function<Holding, BigDecimal> stopLossRatioResolver
+    ) {
         List<AssetStrategyGuide> guides = new ArrayList<>();
         List<UnavailableAsset> unavailableAssets = new ArrayList<>();
-        BigDecimal portfolioDefaultStopLossRatio = resolveStopLossRatio(memberId, portfolioId);
 
         for (int index = 0; index < holdings.size(); index++) {
             Holding holding = holdings.get(index);
 
             try {
-                StrategySignal signal = resolveSignal(portfolioId, holding);
-                BigDecimal stopLossRatio = resolveHoldingStopLossRatio(
-                        portfolioId,
-                        holding,
-                        portfolioDefaultStopLossRatio
-                );
+                StrategySignal signal = resolveSignal(portfolioId, holding, strategyOverride.apply(holding));
+                BigDecimal stopLossRatio = stopLossRatioResolver.apply(holding);
 
                 guides.add(new AssetStrategyGuide(
                         holding.getMarket(),
@@ -146,6 +177,10 @@ public class PortfolioStrategyGuideService {
                 .map(items -> !items.isEmpty())
                 .orElse(false);
 
+        return emptyHoldingsGuidance(hasUnreflectedSnapshot);
+    }
+
+    private EmptyHoldingsGuidance emptyHoldingsGuidance(boolean hasUnreflectedSnapshot) {
         if (hasUnreflectedSnapshot) {
             return new EmptyHoldingsGuidance(
                     EmptyHoldingsReason.BROKER_SNAPSHOT_NOT_REFLECTED,
@@ -166,28 +201,21 @@ public class PortfolioStrategyGuideService {
      * {@link com.tradeguide.domain.strategy.AssetProfile} 조회로 신호를 계산한다. 재정의는
      * 이 포트폴리오에만 적용되며 다른 포트폴리오나 후보 가이드에는 영향을 주지 않는다.
      */
-    private StrategySignal resolveSignal(Long portfolioId, Holding holding) {
-        Optional<PortfolioAssetStrategyProfile> override = portfolioAssetStrategyProfileRepository
-                .findByPortfolio_IdAndMarketAndTicker(
-                        portfolioId,
-                        holding.getMarket(),
-                        holding.getTicker()
-                );
-
+    private StrategySignal resolveSignal(Long portfolioId, Holding holding, Optional<InvestmentTrack> override) {
         if (override.isPresent()) {
             if (portfolioRepository.findById(portfolioId).isPresent()) {
                 return strategyGuideService.getStrategySignal(
                         portfolioId,
                         holding.getMarket(),
                         holding.getTicker(),
-                        override.get().getInvestmentTrack()
+                        override.get()
                 );
             }
 
             return strategyGuideService.getStrategySignal(
                     holding.getMarket(),
                     holding.getTicker(),
-                    override.get().getInvestmentTrack()
+                    override.get()
             );
         }
 

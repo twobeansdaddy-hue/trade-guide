@@ -52,6 +52,31 @@ class PortfolioCandidateStrategyGuideServiceTest {
     private PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
 
     @Test
+    void candidateGuidesFromDecisionInputsExcludeSnapshotHoldingsWithoutRereading() {
+        Holding soxlHolding = new Holding(Market.US, "SOXL", new BigDecimal("10"), new BigDecimal("20"));
+        PortfolioDecisionInputs inputs = PortfolioDecisionInputsFixture.inputs(
+                List.of(soxlHolding),
+                java.util.Map.of(),
+                null,
+                java.util.Map.of(),
+                List.of(new PortfolioDecisionInputs.CandidateRef(Market.US, "SOXL", InvestmentTrack.TRACK_A),
+                        new PortfolioDecisionInputs.CandidateRef(Market.US, "TQQQ", InvestmentTrack.TRACK_A)),
+                false);
+        StrategySignal signal = org.mockito.Mockito.mock(StrategySignal.class);
+        StrategyDecision decision = org.mockito.Mockito.mock(StrategyDecision.class);
+        when(portfolioRepository.findById(10L)).thenReturn(java.util.Optional.of(org.mockito.Mockito.mock(Portfolio.class)));
+        when(strategyGuideService.getStrategySignal(10L, Market.US, "TQQQ", InvestmentTrack.TRACK_A))
+                .thenReturn(signal);
+        when(strategyDecisionMaker.decideForCandidate(signal)).thenReturn(decision);
+
+        StrategyGuideBatch batch = portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(inputs);
+
+        assertThat(batch.getGuides()).extracting(AssetStrategyGuide::getTicker).containsExactly("TQQQ");
+        org.mockito.Mockito.verifyNoInteractions(holdingService, assetProfileRepository,
+                portfolioCandidateAssetRepository);
+    }
+
+    @Test
     void getsGuidesForUnheldTrackACandidates() {
         Holding soxlHolding = new Holding(
                 Market.US,

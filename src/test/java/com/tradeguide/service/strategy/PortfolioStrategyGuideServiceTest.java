@@ -64,6 +64,47 @@ class PortfolioStrategyGuideServiceTest {
     private PortfolioStrategyGuideService portfolioStrategyGuideService;
 
     @Test
+    void guidesFromDecisionInputsUseSnapshotWithoutRereadingLedgerOrSettings() {
+        Holding soxlHolding = new Holding(Market.US, "SOXL", new BigDecimal("10"), new BigDecimal("20"));
+        PortfolioDecisionInputs.AssetKey soxl = new PortfolioDecisionInputs.AssetKey(Market.US, "SOXL");
+        PortfolioDecisionInputs inputs = PortfolioDecisionInputsFixture.inputs(
+                List.of(soxlHolding),
+                java.util.Map.of(soxl, com.tradeguide.domain.strategy.InvestmentTrack.TRACK_A),
+                new BigDecimal("0.1"),
+                java.util.Map.of(soxl, new BigDecimal("0.2")),
+                List.of(),
+                false);
+        StrategySignal signal = org.mockito.Mockito.mock(StrategySignal.class);
+        com.tradeguide.domain.strategy.StrategyDecision decision =
+                org.mockito.Mockito.mock(com.tradeguide.domain.strategy.StrategyDecision.class);
+        when(portfolioRepository.findById(10L))
+                .thenReturn(java.util.Optional.of(org.mockito.Mockito.mock(com.tradeguide.domain.portfolio.Portfolio.class)));
+        when(strategyGuideService.getStrategySignal(10L, Market.US, "SOXL",
+                com.tradeguide.domain.strategy.InvestmentTrack.TRACK_A)).thenReturn(signal);
+        when(strategyDecisionMaker.decideForHolding(signal, new BigDecimal("20"), new BigDecimal("0.2")))
+                .thenReturn(decision);
+
+        var batch = portfolioStrategyGuideService.getPortfolioStrategyGuides(inputs);
+
+        assertThat(batch.getGuides()).extracting(guide -> guide.getTicker()).containsExactly("SOXL");
+        org.mockito.Mockito.verifyNoInteractions(holdingService, portfolioAssetStrategyProfileRepository,
+                portfolioAssetRiskOverrideRepository, portfolioBrokerHoldingSnapshotRepository);
+    }
+
+    @Test
+    void emptyDecisionInputsChooseGuidanceFromCapturedBrokerSnapshotFlag() {
+        PortfolioDecisionInputs inputs = PortfolioDecisionInputsFixture.inputs(
+                List.of(), java.util.Map.of(), null, java.util.Map.of(), List.of(), true);
+
+        var batch = portfolioStrategyGuideService.getPortfolioStrategyGuides(inputs);
+
+        assertThat(batch.getGuides()).isEmpty();
+        assertThat(batch.getEmptyHoldingsGuidance().getReason())
+                .isEqualTo(com.tradeguide.domain.strategy.EmptyHoldingsReason.BROKER_SNAPSHOT_NOT_REFLECTED);
+        org.mockito.Mockito.verifyNoInteractions(holdingService, portfolioBrokerHoldingSnapshotRepository);
+    }
+
+    @Test
     void getsStrategyGuidesForPortfolioHoldings() {
         Holding soxlHolding = new Holding(
                 Market.US,

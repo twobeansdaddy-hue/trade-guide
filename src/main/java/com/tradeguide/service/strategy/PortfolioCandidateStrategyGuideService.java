@@ -54,11 +54,34 @@ public class PortfolioCandidateStrategyGuideService {
             Long portfolioId
     ) {
         List<Holding> holdings = holdingService.getHoldings(memberId, portfolioId);
-        List<AssetStrategyGuide> guides = new ArrayList<>();
-        List<UnavailableAsset> unavailableAssets = new ArrayList<>();
         BigDecimal stopLossRatio = resolveStopLossRatio(memberId, portfolioId);
 
-        List<CandidateAssetRef> candidateRefs = resolveCandidateRefs(portfolioId)
+        return buildGuides(portfolioId, holdings, resolveCandidateRefs(portfolioId), stopLossRatio);
+    }
+
+    /**
+     * 장전 가이드용. 보유 종목·후보군·손절 설정을 다시 조회하지 않고 한 시점에 읽은 {@code inputs}만 사용해,
+     * 같은 가이드의 보유 배치와 같은 포트폴리오 상태로 보유 종목을 제외한다.
+     */
+    public StrategyGuideBatch getCandidateStrategyGuides(PortfolioDecisionInputs inputs) {
+        List<CandidateAssetRef> candidateRefs = inputs.candidates().stream()
+                .map(candidate -> new CandidateAssetRef(
+                        candidate.market(), candidate.ticker(), candidate.investmentTrack()))
+                .toList();
+
+        return buildGuides(inputs.portfolioId(), inputs.holdings(), candidateRefs, inputs.portfolioStopLossRatio());
+    }
+
+    private StrategyGuideBatch buildGuides(
+            Long portfolioId,
+            List<Holding> holdings,
+            List<CandidateAssetRef> allCandidateRefs,
+            BigDecimal stopLossRatio
+    ) {
+        List<AssetStrategyGuide> guides = new ArrayList<>();
+        List<UnavailableAsset> unavailableAssets = new ArrayList<>();
+
+        List<CandidateAssetRef> candidateRefs = allCandidateRefs
                 .stream()
                 .filter(candidateRef -> holdings.stream()
                         .noneMatch(holding ->
