@@ -66,8 +66,15 @@ def toss_minutes(token, symbol, before, count):
         TOSS_BASE_URL + "/api/v1/candles?" + urllib.parse.urlencode(params),
         headers={"Authorization": "Bearer " + token}))
     result = (payload or {}).get("result") or {}
-    stamps = [parse(c.get("timestamp")) for c in (result.get("candles") or []) if c]
-    return status, [s for s in stamps if s], result.get("nextBefore")
+    bars = [(parse(c.get("timestamp")), volume(c.get("volume"))) for c in (result.get("candles") or []) if c]
+    return status, [bar for bar in bars if bar[0]], result.get("nextBefore")
+
+
+def volume(text):
+    try:
+        return float(text)
+    except (TypeError, ValueError):
+        return 0.0
 
 
 def twelve_minutes(api_key, symbol, day):
@@ -95,47 +102,51 @@ def is_kr(symbol):
     return symbol[:1].isdigit()
 
 
-def depth(token, symbol):
-    print(f"\n## {symbol} 토스 1분봉 이력 깊이 (before 기준일마다 5개 요청)")
-    print("| before 기준 | HTTP | 반환 수 | 가장 최근 봉(KST) | 가장 오래된 봉(KST) | 기준일과의 간격(일) |")
-    print("|---|---|---|---|---|---|")
-    for day in PROBE_DATES:
-        before = datetime.fromisoformat(day).replace(hour=23, minute=59, tzinfo=KST).isoformat()
-        status, stamps, _ = toss_minutes(token, symbol, before, 5)
-        if stamps:
-            newest, oldest = max(stamps), min(stamps)
-            gap = (datetime.fromisoformat(day).date() - newest.astimezone(KST).date()).days
-            print(f"| {day} | {status} | {len(stamps)} | {newest.astimezone(KST):%Y-%m-%d %H:%M} | "
-                  f"{oldest.astimezone(KST):%Y-%m-%d %H:%M} | {gap} |")
+def depth(token, symbol, probe_dates, count, before_time):
+    hour, minute = (int(part) for part in before_time.split(":"))
+    print(f"\n## {symbol} 토스 1분봉 이력 깊이 (기준일 {before_time} KST 이전 {count}개 요청)")
+    print("| before 기준 | HTTP | 반환 수 | 체결 있는 봉 | 거래량 합계 | 가장 최근 봉(KST) | 가장 오래된 봉(KST) |")
+    print("|---|---|---|---|---|---|---|")
+    for day in probe_dates:
+        before = datetime.fromisoformat(day).replace(hour=hour, minute=minute, tzinfo=KST).isoformat()
+        status, bars, _ = toss_minutes(token, symbol, before, count)
+        if bars:
+            stamps = [stamp for stamp, _ in bars]
+            traded = sum(1 for _, vol in bars if vol > 0)
+            total = sum(vol for _, vol in bars)
+            print(f"| {day} | {status} | {len(bars)} | {traded} | {total:g} | "
+                  f"{max(stamps).astimezone(KST):%Y-%m-%d %H:%M} | {min(stamps).astimezone(KST):%Y-%m-%d %H:%M} |")
         else:
-            print(f"| {day} | {status} | 0 | - | - | - |")
+            print(f"| {day} | {status} | 0 | - | - | - | - |")
         time.sleep(0.2)
 
 
 def sessions(token, symbol):
-    """최근 600개 봉의 시각 분포로 어떤 세션 시간대가 포함되는지 본다."""
-    stamps, before = [], None
+    """최근 600개 봉의 시각 분포와 시간대별 체결 여부로 어떤 세션이 포함되는지 본다."""
+    bars, before = [], None
     for _ in range(3):
         status, page, next_before = toss_minutes(token, symbol, before, 200)
-        stamps += page
+        bars += page
         if status != 200 or not next_before:
             break
         before = next_before
         time.sleep(0.2)
     zone = KST if is_kr(symbol) else NEW_YORK
     label = "KST" if is_kr(symbol) else "ET"
-    hours = Counter(stamp.astimezone(zone).hour for stamp in stamps)
-    days = sorted({stamp.astimezone(zone).date() for stamp in stamps})
-    print(f"\n## {symbol} 최근 1분봉 {len(stamps)}개의 시간대 분포 ({label}, 봉 종료 시각 기준)")
+    hours = Counter(stamp.astimezone(zone).hour for stamp, _ in bars)
+    traded_hours = Counter(stamp.astimezone(zone).hour for stamp, vol in bars if vol > 0)
+    days = sorted({stamp.astimezone(zone).date() for stamp, _ in bars})
+    print(f"\n## {symbol} 최근 1분봉 {len(bars)}개의 시간대 분포 ({label}, 봉 종료 시각 기준)")
     print(f"- 포함 날짜: {', '.join(str(day) for day in days)}")
-    print("- 시(hour)별 봉 수: " + ", ".join(f"{hour:02d}시 {hours[hour]}" for hour in sorted(hours)))
+    print("- 시(hour)별 봉 수(체결 있는 봉): "
+          + ", ".join(f"{hour:02d}시 {hours[hour]}({traded_hours[hour]})" for hour in sorted(hours)))
 
 
-def twelve(api_key, symbol):
+def twelve(api_key, symbol, probe_dates):
     print(f"\n## {symbol} Twelve Data 1분봉 (기준일 하루치)")
     print("| 날짜 | 상태 | 봉 수 | 첫 봉 | 마지막 봉 |")
     print("|---|---|---|---|---|")
-    for day in PROBE_DATES:
+    for day in probe_dates:
         status, stamps = twelve_minutes(api_key, symbol, day)
         print(f"| {day} | {status} | {len(stamps)} | {stamps[0] if stamps else '-'} | {stamps[-1] if stamps else '-'} |")
         time.sleep(8)  # 무료 등급 분당 호출 한도를 넘지 않게 한다.
@@ -144,6 +155,11 @@ def twelve(api_key, symbol):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("symbols", nargs="+")
+    parser.add_argument("--dates", nargs="+", default=PROBE_DATES, help="토스 before 기준일(YYYY-MM-DD)")
+    parser.add_argument("--count", type=int, default=5, help="기준일마다 요청할 봉 수(최대 200)")
+    parser.add_argument("--before-time", default="23:59", help="기준일의 before 시각(KST, HH:MM). 국내 정규장은 15:20 등")
+    parser.add_argument("--twelve-dates", nargs="+", default=PROBE_DATES, help="Twelve Data 조회일")
+    parser.add_argument("--skip-sessions", action="store_true", help="최근 600개 봉 세션 분포 생략")
     args = parser.parse_args()
     client_id, client_secret = os.environ.get("TOSS_CLIENT_ID"), os.environ.get("TOSS_CLIENT_SECRET")
     if not client_id or not client_secret:
@@ -152,12 +168,13 @@ def main():
     print(f"# 분봉 이력 소표본 실측 ({now.astimezone(KST):%Y-%m-%d %H:%M} KST / {now.astimezone(NEW_YORK):%Y-%m-%d %H:%M} ET)")
     token = issue_toss_token(client_id, client_secret)
     for symbol in args.symbols:
-        depth(token, symbol.upper())
-        sessions(token, symbol.upper())
+        depth(token, symbol.upper(), args.dates, min(max(args.count, 1), 200), args.before_time)
+        if not args.skip_sessions:
+            sessions(token, symbol.upper())
     api_key = os.environ.get("TWELVE_DATA_API_KEY")
     if api_key:
         for symbol in [s.upper() for s in args.symbols if not is_kr(s)]:
-            twelve(api_key, symbol)
+            twelve(api_key, symbol, args.twelve_dates)
     else:
         print("\n(TWELVE_DATA_API_KEY가 없어 Twelve Data 1분봉 실측은 건너뜀)")
 

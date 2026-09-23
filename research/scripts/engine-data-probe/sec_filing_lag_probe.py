@@ -138,6 +138,7 @@ def main():
         print(f"\n## {ticker} (CIK {cik})")
         status, submissions = get_json(f"{SEC_DATA}/submissions/CIK{cik:010d}.json", user_agent)
         if isinstance(submissions, dict):
+            print(f"- SEC 신고자 구분: {submissions.get('category') or '기록 없음'}")
             buckets, filing_lags, span = acceptance_summary(submissions)
             print(f"- submissions(최근 목록) 10-K·10-Q 범위: {span[0]} ~ {span[1]}" if span else "- submissions: 10-K·10-Q 없음")
             print("- 접수 시각 분포(ET): " + ", ".join(f"{k} {v}건" for k, v in sorted(buckets.items())))

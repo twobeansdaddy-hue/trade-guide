@@ -29,22 +29,52 @@ TIMEOUT_SECONDS = 30
 OBSERVATION_START = "2015-01-01"
 
 
-def observations(api_key, series_id, first_release):
+def observations(api_key, series_id, first_release, observation_start=OBSERVATION_START, observation_end=None,
+                 realtime=("1776-07-04", "9999-12-31")):
     params = {"series_id": series_id, "api_key": api_key, "file_type": "json",
-              "observation_start": OBSERVATION_START}
+              "observation_start": observation_start}
+    if observation_end:
+        params["observation_end"] = observation_end
     if first_release:
-        params.update({"realtime_start": "1776-07-04", "realtime_end": "9999-12-31", "output_type": 4})
+        params.update({"realtime_start": realtime[0], "realtime_end": realtime[1], "output_type": 4})
     request = urllib.request.Request(FRED_BASE + "/fred/series/observations?" + urllib.parse.urlencode(params))
     try:
         with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:
             payload = json.loads(response.read().decode())
             return response.status, payload.get("observations") or []
     except urllib.error.HTTPError as error:
-        return error.code, []
+        return f"{error.code} {safe_error_message(error, api_key)}".strip(), []
     except (urllib.error.URLError, ValueError) as error:
         return type(error).__name__, []
     finally:
         time.sleep(0.6)  # FRED 분당 호출 한도보다 충분히 느리게
+
+
+def safe_error_message(error, api_key):
+    """FRED 오류 본문의 error_message만 꺼내고, 혹시 키가 섞여 있으면 가린다."""
+    try:
+        message = json.loads(error.read().decode()).get("error_message") or ""
+    except (ValueError, OSError):
+        return ""
+    return message.replace(api_key, "***")[:200]
+
+
+def first_release_by_year(api_key, series_id):
+    """전체 기간 최초 발표값 요청이 vintage 수 한도(2,000)로 거부될 때 연도별로 나눠 요청한다(일간 지표용).
+
+    FRED 한도는 실시간 기간 안의 vintage 수에 걸리므로 관측 기간과 실시간 기간을 함께 좁힌다.
+    실시간 기간은 관측 연도 시작부터 다음 해 1월 말까지로 둬서 연말 관측의 최초 발표도 포함한다.
+    """
+    rows, statuses = [], []
+    for year in range(int(OBSERVATION_START[:4]), date.today().year + 1):
+        # FRED는 오늘 이후의 realtime_end를 거부하므로 올해 구간은 오늘까지로 자른다.
+        realtime_end = min(date(year + 1, 1, 31), date.today()).isoformat()
+        status, chunk = observations(api_key, series_id, True, f"{year}-01-01", f"{year}-12-31",
+                                     realtime=(f"{year}-01-01", realtime_end))
+        statuses.append(status)
+        rows += chunk
+    failed = [s for s in statuses if s != 200]
+    return (200 if not failed else f"연도별 {len(statuses) - len(failed)}/{len(statuses)} 성공, 실패 예: {failed[0]}"), rows
 
 
 def number(text):
@@ -62,6 +92,9 @@ def percentile(values, fraction):
 def summarize(api_key, series_id):
     latest_status, latest = observations(api_key, series_id, first_release=False)
     first_status, first = observations(api_key, series_id, first_release=True)
+    if first_status != 200:
+        print(f"\n(참고) {series_id} 전체 기간 최초 발표값 요청 거부: {first_status} → 연도별 재요청")
+        first_status, first = first_release_by_year(api_key, series_id)
     print(f"\n## {series_id} (최신 HTTP {latest_status}, 최초 발표 HTTP {first_status}, 관측 {OBSERVATION_START} 이후)")
     if not latest or not first:
         print("- 데이터 없음(키·지표 ID·ALFRED 이력 여부 확인 필요)")
