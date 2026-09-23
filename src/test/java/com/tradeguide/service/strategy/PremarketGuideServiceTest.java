@@ -144,6 +144,70 @@ class PremarketGuideServiceTest {
         assertThat(saved.getValue().getInputAudit().getEvidenceStatus())
                 .isEqualTo(GuideInputEvidenceStatus.UNVERIFIED);
         assertThat(saved.getValue().getInputAudit().getInputSha256()).isNull();
+        assertThat(saved.getValue().getInputAudit().getMissingReasons())
+                .doesNotContain("CANDLE_EVIDENCE_INCOMPLETE");
+    }
+
+    @Test
+    void doesNotRecordCandleEvidenceWhenCacheDateDisagreesWithGuide() {
+        Portfolio portfolio = mock(Portfolio.class);
+        when(portfolioRepository.findByMember_IdAndId(1L, 10L)).thenReturn(Optional.of(portfolio));
+        when(portfolio.getMarketDataPreference())
+                .thenReturn(PortfolioMarketDataPreference.unified(MarketDataProvider.TWELVE_DATA));
+        when(snapshotRepository.findByPortfolio_IdAndGuideDate(10L, LocalDate.of(2026, 9, 14)))
+                .thenReturn(Optional.empty());
+        when(snapshotRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(1L, 10L))
+                .thenReturn(new StrategyGuideBatch(List.of(guide("SOXL")), List.of()));
+        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(1L, 10L))
+                .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
+        MarketCandle staleCandle = new MarketCandle(Market.US, "SOXL", LocalDate.of(2026, 9, 4),
+                BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, 100L);
+        when(completedWeeklyCandleCache.findObservation("TWELVE_DATA", Market.US, "SOXL", 101))
+                .thenReturn(Optional.of(new CompletedWeeklyCandleCache.CandleLoadObservation(
+                        List.of(staleCandle), Instant.parse("2026-09-11T21:00:00Z"))));
+        when(completedWeeklyCandleFilter.filter(List.of(staleCandle))).thenReturn(List.of(staleCandle));
+
+        service.generateToday(1L, 10L, false);
+
+        var saved = org.mockito.ArgumentCaptor.forClass(
+                com.tradeguide.domain.strategy.PremarketGuideSnapshot.class);
+        verify(snapshotRepository).save(saved.capture());
+        assertThat(saved.getValue().getCandleEvidence()).isEmpty();
+        assertThat(saved.getValue().getInputAudit().getMissingReasons())
+                .contains("CANDLE_EVIDENCE_INCOMPLETE");
+        verifyNoInteractions(marketCandleDigest);
+    }
+
+    @Test
+    void forceRegenerationRemovesEvidenceThatCannotBeObservedAgain() {
+        Portfolio portfolio = mock(Portfolio.class);
+        when(portfolioRepository.findByMember_IdAndId(1L, 10L)).thenReturn(Optional.of(portfolio));
+        when(portfolio.getMarketDataPreference())
+                .thenReturn(PortfolioMarketDataPreference.unified(MarketDataProvider.TWELVE_DATA));
+        var snapshot = new com.tradeguide.domain.strategy.PremarketGuideSnapshot(
+                portfolio, LocalDate.of(2026, 9, 14), java.time.LocalDateTime.of(2026, 9, 14, 12, 0));
+        snapshot.replaceCandleEvidence(List.of(new com.tradeguide.domain.strategy.PremarketGuideCandleEvidence(
+                com.tradeguide.domain.strategy.PremarketGuideScope.HELD, Market.US, "SOXL",
+                MarketDataProvider.TWELVE_DATA, Instant.parse("2026-09-11T21:00:00Z"),
+                "a".repeat(64), 40, LocalDate.of(2026, 9, 11))));
+        when(snapshotRepository.findByPortfolio_IdAndGuideDate(10L, LocalDate.of(2026, 9, 14)))
+                .thenReturn(Optional.of(snapshot));
+        when(snapshotRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(1L, 10L))
+                .thenReturn(new StrategyGuideBatch(List.of(guide("SOXL")), List.of()));
+        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(1L, 10L))
+                .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
+        when(completedWeeklyCandleCache.findObservation("TWELVE_DATA", Market.US, "SOXL", 101))
+                .thenReturn(Optional.empty());
+
+        service.generateToday(1L, 10L, true);
+
+        assertThat(snapshot.getCandleEvidence()).isEmpty();
+        assertThat(snapshot.getInputAudit().getEvidenceStatus())
+                .isEqualTo(GuideInputEvidenceStatus.UNVERIFIED);
+        assertThat(snapshot.getInputAudit().getMissingReasons())
+                .contains("CANDLE_EVIDENCE_INCOMPLETE");
     }
 
     @Test

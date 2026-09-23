@@ -88,6 +88,12 @@ public class PremarketGuideCandleEvidence {
         return scope == other.scope && market == other.market && ticker.equals(other.ticker);
     }
 
+    boolean matches(PremarketGuideItem item, MarketDataProvider provider) {
+        return scope == item.getScope() && market == item.getMarket()
+                && ticker.equals(item.getTicker()) && candleProvider == provider
+                && dataAsOf.equals(item.getDataAsOf());
+    }
+
     void refreshFrom(PremarketGuideCandleEvidence other) {
         candleProvider = other.candleProvider;
         loadCompletedAt = other.loadCompletedAt;

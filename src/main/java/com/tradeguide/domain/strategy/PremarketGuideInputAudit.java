@@ -60,12 +60,13 @@ public class PremarketGuideInputAudit {
     }
 
     PremarketGuideInputAudit(PremarketGuideSnapshot snapshot, Instant recordedAt,
-                            MarketDataProvider candleProvider) {
+                            MarketDataProvider candleProvider, boolean candleEvidenceIncomplete) {
         this.snapshot = snapshot;
-        markUnverified(recordedAt, candleProvider);
+        markUnverified(recordedAt, candleProvider, candleEvidenceIncomplete);
     }
 
-    void markUnverified(Instant recordedAt, MarketDataProvider candleProvider) {
+    void markUnverified(Instant recordedAt, MarketDataProvider candleProvider,
+                        boolean candleEvidenceIncomplete) {
         if (recordedAt == null) {
             throw new IllegalArgumentException("감사 기록 시각이 필요합니다.");
         }
@@ -76,7 +77,8 @@ public class PremarketGuideInputAudit {
         this.adjustmentMode = null;
         this.inputSha256 = null;
         this.portfolioStateRef = null;
-        this.missingReasons = MISSING_REASONS;
+        this.missingReasons = MISSING_REASONS
+                + (candleEvidenceIncomplete ? ",CANDLE_EVIDENCE_INCOMPLETE" : "");
     }
 
     public GuideInputEvidenceStatus getEvidenceStatus() {
