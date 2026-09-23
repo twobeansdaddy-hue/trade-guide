@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
@@ -16,11 +17,17 @@ import java.util.List;
 @Component
 public class MarketCandleDigest {
 
+    /**
+     * 직렬화 형식 버전. v2부터 가격을 표기(scale)가 아니라 값으로 직렬화해
+     * {@code 100}과 {@code 100.0}이 같은 해시가 된다. v1 해시와는 호환되지 않는다.
+     */
+    private static final int FORMAT_VERSION = 2;
+
     public String sha256(MarketDataProvider provider, CandleInterval interval, List<MarketCandle> candles) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             DataOutputStream output = new DataOutputStream(bytes);
-            output.writeByte(1);
+            output.writeByte(FORMAT_VERSION);
             output.writeUTF(provider.name());
             output.writeUTF(interval.name());
             output.writeInt(candles.size());
@@ -28,10 +35,10 @@ public class MarketCandleDigest {
                 output.writeUTF(candle.getMarket().name());
                 output.writeUTF(candle.getTicker());
                 output.writeLong(candle.getTradingDate().toEpochDay());
-                output.writeUTF(candle.getOpen().toPlainString());
-                output.writeUTF(candle.getHigh().toPlainString());
-                output.writeUTF(candle.getLow().toPlainString());
-                output.writeUTF(candle.getClose().toPlainString());
+                output.writeUTF(canonical(candle.getOpen()));
+                output.writeUTF(canonical(candle.getHigh()));
+                output.writeUTF(canonical(candle.getLow()));
+                output.writeUTF(canonical(candle.getClose()));
                 output.writeLong(candle.getVolume());
             }
             output.flush();
@@ -39,5 +46,9 @@ public class MarketCandleDigest {
         } catch (IOException | NoSuchAlgorithmException exception) {
             throw new IllegalStateException("시세 입력 해시를 계산할 수 없습니다.", exception);
         }
+    }
+
+    private String canonical(BigDecimal price) {
+        return price.stripTrailingZeros().toPlainString();
     }
 }

@@ -30,9 +30,34 @@ class MarketCandleDigestTest {
                 MarketDataProvider.YAHOO_FINANCE, CandleInterval.WEEKLY, List.of(original)));
     }
 
+    @Test
+    void sameValuesWithDifferentScaleHaveSameHash() {
+        String twoDecimals = hash(candle("98.00", "102.00", "97.00", "100.00"));
+
+        assertThat(hash(candle("98", "102.0", "97.000", "100"))).isEqualTo(twoDecimals);
+        assertThat(hash(candle("98.0", "1.02E+2", "97", "1E+2"))).isEqualTo(twoDecimals);
+        assertThat(hash(candle("0.00", "102", "0", "100"))).isEqualTo(hash(candle("0", "102", "0.0", "100")));
+    }
+
+    @Test
+    void normalizationStillSeparatesDifferentValues() {
+        assertThat(hash(candle("98", "102", "97", "100.5")))
+                .isNotEqualTo(hash(candle("98", "102", "97", "100.05")));
+        assertThat(hash(candle("98", "102", "97", "100")))
+                .isNotEqualTo(hash(candle("98", "102", "97", "1000")));
+    }
+
+    private String hash(MarketCandle candle) {
+        return digest.sha256(MarketDataProvider.TWELVE_DATA, CandleInterval.WEEKLY, List.of(candle));
+    }
+
     private MarketCandle candle(String close) {
+        return candle("98.00", "102.00", "97.00", close);
+    }
+
+    private MarketCandle candle(String open, String high, String low, String close) {
         return new MarketCandle(Market.US, "SOXL", LocalDate.of(2026, 9, 11),
-                new BigDecimal("98.00"), new BigDecimal("102.00"), new BigDecimal("97.00"),
+                new BigDecimal(open), new BigDecimal(high), new BigDecimal(low),
                 new BigDecimal(close), 1000);
     }
 }
