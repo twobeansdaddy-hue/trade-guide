@@ -14,12 +14,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +83,10 @@ public class PremarketGuideSnapshot {
     @OrderBy("scope ASC, market ASC, ticker ASC")
     private List<PremarketGuideItem> items = new ArrayList<>();
 
+    @OneToOne(mappedBy = "snapshot", cascade = CascadeType.ALL, orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private PremarketGuideInputAudit inputAudit;
+
     protected PremarketGuideSnapshot() {
     }
 
@@ -129,6 +135,14 @@ public class PremarketGuideSnapshot {
         this.heldEmptyMessage = emptyHoldingsGuidance == null
                 ? null
                 : emptyHoldingsGuidance.getMessage();
+    }
+
+    public void recordUnverifiedInputs(Instant recordedAt, MarketDataProvider candleProvider) {
+        if (inputAudit == null) {
+            inputAudit = new PremarketGuideInputAudit(this, recordedAt, candleProvider);
+        } else {
+            inputAudit.markUnverified(recordedAt, candleProvider);
+        }
     }
 
     private int count(PremarketGuideScope scope, PremarketGuideItemStatus status) {
@@ -183,5 +197,9 @@ public class PremarketGuideSnapshot {
 
     public MarketDataProvider getMarketDataProvider() {
         return marketDataProvider;
+    }
+
+    public PremarketGuideInputAudit getInputAudit() {
+        return inputAudit;
     }
 }

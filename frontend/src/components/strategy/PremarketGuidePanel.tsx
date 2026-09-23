@@ -139,6 +139,17 @@ export default function PremarketGuidePanel({memberId, portfolioId, resource}: P
                 <>
                     <div className="premarket-guide-meta">
                         <span className={`premarket-guide-status ${statusClass}`}>{statusLabel}</span>
+                        {guide.snapshotId ? (
+                            <span className={`premarket-guide-status ${guide.inputEvidenceStatus === "VERIFIED" ? "completed" : "partial"}`}>
+                                {guide.inputEvidenceStatus === "VERIFIED"
+                                    ? "입력 근거 검증됨"
+                                    : guide.inputEvidenceStatus === "CAPTURED"
+                                        ? "입력 근거 수집·미검증"
+                                        : guide.inputEvidenceStatus === "UNVERIFIED"
+                                            ? "입력 근거 미검증"
+                                            : "입력 근거 기록 없음"}
+                            </span>
+                        ) : null}
                         <span className="premarket-guide-meta-item">가이드 기준일 {guide.guideDate}</span>
                         <span className="premarket-guide-meta-item">시세 기준일 {dataAsOfLabel}</span>
                         {guide.snapshotId ? (

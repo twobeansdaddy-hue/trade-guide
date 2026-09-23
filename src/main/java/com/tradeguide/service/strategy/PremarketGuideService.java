@@ -97,6 +97,7 @@ public class PremarketGuideService {
         EmptyHoldingsGuidance emptyGuidance = heldBatch.getEmptyHoldingsGuidance();
         MarketDataProvider marketDataProvider = portfolio.getMarketDataPreference().getCandleProvider();
         snapshot.replaceResults(status, items, emptyGuidance, generatedAt, marketDataProvider);
+        snapshot.recordUnverifiedInputs(clock.instant(), marketDataProvider);
 
         return PremarketGuideResponse.from(snapshotRepository.save(snapshot), displayNameResolver);
     }

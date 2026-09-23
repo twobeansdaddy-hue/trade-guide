@@ -11,6 +11,7 @@ import com.tradeguide.domain.strategy.StrategySignal;
 import com.tradeguide.domain.strategy.StrategySignalEvent;
 import com.tradeguide.domain.strategy.StrategyTrend;
 import com.tradeguide.domain.strategy.PremarketGuideStatus;
+import com.tradeguide.domain.strategy.GuideInputEvidenceStatus;
 import com.tradeguide.domain.trade.Market;
 import com.tradeguide.dto.strategy.PremarketGuideResponse;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
@@ -84,7 +85,16 @@ class PremarketGuideServiceTest {
                 .containsExactly("SOXL");
         assertThat(result.availableGuideCount()).isEqualTo(1);
         assertThat(result.marketDataProvider()).isEqualTo("TWELVE_DATA");
-        verify(snapshotRepository).save(any());
+        assertThat(result.inputEvidenceStatus()).isEqualTo("UNVERIFIED");
+        var savedSnapshot = org.mockito.ArgumentCaptor.forClass(
+                com.tradeguide.domain.strategy.PremarketGuideSnapshot.class);
+        verify(snapshotRepository).save(savedSnapshot.capture());
+        assertThat(savedSnapshot.getValue().getInputAudit().getEvidenceStatus())
+                .isEqualTo(GuideInputEvidenceStatus.UNVERIFIED);
+        assertThat(savedSnapshot.getValue().getInputAudit().getRecordedAt())
+                .isEqualTo(clock.instant());
+        assertThat(savedSnapshot.getValue().getInputAudit().getResponseReceivedAt()).isNull();
+        assertThat(savedSnapshot.getValue().getInputAudit().getInputSha256()).isNull();
     }
 
     @Test
@@ -109,6 +119,7 @@ class PremarketGuideServiceTest {
 
         assertThat(result.status()).isEqualTo(PremarketGuideStatus.COMPLETED);
         assertThat(result.marketDataProvider()).isNull();
+        assertThat(result.inputEvidenceStatus()).isNull();
         verifyNoInteractions(portfolioStrategyGuideService, portfolioCandidateStrategyGuideService);
         verify(snapshotRepository, never()).save(any());
     }
@@ -140,6 +151,7 @@ class PremarketGuideServiceTest {
         verify(portfolioCandidateStrategyGuideService).getCandidateStrategyGuides(1L, 10L);
         verify(snapshotRepository).save(any());
         assertThat(result.marketDataProvider()).isEqualTo("YAHOO_FINANCE");
+        assertThat(result.inputEvidenceStatus()).isEqualTo("UNVERIFIED");
     }
 
     @Test

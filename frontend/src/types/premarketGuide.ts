@@ -20,4 +20,5 @@ export type PremarketGuide = {
     availableGuideCount: number;
     unavailableCount: number;
     marketDataProvider: string | null;
+    inputEvidenceStatus: "UNVERIFIED" | "CAPTURED" | "VERIFIED" | null;
 };

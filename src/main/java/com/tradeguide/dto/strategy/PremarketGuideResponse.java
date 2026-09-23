@@ -27,7 +27,8 @@ public record PremarketGuideResponse(
         LocalDate dataAsOfTo,
         int availableGuideCount,
         int unavailableCount,
-        String marketDataProvider
+        String marketDataProvider,
+        String inputEvidenceStatus
 ) {
     public static PremarketGuideResponse notGenerated(LocalDate guideDate) {
         return new PremarketGuideResponse(
@@ -43,6 +44,7 @@ public record PremarketGuideResponse(
                 null,
                 0,
                 0,
+                null,
                 null
         );
     }
@@ -104,7 +106,10 @@ public record PremarketGuideResponse(
                 unavailableAssets.size(),
                 snapshot.getMarketDataProvider() == null
                         ? null
-                        : snapshot.getMarketDataProvider().name()
+                        : snapshot.getMarketDataProvider().name(),
+                snapshot.getInputAudit() == null
+                        ? null
+                        : snapshot.getInputAudit().getEvidenceStatus().name()
         );
     }
 
