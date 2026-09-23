@@ -76,6 +76,19 @@ coordination: preparing the local scope with `./scripts/agent-harness.sh`,
 accepting findings, and final acceptance. Claude may then implement or verify,
 but never both for the same slice. Claude's Git boundary does not change.
 
+Any task assigned to Codex, or deferred until Codex is available again, may be
+taken by Claude while Codex is unavailable, with these exceptions:
+
+1. Push, merge, and branch changes stay with the user. Claude commits only when
+   the user asks for that specific commit in the current turn.
+2. Claude never enters, reads, or handles credentials or other secrets. A step
+   that needs them is run by the user; Claude may prepare a tool that reads
+   secrets only from the user's environment and prints no secret values.
+3. When Claude implements a slice, the user performs cross verification and
+   final acceptance for it.
+4. Decisions that require user approval (investment policy, authentication,
+   authorization, broker APIs, schema changes) still require it.
+
 Do not delegate a trivial rename, a one-line question, or a change that needs
 an immediate user product decision. Delegate when independent review reduces
 the chance of a regression, or when Claude can complete a clearly isolated
