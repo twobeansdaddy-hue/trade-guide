@@ -60,6 +60,22 @@ public class CompletedWeeklyCandleCache {
             int outputSize,
             Supplier<List<MarketCandle>> loader
     ) {
+        return getOrLoadObserved(providerKey, market, ticker, outputSize, () -> {
+            List<MarketCandle> loaded = loader.get();
+            if (loaded == null) {
+                throw new IllegalStateException("주봉 시세 데이터가 비어 있습니다.");
+            }
+            return new ObservedMarketCandles(loaded, Optional.empty());
+        });
+    }
+
+    public List<MarketCandle> getOrLoadObserved(
+            String providerKey,
+            Market market,
+            String ticker,
+            int outputSize,
+            Supplier<ObservedMarketCandles> loader
+    ) {
         String cacheKey = cacheKey(providerKey, market, ticker, outputSize);
 
         LocalDate expectedLatestCompletedCandleStart = weeklyCandleSchedule.getExpectedLatestCompletedCandleStart();
@@ -79,13 +95,15 @@ public class CompletedWeeklyCandleCache {
         }
 
         try {
-            List<MarketCandle> loadedCandles = loader.get();
-            if (loadedCandles == null) {
+            ObservedMarketCandles observed = loader.get();
+            if (observed == null || observed.candles() == null) {
                 throw new IllegalStateException("주봉 시세 데이터가 비어 있습니다.");
             }
+            List<MarketCandle> loadedCandles = observed.candles();
 
             cachedCandles.put(cacheKey, new CacheEntry(
-                    expectedLatestCompletedCandleStart, loadedCandles, clock.instant()));
+                    expectedLatestCompletedCandleStart, loadedCandles, clock.instant(),
+                    observed.sourceReceipt()));
             ownFuture.complete(loadedCandles);
             return loadedCandles;
         } catch (RuntimeException exception) {
@@ -105,7 +123,8 @@ public class CompletedWeeklyCandleCache {
                 .equals(weeklyCandleSchedule.getExpectedLatestCompletedCandleStart())) {
             return Optional.empty();
         }
-        return Optional.of(new CandleLoadObservation(entry.candles(), entry.loadCompletedAt()));
+        return Optional.of(new CandleLoadObservation(
+                entry.candles(), entry.loadCompletedAt(), entry.sourceReceipt()));
     }
 
     private String cacheKey(String providerKey, Market market, String ticker, int outputSize) {
@@ -127,13 +146,23 @@ public class CompletedWeeklyCandleCache {
     private record CacheEntry(
             LocalDate latestCompletedCandleStart,
             List<MarketCandle> candles,
-            Instant loadCompletedAt
+            Instant loadCompletedAt,
+            Optional<ObservedMarketCandles.SourceReceipt> sourceReceipt
     ) {
     }
 
-    public record CandleLoadObservation(List<MarketCandle> candles, Instant loadCompletedAt) {
+    public record CandleLoadObservation(
+            List<MarketCandle> candles,
+            Instant loadCompletedAt,
+            Optional<ObservedMarketCandles.SourceReceipt> sourceReceipt
+    ) {
+        public CandleLoadObservation(List<MarketCandle> candles, Instant loadCompletedAt) {
+            this(candles, loadCompletedAt, Optional.empty());
+        }
+
         public CandleLoadObservation {
             candles = List.copyOf(candles);
+            java.util.Objects.requireNonNull(sourceReceipt, "시세 수신 근거 상태가 필요합니다.");
         }
     }
 

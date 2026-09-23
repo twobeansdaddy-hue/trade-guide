@@ -19,12 +19,14 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,14 +49,17 @@ public class TossSecuritiesMarketHistoryProvider {
 
     private final RestClient restClient;
     private final TossSecuritiesAccessTokenIssuer accessTokenIssuer;
+    private final Clock clock;
 
     public TossSecuritiesMarketHistoryProvider(
             @Qualifier("brokerRestClientBuilder") RestClient.Builder builder,
             @Value("${toss-securities.base-url:https://openapi.tossinvest.com}") String baseUrl,
-            TossSecuritiesAccessTokenIssuer accessTokenIssuer
+            TossSecuritiesAccessTokenIssuer accessTokenIssuer,
+            Clock clock
     ) {
         this.restClient = builder.baseUrl(baseUrl).build();
         this.accessTokenIssuer = accessTokenIssuer;
+        this.clock = clock;
     }
 
     public List<MarketCandle> getCandles(
@@ -64,6 +69,13 @@ public class TossSecuritiesMarketHistoryProvider {
             CandleInterval interval,
             int outputSize
     ) {
+        return getCandlesWithReceipt(credentials, market, ticker, interval, outputSize).candles();
+    }
+
+    public TossCandleFetch getCandlesWithReceipt(
+            BrokerCredentials credentials, Market market, String ticker,
+            CandleInterval interval, int outputSize
+    ) {
         if (outputSize < 1 || outputSize > MAX_DAILY_CANDLES) {
             throw new IllegalArgumentException("캔들 조회 개수는 1에서 5000 사이여야 합니다.");
         }
@@ -71,21 +83,26 @@ public class TossSecuritiesMarketHistoryProvider {
         int dailySize = interval == CandleInterval.WEEKLY
                 ? Math.min(MAX_DAILY_CANDLES, Math.max(MAX_CANDLES_PER_REQUEST, outputSize * 7 + 30))
                 : outputSize;
-        List<MarketCandle> dailyCandles = loadDailyCandles(
+        LoadedDailyCandles dailyLoad = loadDailyCandles(
                 credentials,
                 market,
                 ticker,
                 dailySize
         );
+        List<MarketCandle> dailyCandles = dailyLoad.candles();
 
         if (interval == CandleInterval.DAILY) {
-            return dailyCandles.subList(Math.max(0, dailyCandles.size() - outputSize), dailyCandles.size());
+            return new TossCandleFetch(
+                    dailyCandles.subList(Math.max(0, dailyCandles.size() - outputSize), dailyCandles.size()),
+                    dailyLoad.pageReceivedAt(), true);
         }
 
-        return aggregateWeekly(dailyCandles, market, ticker, outputSize);
+        return new TossCandleFetch(
+                aggregateWeekly(dailyCandles, market, ticker, outputSize),
+                dailyLoad.pageReceivedAt(), true);
     }
 
-    private List<MarketCandle> loadDailyCandles(
+    private LoadedDailyCandles loadDailyCandles(
             BrokerCredentials credentials,
             Market market,
             String ticker,
@@ -94,12 +111,13 @@ public class TossSecuritiesMarketHistoryProvider {
         String accessToken = accessTokenIssuer.issueAccessToken(credentials);
         String normalizedTicker = ticker.toUpperCase(Locale.ROOT);
         Map<LocalDate, MarketCandle> candlesByDate = new LinkedHashMap<>();
+        List<Instant> pageReceivedAt = new ArrayList<>();
         Set<String> seenCursors = new HashSet<>();
         String before = null;
 
         while (candlesByDate.size() < outputSize) {
             int count = Math.min(MAX_CANDLES_PER_REQUEST, outputSize - candlesByDate.size());
-            CandlesResponse response = callCandlesEndpoint(
+            ReceivedCandlesResponse received = callCandlesEndpoint(
                     credentials,
                     accessToken,
                     market,
@@ -107,10 +125,12 @@ public class TossSecuritiesMarketHistoryProvider {
                     count,
                     before
             );
+            CandlesResponse response = received.response();
 
             if (response == null || response.result() == null || response.result().candles() == null) {
                 throw new MarketDataUnavailableException("토스증권 캔들 응답이 올바르지 않습니다.");
             }
+            pageReceivedAt.add(received.receivedAt());
 
             List<MarketCandle> page = response.result().candles().stream()
                     .filter(Objects::nonNull)
@@ -146,9 +166,11 @@ public class TossSecuritiesMarketHistoryProvider {
             throw new MarketDataUnavailableException("토스증권 캔들 데이터를 찾을 수 없습니다.");
         }
 
-        return candlesByDate.values().stream()
-                .sorted(Comparator.comparing(MarketCandle::getTradingDate))
-                .toList();
+        return new LoadedDailyCandles(
+                candlesByDate.values().stream()
+                        .sorted(Comparator.comparing(MarketCandle::getTradingDate))
+                        .toList(),
+                List.copyOf(pageReceivedAt));
     }
 
     private boolean sameValues(MarketCandle first, MarketCandle second) {
@@ -159,7 +181,7 @@ public class TossSecuritiesMarketHistoryProvider {
                 && first.getVolume() == second.getVolume();
     }
 
-    private CandlesResponse callCandlesEndpoint(
+    private ReceivedCandlesResponse callCandlesEndpoint(
             BrokerCredentials credentials,
             String accessToken,
             Market market,
@@ -168,7 +190,7 @@ public class TossSecuritiesMarketHistoryProvider {
             String before
     ) {
         try {
-            return restClient.get()
+            CandlesResponse response = restClient.get()
                     .uri(uriBuilder -> {
                         uriBuilder.path("/api/v1/candles")
                                 .queryParam("symbol", ticker)
@@ -183,6 +205,7 @@ public class TossSecuritiesMarketHistoryProvider {
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .retrieve()
                     .body(CandlesResponse.class);
+            return new ReceivedCandlesResponse(response, clock.instant());
         } catch (HttpClientErrorException.Unauthorized exception) {
             accessTokenIssuer.invalidate(credentials);
             throw new MarketDataProviderAccessDeniedException(
@@ -322,4 +345,19 @@ public class TossSecuritiesMarketHistoryProvider {
             String volume,
             String currency
     ) {}
+
+    private record ReceivedCandlesResponse(CandlesResponse response, Instant receivedAt) {}
+
+    private record LoadedDailyCandles(List<MarketCandle> candles, List<Instant> pageReceivedAt) {}
+
+    public record TossCandleFetch(List<MarketCandle> candles, List<Instant> pageReceivedAt,
+                                  boolean adjustedRequested) {
+        public TossCandleFetch {
+            candles = List.copyOf(candles);
+            pageReceivedAt = List.copyOf(pageReceivedAt);
+            if (pageReceivedAt.isEmpty()) {
+                throw new IllegalArgumentException("토스 캔들 응답 수신 시각이 필요합니다.");
+            }
+        }
+    }
 }

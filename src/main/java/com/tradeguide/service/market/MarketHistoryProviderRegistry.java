@@ -102,5 +102,16 @@ public class MarketHistoryProviderRegistry {
         ) {
             return delegate.getCandles(credentials, market, ticker, interval, outputSize);
         }
+
+        @Override
+        public ObservedMarketCandles getObservedCandles(
+                Market market, String ticker, com.tradeguide.domain.market.CandleInterval interval, int outputSize
+        ) {
+            TossSecuritiesMarketHistoryProvider.TossCandleFetch fetched =
+                    delegate.getCandlesWithReceipt(credentials, market, ticker, interval, outputSize);
+            return new ObservedMarketCandles(fetched.candles(), java.util.Optional.of(
+                    new ObservedMarketCandles.SourceReceipt(
+                            fetched.pageReceivedAt(), fetched.adjustedRequested())));
+        }
     }
 }

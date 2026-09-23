@@ -18,8 +18,8 @@ import java.time.Instant;
 @Table(name = "premarket_guide_input_audits")
 public class PremarketGuideInputAudit {
 
-    public static final String MISSING_REASONS =
-            "CANDLE_RECEIPT_NOT_CAPTURED,INPUT_DIGEST_NOT_CAPTURED,PORTFOLIO_STATE_NOT_CAPTURED";
+    private static final String MISSING_INPUT_REASONS =
+            "INPUT_DIGEST_NOT_CAPTURED,PORTFOLIO_STATE_NOT_CAPTURED";
 
     @Id
     @Column(name = "guide_snapshot_id")
@@ -60,13 +60,14 @@ public class PremarketGuideInputAudit {
     }
 
     PremarketGuideInputAudit(PremarketGuideSnapshot snapshot, Instant recordedAt,
-                            MarketDataProvider candleProvider, boolean candleEvidenceIncomplete) {
+                            MarketDataProvider candleProvider, boolean candleEvidenceIncomplete,
+                            boolean candleReceiptIncomplete) {
         this.snapshot = snapshot;
-        markUnverified(recordedAt, candleProvider, candleEvidenceIncomplete);
+        markUnverified(recordedAt, candleProvider, candleEvidenceIncomplete, candleReceiptIncomplete);
     }
 
     void markUnverified(Instant recordedAt, MarketDataProvider candleProvider,
-                        boolean candleEvidenceIncomplete) {
+                        boolean candleEvidenceIncomplete, boolean candleReceiptIncomplete) {
         if (recordedAt == null) {
             throw new IllegalArgumentException("감사 기록 시각이 필요합니다.");
         }
@@ -77,7 +78,8 @@ public class PremarketGuideInputAudit {
         this.adjustmentMode = null;
         this.inputSha256 = null;
         this.portfolioStateRef = null;
-        this.missingReasons = MISSING_REASONS
+        this.missingReasons = (candleReceiptIncomplete ? "CANDLE_RECEIPT_NOT_CAPTURED," : "")
+                + MISSING_INPUT_REASONS
                 + (candleEvidenceIncomplete ? ",CANDLE_EVIDENCE_INCOMPLETE" : "");
     }
 

@@ -22,6 +22,7 @@ import com.tradeguide.service.market.UsEquityTradingCalendar;
 import com.tradeguide.service.market.CompletedWeeklyCandleCache;
 import com.tradeguide.service.market.CompletedWeeklyCandleFilter;
 import com.tradeguide.service.market.MarketCandleDigest;
+import com.tradeguide.service.market.ObservedMarketCandles;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -146,6 +147,45 @@ class PremarketGuideServiceTest {
         assertThat(saved.getValue().getInputAudit().getInputSha256()).isNull();
         assertThat(saved.getValue().getInputAudit().getMissingReasons())
                 .doesNotContain("CANDLE_EVIDENCE_INCOMPLETE");
+    }
+
+    @Test
+    void storesTossPageReceiptsWithMatchingGuideCandleEvidence() {
+        Portfolio portfolio = mock(Portfolio.class);
+        when(portfolioRepository.findByMember_IdAndId(1L, 10L)).thenReturn(Optional.of(portfolio));
+        when(portfolio.getMarketDataPreference())
+                .thenReturn(PortfolioMarketDataPreference.unified(MarketDataProvider.TOSS_SECURITIES));
+        when(snapshotRepository.findByPortfolio_IdAndGuideDate(10L, LocalDate.of(2026, 9, 14)))
+                .thenReturn(Optional.empty());
+        when(snapshotRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(1L, 10L))
+                .thenReturn(new StrategyGuideBatch(List.of(guide("SOXL")), List.of()));
+        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(1L, 10L))
+                .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
+        Instant receivedAt = Instant.parse("2026-09-11T20:00:00Z");
+        MarketCandle candle = new MarketCandle(Market.US, "SOXL", LocalDate.of(2026, 9, 11),
+                BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, 100L);
+        when(completedWeeklyCandleCache.findObservation("TOSS_SECURITIES:10", Market.US, "SOXL", 101))
+                .thenReturn(Optional.of(new CompletedWeeklyCandleCache.CandleLoadObservation(
+                        List.of(candle), Instant.parse("2026-09-11T20:00:01Z"),
+                        Optional.of(new ObservedMarketCandles.SourceReceipt(List.of(receivedAt), true)))));
+        when(completedWeeklyCandleFilter.filter(List.of(candle))).thenReturn(List.of(candle));
+        when(marketCandleDigest.sha256(eq(MarketDataProvider.TOSS_SECURITIES), any(), eq(List.of(candle))))
+                .thenReturn("a".repeat(64));
+
+        service.generateToday(1L, 10L, false);
+
+        var saved = org.mockito.ArgumentCaptor.forClass(
+                com.tradeguide.domain.strategy.PremarketGuideSnapshot.class);
+        verify(snapshotRepository).save(saved.capture());
+        var evidence = saved.getValue().getCandleEvidence().getFirst();
+        assertThat(evidence.getPageReceivedAt()).containsExactly(receivedAt);
+        assertThat(evidence.getAdjustedRequested()).isTrue();
+        assertThat(saved.getValue().getInputAudit().getEvidenceStatus())
+                .isEqualTo(GuideInputEvidenceStatus.UNVERIFIED);
+        assertThat(saved.getValue().getInputAudit().getMissingReasons())
+                .doesNotContain("CANDLE_RECEIPT_NOT_CAPTURED")
+                .contains("INPUT_DIGEST_NOT_CAPTURED", "PORTFOLIO_STATE_NOT_CAPTURED");
     }
 
     @Test

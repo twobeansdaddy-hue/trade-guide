@@ -17,4 +17,11 @@ public interface MarketHistoryProvider {
             CandleInterval interval,
             int outputSize
     );
+
+    default ObservedMarketCandles getObservedCandles(
+            Market market, String ticker, CandleInterval interval, int outputSize
+    ) {
+        return new ObservedMarketCandles(
+                getCandles(market, ticker, interval, outputSize), java.util.Optional.empty());
+    }
 }

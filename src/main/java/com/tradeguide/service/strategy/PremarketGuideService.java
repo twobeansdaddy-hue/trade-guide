@@ -135,11 +135,14 @@ public class PremarketGuideService {
                         .equals(item.getDataAsOf())) {
                     return;
                 }
+                var sourceReceipt = cached.sourceReceipt();
                 observations.add(new PremarketGuideCandleEvidence(
                         item.getScope(), item.getMarket(), item.getTicker(), provider,
                         cached.loadCompletedAt(),
                         marketCandleDigest.sha256(provider, CandleInterval.WEEKLY, completed),
-                        completed.size(), item.getDataAsOf()));
+                        completed.size(), item.getDataAsOf(),
+                        sourceReceipt.map(receipt -> receipt.pageReceivedAt()).orElse(List.of()),
+                        sourceReceipt.map(receipt -> receipt.adjustedRequested()).orElse(null)));
             });
         }
         return observations;

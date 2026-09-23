@@ -340,24 +340,26 @@ class StrategyGuideServiceTest {
                 "SOXL"
         )).thenReturn(Optional.of(assetProfile));
 
-        when(marketHistoryService.getCandles(
+        when(marketHistoryService.getObservedCandles(
                 MarketDataProvider.TOSS_SECURITIES,
                 portfolioId,
                 Market.US,
                 "SOXL",
                 CandleInterval.WEEKLY,
                 101
-        )).thenReturn(fetchedCandles);
+        )).thenReturn(new com.tradeguide.service.market.ObservedMarketCandles(
+                fetchedCandles, Optional.empty()));
 
-        when(completedWeeklyCandleCache.getOrLoad(
+        when(completedWeeklyCandleCache.getOrLoadObserved(
                 eq("TOSS_SECURITIES:42"),
                 eq(Market.US),
                 eq("SOXL"),
                 eq(101),
                 any()
         )).thenAnswer(invocation -> invocation
-                .<Supplier<List<MarketCandle>>>getArgument(4)
+                .<Supplier<com.tradeguide.service.market.ObservedMarketCandles>>getArgument(4)
                 .get()
+                .candles()
         );
 
         when(completedWeeklyCandleFilter.filter(fetchedCandles))
@@ -379,7 +381,7 @@ class StrategyGuideServiceTest {
 
         verify(portfolioRepository).findById(portfolioId);
 
-        verify(completedWeeklyCandleCache).getOrLoad(
+        verify(completedWeeklyCandleCache).getOrLoadObserved(
                 eq("TOSS_SECURITIES:42"),
                 eq(Market.US),
                 eq("SOXL"),
@@ -393,7 +395,7 @@ class StrategyGuideServiceTest {
                 any()
         );
 
-        verify(marketHistoryService).getCandles(
+        verify(marketHistoryService).getObservedCandles(
                 MarketDataProvider.TOSS_SECURITIES,
                 portfolioId,
                 Market.US,

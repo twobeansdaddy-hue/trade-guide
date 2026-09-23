@@ -100,6 +100,37 @@ class PremarketGuideInputAuditRepositoryTest {
         assertThat(snapshotRepository.findById(id).orElseThrow().getCandleEvidence()).isEmpty();
     }
 
+    @Test
+    void persistsOrderedPageReceiptsAndClearsThemOnRefresh() {
+        Member member = memberRepository.save(new Member("page-audit@example.com", "page-user"));
+        Portfolio portfolio = portfolioRepository.save(new Portfolio(member, "응답 페이지 근거"));
+        PremarketGuideSnapshot snapshot = new PremarketGuideSnapshot(
+                portfolio, LocalDate.of(2026, 9, 14), LocalDateTime.of(2026, 9, 14, 13, 0));
+        Instant first = Instant.parse("2026-09-11T20:00:00Z");
+        Instant second = Instant.parse("2026-09-11T20:00:01Z");
+        snapshot.replaceCandleEvidence(java.util.List.of(new PremarketGuideCandleEvidence(
+                PremarketGuideScope.HELD, Market.US, "SOXL", MarketDataProvider.TOSS_SECURITIES,
+                Instant.parse("2026-09-11T20:00:02Z"), "a".repeat(64), 40,
+                LocalDate.of(2026, 9, 11), java.util.List.of(first, second), true)));
+        snapshotRepository.saveAndFlush(snapshot);
+        Long id = snapshot.getId();
+        entityManager.clear();
+
+        PremarketGuideSnapshot restored = snapshotRepository.findById(id).orElseThrow();
+        assertThat(restored.getCandleEvidence().getFirst().getPageReceivedAt())
+                .containsExactly(first, second);
+        assertThat(restored.getCandleEvidence().getFirst().getAdjustedRequested()).isTrue();
+
+        restored.replaceCandleEvidence(java.util.List.of(candleEvidence("b".repeat(64))));
+        snapshotRepository.saveAndFlush(restored);
+        entityManager.clear();
+
+        PremarketGuideCandleEvidence refreshed = snapshotRepository.findById(id).orElseThrow()
+                .getCandleEvidence().getFirst();
+        assertThat(refreshed.getPageReceivedAt()).isEmpty();
+        assertThat(refreshed.getAdjustedRequested()).isNull();
+    }
+
     private PremarketGuideCandleEvidence candleEvidence(String sha256) {
         return new PremarketGuideCandleEvidence(PremarketGuideScope.HELD, Market.US, "SOXL",
                 MarketDataProvider.TWELVE_DATA, Instant.parse("2026-09-11T21:00:00Z"),

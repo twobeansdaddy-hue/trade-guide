@@ -142,15 +142,22 @@ public class PremarketGuideSnapshot {
     }
 
     public void recordUnverifiedInputs(Instant recordedAt, MarketDataProvider candleProvider) {
-        boolean candleEvidenceIncomplete = items.stream()
+        List<PremarketGuideItem> availableItems = items.stream()
                 .filter(item -> item.getStatus() == PremarketGuideItemStatus.AVAILABLE)
+                .toList();
+        boolean candleEvidenceIncomplete = availableItems.stream()
                 .anyMatch(item -> candleEvidence.stream()
                         .noneMatch(evidence -> evidence.matches(item, candleProvider)));
+        boolean candleReceiptIncomplete = availableItems.isEmpty() || availableItems.stream()
+                .anyMatch(item -> candleEvidence.stream()
+                        .noneMatch(evidence -> evidence.matches(item, candleProvider)
+                                && !evidence.getPageReceivedAt().isEmpty()));
         if (inputAudit == null) {
             inputAudit = new PremarketGuideInputAudit(
-                    this, recordedAt, candleProvider, candleEvidenceIncomplete);
+                    this, recordedAt, candleProvider, candleEvidenceIncomplete, candleReceiptIncomplete);
         } else {
-            inputAudit.markUnverified(recordedAt, candleProvider, candleEvidenceIncomplete);
+            inputAudit.markUnverified(
+                    recordedAt, candleProvider, candleEvidenceIncomplete, candleReceiptIncomplete);
         }
     }
 

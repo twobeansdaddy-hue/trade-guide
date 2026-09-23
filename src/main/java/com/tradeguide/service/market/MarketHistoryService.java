@@ -50,4 +50,12 @@ public class MarketHistoryService {
                 .resolve(providerType, portfolioId)
                 .getCandles(market, ticker, interval, outputSize);
     }
+
+    public ObservedMarketCandles getObservedCandles(
+            MarketDataProvider providerType, Long portfolioId, Market market,
+            String ticker, CandleInterval interval, int outputSize
+    ) {
+        return marketHistoryProviderRegistry.resolve(providerType, portfolioId)
+                .getObservedCandles(market, ticker, interval, outputSize);
+    }
 }

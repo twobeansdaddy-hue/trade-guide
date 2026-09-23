@@ -10,6 +10,9 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static com.tradeguide.domain.broker.BrokerCredentialsFixture.tossCredentials;
@@ -30,7 +33,8 @@ class TossSecuritiesMarketHistoryProviderTest {
     private final MockRestServiceServer server = MockRestServiceServer.bindTo(builder).build();
     private final TossSecuritiesAccessTokenIssuer tokenIssuer = mock(TossSecuritiesAccessTokenIssuer.class);
     private final TossSecuritiesMarketHistoryProvider provider =
-            new TossSecuritiesMarketHistoryProvider(builder, BASE_URL, tokenIssuer);
+            new TossSecuritiesMarketHistoryProvider(builder, BASE_URL, tokenIssuer,
+                    Clock.fixed(Instant.parse("2026-09-14T12:00:00Z"), ZoneOffset.UTC));
 
     @Test
     void overlappingDailyPagesYieldUniqueDates() {
@@ -47,6 +51,26 @@ class TossSecuritiesMarketHistoryProviderTest {
 
         assertThat(candles).extracting(MarketCandle::getTradingDate).containsExactly(
                 LocalDate.of(2026, 9, 2), LocalDate.of(2026, 9, 3), LocalDate.of(2026, 9, 4));
+        server.verify();
+    }
+
+    @Test
+    void capturesActualResponseTimesForEachTossPage() {
+        givenToken();
+        server.expect(requestTo(startsWith(BASE_URL + "/api/v1/candles?")))
+                .andRespond(withSuccess(page("page2", candle("2026-09-04", "104")),
+                        MediaType.APPLICATION_JSON));
+        server.expect(requestTo(startsWith(BASE_URL + "/api/v1/candles?")))
+                .andRespond(withSuccess(page(null, candle("2026-09-03", "103")),
+                        MediaType.APPLICATION_JSON));
+
+        var result = provider.getCandlesWithReceipt(tossCredentials("id", "secret"),
+                Market.US, "SOXL", CandleInterval.DAILY, 2);
+
+        assertThat(result.candles()).hasSize(2);
+        assertThat(result.pageReceivedAt()).containsExactly(
+                Instant.parse("2026-09-14T12:00:00Z"), Instant.parse("2026-09-14T12:00:00Z"));
+        assertThat(result.adjustedRequested()).isTrue();
         server.verify();
     }
 

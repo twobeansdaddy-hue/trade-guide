@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -180,6 +181,32 @@ class CompletedWeeklyCandleCacheTest {
                 .isEqualTo(firstLoad);
         verify(clock).instant();
         verifyNoMoreInteractions(clock);
+    }
+
+    @Test
+    void cacheHitRetainsOriginalPageReceipts() {
+        when(weeklyCandleSchedule.getExpectedLatestCompletedCandleStart())
+                .thenReturn(LocalDate.of(2026, 8, 3));
+        Instant receivedAt = Instant.parse("2026-08-10T11:59:59Z");
+        AtomicInteger loads = new AtomicInteger();
+        completedWeeklyCandleCache.getOrLoadObserved("TOSS_SECURITIES:1", Market.US, "SOXL", 101,
+                () -> {
+                    loads.incrementAndGet();
+                    return new ObservedMarketCandles(List.of(), Optional.of(
+                            new ObservedMarketCandles.SourceReceipt(List.of(receivedAt), true)));
+                });
+        completedWeeklyCandleCache.getOrLoadObserved("TOSS_SECURITIES:1", Market.US, "SOXL", 101,
+                () -> {
+                    loads.incrementAndGet();
+                    return new ObservedMarketCandles(List.of(), Optional.empty());
+                });
+
+        assertThat(loads).hasValue(1);
+        assertThat(completedWeeklyCandleCache.findObservation(
+                "TOSS_SECURITIES:1", Market.US, "SOXL", 101))
+                .get()
+                .extracting(observation -> observation.sourceReceipt().orElseThrow().pageReceivedAt())
+                .isEqualTo(List.of(receivedAt));
     }
 
     @Test
