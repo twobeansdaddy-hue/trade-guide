@@ -131,6 +131,27 @@ class PremarketGuideInputAuditRepositoryTest {
         assertThat(refreshed.getAdjustedRequested()).isNull();
     }
 
+    @Test
+    void persistsResponseReceiptWithoutAssumingAdjustmentMode() {
+        Member member = memberRepository.save(new Member("twelve-receipt@example.com", "twelve-user"));
+        Portfolio portfolio = portfolioRepository.save(new Portfolio(member, "Twelve 응답 근거"));
+        PremarketGuideSnapshot snapshot = new PremarketGuideSnapshot(
+                portfolio, LocalDate.of(2026, 9, 14), LocalDateTime.of(2026, 9, 14, 13, 0));
+        Instant receivedAt = Instant.parse("2026-09-11T20:00:00Z");
+        snapshot.replaceCandleEvidence(java.util.List.of(new PremarketGuideCandleEvidence(
+                PremarketGuideScope.HELD, Market.US, "SOXL", MarketDataProvider.TWELVE_DATA,
+                Instant.parse("2026-09-11T20:00:01Z"), "a".repeat(64), 40,
+                LocalDate.of(2026, 9, 11), java.util.List.of(receivedAt), null)));
+        snapshotRepository.saveAndFlush(snapshot);
+        Long id = snapshot.getId();
+        entityManager.clear();
+
+        PremarketGuideCandleEvidence restored = snapshotRepository.findById(id).orElseThrow()
+                .getCandleEvidence().getFirst();
+        assertThat(restored.getPageReceivedAt()).containsExactly(receivedAt);
+        assertThat(restored.getAdjustedRequested()).isNull();
+    }
+
     private PremarketGuideCandleEvidence candleEvidence(String sha256) {
         return new PremarketGuideCandleEvidence(PremarketGuideScope.HELD, Market.US, "SOXL",
                 MarketDataProvider.TWELVE_DATA, Instant.parse("2026-09-11T21:00:00Z"),

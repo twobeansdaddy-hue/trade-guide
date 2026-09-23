@@ -13,7 +13,7 @@ public record ObservedMarketCandles(List<MarketCandle> candles, Optional<SourceR
         Objects.requireNonNull(sourceReceipt, "시세 수신 근거 상태가 필요합니다.");
     }
 
-    public record SourceReceipt(List<Instant> pageReceivedAt, boolean adjustedRequested) {
+    public record SourceReceipt(List<Instant> pageReceivedAt, Boolean adjustedRequested) {
         public SourceReceipt {
             pageReceivedAt = List.copyOf(pageReceivedAt);
             if (pageReceivedAt.isEmpty()) {

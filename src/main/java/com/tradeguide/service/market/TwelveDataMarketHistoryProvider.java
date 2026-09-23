@@ -15,9 +15,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
@@ -25,17 +28,20 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
     private final RestClient restClient;
     private final String apiKey;
     private final MarketDataProviderConfigurationStatus configurationStatus;
+    private final Clock clock;
 
     public TwelveDataMarketHistoryProvider(
             RestClient.Builder restClientBuilder,
             @Value("${twelve-data.api-key}") String apiKey,
-            MarketDataProviderConfigurationStatus configurationStatus
+            MarketDataProviderConfigurationStatus configurationStatus,
+            Clock clock
     ) {
         this.restClient = restClientBuilder
                 .baseUrl("https://api.twelvedata.com")
                 .build();
         this.apiKey = apiKey;
         this.configurationStatus = configurationStatus;
+        this.clock = clock;
     }
 
     @Override
@@ -50,6 +56,13 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
             CandleInterval interval,
             int outputSize
     ) {
+        return getObservedCandles(market, ticker, interval, outputSize).candles();
+    }
+
+    @Override
+    public ObservedMarketCandles getObservedCandles(
+            Market market, String ticker, CandleInterval interval, int outputSize
+    ) {
         if (outputSize < 1 || outputSize > 5000) {
             throw new IllegalArgumentException(
                     "캔들 조회 개수는 1에서 5000 사이여야 합니다."
@@ -60,6 +73,7 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
 
         String normalizedTicker = ticker.toUpperCase(Locale.ROOT);
         TwelveDataTimeSeriesResponse response;
+        Instant responseReceivedAt;
 
         try {
             response = restClient.get()
@@ -73,6 +87,7 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
                     .header(HttpHeaders.AUTHORIZATION, "apikey " + apiKey)
                     .retrieve()
                     .body(TwelveDataTimeSeriesResponse.class);
+            responseReceivedAt = clock.instant();
         } catch (RestClientResponseException exception) {
             if (exception.getStatusCode()
                     .isSameCodeAs(HttpStatus.TOO_MANY_REQUESTS)) {
@@ -102,7 +117,7 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
         }
 
         try {
-            return response.values().stream()
+            List<MarketCandle> candles = response.values().stream()
                     .map(candle -> new MarketCandle(
                             market,
                             normalizedTicker,
@@ -114,6 +129,8 @@ public class TwelveDataMarketHistoryProvider implements MarketHistoryProvider {
                             Long.parseLong(candle.volume())
                     ))
                     .toList();
+            return new ObservedMarketCandles(candles, Optional.of(
+                    new ObservedMarketCandles.SourceReceipt(List.of(responseReceivedAt), null)));
         } catch (RuntimeException exception) {
             throw new MarketDataUnavailableException(
                     "캔들 데이터 형식이 올바르지 않습니다.",

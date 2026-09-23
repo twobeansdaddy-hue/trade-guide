@@ -17,6 +17,9 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,7 +41,8 @@ class TwelveDataMarketHistoryProviderTest {
             new TwelveDataMarketHistoryProvider(
                     restClientBuilder,
                     "test-api-key",
-                    new MarketDataProviderConfigurationStatus("test-api-key", unconfiguredBrokerCipher())
+                    new MarketDataProviderConfigurationStatus("test-api-key", unconfiguredBrokerCipher()),
+                    Clock.fixed(Instant.parse("2026-08-05T12:00:00Z"), ZoneOffset.UTC)
             );
 
     private static BrokerCredentialCipher unconfiguredBrokerCipher() {
@@ -89,8 +93,9 @@ class TwelveDataMarketHistoryProviderTest {
                 );
 
         // When
-        List<MarketCandle> candles =
-                provider.getCandles(Market.US, "aapl", CandleInterval.DAILY, 2);
+        ObservedMarketCandles observed =
+                provider.getObservedCandles(Market.US, "aapl", CandleInterval.DAILY, 2);
+        List<MarketCandle> candles = observed.candles();
 
         // Then
         assertThat(candles).hasSize(2);
@@ -114,6 +119,10 @@ class TwelveDataMarketHistoryProviderTest {
                 .isEqualTo(LocalDate.of(2026, 8, 4));
         assertThat(candles.get(1).getClose())
                 .isEqualByComparingTo("204.10");
+        assertThat(observed.sourceReceipt()).isPresent();
+        assertThat(observed.sourceReceipt().orElseThrow().pageReceivedAt())
+                .containsExactly(Instant.parse("2026-08-05T12:00:00Z"));
+        assertThat(observed.sourceReceipt().orElseThrow().adjustedRequested()).isNull();
 
         server.verify();
     }
@@ -228,7 +237,8 @@ class TwelveDataMarketHistoryProviderTest {
                 new TwelveDataMarketHistoryProvider(
                         RestClient.builder(),
                         "",
-                        new MarketDataProviderConfigurationStatus("", unconfiguredBrokerCipher())
+                        new MarketDataProviderConfigurationStatus("", unconfiguredBrokerCipher()),
+                        Clock.fixed(Instant.parse("2026-08-05T12:00:00Z"), ZoneOffset.UTC)
                 );
 
         // When & Then

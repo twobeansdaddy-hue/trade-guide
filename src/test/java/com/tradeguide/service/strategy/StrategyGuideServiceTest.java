@@ -415,4 +415,35 @@ class StrategyGuideServiceTest {
         verify(tradingStrategy).decide(assetProfile, completedCandles);
         verify(weeklyCandleFreshnessValidator).validate(completedCandles);
     }
+
+    @Test
+    void portfolioTwelveCandlesUseObservedCachePath() {
+        Long portfolioId = 51L;
+        Portfolio portfolio = new Portfolio(new Member("twelve@example.com", "twelve"), "Twelve");
+        portfolio.changeMarketDataPreference(
+                PortfolioMarketDataPreference.unified(MarketDataProvider.TWELVE_DATA));
+        when(portfolioRepository.findById(portfolioId)).thenReturn(Optional.of(portfolio));
+        List<MarketCandle> candles = List.of();
+        when(marketHistoryService.getObservedCandles(
+                MarketDataProvider.TWELVE_DATA, portfolioId, Market.US, "SOXL",
+                CandleInterval.WEEKLY, 101))
+                .thenReturn(new com.tradeguide.service.market.ObservedMarketCandles(
+                        candles, Optional.of(new com.tradeguide.service.market.ObservedMarketCandles.SourceReceipt(
+                                List.of(java.time.Instant.parse("2026-09-11T20:00:00Z")), null))));
+        when(completedWeeklyCandleCache.getOrLoadObserved(
+                eq("TWELVE_DATA"), eq(Market.US), eq("SOXL"), eq(101), any()))
+                .thenAnswer(invocation -> invocation
+                        .<Supplier<com.tradeguide.service.market.ObservedMarketCandles>>getArgument(4)
+                        .get().candles());
+        when(completedWeeklyCandleFilter.filter(candles)).thenReturn(candles);
+        when(strategySelector.select(InvestmentTrack.TRACK_A)).thenReturn(tradingStrategy);
+
+        strategyGuideService.getStrategySignal(portfolioId, Market.US, "SOXL", InvestmentTrack.TRACK_A);
+
+        verify(completedWeeklyCandleCache).getOrLoadObserved(
+                eq("TWELVE_DATA"), eq(Market.US), eq("SOXL"), eq(101), any());
+        verify(marketHistoryService).getObservedCandles(
+                MarketDataProvider.TWELVE_DATA, portfolioId, Market.US, "SOXL",
+                CandleInterval.WEEKLY, 101);
+    }
 }

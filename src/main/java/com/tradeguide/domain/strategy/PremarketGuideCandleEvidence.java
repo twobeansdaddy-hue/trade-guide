@@ -91,7 +91,7 @@ public class PremarketGuideCandleEvidence {
         if (scope == null || market == null || ticker == null || ticker.isBlank()
                 || candleProvider == null || loadCompletedAt == null || candleSha256 == null
                 || candleSha256.length() != 64 || candleCount < 1 || dataAsOf == null
-                || pageReceivedAt == null || (pageReceivedAt.isEmpty() != (adjustedRequested == null))) {
+                || pageReceivedAt == null || (pageReceivedAt.isEmpty() && adjustedRequested != null)) {
             throw new IllegalArgumentException("장전 가이드 시세 근거가 올바르지 않습니다.");
         }
         this.scope = scope;

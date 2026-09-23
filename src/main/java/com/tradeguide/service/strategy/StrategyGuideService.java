@@ -159,21 +159,13 @@ public class StrategyGuideService {
                 .orElseThrow(() -> new PortfolioNotFoundException("포트폴리오를 찾을 수 없습니다."));
 
         String providerKey = CompletedWeeklyCandleCache.providerKey(candleProvider, portfolioId);
-        List<MarketCandle> candles = candleProvider == MarketDataProvider.TOSS_SECURITIES
-                ? completedWeeklyCandleCache.getOrLoadObserved(
-                        providerKey, assetProfile.getMarket(), assetProfile.getTicker(),
-                        WEEKLY_CANDLE_OUTPUT_SIZE,
-                        () -> marketHistoryService.getObservedCandles(
-                                candleProvider, portfolioId, assetProfile.getMarket(),
-                                assetProfile.getTicker(), CandleInterval.WEEKLY,
-                                WEEKLY_CANDLE_OUTPUT_SIZE))
-                : completedWeeklyCandleCache.getOrLoad(
-                        providerKey, assetProfile.getMarket(), assetProfile.getTicker(),
-                        WEEKLY_CANDLE_OUTPUT_SIZE,
-                        () -> marketHistoryService.getCandles(
-                                candleProvider, portfolioId, assetProfile.getMarket(),
-                                assetProfile.getTicker(), CandleInterval.WEEKLY,
-                                WEEKLY_CANDLE_OUTPUT_SIZE));
+        List<MarketCandle> candles = completedWeeklyCandleCache.getOrLoadObserved(
+                providerKey, assetProfile.getMarket(), assetProfile.getTicker(),
+                WEEKLY_CANDLE_OUTPUT_SIZE,
+                () -> marketHistoryService.getObservedCandles(
+                        candleProvider, portfolioId, assetProfile.getMarket(),
+                        assetProfile.getTicker(), CandleInterval.WEEKLY,
+                        WEEKLY_CANDLE_OUTPUT_SIZE));
 
         List<MarketCandle> completedCandles = completedWeeklyCandleFilter.filter(candles);
         weeklyCandleFreshnessValidator.validate(completedCandles);
