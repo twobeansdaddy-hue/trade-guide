@@ -98,6 +98,7 @@ Member -> Portfolio -> TradeTransaction -> Holding -> Valuation
   - 요청 제한(429)이 발생하면 이후 종목은 외부 API를 추가 호출하지 않고 요청 제한 메시지로 `unavailableAssets`에 기록한다.
   - 포트폴리오 자체가 없거나 보유 종목 계산에 실패하면 기존 오류 응답을 유지한다.
 - `GET`/`POST /api/members/{memberId}/portfolios/{portfolioId}/premarket-guide/today`는 미국 동부시간 기준 다음 거래일의 장전 가이드를 조회·생성한다. 같은 거래일에 이미 생성된 스냅샷은 기본적으로 재사용하며, `force=true`일 때만 시장 데이터를 다시 조회한다. 결과는 보유·후보 가이드, 조회 불가 종목, 기준일과 생성 시각을 함께 보존한다.
+- 장전 가이드의 입력 근거 1단계로 완료 주봉의 자산별 제공자·로드 완료 시각·캔들 수·SHA-256과 HTTP 응답 수신 시각을 저장한다. Toss는 페이지별, Twelve Data는 단일 응답 기준이다. 캔들 해시는 가격 표기를 정규화한 v2이며 과거 v1 행과 버전 구분 없이 비교할 수 없다. 전체 포트폴리오 입력 해시와 단일 감사 수신 시각은 아직 비어 있고 상태는 미검증이다. 상세 범위와 관측 한계는 `docs/design/GUIDE_INPUT_OBSERVATION.md`를 따른다.
 - 현재 후보 유니버스는 관리자가 등록한 `TRACK_A` 프로필이며, S&P 500 전체 스크리닝이나 `TRACK_B` 후보 탐색은 아직 구현하지 않았다.
 - `referencePrice`는 최신 완료 주봉 종가이며, 주문 지정가·목표가·손절가는 아니다.
 - `decision.metadata`에는 전략 ID·버전·데이터 기준일과 함께 전략별 `confidence`, `caveats`가 포함될 수 있다. 현재 Track A는 `low-medium` 신뢰도와 과거 데이터·기술적 신호·비주문 계산 범위에 대한 주의사항을 제공한다.
