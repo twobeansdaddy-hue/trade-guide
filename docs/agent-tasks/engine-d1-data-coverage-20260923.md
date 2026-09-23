@@ -39,7 +39,7 @@
 
 - [x] `research/TASKS.md` §9에 네 가지 결정이 기록된다.
 - [x] 토스 주문 기능 조사 보고서: 기능별 지원/미지원/문서 불명과 출처 URL·접근일.
-- [ ] 분봉 이력·SEC 접수 시각·거시 vintage 실측 결과(수행분과 미수행분 구분). — 분봉 1차 완료, SEC·ALFRED 미수행.
+- [ ] 분봉 이력·SEC 접수 시각·거시 vintage 실측 결과(수행분과 미수행분 구분). — 분봉 1차·SEC(AAPL·MSFT) 완료, ALFRED 미수행.
 - [ ] 결과를 근거로 한 합격 수치 후보(사용자 확정 전).
 
 ## Handoff
@@ -47,4 +47,5 @@
 - Files changed(1차, 2026-09-23): 이 계약, `research/TASKS.md` §9, `research/reports/toss-broker-order-capability-survey-20260923.md`, `research/reports/engine-data-coverage-probe-20260923.md`, `research/scripts/engine-data-probe/minute_depth_probe.py`.
 - Verification run: 실측 도구를 모의 서버로 확인한 뒤 사용자가 실제 토스·Twelve Data로 실행(2026-09-23 15:34 KST). 공개 문서는 OpenAPI 명세 1.2.17 기준.
 - API / data-model / policy impact: 없음(리서치).
-- Open decision or risk: SEC 식별 User-Agent 문자열과 FRED API 키 발급 여부(사용자). 후속 실측 3건(국내 2022년 봉 거래량, 미국 프리마켓 포함 여부, Twelve Data 1분봉 이력 깊이). 공개 문서와 2026-09-23 일봉 1차 관측 가설의 불일치는 2차 관측 후 판단.
+- 2차(2026-09-23): `research/scripts/engine-data-probe/sec_filing_lag_probe.py` 추가, SEC 실측 결과를 커버리지 보고서 2절에 기록(사용자 실행 02:46 ET, 식별 문자열은 기록하지 않음). 대형주는 공시 24~37일로 60·75일 근사가 보수적이나, `companyfacts` 최신값·최초 태깅일을 그대로 쓰면 재작성 값과 소급 태깅으로 미래 정보가 섞인다.
+- Open decision or risk: FRED API 키 발급 여부(사용자). 소형주 공시 지연 미실측. 후속 실측 3건(국내 2022년 봉 거래량, 미국 프리마켓 포함 여부, Twelve Data 1분봉 이력 깊이). 공개 문서와 2026-09-23 일봉 1차 관측 가설의 불일치는 2차 관측 후 판단.
