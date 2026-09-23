@@ -1,0 +1,29 @@
+{
+  "input": {
+    "state": {
+      "instrumentId": "SYN-K",
+      "currency": "KRW",
+      "version": 0,
+      "quantity": "0",
+      "averageCost": "0",
+      "availableCash": "1000000",
+      "externalReservationsConfirmed": true
+    },
+    "params": {
+      "quantityStep": "1",
+      "priceTick": "100",
+      "feeRate": "0.00015",
+      "cashScale": 0,
+      "portfolioValue": "100000000",
+      "maxExposureRatio": "1",
+      "maxLossRatio": "0.5",
+      "markPrice": "70000",
+      "stopPrice": "60000",
+      "buyLevels": [
+        {"levelId": "B1", "price": "69900", "requestedQuantity": "10", "currency": "KRW"}
+      ],
+      "sellLevels": []
+    }
+  },
+  "fill": {"scenario": "BUY", "levelId": "B1", "quantity": "4", "price": "69800", "fee": "42"}
+}

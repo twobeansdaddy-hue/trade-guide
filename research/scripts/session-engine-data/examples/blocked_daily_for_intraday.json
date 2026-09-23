@@ -1,0 +1,26 @@
+{
+  "manifest": {
+    "datasetId": "synthetic-us-daily-example",
+    "market": "US",
+    "currency": "USD",
+    "interval": "1d",
+    "timezone": "America/New_York",
+    "sessionCoverage": ["REGULAR"],
+    "adjustmentPolicy": "UNKNOWN",
+    "availabilityMode": "FIXED_LAG_APPROXIMATION",
+    "universeMode": "UNKNOWN",
+    "licenseStatus": "RESEARCH_ONLY_SYNTHETIC"
+  },
+  "requirements": {
+    "market": "US",
+    "currency": "USD",
+    "interval": "1m",
+    "session": "PRE",
+    "cutoffAt": "2026-03-10T00:00:00Z",
+    "requirePitUniverse": true,
+    "requireVintage": true
+  },
+  "rows": [
+    {"instrumentId": "SYN-A", "market": "US", "currency": "USD", "session": "REGULAR", "eventAt": "2026-03-05T16:00:00-05:00", "availableAt": "2026-03-05T18:00:00-05:00", "open": 100.0, "high": 101.0, "low": 99.0, "close": 100.5, "volume": 100000}
+  ]
+}

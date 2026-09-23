@@ -1,0 +1,27 @@
+{
+  "manifest": {
+    "datasetId": "synthetic-kr-krx-1m-example",
+    "market": "KR",
+    "currency": "KRW",
+    "interval": "1m",
+    "timezone": "Asia/Seoul",
+    "sessionCoverage": ["KRX_REGULAR"],
+    "adjustmentPolicy": "SPLIT_ADJUSTED",
+    "availabilityMode": "PUBLICATION_RECONSTRUCTED",
+    "universeMode": "POINT_IN_TIME",
+    "licenseStatus": "UNKNOWN"
+  },
+  "requirements": {
+    "market": "KR",
+    "currency": "KRW",
+    "interval": "1m",
+    "session": "KRX_REGULAR",
+    "cutoffAt": "2026-03-10T00:00:00+09:00",
+    "requirePitUniverse": true,
+    "requireVintage": false
+  },
+  "rows": [
+    {"instrumentId": "KR-SYN-A", "market": "KR", "currency": "KRW", "session": "KRX_REGULAR", "eventAt": "2026-03-09T09:01:00+09:00", "availableAt": "2026-03-09T09:01:03+09:00", "open": 70000, "high": 70100, "low": 69900, "close": 70000, "volume": 5000},
+    {"instrumentId": "KR-SYN-A", "market": "KR", "currency": "KRW", "session": "KRX_REGULAR", "eventAt": "2026-03-09T09:02:00+09:00", "availableAt": "2026-03-09T09:02:03+09:00", "open": 70000, "high": 70200, "low": 70000, "close": 70100, "volume": 4200}
+  ]
+}

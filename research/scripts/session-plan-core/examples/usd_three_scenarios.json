@@ -1,0 +1,30 @@
+{
+  "state": {
+    "instrumentId": "SYN-A",
+    "currency": "USD",
+    "version": 3,
+    "quantity": "5",
+    "averageCost": "100",
+    "availableCash": "10000.00",
+    "externalReservationsConfirmed": true
+  },
+  "params": {
+    "quantityStep": "1",
+    "priceTick": "0.01",
+    "feeRate": "0.001",
+    "cashScale": 2,
+    "portfolioValue": "100000",
+    "maxExposureRatio": "0.5",
+    "maxLossRatio": "0.05",
+    "markPrice": "100",
+    "stopPrice": "95",
+    "buyLevels": [
+      {"levelId": "B1", "price": "99.00", "requestedQuantity": "10"},
+      {"levelId": "B2", "price": "98.00", "requestedQuantity": "10"}
+    ],
+    "sellLevels": [
+      {"levelId": "S1", "price": "105.00", "requestedQuantity": "3"},
+      {"levelId": "S2", "price": "106.00", "requestedQuantity": "4"}
+    ]
+  }
+}

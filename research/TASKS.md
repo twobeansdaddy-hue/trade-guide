@@ -303,6 +303,20 @@
       재개하려면 이 세 가지를 먼저 해소해야 한다 — 특히 "예측 엔진"이 아니라
       "이미 계산된 규칙 기반 사실을 자연어로 설명하는 역할"로 범위를 낮추는
       재설계가 대안으로 논의됨.
+- [x] **방향 전환(2026-09-21~23, 저장소 반영 2026-09-23)**: 위 LLM 매크로 엔진 대신
+      "조건부 매매 가이드 엔진"을 설계했다 — 세션별 가격 분포 예측 → 현금·수량·위험 제약 →
+      조건부 매수·매도 가격·수량 계획. LLM은 출처 있는 뉴스 구조화와 계산 완료 결과의 설명으로
+      한정한다(`research/reports/trade-guidance-engine-design-2026-09-21.md`, 제안·미채택).
+      1단계 데이터 감사와 검증 프로토콜 v0.1(`DRAFT_NOT_TRAINABLE`)을 작성했고
+      (`research/reports/engine-phase1-audit-and-protocol-2026-09-21.md`), D0 구조 검증용
+      오프라인 도구를 만들었다: 데이터 준비 검사기·수집 근거·재생 게이트·판단 추적
+      (`research/scripts/session-engine-data/`, 테스트 124개)과 조건부 가격·수량 계산 코어
+      (`research/scripts/session-plan-core/`, 테스트 48개). Orca 작업 공간 삭제 후 복구한 판이며
+      원본 동일성은 인증할 수 없다(`research/reports/recovered-research-RECOVERY.md`).
+      운영 쪽 선행 작업으로 장전 가이드 입력 근거(V31~V33)와 포트폴리오 상태 스냅샷(V34)을
+      구현했다. **실데이터 학습·예측 성능·수익성 검증은 미실행**. 남은 결정: 보유 기간 가정,
+      세션별 분봉·공시·거시 vintage 데이터 확보 범위와 비용, 브로커 세션·조건주문 지원, 성과
+      합격 수치(설계 §14).
 
 ### (C) 가격 사다리 실행 가이드 — 착수 전 (A, B 이후)
 - [ ] `research/STRATEGY_ENGINE_POLICY.md`의 v2 보류 항목(전략 자동 손절, `quantityRatio`
