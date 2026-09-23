@@ -24,7 +24,7 @@ import java.util.List;
 public class StrategyGuideService {
 
     // 완료 처리 중인 이번 주 봉을 제외해도, 40주 이동평균 계산에 필요한 이력을 확보한다.
-    private static final int WEEKLY_CANDLE_OUTPUT_SIZE = 101;
+    static final int WEEKLY_CANDLE_OUTPUT_SIZE = 101;
 
     private final AssetProfileRepository assetProfileRepository;
     private final MarketHistoryService marketHistoryService;
@@ -159,7 +159,7 @@ public class StrategyGuideService {
                 .orElseThrow(() -> new PortfolioNotFoundException("포트폴리오를 찾을 수 없습니다."));
 
         List<MarketCandle> candles = completedWeeklyCandleCache.getOrLoad(
-                candleProvider.name(),
+                CompletedWeeklyCandleCache.providerKey(candleProvider, portfolioId),
                 assetProfile.getMarket(),
                 assetProfile.getTicker(),
                 WEEKLY_CANDLE_OUTPUT_SIZE,

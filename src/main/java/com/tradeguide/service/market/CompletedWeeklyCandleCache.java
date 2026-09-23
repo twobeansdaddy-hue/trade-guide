@@ -1,13 +1,18 @@
 package com.tradeguide.service.market;
 
 import com.tradeguide.domain.market.MarketCandle;
+import com.tradeguide.domain.market.MarketDataProvider;
 import com.tradeguide.domain.trade.Market;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -16,13 +21,22 @@ import java.util.function.Supplier;
 @Component
 public class CompletedWeeklyCandleCache {
 
+    public static String providerKey(MarketDataProvider provider, Long portfolioId) {
+        return provider == MarketDataProvider.TOSS_SECURITIES
+                ? provider.name() + ":" + portfolioId
+                : provider.name();
+    }
+
     private final WeeklyCandleSchedule weeklyCandleSchedule;
+    private final Clock clock;
     private final Map<String, CacheEntry> cachedCandles = new ConcurrentHashMap<>();
     private final Map<InFlightKey, CompletableFuture<List<MarketCandle>>> inFlightLoads =
             new ConcurrentHashMap<>();
 
-    public CompletedWeeklyCandleCache(WeeklyCandleSchedule weeklyCandleSchedule) {
+    @Autowired
+    public CompletedWeeklyCandleCache(WeeklyCandleSchedule weeklyCandleSchedule, Clock clock) {
         this.weeklyCandleSchedule = weeklyCandleSchedule;
+        this.clock = clock;
     }
 
     public List<MarketCandle> getOrLoad(
@@ -46,13 +60,7 @@ public class CompletedWeeklyCandleCache {
             int outputSize,
             Supplier<List<MarketCandle>> loader
     ) {
-        String cacheKey = market.name()
-                + ":"
-                + ticker.toUpperCase(Locale.ROOT)
-                + ":"
-                + outputSize
-                + ":"
-                + providerKey;
+        String cacheKey = cacheKey(providerKey, market, ticker, outputSize);
 
         LocalDate expectedLatestCompletedCandleStart = weeklyCandleSchedule.getExpectedLatestCompletedCandleStart();
 
@@ -76,7 +84,8 @@ public class CompletedWeeklyCandleCache {
                 throw new IllegalStateException("주봉 시세 데이터가 비어 있습니다.");
             }
 
-            cachedCandles.put(cacheKey, new CacheEntry(expectedLatestCompletedCandleStart, loadedCandles));
+            cachedCandles.put(cacheKey, new CacheEntry(
+                    expectedLatestCompletedCandleStart, loadedCandles, clock.instant()));
             ownFuture.complete(loadedCandles);
             return loadedCandles;
         } catch (RuntimeException exception) {
@@ -85,6 +94,22 @@ public class CompletedWeeklyCandleCache {
         } finally {
             inFlightLoads.remove(inFlightKey, ownFuture);
         }
+    }
+
+    /** The timestamp belongs to the original load, including on later cache hits. */
+    public Optional<CandleLoadObservation> findObservation(
+            String providerKey, Market market, String ticker, int outputSize
+    ) {
+        CacheEntry entry = cachedCandles.get(cacheKey(providerKey, market, ticker, outputSize));
+        if (entry == null || !entry.latestCompletedCandleStart()
+                .equals(weeklyCandleSchedule.getExpectedLatestCompletedCandleStart())) {
+            return Optional.empty();
+        }
+        return Optional.of(new CandleLoadObservation(entry.candles(), entry.loadCompletedAt()));
+    }
+
+    private String cacheKey(String providerKey, Market market, String ticker, int outputSize) {
+        return market.name() + ":" + ticker.toUpperCase(Locale.ROOT) + ":" + outputSize + ":" + providerKey;
     }
 
     private List<MarketCandle> join(CompletableFuture<List<MarketCandle>> future) {
@@ -101,8 +126,15 @@ public class CompletedWeeklyCandleCache {
 
     private record CacheEntry(
             LocalDate latestCompletedCandleStart,
-            List<MarketCandle> candles
+            List<MarketCandle> candles,
+            Instant loadCompletedAt
     ) {
+    }
+
+    public record CandleLoadObservation(List<MarketCandle> candles, Instant loadCompletedAt) {
+        public CandleLoadObservation {
+            candles = List.copyOf(candles);
+        }
     }
 
     private record InFlightKey(

@@ -1,14 +1,18 @@
 package com.tradeguide.service.market;
 
 import com.tradeguide.domain.market.MarketCandle;
+import com.tradeguide.domain.market.MarketDataProvider;
 import com.tradeguide.domain.trade.Market;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -18,6 +22,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,8 +34,14 @@ class CompletedWeeklyCandleCacheTest {
     @Mock
     private WeeklyCandleSchedule weeklyCandleSchedule;
 
-    @InjectMocks
     private CompletedWeeklyCandleCache completedWeeklyCandleCache;
+
+    @BeforeEach
+    void setUp() {
+        completedWeeklyCandleCache = new CompletedWeeklyCandleCache(
+                weeklyCandleSchedule,
+                Clock.fixed(Instant.parse("2026-08-10T12:00:00Z"), ZoneOffset.UTC));
+    }
 
     @Test
     void returnsCachedCandlesWithinSameCompletedWeek() {
@@ -60,6 +74,10 @@ class CompletedWeeklyCandleCacheTest {
         assertThat(first).isSameAs(cachedCandles);
         assertThat(second).isSameAs(cachedCandles);
         assertThat(loadCount).hasValue(1);
+        assertThat(completedWeeklyCandleCache.findObservation("DEFAULT", Market.US, "TQQQ", 101))
+                .get()
+                .extracting(CompletedWeeklyCandleCache.CandleLoadObservation::loadCompletedAt)
+                .isEqualTo(Instant.parse("2026-08-10T12:00:00Z"));
     }
 
     @Test
@@ -142,6 +160,65 @@ class CompletedWeeklyCandleCacheTest {
         } finally {
             executor.shutdownNow();
         }
+    }
+
+    @Test
+    void cacheHitRetainsOriginalLoadTime() {
+        Clock clock = mock(Clock.class);
+        Instant firstLoad = Instant.parse("2026-08-10T12:00:00Z");
+        when(clock.instant()).thenReturn(firstLoad);
+        completedWeeklyCandleCache = new CompletedWeeklyCandleCache(weeklyCandleSchedule, clock);
+        when(weeklyCandleSchedule.getExpectedLatestCompletedCandleStart())
+                .thenReturn(LocalDate.of(2026, 8, 3));
+
+        completedWeeklyCandleCache.getOrLoad("TWELVE_DATA", Market.US, "SOXL", 101, List::of);
+        completedWeeklyCandleCache.getOrLoad("TWELVE_DATA", Market.US, "SOXL", 101, List::of);
+
+        assertThat(completedWeeklyCandleCache.findObservation("TWELVE_DATA", Market.US, "SOXL", 101))
+                .get()
+                .extracting(CompletedWeeklyCandleCache.CandleLoadObservation::loadCompletedAt)
+                .isEqualTo(firstLoad);
+        verify(clock).instant();
+        verifyNoMoreInteractions(clock);
+    }
+
+    @Test
+    void failedLoadHasNoObservation() {
+        when(weeklyCandleSchedule.getExpectedLatestCompletedCandleStart())
+                .thenReturn(LocalDate.of(2026, 8, 3));
+
+        assertThatThrownBy(() -> completedWeeklyCandleCache.getOrLoad(
+                "TWELVE_DATA", Market.US, "SOXL", 101,
+                () -> { throw new IllegalStateException("provider failed"); }))
+                .isInstanceOf(IllegalStateException.class);
+        assertThat(completedWeeklyCandleCache.findObservation("TWELVE_DATA", Market.US, "SOXL", 101))
+                .isEmpty();
+    }
+
+    @Test
+    void isolatesTossCandlesByPortfolioButSharesPublicProviderCandles() {
+        when(weeklyCandleSchedule.getExpectedLatestCompletedCandleStart())
+                .thenReturn(LocalDate.of(2026, 8, 3));
+        AtomicInteger loads = new AtomicInteger();
+        String firstToss = CompletedWeeklyCandleCache.providerKey(MarketDataProvider.TOSS_SECURITIES, 1L);
+        String secondToss = CompletedWeeklyCandleCache.providerKey(MarketDataProvider.TOSS_SECURITIES, 2L);
+        String publicProvider = CompletedWeeklyCandleCache.providerKey(MarketDataProvider.TWELVE_DATA, 1L);
+
+        completedWeeklyCandleCache.getOrLoad(firstToss, Market.US, "SOXL", 101,
+                () -> { loads.incrementAndGet(); return List.of(); });
+        completedWeeklyCandleCache.getOrLoad(secondToss, Market.US, "SOXL", 101,
+                () -> { loads.incrementAndGet(); return List.of(); });
+        completedWeeklyCandleCache.getOrLoad(publicProvider, Market.US, "SOXL", 101,
+                () -> { loads.incrementAndGet(); return List.of(); });
+        completedWeeklyCandleCache.getOrLoad(
+                CompletedWeeklyCandleCache.providerKey(MarketDataProvider.TWELVE_DATA, 2L),
+                Market.US, "SOXL", 101,
+                () -> { loads.incrementAndGet(); return List.of(); });
+
+        assertThat(loads).hasValue(3);
+        assertThat(firstToss).isNotEqualTo(secondToss);
+        assertThat(completedWeeklyCandleCache.findObservation(secondToss, Market.US, "SOXL", 101))
+                .isPresent();
     }
 
     private static void await(CountDownLatch latch) {

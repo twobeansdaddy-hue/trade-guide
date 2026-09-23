@@ -83,6 +83,10 @@ public class PremarketGuideSnapshot {
     @OrderBy("scope ASC, market ASC, ticker ASC")
     private List<PremarketGuideItem> items = new ArrayList<>();
 
+    @OneToMany(mappedBy = "snapshot", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("scope ASC, market ASC, ticker ASC")
+    private List<PremarketGuideCandleEvidence> candleEvidence = new ArrayList<>();
+
     @OneToOne(mappedBy = "snapshot", cascade = CascadeType.ALL, orphanRemoval = true,
             fetch = FetchType.LAZY)
     private PremarketGuideInputAudit inputAudit;
@@ -145,6 +149,19 @@ public class PremarketGuideSnapshot {
         }
     }
 
+    public void replaceCandleEvidence(List<PremarketGuideCandleEvidence> observations) {
+        candleEvidence.removeIf(existing -> observations.stream().noneMatch(existing::hasAssetKey));
+        for (PremarketGuideCandleEvidence observation : observations) {
+            candleEvidence.stream()
+                    .filter(existing -> existing.hasAssetKey(observation))
+                    .findFirst()
+                    .ifPresentOrElse(existing -> existing.refreshFrom(observation), () -> {
+                        observation.assignSnapshot(this);
+                        candleEvidence.add(observation);
+                    });
+        }
+    }
+
     private int count(PremarketGuideScope scope, PremarketGuideItemStatus status) {
         return (int) items.stream()
                 .filter(item -> item.getScope() == scope && item.getStatus() == status)
@@ -201,5 +218,9 @@ public class PremarketGuideSnapshot {
 
     public PremarketGuideInputAudit getInputAudit() {
         return inputAudit;
+    }
+
+    public List<PremarketGuideCandleEvidence> getCandleEvidence() {
+        return List.copyOf(candleEvidence);
     }
 }

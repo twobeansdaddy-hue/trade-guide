@@ -1,12 +1,15 @@
 package com.tradeguide.service.strategy;
 
 import com.tradeguide.domain.market.MarketDataProvider;
+import com.tradeguide.domain.market.CandleInterval;
+import com.tradeguide.domain.market.MarketCandle;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.strategy.EmptyHoldingsGuidance;
 import com.tradeguide.domain.strategy.PremarketGuideItem;
 import com.tradeguide.domain.strategy.PremarketGuideItemStatus;
 import com.tradeguide.domain.strategy.PremarketGuideScope;
 import com.tradeguide.domain.strategy.PremarketGuideSnapshot;
+import com.tradeguide.domain.strategy.PremarketGuideCandleEvidence;
 import com.tradeguide.domain.strategy.PremarketGuideStatus;
 import com.tradeguide.domain.strategy.StrategyGuideBatch;
 import com.tradeguide.dto.strategy.PremarketGuideResponse;
@@ -15,6 +18,9 @@ import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.strategy.PremarketGuideSnapshotRepository;
 import com.tradeguide.service.asset.AssetDisplayNameResolver;
 import com.tradeguide.service.market.UsEquityTradingCalendar;
+import com.tradeguide.service.market.CompletedWeeklyCandleCache;
+import com.tradeguide.service.market.CompletedWeeklyCandleFilter;
+import com.tradeguide.service.market.MarketCandleDigest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +43,9 @@ public class PremarketGuideService {
     private final PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
     private final UsEquityTradingCalendar tradingCalendar;
     private final AssetDisplayNameResolver displayNameResolver;
+    private final CompletedWeeklyCandleCache completedWeeklyCandleCache;
+    private final CompletedWeeklyCandleFilter completedWeeklyCandleFilter;
+    private final MarketCandleDigest marketCandleDigest;
 
     public PremarketGuideService(
             Clock clock,
@@ -45,7 +54,10 @@ public class PremarketGuideService {
             PortfolioStrategyGuideService portfolioStrategyGuideService,
             PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService,
             UsEquityTradingCalendar tradingCalendar,
-            AssetDisplayNameResolver displayNameResolver
+            AssetDisplayNameResolver displayNameResolver,
+            CompletedWeeklyCandleCache completedWeeklyCandleCache,
+            CompletedWeeklyCandleFilter completedWeeklyCandleFilter,
+            MarketCandleDigest marketCandleDigest
     ) {
         this.clock = clock;
         this.portfolioRepository = portfolioRepository;
@@ -54,6 +66,9 @@ public class PremarketGuideService {
         this.portfolioCandidateStrategyGuideService = portfolioCandidateStrategyGuideService;
         this.tradingCalendar = tradingCalendar;
         this.displayNameResolver = displayNameResolver;
+        this.completedWeeklyCandleCache = completedWeeklyCandleCache;
+        this.completedWeeklyCandleFilter = completedWeeklyCandleFilter;
+        this.marketCandleDigest = marketCandleDigest;
     }
 
     @Transactional
@@ -97,9 +112,37 @@ public class PremarketGuideService {
         EmptyHoldingsGuidance emptyGuidance = heldBatch.getEmptyHoldingsGuidance();
         MarketDataProvider marketDataProvider = portfolio.getMarketDataPreference().getCandleProvider();
         snapshot.replaceResults(status, items, emptyGuidance, generatedAt, marketDataProvider);
+        snapshot.replaceCandleEvidence(captureCandleEvidence(items, marketDataProvider, portfolioId));
         snapshot.recordUnverifiedInputs(clock.instant(), marketDataProvider);
 
         return PremarketGuideResponse.from(snapshotRepository.save(snapshot), displayNameResolver);
+    }
+
+    private List<PremarketGuideCandleEvidence> captureCandleEvidence(
+            List<PremarketGuideItem> items, MarketDataProvider provider, Long portfolioId
+    ) {
+        List<PremarketGuideCandleEvidence> observations = new ArrayList<>();
+        for (PremarketGuideItem item : items) {
+            if (item.getStatus() != PremarketGuideItemStatus.AVAILABLE || item.getDataAsOf() == null) {
+                continue;
+            }
+            completedWeeklyCandleCache.findObservation(
+                    CompletedWeeklyCandleCache.providerKey(provider, portfolioId), item.getMarket(), item.getTicker(),
+                    StrategyGuideService.WEEKLY_CANDLE_OUTPUT_SIZE
+            ).ifPresent(cached -> {
+                List<MarketCandle> completed = completedWeeklyCandleFilter.filter(cached.candles());
+                if (completed.isEmpty() || !completed.get(completed.size() - 1).getTradingDate()
+                        .equals(item.getDataAsOf())) {
+                    return;
+                }
+                observations.add(new PremarketGuideCandleEvidence(
+                        item.getScope(), item.getMarket(), item.getTicker(), provider,
+                        cached.loadCompletedAt(),
+                        marketCandleDigest.sha256(provider, CandleInterval.WEEKLY, completed),
+                        completed.size(), item.getDataAsOf()));
+            });
+        }
+        return observations;
     }
 
     @Transactional(readOnly = true)

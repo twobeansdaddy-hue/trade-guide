@@ -4,7 +4,10 @@ import com.tradeguide.domain.market.MarketDataProvider;
 import com.tradeguide.domain.member.Member;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.strategy.GuideInputEvidenceStatus;
+import com.tradeguide.domain.strategy.PremarketGuideCandleEvidence;
+import com.tradeguide.domain.strategy.PremarketGuideScope;
 import com.tradeguide.domain.strategy.PremarketGuideSnapshot;
+import com.tradeguide.domain.trade.Market;
 import com.tradeguide.repository.member.MemberRepository;
 import com.tradeguide.repository.portfolio.PortfolioRepository;
 import org.junit.jupiter.api.Test;
@@ -67,5 +70,39 @@ class PremarketGuideInputAuditRepositoryTest {
         entityManager.clear();
 
         assertThat(snapshotRepository.findById(id).orElseThrow().getInputAudit()).isNull();
+    }
+
+    @Test
+    void replacesCandleEvidenceInPlaceAndRemovesStaleAsset() {
+        Member member = memberRepository.save(new Member("candle-audit@example.com", "candle-user"));
+        Portfolio portfolio = portfolioRepository.save(new Portfolio(member, "시세 근거"));
+        PremarketGuideSnapshot snapshot = new PremarketGuideSnapshot(
+                portfolio, LocalDate.of(2026, 9, 14), LocalDateTime.of(2026, 9, 14, 13, 0));
+        snapshot.replaceCandleEvidence(java.util.List.of(candleEvidence("a".repeat(64))));
+        snapshotRepository.saveAndFlush(snapshot);
+        Long id = snapshot.getId();
+        entityManager.clear();
+
+        PremarketGuideSnapshot restored = snapshotRepository.findById(id).orElseThrow();
+        assertThat(restored.getCandleEvidence()).hasSize(1);
+        assertThat(restored.getCandleEvidence().get(0).getCandleSha256()).isEqualTo("a".repeat(64));
+
+        restored.replaceCandleEvidence(java.util.List.of(candleEvidence("b".repeat(64))));
+        snapshotRepository.saveAndFlush(restored);
+        entityManager.clear();
+        PremarketGuideSnapshot refreshed = snapshotRepository.findById(id).orElseThrow();
+        assertThat(refreshed.getCandleEvidence()).hasSize(1);
+        assertThat(refreshed.getCandleEvidence().get(0).getCandleSha256()).isEqualTo("b".repeat(64));
+
+        refreshed.replaceCandleEvidence(java.util.List.of());
+        snapshotRepository.saveAndFlush(refreshed);
+        entityManager.clear();
+        assertThat(snapshotRepository.findById(id).orElseThrow().getCandleEvidence()).isEmpty();
+    }
+
+    private PremarketGuideCandleEvidence candleEvidence(String sha256) {
+        return new PremarketGuideCandleEvidence(PremarketGuideScope.HELD, Market.US, "SOXL",
+                MarketDataProvider.TWELVE_DATA, Instant.parse("2026-09-11T21:00:00Z"),
+                sha256, 40, LocalDate.of(2026, 9, 11));
     }
 }

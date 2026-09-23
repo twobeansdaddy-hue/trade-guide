@@ -196,7 +196,9 @@ export default function PremarketGuidePanel({memberId, portfolioId, resource}: P
                         </div>
                     ) : (
                         <p className="premarket-guide-empty">
-                            아직 저장된 오늘 가이드가 없습니다. 생성 버튼을 눌러 현재 포트폴리오 기준을 기록해 주세요.
+                            {guide.snapshotId
+                                ? "이번 가이드에서 검토할 종목이 없습니다. 보유 종목과 후보 종목 설정을 확인해 주세요."
+                                : "아직 저장된 오늘 가이드가 없습니다. 생성 버튼을 눌러 현재 포트폴리오 기준을 기록해 주세요."}
                         </p>
                     )}
                     {unavailableMessage ? (

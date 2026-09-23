@@ -1,6 +1,7 @@
 package com.tradeguide.service.strategy;
 
 import com.tradeguide.domain.market.MarketDataProvider;
+import com.tradeguide.domain.market.MarketCandle;
 import com.tradeguide.domain.market.PortfolioMarketDataPreference;
 import com.tradeguide.domain.portfolio.Portfolio;
 import com.tradeguide.domain.strategy.AssetStrategyGuide;
@@ -18,6 +19,9 @@ import com.tradeguide.repository.portfolio.PortfolioRepository;
 import com.tradeguide.repository.strategy.PremarketGuideSnapshotRepository;
 import com.tradeguide.service.asset.AssetDisplayNameResolver;
 import com.tradeguide.service.market.UsEquityTradingCalendar;
+import com.tradeguide.service.market.CompletedWeeklyCandleCache;
+import com.tradeguide.service.market.CompletedWeeklyCandleFilter;
+import com.tradeguide.service.market.MarketCandleDigest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -44,6 +48,9 @@ class PremarketGuideServiceTest {
     private PremarketGuideSnapshotRepository snapshotRepository;
     private PortfolioStrategyGuideService portfolioStrategyGuideService;
     private PortfolioCandidateStrategyGuideService portfolioCandidateStrategyGuideService;
+    private CompletedWeeklyCandleCache completedWeeklyCandleCache;
+    private CompletedWeeklyCandleFilter completedWeeklyCandleFilter;
+    private MarketCandleDigest marketCandleDigest;
     private PremarketGuideService service;
 
     @BeforeEach
@@ -52,6 +59,9 @@ class PremarketGuideServiceTest {
         snapshotRepository = mock(PremarketGuideSnapshotRepository.class);
         portfolioStrategyGuideService = mock(PortfolioStrategyGuideService.class);
         portfolioCandidateStrategyGuideService = mock(PortfolioCandidateStrategyGuideService.class);
+        completedWeeklyCandleCache = mock(CompletedWeeklyCandleCache.class);
+        completedWeeklyCandleFilter = mock(CompletedWeeklyCandleFilter.class);
+        marketCandleDigest = mock(MarketCandleDigest.class);
         service = new PremarketGuideService(
                 clock,
                 portfolioRepository,
@@ -59,7 +69,10 @@ class PremarketGuideServiceTest {
                 portfolioStrategyGuideService,
                 portfolioCandidateStrategyGuideService,
                 new UsEquityTradingCalendar(),
-                mock(AssetDisplayNameResolver.class)
+                mock(AssetDisplayNameResolver.class),
+                completedWeeklyCandleCache,
+                completedWeeklyCandleFilter,
+                marketCandleDigest
         );
     }
 
@@ -95,6 +108,42 @@ class PremarketGuideServiceTest {
                 .isEqualTo(clock.instant());
         assertThat(savedSnapshot.getValue().getInputAudit().getResponseReceivedAt()).isNull();
         assertThat(savedSnapshot.getValue().getInputAudit().getInputSha256()).isNull();
+    }
+
+    @Test
+    void storesOnlyMatchingCompletedCandleEvidenceWithoutVerifyingWholeGuide() {
+        Portfolio portfolio = mock(Portfolio.class);
+        when(portfolioRepository.findByMember_IdAndId(1L, 10L)).thenReturn(Optional.of(portfolio));
+        when(portfolio.getMarketDataPreference())
+                .thenReturn(PortfolioMarketDataPreference.unified(MarketDataProvider.TWELVE_DATA));
+        when(snapshotRepository.findByPortfolio_IdAndGuideDate(10L, LocalDate.of(2026, 9, 14)))
+                .thenReturn(Optional.empty());
+        when(snapshotRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(portfolioStrategyGuideService.getPortfolioStrategyGuides(1L, 10L))
+                .thenReturn(new StrategyGuideBatch(List.of(guide("SOXL")), List.of()));
+        when(portfolioCandidateStrategyGuideService.getCandidateStrategyGuides(1L, 10L))
+                .thenReturn(new StrategyGuideBatch(List.of(), List.of()));
+        Instant loadedAt = Instant.parse("2026-09-11T21:00:00Z");
+        MarketCandle candle = new MarketCandle(Market.US, "SOXL", LocalDate.of(2026, 9, 11),
+                BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, 100L);
+        when(completedWeeklyCandleCache.findObservation("TWELVE_DATA", Market.US, "SOXL", 101))
+                .thenReturn(Optional.of(new CompletedWeeklyCandleCache.CandleLoadObservation(
+                        List.of(candle), loadedAt)));
+        when(completedWeeklyCandleFilter.filter(List.of(candle))).thenReturn(List.of(candle));
+        when(marketCandleDigest.sha256(eq(MarketDataProvider.TWELVE_DATA), any(), eq(List.of(candle))))
+                .thenReturn("a".repeat(64));
+
+        service.generateToday(1L, 10L, false);
+
+        var saved = org.mockito.ArgumentCaptor.forClass(
+                com.tradeguide.domain.strategy.PremarketGuideSnapshot.class);
+        verify(snapshotRepository).save(saved.capture());
+        assertThat(saved.getValue().getCandleEvidence()).hasSize(1);
+        assertThat(saved.getValue().getCandleEvidence().get(0).getLoadCompletedAt()).isEqualTo(loadedAt);
+        assertThat(saved.getValue().getCandleEvidence().get(0).getCandleSha256()).isEqualTo("a".repeat(64));
+        assertThat(saved.getValue().getInputAudit().getEvidenceStatus())
+                .isEqualTo(GuideInputEvidenceStatus.UNVERIFIED);
+        assertThat(saved.getValue().getInputAudit().getInputSha256()).isNull();
     }
 
     @Test

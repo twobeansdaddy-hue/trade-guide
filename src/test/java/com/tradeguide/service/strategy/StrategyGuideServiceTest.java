@@ -350,7 +350,7 @@ class StrategyGuideServiceTest {
         )).thenReturn(fetchedCandles);
 
         when(completedWeeklyCandleCache.getOrLoad(
-                eq(MarketDataProvider.TOSS_SECURITIES.name()),
+                eq("TOSS_SECURITIES:42"),
                 eq(Market.US),
                 eq("SOXL"),
                 eq(101),
@@ -380,7 +380,7 @@ class StrategyGuideServiceTest {
         verify(portfolioRepository).findById(portfolioId);
 
         verify(completedWeeklyCandleCache).getOrLoad(
-                eq(MarketDataProvider.TOSS_SECURITIES.name()),
+                eq("TOSS_SECURITIES:42"),
                 eq(Market.US),
                 eq("SOXL"),
                 eq(101),
